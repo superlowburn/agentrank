@@ -1,0 +1,13 @@
+{
+  "name": "agentrank",
+  "version": "0.1.0",
+  "private": true,
+  "workspaces": [
+    "crawler",
+    "scorer",
+    "site"
+  ],
+  "dependencies": {
+    "@octokit/rest": "^22.0.1"
+  }
+}

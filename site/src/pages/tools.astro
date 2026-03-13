@@ -1,0 +1,266 @@
+---
+export const prerender = true;
+
+import Base from '../layouts/Base.astro';
+import { getTopTools, getAllTools } from '../data/ranked';
+import { toSlug, formatStars, relativeTime, scoreColor } from '../data/tools';
+
+const TOP_N = 500;
+const tools = getTopTools(TOP_N);
+const totalCount = getAllTools().length;
+---
+
+<Base title="AgentRank — Every MCP server & agent tool, ranked" activeTab="tools">
+  <div class="controls">
+    <input type="text" id="search" placeholder="Search tools..." autocomplete="off" />
+    <span class="count"><span id="visible-count">{tools.length}</span> of {totalCount.toLocaleString('en-US')} tools (top {TOP_N})</span>
+  </div>
+
+  <div class="table-wrap">
+    <table id="leaderboard">
+      <thead>
+        <tr>
+          <th class="sortable" data-col="rank" data-type="num">#</th>
+          <th class="sortable" data-col="name" data-type="str">Name</th>
+          <th class="sortable" data-col="score" data-type="num">Score</th>
+          <th class="sortable" data-col="stars" data-type="num">Stars</th>
+          <th class="sortable" data-col="commit" data-type="num">Last Commit</th>
+          <th class="sortable" data-col="lang" data-type="str">Language</th>
+        </tr>
+      </thead>
+      <tbody id="tbody">
+        {tools.map((tool) => (
+          <tr>
+            <td class="rank">{tool.rank}</td>
+            <td class="name">
+              <a href={`/tool/${toSlug(tool.full_name)}/`}>{tool.full_name}</a>
+              {tool.is_archived && <span class="badge archived">archived</span>}
+            </td>
+            <td class="score">
+              <span class="score-bar" style={`--w: ${tool.score}%; --c: ${scoreColor(tool.score)}`}>
+                {tool.score.toFixed(1)}
+              </span>
+            </td>
+            <td class="stars">{formatStars(tool.stars)}</td>
+            <td class="commit">{relativeTime(tool.last_commit_at)}</td>
+            <td class="lang">{tool.language || '—'}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+</Base>
+
+<style>
+  .controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    gap: 1rem;
+  }
+
+  #search {
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 0.5rem 0.75rem;
+    border-radius: 4px;
+    font-family: inherit;
+    font-size: 0.85rem;
+    width: 300px;
+    max-width: 60%;
+  }
+
+  #search:focus {
+    outline: 1px solid var(--accent);
+    border-color: var(--accent);
+  }
+
+  .count {
+    color: var(--text-muted);
+    font-size: 0.8rem;
+    white-space: nowrap;
+  }
+
+  .table-wrap {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.85rem;
+  }
+
+  thead {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+  }
+
+  th {
+    background: var(--bg-surface);
+    border-bottom: 2px solid var(--border);
+    padding: 0.5rem 0.75rem;
+    text-align: left;
+    font-weight: 600;
+    white-space: nowrap;
+    user-select: none;
+    color: var(--text-muted);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  th.sortable {
+    cursor: pointer;
+  }
+
+  th.sortable:hover {
+    color: var(--text);
+  }
+
+  th.sorted-asc::after {
+    content: ' ↑';
+  }
+
+  th.sorted-desc::after {
+    content: ' ↓';
+  }
+
+  td {
+    padding: 0.4rem 0.75rem;
+    border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+  }
+
+  tr:hover td {
+    background: var(--bg-hover);
+  }
+
+  .rank {
+    color: var(--text-muted);
+    width: 3rem;
+  }
+
+  .name a {
+    color: var(--text);
+    font-weight: 500;
+  }
+
+  .name a:hover {
+    color: var(--accent);
+  }
+
+  .badge {
+    font-size: 0.65rem;
+    padding: 0.1rem 0.35rem;
+    border-radius: 3px;
+    margin-left: 0.5rem;
+    vertical-align: middle;
+  }
+
+  .archived {
+    background: #78350f;
+    color: #fbbf24;
+  }
+
+  .score-bar {
+    display: inline-block;
+    padding: 0.1rem 0.5rem;
+    border-radius: 3px;
+    background: linear-gradient(90deg, var(--c) var(--w), transparent var(--w));
+    background-color: var(--bg-surface);
+    min-width: 4rem;
+    font-weight: 600;
+  }
+
+  .stars, .commit {
+    color: var(--text-muted);
+  }
+
+  .lang {
+    color: var(--text-muted);
+  }
+
+  @media (prefers-color-scheme: light) {
+    .archived {
+      background: #fef3c7;
+      color: #92400e;
+    }
+  }
+</style>
+
+<script>
+  const tbody = document.getElementById('tbody')!;
+  const rows = Array.from(tbody.querySelectorAll('tr'));
+  const searchInput = document.getElementById('search') as HTMLInputElement;
+  const visibleCount = document.getElementById('visible-count')!;
+
+  let currentSort = { col: '', dir: 'asc' };
+
+  searchInput.addEventListener('input', () => {
+    const q = searchInput.value.toLowerCase();
+    let count = 0;
+    rows.forEach((row) => {
+      const name = row.querySelector('.name')!.textContent!.toLowerCase();
+      const lang = row.querySelector('.lang')!.textContent!.toLowerCase();
+      const matches = !q || name.includes(q) || lang.includes(q);
+      row.classList.toggle('hidden-row', !matches);
+      if (matches) count++;
+    });
+    visibleCount.textContent = String(count);
+  });
+
+  document.querySelectorAll('th.sortable').forEach((th) => {
+    th.addEventListener('click', () => {
+      const col = (th as HTMLElement).dataset.col!;
+      const type = (th as HTMLElement).dataset.type!;
+      const dir = currentSort.col === col && currentSort.dir === 'asc' ? 'desc' : 'asc';
+      currentSort = { col, dir };
+
+      document.querySelectorAll('th.sortable').forEach((h) => {
+        h.classList.remove('sorted-asc', 'sorted-desc');
+      });
+      th.classList.add(dir === 'asc' ? 'sorted-asc' : 'sorted-desc');
+
+      const getCellValue = (row: Element): string => {
+        switch (col) {
+          case 'rank': return row.querySelector('.rank')!.textContent!;
+          case 'name': return row.querySelector('.name')!.textContent!;
+          case 'score': return row.querySelector('.score-bar')!.textContent!;
+          case 'stars': return row.querySelector('.stars')!.textContent!;
+          case 'commit': return row.querySelector('.commit')!.textContent!;
+          case 'lang': return row.querySelector('.lang')!.textContent!;
+          default: return '';
+        }
+      };
+
+      const parseNum = (s: string): number => {
+        s = s.trim();
+        if (s.endsWith('k')) return parseFloat(s) * 1000;
+        if (s.includes('d ago')) return parseInt(s);
+        if (s.includes('mo ago')) return parseInt(s) * 30;
+        if (s.includes('y ago')) return parseInt(s) * 365;
+        if (s === 'today') return 0;
+        return parseFloat(s) || 0;
+      };
+
+      rows.sort((a, b) => {
+        const aVal = getCellValue(a);
+        const bVal = getCellValue(b);
+        let cmp: number;
+        if (type === 'num') {
+          cmp = parseNum(aVal) - parseNum(bVal);
+        } else {
+          cmp = aVal.localeCompare(bVal);
+        }
+        return dir === 'asc' ? cmp : -cmp;
+      });
+
+      rows.forEach((row) => tbody.appendChild(row));
+    });
+  });
+</script>

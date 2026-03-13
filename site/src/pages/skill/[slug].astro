@@ -1,0 +1,396 @@
+---
+import Base from '../../layouts/Base.astro';
+import { scoreColor, formatInstalls, sourceLabel } from '../../data/skills';
+import { relativeTime } from '../../data/tools';
+
+const { slug } = Astro.params;
+
+// Convert URL slug back to DB slug:
+// URL uses -- for / and - for : (via toSkillSlug)
+const decoded = slug!.replace(/--/g, '/').replace(/^(skills\.sh|glama|clawhub)-/, '$1:');
+
+const { env } = Astro.locals.runtime;
+
+// Try decoded slug first, then raw slug as fallback
+let row = await env.DB.prepare('SELECT * FROM skills WHERE slug = ?').bind(decoded).first();
+if (!row) {
+  row = await env.DB.prepare('SELECT * FROM skills WHERE slug = ?').bind(slug).first();
+}
+
+if (!row) {
+  return Astro.redirect('/404');
+}
+
+const skill = {
+  rank: row.rank as number,
+  slug: row.slug as string,
+  name: (row.name as string | null) || row.slug as string,
+  description: row.description as string | null,
+  score: row.score as number,
+  installs: row.installs as number,
+  platforms: JSON.parse(row.platforms as string || '[]') as string[],
+  source: row.source as string,
+  github_repo: row.github_repo as string | null,
+  author: row.author as string | null,
+};
+
+// Look up linked GitHub repo data if available
+let repoData: {
+  stars: number;
+  last_commit_at: string;
+  open_issues: number;
+  closed_issues: number;
+  contributors: number;
+} | null = null;
+
+if (skill.github_repo) {
+  const repoRow = await env.DB.prepare('SELECT stars, last_commit_at, open_issues, closed_issues, contributors FROM tools WHERE full_name = ?')
+    .bind(skill.github_repo)
+    .first();
+  if (repoRow) {
+    repoData = {
+      stars: repoRow.stars as number,
+      last_commit_at: repoRow.last_commit_at as string,
+      open_issues: repoRow.open_issues as number,
+      closed_issues: repoRow.closed_issues as number,
+      contributors: repoRow.contributors as number,
+    };
+  }
+}
+
+// Compute signal bars
+const installsBar = Math.min(100, Math.log(1 + skill.installs) / Math.log(1 + 200000) * 100);
+
+const freshnessBar = repoData ? (() => {
+  const days = Math.floor((Date.now() - new Date(repoData.last_commit_at).getTime()) / (1000 * 60 * 60 * 24));
+  if (days <= 7) return 100;
+  if (days <= 90) return 100 - ((days - 7) / 83) * 60;
+  return Math.max(0, 40 * Math.exp(-(days - 90) / 180));
+})() : null;
+
+const issueHealth = repoData ? (() => {
+  const total = repoData.open_issues + repoData.closed_issues;
+  return total > 0 ? repoData.closed_issues / total : 0.5;
+})() : null;
+
+const starsBar = repoData ? Math.min(100, Math.log(1 + repoData.stars) / Math.log(1 + 200000) * 100) : null;
+
+const platformBar = Math.min(100, skill.platforms.length / 21 * 100);
+
+const contributorsBar = repoData ? Math.min(100, Math.log(1 + repoData.contributors) / Math.log(1 + 500) * 100) : null;
+
+const descLen = skill.description?.length ?? 0;
+const descQuality = !skill.description ? 0 : descLen < 50 ? 0.3 : descLen < 150 ? 0.7 : 1.0;
+
+// Build registry link
+const registryLink = skill.source === 'skills.sh'
+  ? `https://skills.sh/${skill.slug}`
+  : skill.source === 'glama'
+    ? `https://glama.ai/mcp/servers/${skill.slug}`
+    : null;
+
+const githubLink = skill.github_repo ? `https://github.com/${skill.github_repo}` : null;
+---
+
+<Base title={`${skill.name} — AgentRank`} description={skill.description || `AgentRank profile for ${skill.name}`} activeTab="skills">
+  <div class="back">
+    <a href="/">&larr; Back to leaderboard</a>
+  </div>
+
+  <div class="tool-header">
+    <h2>{skill.name}</h2>
+    <div class="tool-meta">
+      <span class="score-badge" style={`color: ${scoreColor(skill.score)}`}>
+        Score: {skill.score.toFixed(1)}
+      </span>
+      <span class="rank-badge">Rank #{skill.rank}</span>
+      {skill.author && <span class="author-badge">by {skill.author}</span>}
+    </div>
+  </div>
+
+  {skill.description && <p class="description">{skill.description}</p>}
+
+  <section class="signals">
+    <h3>Signal Breakdown</h3>
+    <div class="signal-list">
+      <div class="signal">
+        <div class="signal-label">
+          <span>Installs</span>
+          <span class="signal-value">{formatInstalls(skill.installs)}</span>
+        </div>
+        <div class="signal-track">
+          <div class="signal-fill" style={`width: ${installsBar}%; background: ${scoreColor(installsBar)}`}></div>
+        </div>
+      </div>
+
+      {freshnessBar !== null && repoData ? (
+        <div class="signal">
+          <div class="signal-label">
+            <span>Freshness</span>
+            <span class="signal-value">{relativeTime(repoData.last_commit_at)}</span>
+          </div>
+          <div class="signal-track">
+            <div class="signal-fill" style={`width: ${freshnessBar}%; background: ${scoreColor(freshnessBar)}`}></div>
+          </div>
+        </div>
+      ) : (
+        <div class="signal">
+          <div class="signal-label">
+            <span>Freshness</span>
+            <span class="signal-value muted">GitHub not linked</span>
+          </div>
+        </div>
+      )}
+
+      {issueHealth !== null ? (
+        <div class="signal">
+          <div class="signal-label">
+            <span>Issue Health</span>
+            <span class="signal-value">{(issueHealth * 100).toFixed(0)}%</span>
+          </div>
+          <div class="signal-track">
+            <div class="signal-fill" style={`width: ${issueHealth * 100}%; background: ${scoreColor(issueHealth * 100)}`}></div>
+          </div>
+        </div>
+      ) : (
+        <div class="signal">
+          <div class="signal-label">
+            <span>Issue Health</span>
+            <span class="signal-value muted">GitHub not linked</span>
+          </div>
+        </div>
+      )}
+
+      {starsBar !== null && repoData ? (
+        <div class="signal">
+          <div class="signal-label">
+            <span>Stars</span>
+            <span class="signal-value">{repoData.stars.toLocaleString('en-US')}</span>
+          </div>
+          <div class="signal-track">
+            <div class="signal-fill" style={`width: ${starsBar}%; background: ${scoreColor(starsBar)}`}></div>
+          </div>
+        </div>
+      ) : (
+        <div class="signal">
+          <div class="signal-label">
+            <span>Stars</span>
+            <span class="signal-value muted">GitHub not linked</span>
+          </div>
+        </div>
+      )}
+
+      <div class="signal">
+        <div class="signal-label">
+          <span>Platform Breadth</span>
+          <span class="signal-value">{skill.platforms.length} platform{skill.platforms.length !== 1 ? 's' : ''}</span>
+        </div>
+        <div class="signal-track">
+          <div class="signal-fill" style={`width: ${platformBar}%; background: ${scoreColor(platformBar)}`}></div>
+        </div>
+      </div>
+
+      {contributorsBar !== null && repoData ? (
+        <div class="signal">
+          <div class="signal-label">
+            <span>Contributors</span>
+            <span class="signal-value">{repoData.contributors}</span>
+          </div>
+          <div class="signal-track">
+            <div class="signal-fill" style={`width: ${contributorsBar}%; background: ${scoreColor(contributorsBar)}`}></div>
+          </div>
+        </div>
+      ) : (
+        <div class="signal">
+          <div class="signal-label">
+            <span>Contributors</span>
+            <span class="signal-value muted">GitHub not linked</span>
+          </div>
+        </div>
+      )}
+
+      <div class="signal">
+        <div class="signal-label">
+          <span>Description</span>
+          <span class="signal-value">{descQuality === 0 ? 'None' : descQuality === 0.3 ? 'Brief' : descQuality === 0.7 ? 'Good' : 'Detailed'}</span>
+        </div>
+        <div class="signal-track">
+          <div class="signal-fill" style={`width: ${descQuality * 100}%; background: ${scoreColor(descQuality * 100)}`}></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {skill.platforms.length > 0 && (
+    <section class="queries">
+      <h3>Compatible Platforms</h3>
+      <div class="tags">
+        {skill.platforms.map((p) => (
+          <span class="tag">{p}</span>
+        ))}
+      </div>
+    </section>
+  )}
+
+  <div class="links">
+    {githubLink && (
+      <a href={githubLink} target="_blank" rel="noopener noreferrer">View on GitHub &rarr;</a>
+    )}
+    {registryLink && (
+      <a href={registryLink} target="_blank" rel="noopener noreferrer">View on {sourceLabel(skill.source)} &rarr;</a>
+    )}
+    {skill.source === 'skills.sh' && (
+      <div class="install-cmd">
+        <span class="install-label">Install:</span>
+        <code>npx skillsadd {skill.slug}</code>
+      </div>
+    )}
+  </div>
+</Base>
+
+<style>
+  .back {
+    margin-bottom: 1.5rem;
+  }
+
+  .back a {
+    color: var(--text-muted);
+    font-size: 0.8rem;
+  }
+
+  .back a:hover {
+    color: var(--accent);
+  }
+
+  .tool-header {
+    margin-bottom: 1rem;
+  }
+
+  .tool-header h2 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+  }
+
+  .tool-meta {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+  }
+
+  .score-badge {
+    font-weight: 700;
+    font-size: 1rem;
+  }
+
+  .rank-badge {
+    color: var(--text-muted);
+    font-size: 0.85rem;
+  }
+
+  .author-badge {
+    color: var(--text-muted);
+    font-size: 0.85rem;
+  }
+
+  .description {
+    color: var(--text-muted);
+    margin-bottom: 2rem;
+    font-size: 0.9rem;
+  }
+
+  section {
+    margin-bottom: 2rem;
+  }
+
+  h3 {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-muted);
+    margin-bottom: 0.75rem;
+  }
+
+  .signal-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .signal-label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.8rem;
+    margin-bottom: 0.25rem;
+  }
+
+  .signal-value {
+    color: var(--text-muted);
+  }
+
+  .signal-value.muted {
+    font-style: italic;
+    opacity: 0.6;
+  }
+
+  .signal-track {
+    height: 6px;
+    background: var(--bg-surface);
+    border-radius: 3px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+  }
+
+  .signal-fill {
+    height: 100%;
+    border-radius: 3px;
+    transition: width 0.3s;
+  }
+
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .tag {
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    padding: 0.2rem 0.6rem;
+    border-radius: 3px;
+    font-size: 0.75rem;
+    color: var(--text-muted);
+  }
+
+  .links {
+    margin-top: 2rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .links a {
+    font-weight: 600;
+  }
+
+  .install-cmd {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.85rem;
+  }
+
+  .install-label {
+    color: var(--text-muted);
+  }
+
+  .install-cmd code {
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    padding: 0.25rem 0.6rem;
+    border-radius: 3px;
+    font-size: 0.8rem;
+  }
+</style>

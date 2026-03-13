@@ -1,0 +1,273 @@
+---
+export const prerender = true;
+
+import Base from '../layouts/Base.astro';
+import { getTopSkills, getAllSkills } from '../data/ranked-skills';
+import { toSkillSlug, formatInstalls, platformBadges, scoreColor, sourceLabel } from '../data/skills';
+
+const TOP_N = 500;
+const allSkills = getAllSkills();
+const skills = getTopSkills(TOP_N);
+const totalCount = allSkills.length;
+---
+
+<Base title="AgentRank — The reputation layer for AI skills, tools & agents" activeTab="skills">
+  <div class="controls">
+    <input type="text" id="search" placeholder="Search skills..." autocomplete="off" />
+    <span class="count"><span id="visible-count">{skills.length}</span> of {totalCount.toLocaleString('en-US')} skills</span>
+  </div>
+
+  <div class="table-wrap">
+    <table id="leaderboard">
+      <thead>
+        <tr>
+          <th class="sortable" data-col="rank" data-type="num">#</th>
+          <th class="sortable" data-col="name" data-type="str">Name</th>
+          <th class="sortable" data-col="score" data-type="num">Score</th>
+          <th class="sortable" data-col="installs" data-type="num">Installs</th>
+          <th class="sortable" data-col="platforms" data-type="str">Platforms</th>
+          <th class="sortable" data-col="source" data-type="str">Source</th>
+        </tr>
+      </thead>
+      <tbody id="tbody">
+        {skills.map((skill) => (
+          <tr>
+            <td class="rank">{skill.rank}</td>
+            <td class="name">
+              <a href={`/skill/${toSkillSlug(skill.slug)}/`}>{skill.name || skill.slug}</a>
+            </td>
+            <td class="score">
+              <span class="score-bar" style={`--w: ${skill.score}%; --c: ${scoreColor(skill.score)}`}>
+                {skill.score.toFixed(1)}
+              </span>
+            </td>
+            <td class="installs">{formatInstalls(skill.installs)}</td>
+            <td class="platforms">
+              {platformBadges(skill.platforms).map((p) => (
+                <span class="platform-badge">{p}</span>
+              ))}
+            </td>
+            <td class="source">{sourceLabel(skill.source)}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+</Base>
+
+<style>
+  .controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    gap: 1rem;
+  }
+
+  #search {
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 0.5rem 0.75rem;
+    border-radius: 4px;
+    font-family: inherit;
+    font-size: 0.85rem;
+    width: 300px;
+    max-width: 60%;
+  }
+
+  #search:focus {
+    outline: 1px solid var(--accent);
+    border-color: var(--accent);
+  }
+
+  .count {
+    color: var(--text-muted);
+    font-size: 0.8rem;
+    white-space: nowrap;
+  }
+
+  .table-wrap {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.85rem;
+  }
+
+  thead {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+  }
+
+  th {
+    background: var(--bg-surface);
+    border-bottom: 2px solid var(--border);
+    padding: 0.5rem 0.75rem;
+    text-align: left;
+    font-weight: 600;
+    white-space: nowrap;
+    user-select: none;
+    color: var(--text-muted);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  th.sortable {
+    cursor: pointer;
+  }
+
+  th.sortable:hover {
+    color: var(--text);
+  }
+
+  th.sorted-asc::after {
+    content: ' \2191';
+  }
+
+  th.sorted-desc::after {
+    content: ' \2193';
+  }
+
+  td {
+    padding: 0.4rem 0.75rem;
+    border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+  }
+
+  tr:hover td {
+    background: var(--bg-hover);
+  }
+
+  .rank {
+    color: var(--text-muted);
+    width: 3rem;
+  }
+
+  .name a {
+    color: var(--text);
+    font-weight: 500;
+  }
+
+  .name a:hover {
+    color: var(--accent);
+  }
+
+  .score-bar {
+    display: inline-block;
+    padding: 0.1rem 0.5rem;
+    border-radius: 3px;
+    background: linear-gradient(90deg, var(--c) var(--w), transparent var(--w));
+    background-color: var(--bg-surface);
+    min-width: 4rem;
+    font-weight: 600;
+  }
+
+  .installs {
+    color: var(--text-muted);
+  }
+
+  .platforms {
+    display: flex;
+    gap: 0.25rem;
+    flex-wrap: nowrap;
+  }
+
+  .platform-badge {
+    display: inline-block;
+    font-size: 0.65rem;
+    padding: 0.1rem 0.35rem;
+    border-radius: 3px;
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+    white-space: nowrap;
+  }
+
+  .source {
+    color: var(--text-muted);
+  }
+
+  @media (prefers-color-scheme: light) {
+    .platform-badge {
+      background: #f4f4f5;
+      border-color: #e4e4e7;
+      color: #52525b;
+    }
+  }
+</style>
+
+<script>
+  const tbody = document.getElementById('tbody')!;
+  const rows = Array.from(tbody.querySelectorAll('tr'));
+  const searchInput = document.getElementById('search') as HTMLInputElement;
+  const visibleCount = document.getElementById('visible-count')!;
+
+  let currentSort = { col: '', dir: 'asc' };
+
+  searchInput.addEventListener('input', () => {
+    const q = searchInput.value.toLowerCase();
+    let count = 0;
+    rows.forEach((row) => {
+      const name = row.querySelector('.name')!.textContent!.toLowerCase();
+      const source = row.querySelector('.source')!.textContent!.toLowerCase();
+      const platforms = row.querySelector('.platforms')!.textContent!.toLowerCase();
+      const matches = !q || name.includes(q) || source.includes(q) || platforms.includes(q);
+      row.classList.toggle('hidden-row', !matches);
+      if (matches) count++;
+    });
+    visibleCount.textContent = String(count);
+  });
+
+  document.querySelectorAll('th.sortable').forEach((th) => {
+    th.addEventListener('click', () => {
+      const col = (th as HTMLElement).dataset.col!;
+      const type = (th as HTMLElement).dataset.type!;
+      const dir = currentSort.col === col && currentSort.dir === 'asc' ? 'desc' : 'asc';
+      currentSort = { col, dir };
+
+      document.querySelectorAll('th.sortable').forEach((h) => {
+        h.classList.remove('sorted-asc', 'sorted-desc');
+      });
+      th.classList.add(dir === 'asc' ? 'sorted-asc' : 'sorted-desc');
+
+      const getCellValue = (row: Element): string => {
+        switch (col) {
+          case 'rank': return row.querySelector('.rank')!.textContent!;
+          case 'name': return row.querySelector('.name')!.textContent!;
+          case 'score': return row.querySelector('.score-bar')!.textContent!;
+          case 'installs': return row.querySelector('.installs')!.textContent!;
+          case 'platforms': return row.querySelector('.platforms')!.textContent!;
+          case 'source': return row.querySelector('.source')!.textContent!;
+          default: return '';
+        }
+      };
+
+      const parseNum = (s: string): number => {
+        s = s.trim();
+        if (s.endsWith('M')) return parseFloat(s) * 1000000;
+        if (s.endsWith('k')) return parseFloat(s) * 1000;
+        return parseFloat(s.replace(/,/g, '')) || 0;
+      };
+
+      rows.sort((a, b) => {
+        const aVal = getCellValue(a);
+        const bVal = getCellValue(b);
+        let cmp: number;
+        if (type === 'num') {
+          cmp = parseNum(aVal) - parseNum(bVal);
+        } else {
+          cmp = aVal.localeCompare(bVal);
+        }
+        return dir === 'asc' ? cmp : -cmp;
+      });
+
+      rows.forEach((row) => tbody.appendChild(row));
+    });
+  });
+</script>

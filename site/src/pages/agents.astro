@@ -1,0 +1,221 @@
+---
+export const prerender = true;
+
+import Base from '../layouts/Base.astro';
+---
+
+<Base title="Register Your Agent — AgentRank" activeTab="agents">
+  <div class="hero">
+    <h2>The agent economy is coming. Register yours now.</h2>
+    <p class="subtitle">
+      AgentRank is building the discovery and reputation layer for AI agents.
+      Register early and build reputation before everyone else.
+    </p>
+  </div>
+
+  <form id="register-form" novalidate>
+    <div class="field">
+      <label for="name">Agent name <span class="required">*</span></label>
+      <input type="text" id="name" name="name" required autocomplete="off" />
+    </div>
+
+    <div class="field">
+      <label for="description">What does your agent do? <span class="required">*</span></label>
+      <textarea id="description" name="description" required rows="3"></textarea>
+    </div>
+
+    <div class="field">
+      <label for="owner_name">Your name or organization <span class="required">*</span></label>
+      <input type="text" id="owner_name" name="owner_name" required autocomplete="organization" />
+    </div>
+
+    <div class="field">
+      <label for="owner_url">Website or GitHub URL <span class="required">*</span></label>
+      <input type="url" id="owner_url" name="owner_url" required placeholder="https://" autocomplete="url" />
+    </div>
+
+    <div class="field">
+      <label for="capabilities">Capabilities <span class="optional">(optional, comma-separated)</span></label>
+      <input type="text" id="capabilities" name="capabilities" placeholder="e.g. tax-filing, audit-defense, code-review" autocomplete="off" />
+    </div>
+
+    <div class="field">
+      <label for="contact_email">Contact email <span class="required">*</span></label>
+      <input type="email" id="contact_email" name="contact_email" required autocomplete="email" />
+      <span class="field-note">Not displayed publicly</span>
+    </div>
+
+    <button type="submit" id="submit-btn">Register Agent</button>
+
+    <div id="form-message" class="form-message" aria-live="polite"></div>
+  </form>
+</Base>
+
+<style>
+  .hero {
+    margin-bottom: 2.5rem;
+  }
+
+  .hero h2 {
+    font-size: 1.4rem;
+    font-weight: 700;
+    margin-bottom: 0.75rem;
+  }
+
+  .subtitle {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    max-width: 600px;
+    line-height: 1.6;
+  }
+
+  form {
+    max-width: 520px;
+  }
+
+  .field {
+    margin-bottom: 1.25rem;
+  }
+
+  label {
+    display: block;
+    font-size: 0.8rem;
+    font-weight: 600;
+    margin-bottom: 0.35rem;
+    color: var(--text);
+  }
+
+  .required {
+    color: var(--accent);
+  }
+
+  .optional {
+    color: var(--text-muted);
+    font-weight: 400;
+  }
+
+  input[type="text"],
+  input[type="url"],
+  input[type="email"],
+  textarea {
+    width: 100%;
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 0.5rem 0.75rem;
+    border-radius: 4px;
+    font-family: inherit;
+    font-size: 0.85rem;
+    line-height: 1.5;
+  }
+
+  input:focus,
+  textarea:focus {
+    outline: 1px solid var(--accent);
+    border-color: var(--accent);
+  }
+
+  textarea {
+    resize: vertical;
+    min-height: 4rem;
+  }
+
+  .field-note {
+    display: block;
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    margin-top: 0.25rem;
+  }
+
+  button[type="submit"] {
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    padding: 0.6rem 1.5rem;
+    border-radius: 4px;
+    font-family: inherit;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.15s;
+  }
+
+  button[type="submit"]:hover {
+    opacity: 0.9;
+  }
+
+  button[type="submit"]:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .form-message {
+    margin-top: 1rem;
+    font-size: 0.85rem;
+    min-height: 1.5em;
+  }
+
+  .form-message.success {
+    color: var(--accent);
+  }
+
+  .form-message.error {
+    color: #ef4444;
+  }
+</style>
+
+<script>
+  const form = document.getElementById('register-form') as HTMLFormElement;
+  const btn = document.getElementById('submit-btn') as HTMLButtonElement;
+  const msg = document.getElementById('form-message')!;
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    msg.textContent = '';
+    msg.className = 'form-message';
+
+    const data: Record<string, string> = {};
+    const formData = new FormData(form);
+    for (const [key, value] of formData.entries()) {
+      data[key] = value as string;
+    }
+
+    // Client-side validation
+    const required = ['name', 'description', 'owner_name', 'owner_url', 'contact_email'];
+    for (const field of required) {
+      if (!data[field]?.trim()) {
+        msg.textContent = `Please fill in the ${field.replace('_', ' ')} field.`;
+        msg.className = 'form-message error';
+        return;
+      }
+    }
+
+    btn.disabled = true;
+    btn.textContent = 'Submitting...';
+
+    try {
+      const resp = await fetch('/api/register-agent', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      });
+
+      const result = await resp.json();
+
+      if (result.success) {
+        msg.textContent = "Thanks! We'll review your submission and get back to you.";
+        msg.className = 'form-message success';
+        form.reset();
+      } else {
+        msg.textContent = result.error || 'Something went wrong. Please try again.';
+        msg.className = 'form-message error';
+      }
+    } catch {
+      msg.textContent = 'Network error. Please try again.';
+      msg.className = 'form-message error';
+    } finally {
+      btn.disabled = false;
+      btn.textContent = 'Register Agent';
+    }
+  });
+</script>

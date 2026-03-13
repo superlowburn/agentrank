@@ -1,0 +1,278 @@
+---
+import Base from '../../layouts/Base.astro';
+import { toSlug, formatStars, relativeTime, scoreColor, type Tool } from '../../data/tools';
+
+const { slug } = Astro.params;
+const fullName = slug!.replace('--', '/');
+
+const { env } = Astro.locals.runtime;
+const row = await env.DB.prepare('SELECT * FROM tools WHERE full_name = ?').bind(fullName).first();
+
+if (!row) {
+  return Astro.redirect('/404');
+}
+
+const tool: Tool = {
+  rank: row.rank as number,
+  full_name: row.full_name as string,
+  url: row.url as string,
+  description: row.description as string | null,
+  score: row.score as number,
+  stars: row.stars as number,
+  forks: row.forks as number,
+  open_issues: row.open_issues as number,
+  closed_issues: row.closed_issues as number,
+  contributors: row.contributors as number,
+  dependents: row.dependents as number,
+  language: row.language as string | null,
+  license: row.license as string | null,
+  last_commit_at: row.last_commit_at as string,
+  is_archived: (row.is_archived as number) === 1,
+  matched_queries: JSON.parse(row.matched_queries as string || '[]'),
+};
+
+const totalIssues = tool.open_issues + tool.closed_issues;
+const issueHealth = totalIssues > 0 ? (tool.closed_issues / totalIssues) : 0.5;
+
+const descLen = tool.description?.length ?? 0;
+const descQuality = !tool.description ? 0 : descLen < 50 ? 0.3 : descLen < 150 ? 0.7 : 1.0;
+
+const PERMISSIVE = ['MIT', 'Apache-2.0', 'BSD-2-Clause', 'BSD-3-Clause', 'ISC', 'Unlicense'];
+const licHealth = !tool.license || tool.license === 'NOASSERTION' ? 0.2 : PERMISSIVE.includes(tool.license) ? 1.0 : 0.6;
+
+const signals = [
+  { name: 'Stars', value: tool.stars.toLocaleString('en-US'), bar: Math.min(100, Math.log(1 + tool.stars) / Math.log(1 + 200000) * 100) },
+  { name: 'Freshness', value: relativeTime(tool.last_commit_at), bar: (() => {
+    const days = Math.floor((Date.now() - new Date(tool.last_commit_at).getTime()) / (1000 * 60 * 60 * 24));
+    if (days <= 7) return 100;
+    if (days <= 90) return 100 - ((days - 7) / 83) * 60;
+    return Math.max(0, 40 * Math.exp(-(days - 90) / 180));
+  })() },
+  { name: 'Issue Health', value: `${(issueHealth * 100).toFixed(0)}%`, bar: issueHealth * 100 },
+  { name: 'Contributors', value: tool.contributors, bar: Math.min(100, Math.log(1 + tool.contributors) / Math.log(1 + 500) * 100) },
+  { name: 'Dependents', value: 'Coming soon', bar: -1 },
+  { name: 'Forks', value: tool.forks.toLocaleString('en-US'), bar: Math.min(100, Math.log(1 + tool.forks) / Math.log(1 + 50000) * 100) },
+  { name: 'Description', value: descQuality === 0 ? 'None' : descQuality === 0.3 ? 'Brief' : descQuality === 0.7 ? 'Good' : 'Detailed', bar: descQuality * 100 },
+  { name: 'License', value: tool.license || 'None', bar: licHealth * 100 },
+];
+---
+
+<Base title={`${tool.full_name} — AgentRank`} description={tool.description || `AgentRank profile for ${tool.full_name}`} activeTab="tools">
+  <div class="back">
+    <a href="/tools/">&larr; Back to tools leaderboard</a>
+  </div>
+
+  <div class="tool-header">
+    <h2>{tool.full_name}</h2>
+    <div class="tool-meta">
+      <span class="score-badge" style={`color: ${scoreColor(tool.score)}`}>
+        Score: {tool.score.toFixed(1)}
+      </span>
+      <span class="rank-badge">Rank #{tool.rank}</span>
+      {tool.is_archived && <span class="badge archived">Archived</span>}
+    </div>
+  </div>
+
+  {tool.description && <p class="description">{tool.description}</p>}
+
+  <section class="signals">
+    <h3>Signal Breakdown</h3>
+    <div class="signal-list">
+      {signals.map((s) => (
+        <div class="signal">
+          <div class="signal-label">
+            <span>{s.name}</span>
+            <span class={`signal-value${s.bar === -1 ? ' coming-soon' : ''}`}>{s.value}</span>
+          </div>
+          {s.bar >= 0 && (
+            <div class="signal-track">
+              <div class="signal-fill" style={`width: ${s.bar}%; background: ${scoreColor(s.bar)}`}></div>
+            </div>
+          )}
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <section class="metadata">
+    <h3>Details</h3>
+    <dl>
+      <dt>Stars</dt><dd>{tool.stars.toLocaleString('en-US')}</dd>
+      <dt>Forks</dt><dd>{tool.forks.toLocaleString('en-US')}</dd>
+      <dt>Open Issues</dt><dd>{tool.open_issues.toLocaleString('en-US')}</dd>
+      <dt>Closed Issues</dt><dd>{tool.closed_issues.toLocaleString('en-US')}</dd>
+      <dt>Contributors</dt><dd>{tool.contributors}</dd>
+      <dt>Language</dt><dd>{tool.language || '—'}</dd>
+      <dt>License</dt><dd>{tool.license || '—'}</dd>
+      <dt>Last Commit</dt><dd>{relativeTime(tool.last_commit_at)}</dd>
+    </dl>
+  </section>
+
+  {tool.matched_queries.length > 0 && (
+    <section class="queries">
+      <h3>Matched Queries</h3>
+      <div class="tags">
+        {tool.matched_queries.map((q) => (
+          <span class="tag">{q}</span>
+        ))}
+      </div>
+    </section>
+  )}
+
+  <div class="github-link">
+    <a href={tool.url} target="_blank" rel="noopener noreferrer">View on GitHub &rarr;</a>
+  </div>
+</Base>
+
+<style>
+  .back {
+    margin-bottom: 1.5rem;
+  }
+
+  .back a {
+    color: var(--text-muted);
+    font-size: 0.8rem;
+  }
+
+  .back a:hover {
+    color: var(--accent);
+  }
+
+  .tool-header {
+    margin-bottom: 1rem;
+  }
+
+  .tool-header h2 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+  }
+
+  .tool-meta {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+  }
+
+  .score-badge {
+    font-weight: 700;
+    font-size: 1rem;
+  }
+
+  .rank-badge {
+    color: var(--text-muted);
+    font-size: 0.85rem;
+  }
+
+  .badge {
+    font-size: 0.65rem;
+    padding: 0.1rem 0.35rem;
+    border-radius: 3px;
+  }
+
+  .archived {
+    background: #78350f;
+    color: #fbbf24;
+  }
+
+  .description {
+    color: var(--text-muted);
+    margin-bottom: 2rem;
+    font-size: 0.9rem;
+  }
+
+  section {
+    margin-bottom: 2rem;
+  }
+
+  h3 {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-muted);
+    margin-bottom: 0.75rem;
+  }
+
+  .signal-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .signal-label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.8rem;
+    margin-bottom: 0.25rem;
+  }
+
+  .signal-value {
+    color: var(--text-muted);
+  }
+
+  .signal-value.coming-soon {
+    font-style: italic;
+    opacity: 0.5;
+  }
+
+  .signal-track {
+    height: 6px;
+    background: var(--bg-surface);
+    border-radius: 3px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+  }
+
+  .signal-fill {
+    height: 100%;
+    border-radius: 3px;
+    transition: width 0.3s;
+  }
+
+  dl {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 0.35rem 1.5rem;
+    font-size: 0.85rem;
+  }
+
+  dt {
+    color: var(--text-muted);
+  }
+
+  dd {
+    font-weight: 500;
+  }
+
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .tag {
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    padding: 0.2rem 0.6rem;
+    border-radius: 3px;
+    font-size: 0.75rem;
+    color: var(--text-muted);
+  }
+
+  .github-link {
+    margin-top: 2rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border);
+  }
+
+  .github-link a {
+    font-weight: 600;
+  }
+
+  @media (prefers-color-scheme: light) {
+    .archived {
+      background: #fef3c7;
+      color: #92400e;
+    }
+  }
+</style>

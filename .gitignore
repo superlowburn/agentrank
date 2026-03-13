@@ -1,0 +1,11 @@
+node_modules/
+dist/
+data/*.db
+data/d1-seed.sql
+.env
+*.log
+site/dist/
+site/.astro/
+site/.wrangler/
+.wrangler/
+.DS_Store
