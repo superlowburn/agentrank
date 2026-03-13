@@ -6,13 +6,14 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 dotenv.config({ path: path.resolve(__dirname, "../../.env") });
 import { Octokit } from "octokit";
 import { throttling } from "@octokit/plugin-throttling";
-import { initDb, getDb, getRepoCount, getSkillCount, closeDb } from "./db.js";
+import { initDb, getDb, getRepoCount, getSkillCount, getTopReposForDependentsRefresh, updateDependents, closeDb } from "./db.js";
 import { SEARCH_QUERIES } from "./queries.js";
 import { runSearch } from "./search.js";
 import { enrichRepos } from "./enrich.js";
 import { crawlSkillsSh } from "./skills.js";
 import { crawlGlama } from "./glama.js";
 import { crawlClawHub } from "./clawhub.js";
+import { getDependentsCount, sleep, randomDelay } from "./dependents.js";
 
 // CRAWL_MODE=incremental: only search repos created in last 2 days, skip fork/noise cleanup
 // CRAWL_MODE=full (default): full crawl from 2023-01-01
@@ -113,6 +114,51 @@ async function main(): Promise<void> {
   console.log(`\nskills.sh: ${skillsShCount} skills processed`);
   console.log(`Glama: ${glamaResult.total} servers processed, ${glamaResult.matched} matched to repos`);
   console.log(`ClawHub: ${clawHubCount} skills processed`);
+
+  // Dependents refresh — top repos by stars
+  const dependentsLimit = isIncremental ? 500 : 1000;
+  console.log(`\n=== Dependents Refresh Phase (top ${dependentsLimit} by stars) ===`);
+  const depsRepos = getTopReposForDependentsRefresh(dependentsLimit);
+  let depsUpdated = 0;
+  let depsBackoffs = 0;
+
+  for (let i = 0; i < depsRepos.length; i++) {
+    const repo = depsRepos[i];
+    if (i % 50 === 0) {
+      console.log(`[dependents] ${i + 1}/${depsRepos.length}: ${repo.full_name} (updated ${depsUpdated})`);
+    }
+
+    try {
+      const result = await getDependentsCount(repo.full_name);
+
+      if (result.rateLimited) {
+        depsBackoffs++;
+        const backoffMs = 60_000 * Math.pow(2, depsBackoffs - 1);
+        console.warn(`[dependents] Rate limited. Backoff ${depsBackoffs}/3: ${backoffMs / 1000}s`);
+        if (depsBackoffs >= 3) {
+          console.error(`[dependents] Too many rate limits. Stopping after ${i} repos.`);
+          break;
+        }
+        await sleep(backoffMs);
+        i--;
+        continue;
+      }
+
+      depsBackoffs = 0;
+      if (result.count !== repo.dependents) {
+        updateDependents(repo.full_name, result.count);
+        depsUpdated++;
+      }
+    } catch (err) {
+      console.warn(`[dependents] Error: ${repo.full_name}: ${(err as Error).message}`);
+    }
+
+    if (i < depsRepos.length - 1) {
+      await sleep(randomDelay());
+    }
+  }
+
+  console.log(`[dependents] Refresh complete: ${depsUpdated} updated out of ${depsRepos.length}`);
 
   // Summary
   const finalCount = getRepoCount();

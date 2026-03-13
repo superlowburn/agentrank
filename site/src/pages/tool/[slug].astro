@@ -50,7 +50,7 @@ const signals = [
   })() },
   { name: 'Issue Health', value: `${(issueHealth * 100).toFixed(0)}%`, bar: issueHealth * 100 },
   { name: 'Contributors', value: tool.contributors, bar: Math.min(100, Math.log(1 + tool.contributors) / Math.log(1 + 500) * 100) },
-  { name: 'Dependents', value: 'Coming soon', bar: -1 },
+  { name: 'Dependents', value: tool.dependents > 0 ? tool.dependents.toLocaleString('en-US') : '0', bar: Math.min(100, tool.dependents > 0 ? Math.log(1 + tool.dependents) / Math.log(1 + 100000) * 100 : 0) },
   { name: 'Forks', value: tool.forks.toLocaleString('en-US'), bar: Math.min(100, Math.log(1 + tool.forks) / Math.log(1 + 50000) * 100) },
   { name: 'Description', value: descQuality === 0 ? 'None' : descQuality === 0.3 ? 'Brief' : descQuality === 0.7 ? 'Good' : 'Detailed', bar: descQuality * 100 },
   { name: 'License', value: tool.license || 'None', bar: licHealth * 100 },
@@ -102,6 +102,7 @@ const signals = [
       <dt>Open Issues</dt><dd>{tool.open_issues.toLocaleString('en-US')}</dd>
       <dt>Closed Issues</dt><dd>{tool.closed_issues.toLocaleString('en-US')}</dd>
       <dt>Contributors</dt><dd>{tool.contributors}</dd>
+      <dt>Dependents</dt><dd>{tool.dependents > 0 ? tool.dependents.toLocaleString('en-US') : '—'}</dd>
       <dt>Language</dt><dd>{tool.language || '—'}</dd>
       <dt>License</dt><dd>{tool.license || '—'}</dd>
       <dt>Last Commit</dt><dd>{relativeTime(tool.last_commit_at)}</dd>

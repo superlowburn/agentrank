@@ -24,6 +24,7 @@ const totalCount = getAllTools().length;
           <th class="sortable" data-col="name" data-type="str">Name</th>
           <th class="sortable" data-col="score" data-type="num">Score</th>
           <th class="sortable" data-col="stars" data-type="num">Stars</th>
+          <th class="sortable" data-col="dependents" data-type="num">Dependents</th>
           <th class="sortable" data-col="commit" data-type="num">Last Commit</th>
           <th class="sortable" data-col="lang" data-type="str">Language</th>
         </tr>
@@ -42,6 +43,7 @@ const totalCount = getAllTools().length;
               </span>
             </td>
             <td class="stars">{formatStars(tool.stars)}</td>
+            <td class="dependents">{tool.dependents > 0 ? formatStars(tool.dependents) : '—'}</td>
             <td class="commit">{relativeTime(tool.last_commit_at)}</td>
             <td class="lang">{tool.language || '—'}</td>
           </tr>
@@ -177,7 +179,7 @@ const totalCount = getAllTools().length;
     font-weight: 600;
   }
 
-  .stars, .commit {
+  .stars, .dependents, .commit {
     color: var(--text-muted);
   }
 
@@ -236,6 +238,7 @@ const totalCount = getAllTools().length;
           case 'name': return row.querySelector('.name')!.textContent!;
           case 'score': return row.querySelector('.score-bar')!.textContent!;
           case 'stars': return row.querySelector('.stars')!.textContent!;
+          case 'dependents': return row.querySelector('.dependents')!.textContent!;
           case 'commit': return row.querySelector('.commit')!.textContent!;
           case 'lang': return row.querySelector('.lang')!.textContent!;
           default: return '';

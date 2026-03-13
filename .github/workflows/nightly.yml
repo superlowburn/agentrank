@@ -43,7 +43,7 @@ jobs:
           CRAWL_MODE: ${{ steps.mode.outputs.mode }}
           GLAMA_MAX_PAGES: '500'
         run: cd crawler && npx tsx src/index.ts
-        timeout-minutes: 90
+        timeout-minutes: 100
 
       - name: Score
         run: cd scorer && npx tsx src/index.ts

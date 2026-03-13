@@ -309,6 +309,17 @@ export function getReposForDependents(limit: number, offset: number, minStars: n
     .all(minStars, limit, offset) as RepoRow[];
 }
 
+export function getTopReposForDependentsRefresh(limit: number): RepoRow[] {
+  const db = getDb();
+  return db
+    .prepare(
+      `SELECT * FROM repos
+       ORDER BY stars DESC
+       LIMIT ?`
+    )
+    .all(limit) as RepoRow[];
+}
+
 export function closeDb(): void {
   if (_db) {
     _db.close();
