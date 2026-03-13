@@ -14,6 +14,16 @@ import { crawlSkillsSh } from "./skills.js";
 import { crawlGlama } from "./glama.js";
 import { crawlClawHub } from "./clawhub.js";
 
+// CRAWL_MODE=incremental: only search repos created in last 2 days, skip fork/noise cleanup
+// CRAWL_MODE=full (default): full crawl from 2023-01-01
+const CRAWL_MODE = process.env.CRAWL_MODE || "full";
+
+function getIncrementalStartDate(): string {
+  const d = new Date();
+  d.setDate(d.getDate() - 2);
+  return d.toISOString().slice(0, 10);
+}
+
 const ThrottledOctokit = Octokit.plugin(throttling);
 
 function createOctokit(): InstanceType<typeof ThrottledOctokit> {
@@ -48,48 +58,60 @@ async function main(): Promise<void> {
   const countBefore = getRepoCount();
 
   // Search phase
-  console.log("=== Search Phase ===");
+  const isIncremental = CRAWL_MODE === "incremental";
+  const searchStartDate = isIncremental ? getIncrementalStartDate() : undefined;
+  console.log(`=== Search Phase (${isIncremental ? "incremental from " + searchStartDate : "full"}) ===`);
+
   for (const query of SEARCH_QUERIES) {
     console.log(`\n--- Query: ${query} ---`);
-    const found = await runSearch(octokit, query);
+    const found = await runSearch(octokit, query, searchStartDate);
     console.log(`Collected ${found} results for ${query}`);
   }
 
   const countAfterSearch = getRepoCount();
   console.log(`\n=== Search complete: ${countAfterSearch} repos (${countAfterSearch - countBefore} new) ===`);
 
-  // Filter: remove forks that have fewer stars than parent
+  // Filter: remove forks that have fewer stars than parent (skip on incremental — already done)
   const db = getDb();
-  const forksRemoved = db
-    .prepare(
-      `DELETE FROM repos WHERE is_fork = 1 AND parent_stars IS NOT NULL AND stars < parent_stars`
-    )
-    .run();
-  console.log(`Removed ${forksRemoved.changes} low-value forks`);
+  if (!isIncremental) {
+    const forksRemoved = db
+      .prepare(
+        `DELETE FROM repos WHERE is_fork = 1 AND parent_stars IS NOT NULL AND stars < parent_stars`
+      )
+      .run();
+    console.log(`Removed ${forksRemoved.changes} low-value forks`);
 
-  // Filter: remove noise (0 stars AND no description)
-  const noiseRemoved = db
-    .prepare(`DELETE FROM repos WHERE stars = 0 AND (description IS NULL OR description = '')`)
-    .run();
-  console.log(`Removed ${noiseRemoved.changes} noise repos (0 stars, no description)`);
+    // Filter: remove noise (0 stars AND no description)
+    const noiseRemoved = db
+      .prepare(`DELETE FROM repos WHERE stars = 0 AND (description IS NULL OR description = '')`)
+      .run();
+    console.log(`Removed ${noiseRemoved.changes} noise repos (0 stars, no description)`);
+  }
 
   // Enrichment phase
   console.log("\n=== Enrichment Phase ===");
   await enrichRepos(octokit);
 
-  // Skills crawling phase
-  console.log("\n=== Skills Crawling Phase ===");
+  // Skills crawling phase — run all three in parallel
+  console.log("\n=== Skills Crawling Phase (parallel) ===");
 
-  console.log("\n--- skills.sh ---");
-  const skillsShCount = await crawlSkillsSh();
-  console.log(`skills.sh: ${skillsShCount} skills processed`);
+  const [skillsShCount, glamaResult, clawHubCount] = await Promise.all([
+    crawlSkillsSh().catch((err) => {
+      console.error("skills.sh crawler failed:", err);
+      return 0;
+    }),
+    crawlGlama().catch((err) => {
+      console.error("Glama crawler failed:", err);
+      return { total: 0, matched: 0 };
+    }),
+    crawlClawHub().catch((err) => {
+      console.error("ClawHub crawler failed:", err);
+      return 0;
+    }),
+  ]);
 
-  console.log("\n--- Glama.ai ---");
-  const glamaResult = await crawlGlama();
+  console.log(`\nskills.sh: ${skillsShCount} skills processed`);
   console.log(`Glama: ${glamaResult.total} servers processed, ${glamaResult.matched} matched to repos`);
-
-  console.log("\n--- ClawHub ---");
-  const clawHubCount = await crawlClawHub();
   console.log(`ClawHub: ${clawHubCount} skills processed`);
 
   // Summary

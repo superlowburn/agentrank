@@ -2,7 +2,7 @@ import type { Octokit } from "octokit";
 import { upsertRepo } from "./db.js";
 
 const MAX_RESULTS = 1000;
-const START_DATE = "2023-01-01";
+const DEFAULT_START_DATE = "2023-01-01";
 
 function formatDate(d: Date): string {
   return d.toISOString().slice(0, 10);
@@ -89,7 +89,7 @@ async function searchRange(
   return collected;
 }
 
-export async function runSearch(octokit: Octokit, query: string): Promise<number> {
+export async function runSearch(octokit: Octokit, query: string, startDate?: string): Promise<number> {
   const today = formatDate(new Date());
-  return searchRange(octokit, query, START_DATE, today);
+  return searchRange(octokit, query, startDate || DEFAULT_START_DATE, today);
 }

@@ -4,7 +4,8 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "crawl": "tsx src/index.ts"
+    "crawl": "tsx src/index.ts",
+    "crawl:dependents": "tsx src/crawl-dependents.ts"
   },
   "dependencies": {
     "@octokit/plugin-throttling": "^11.0.0",

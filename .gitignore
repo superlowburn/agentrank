@@ -1,7 +1,11 @@
 node_modules/
 dist/
 data/*.db
+data/*.db-shm
+data/*.db-wal
 data/d1-seed.sql
+data/ranked.json
+data/ranked-skills.json
 .env
 *.log
 site/dist/
@@ -9,3 +13,4 @@ site/.astro/
 site/.wrangler/
 .wrangler/
 .DS_Store
+.claude/

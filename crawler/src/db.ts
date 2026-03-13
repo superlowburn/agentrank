@@ -290,6 +290,25 @@ export function getRepoCount(): number {
   return (db.prepare("SELECT COUNT(*) as count FROM repos").get() as { count: number }).count;
 }
 
+export function updateDependents(fullName: string, count: number): void {
+  const db = getDb();
+  db.prepare(
+    `UPDATE repos SET dependents = ?, last_crawled_at = datetime('now') WHERE full_name = ?`
+  ).run(count, fullName);
+}
+
+export function getReposForDependents(limit: number, offset: number, minStars: number): RepoRow[] {
+  const db = getDb();
+  return db
+    .prepare(
+      `SELECT * FROM repos
+       WHERE dependents = 0 AND stars >= ?
+       ORDER BY stars DESC
+       LIMIT ? OFFSET ?`
+    )
+    .all(minStars, limit, offset) as RepoRow[];
+}
+
 export function closeDb(): void {
   if (_db) {
     _db.close();
