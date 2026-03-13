@@ -65,6 +65,19 @@ async function fetchText(url: string): Promise<string> {
   return res.text();
 }
 
+async function fetchWithRetry(url: string, label: string, maxRetries = 3): Promise<string> {
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    try {
+      return await fetchText(url);
+    } catch (err) {
+      console.warn(`[glama] ${label} attempt ${attempt}/${maxRetries} failed: ${(err as Error).message}`);
+      if (attempt === maxRetries) throw err;
+      await sleep(DELAY_MS * attempt);
+    }
+  }
+  throw new Error("unreachable");
+}
+
 /**
  * Parse the sitemap XML to extract all MCP server URLs.
  * Each <loc> tag contains a URL like https://glama.ai/mcp/servers/author/name
@@ -158,7 +171,8 @@ function extractWeeklyDownloads(html: string): number {
     const match = html.match(pattern);
     if (match?.[1]) {
       const num = parseInt(match[1].replace(/,/g, ""), 10);
-      if (!isNaN(num) && num >= 0) return num;
+      // Sanity cap: no MCP server has >10M weekly downloads. If higher, it's a false positive.
+      if (!isNaN(num) && num >= 0 && num < 10_000_000) return num;
     }
   }
 
@@ -403,11 +417,11 @@ export async function crawlGlama(): Promise<{ matched: number; total: number }> 
   console.log("[glama] Fetching sitemap...");
   let serverUrls: string[] = [];
   try {
-    const sitemapXml = await fetchText(SITEMAP_URL);
+    const sitemapXml = await fetchWithRetry(SITEMAP_URL, "Sitemap fetch");
     serverUrls = parseSitemapUrls(sitemapXml);
     console.log(`[glama] Found ${serverUrls.length} server URLs in sitemap`);
   } catch (err) {
-    console.error("[glama] Failed to fetch sitemap:", (err as Error).message);
+    console.error("[glama] Failed to fetch sitemap after 3 attempts:", (err as Error).message);
     // Fall back to listing page only
   }
 
@@ -427,11 +441,11 @@ export async function crawlGlama(): Promise<{ matched: number; total: number }> 
   }> = [];
 
   try {
-    const listingHtml = await fetchText(LISTING_URL);
+    const listingHtml = await fetchWithRetry(LISTING_URL, "Listing page fetch");
     listingServers = parseListingJsonLd(listingHtml);
     console.log(`[glama] Extracted ${listingServers.length} servers from listing JSON-LD`);
   } catch (err) {
-    console.error("[glama] Failed to fetch listing page:", (err as Error).message);
+    console.error("[glama] Failed to fetch listing page after 3 attempts:", (err as Error).message);
   }
 
   await sleep(DELAY_MS);
@@ -480,6 +494,12 @@ export async function crawlGlama(): Promise<{ matched: number; total: number }> 
   // -------------------------------------------------------------------------
   // Step 4: Fetch each detail page, extract data, cross-reference with repos
   // -------------------------------------------------------------------------
+  interface RetryItem {
+    slug: string;
+    attempts: number;
+  }
+  const retryQueue: RetryItem[] = [];
+
   for (let i = 0; i < slugsToProcess.length; i++) {
     const slug = slugsToProcess[i];
     const detailUrl = `${BASE_URL}/mcp/servers/${slug}`;
@@ -500,29 +520,13 @@ export async function crawlGlama(): Promise<{ matched: number; total: number }> 
     } catch (err) {
       const message = (err as Error).message;
       if (message.includes("404")) {
-        // Server page gone, skip
+        // Server page genuinely gone, skip
         continue;
       }
-      console.warn(`[glama] Failed to fetch ${slug}: ${message}`);
-
-      // Use listing data as fallback if available
-      const listing = listingLookup.get(slug);
-      if (listing) {
-        server = {
-          slug,
-          name: listing.name || null,
-          description: listing.description || null,
-          author: listing.author || null,
-          githubRepo: null,
-          weeklyDownloads: 0,
-          toolCount: 0,
-          qualityGrade: null,
-          categories: [],
-          glamaUrl: detailUrl,
-        };
-      } else {
-        continue;
-      }
+      console.warn(`[glama] Detail fetch failed for ${slug} (attempt 1/3): ${message}`);
+      retryQueue.push({ slug, attempts: 1 });
+      if (i < slugsToProcess.length - 1) await sleep(DELAY_MS);
+      continue;
     }
 
     total++;
@@ -565,6 +569,58 @@ export async function crawlGlama(): Promise<{ matched: number; total: number }> 
     // Delay between fetches
     if (i < slugsToProcess.length - 1) {
       await sleep(DELAY_MS);
+    }
+  }
+
+  // -------------------------------------------------------------------------
+  // Step 5: Process retry queue — each failed item gets up to 2 more attempts
+  // -------------------------------------------------------------------------
+  if (retryQueue.length > 0) {
+    console.log(`[glama] Processing ${retryQueue.length} retries...`);
+    let queue = [...retryQueue];
+    while (queue.length > 0) {
+      const nextQueue: RetryItem[] = [];
+      for (const entry of queue) {
+        const attempt = entry.attempts + 1;
+        const detailUrl = `${BASE_URL}/mcp/servers/${entry.slug}`;
+        try {
+          await sleep(DELAY_MS * attempt);
+          const html = await fetchText(detailUrl);
+          const server = parseDetailPage(html, entry.slug);
+          total++;
+
+          upsertSkill({
+            slug: `glama:${entry.slug}`,
+            name: server.name,
+            description: server.description,
+            github_repo: server.githubRepo ? `https://github.com/${server.githubRepo}` : null,
+            source: "glama",
+            installs: server.weeklyDownloads,
+            trending_rank: null,
+            platforms: ["MCP"],
+            author: server.author,
+          });
+
+          if (server.githubRepo) {
+            try {
+              updateRepoGlama(server.githubRepo, {
+                weekly_downloads: server.weeklyDownloads,
+                tool_calls: server.toolCount,
+              });
+              matched++;
+            } catch {}
+          }
+
+          console.log(`[glama] Retry succeeded for ${entry.slug} on attempt ${attempt}/3`);
+        } catch (err) {
+          if (attempt >= 3) {
+            console.error(`[glama] FAILED after 3 attempts: ${entry.slug} — ${(err as Error).message}`);
+          } else {
+            nextQueue.push({ ...entry, attempts: attempt });
+          }
+        }
+      }
+      queue = nextQueue;
     }
   }
 

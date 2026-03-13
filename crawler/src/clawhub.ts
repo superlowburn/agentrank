@@ -59,6 +59,20 @@ async function fetchPage(cursor?: string): Promise<ClawHubResponse> {
   return (await response.json()) as ClawHubResponse;
 }
 
+async function fetchPageWithRetry(cursor?: string, maxRetries = 3): Promise<ClawHubResponse> {
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    try {
+      return await fetchPage(cursor);
+    } catch (err) {
+      const label = cursor ? `page (cursor: ${cursor.slice(0, 20)}...)` : "initial page";
+      console.warn(`[clawhub] ${label} attempt ${attempt}/${maxRetries} failed: ${(err as Error).message}`);
+      if (attempt === maxRetries) throw err;
+      await sleep(DELAY_MS * attempt);
+    }
+  }
+  throw new Error("unreachable");
+}
+
 function derivePlatforms(skill: ClawHubSkill): string[] {
   const platforms: string[] = ["openclaw"];
 
@@ -73,8 +87,8 @@ function derivePlatforms(skill: ClawHubSkill): string[] {
 }
 
 export async function crawlClawHub(): Promise<number> {
-  console.log("=== ClawHub Crawler ===");
-  console.log(`Fetching skills from ${API_BASE}`);
+  console.log("[clawhub] === ClawHub Crawler ===");
+  console.log(`[clawhub] Fetching skills from ${API_BASE}`);
 
   let processed = 0;
   let cursor: string | undefined;
@@ -82,15 +96,15 @@ export async function crawlClawHub(): Promise<number> {
 
   try {
     // Fetch first page to verify API is accessible
-    const firstPage = await fetchPage();
+    const firstPage = await fetchPageWithRetry();
     pageNum++;
 
     if (!firstPage.items || !Array.isArray(firstPage.items)) {
-      console.log("ClawHub API returned unexpected format. Skipping.");
+      console.log("[clawhub] API returned unexpected format. Skipping.");
       return 0;
     }
 
-    console.log(`  Page ${pageNum}: ${firstPage.items.length} skills`);
+    console.log(`[clawhub]   Page ${pageNum}: ${firstPage.items.length} skills`);
 
     for (const skill of firstPage.items) {
       upsertSkill({
@@ -113,43 +127,48 @@ export async function crawlClawHub(): Promise<number> {
     while (cursor) {
       await sleep(DELAY_MS);
 
-      const page = await fetchPage(cursor);
-      pageNum++;
+      try {
+        const page = await fetchPageWithRetry(cursor);
+        pageNum++;
 
-      if (!page.items || page.items.length === 0) {
-        console.log(`  Page ${pageNum}: empty, stopping pagination`);
+        if (!page.items || page.items.length === 0) {
+          console.log(`[clawhub]   Page ${pageNum}: empty, stopping pagination`);
+          break;
+        }
+
+        console.log(`[clawhub]   Page ${pageNum}: ${page.items.length} skills`);
+
+        for (const skill of page.items) {
+          upsertSkill({
+            slug: `clawhub:${skill.slug}`,
+            name: skill.displayName || skill.slug,
+            description: skill.summary || null,
+            github_repo: null,
+            source: "clawhub",
+            installs: skill.stats?.installsAllTime ?? 0,
+            trending_rank: null,
+            platforms: derivePlatforms(skill),
+            author: null,
+          });
+          processed++;
+        }
+
+        cursor = page.nextCursor ?? undefined;
+      } catch (err) {
+        console.error(`[clawhub] Pagination failed after 3 attempts. ${processed} skills processed so far.`);
         break;
       }
-
-      console.log(`  Page ${pageNum}: ${page.items.length} skills`);
-
-      for (const skill of page.items) {
-        upsertSkill({
-          slug: `clawhub:${skill.slug}`,
-          name: skill.displayName || skill.slug,
-          description: skill.summary || null,
-          github_repo: null,
-          source: "clawhub",
-          installs: skill.stats?.installsAllTime ?? 0,
-          trending_rank: null,
-          platforms: derivePlatforms(skill),
-          author: null,
-        });
-        processed++;
-      }
-
-      cursor = page.nextCursor ?? undefined;
     }
 
-    console.log(`ClawHub crawl complete: ${processed} skills processed across ${pageNum} pages`);
+    console.log(`[clawhub] Crawl complete: ${processed} skills processed across ${pageNum} pages`);
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err);
 
     if (message.includes("404") || message.includes("ENOTFOUND") || message.includes("fetch failed")) {
-      console.log(`ClawHub API not reachable (${message}). ${processed} skills processed before failure.`);
+      console.log(`[clawhub] API not reachable (${message}). ${processed} skills processed before failure.`);
     } else {
-      console.error(`ClawHub crawler error: ${message}`);
-      console.log(`${processed} skills processed before error.`);
+      console.error(`[clawhub] Crawler error: ${message}`);
+      console.log(`[clawhub] ${processed} skills processed before error.`);
     }
   }
 

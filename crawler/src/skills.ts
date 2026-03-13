@@ -42,6 +42,13 @@ interface SkillDetail {
   githubRepo: string | null;
 }
 
+interface RetryItem {
+  skill: LeaderboardSkill;
+  slug: string;
+  trendingRank: number | null;
+  attempts: number;
+}
+
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
@@ -60,23 +67,39 @@ async function fetchPage(url: string): Promise<string> {
   return res.text();
 }
 
+async function fetchWithRetry(url: string, label: string, maxRetries = 3): Promise<string> {
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    try {
+      return await fetchPage(url);
+    } catch (err) {
+      console.warn(`[skills.sh] ${label} attempt ${attempt}/${maxRetries} failed: ${(err as Error).message}`);
+      if (attempt === maxRetries) throw err;
+      await sleep(DELAY_MS * attempt);
+    }
+  }
+  throw new Error("unreachable");
+}
+
 /**
  * Extract a JSON array of skill objects from the Next.js RSC streaming payload.
  * The data is embedded in script tags as self.__next_f.push() calls containing
  * serialised component props with "initialSkills":[...] or similar patterns.
+ *
+ * NOTE: The JSON is inside JS string literals, so quotes are escaped as \"
+ * We first try to unescape the data, then parse with standard patterns.
  */
 function extractSkillsArray(html: string): LeaderboardSkill[] {
-  // Try multiple extraction patterns — the exact format can vary between
-  // Next.js versions and page variants.
+  // The RSC payload has escaped JSON inside JS strings. Unescape \" to " first.
+  // This is safe because we're only looking for specific patterns.
+  const unescaped = html.replace(/\\"/g, '"');
 
   // Pattern 1: "initialSkills":[{...}]
   const p1 = /"initialSkills"\s*:\s*(\[[\s\S]*?\])(?=\s*[,}])/;
   // Pattern 2: skills array inside RSC chunk — array of {source,skillId,name,installs}
-  //   Match a JSON array that starts with [{"source": and contains skillId
   const p2 = /(\[\{"source":"[^"]+","skillId":"[^"]+","name":"[^"]+","installs":\d+\}(?:,\{"source":"[^"]+","skillId":"[^"]+","name":"[^"]+","installs":\d+\})*\])/;
 
   for (const pattern of [p1, p2]) {
-    const match = html.match(pattern);
+    const match = unescaped.match(pattern);
     if (match?.[1]) {
       try {
         const parsed = JSON.parse(match[1]);
@@ -93,7 +116,7 @@ function extractSkillsArray(html: string): LeaderboardSkill[] {
   const objPattern = /\{"source":"([^"]+)","skillId":"([^"]+)","name":"([^"]+)","installs":(\d+)\}/g;
   const skills: LeaderboardSkill[] = [];
   let m: RegExpExecArray | null;
-  while ((m = objPattern.exec(html)) !== null) {
+  while ((m = objPattern.exec(unescaped)) !== null) {
     skills.push({
       source: m[1],
       skillId: m[2],
@@ -109,11 +132,13 @@ function extractSkillsArray(html: string): LeaderboardSkill[] {
  * Extract skill objects from the /hot page which includes additional fields.
  */
 function extractHotSkills(html: string): HotSkill[] {
+  // Unescape \" from RSC payload (same as extractSkillsArray)
+  const unescaped = html.replace(/\\"/g, '"');
   // Hot page skills may include installsYesterday and change fields
   const objPattern = /\{"source":"([^"]+)","skillId":"([^"]+)","name":"([^"]+)","installs":(\d+)(?:,"installsYesterday":(\d+))?(?:,"change":(-?\d+))?\}/g;
   const skills: HotSkill[] = [];
   let m: RegExpExecArray | null;
-  while ((m = objPattern.exec(html)) !== null) {
+  while ((m = objPattern.exec(unescaped)) !== null) {
     skills.push({
       source: m[1],
       skillId: m[2],
@@ -274,11 +299,11 @@ export async function crawlSkillsSh(): Promise<number> {
   console.log("[skills.sh] Fetching main leaderboard...");
   let leaderboardSkills: LeaderboardSkill[] = [];
   try {
-    const html = await fetchPage(BASE_URL);
+    const html = await fetchWithRetry(BASE_URL, "leaderboard");
     leaderboardSkills = extractSkillsArray(html);
     console.log(`[skills.sh] Extracted ${leaderboardSkills.length} skills from leaderboard`);
   } catch (err) {
-    console.error("[skills.sh] Failed to fetch leaderboard:", err);
+    console.error("[skills.sh] Failed to fetch leaderboard after 3 attempts:", err);
     return 0;
   }
 
@@ -295,7 +320,7 @@ export async function crawlSkillsSh(): Promise<number> {
   // -------------------------------------------------------------------------
   console.log("[skills.sh] Fetching trending page...");
   try {
-    const trendingHtml = await fetchPage(`${BASE_URL}/trending`);
+    const trendingHtml = await fetchWithRetry(`${BASE_URL}/trending`, "trending page");
     const trendingSkills = extractSkillsArray(trendingHtml);
     console.log(`[skills.sh] Extracted ${trendingSkills.length} skills from trending page`);
 
@@ -309,7 +334,7 @@ export async function crawlSkillsSh(): Promise<number> {
       }
     }
   } catch (err) {
-    console.warn("[skills.sh] Failed to fetch trending page (non-fatal):", err);
+    console.warn("[skills.sh] Failed to fetch trending page after 3 attempts (non-fatal):", err);
   }
 
   await sleep(DELAY_MS);
@@ -320,7 +345,7 @@ export async function crawlSkillsSh(): Promise<number> {
   let hotSkillsMap = new Map<string, HotSkill>();
   console.log("[skills.sh] Fetching hot page...");
   try {
-    const hotHtml = await fetchPage(`${BASE_URL}/hot`);
+    const hotHtml = await fetchWithRetry(`${BASE_URL}/hot`, "hot page");
     const hotSkills = extractHotSkills(hotHtml);
     console.log(`[skills.sh] Extracted ${hotSkills.length} skills from hot page`);
     for (const hs of hotSkills) {
@@ -337,7 +362,7 @@ export async function crawlSkillsSh(): Promise<number> {
       }
     }
   } catch (err) {
-    console.warn("[skills.sh] Failed to fetch hot page (non-fatal):", err);
+    console.warn("[skills.sh] Failed to fetch hot page after 3 attempts (non-fatal):", err);
   }
 
   await sleep(DELAY_MS);
@@ -370,8 +395,10 @@ export async function crawlSkillsSh(): Promise<number> {
 
   // -------------------------------------------------------------------------
   // Step 6: For each skill, fetch the detail page for description/platforms,
-  //         then upsert into the database
+  //         then upsert into the database. Failed detail fetches go to retry queue.
   // -------------------------------------------------------------------------
+  const retryQueue: RetryItem[] = [];
+
   for (let i = 0; i < allSkills.length; i++) {
     const skill = allSkills[i];
     const skillUrl = `${BASE_URL}/${skill.source}/${skill.skillId}`;
@@ -382,23 +409,19 @@ export async function crawlSkillsSh(): Promise<number> {
       console.log(`[skills.sh] Processing ${i + 1}/${allSkills.length}: ${slug}`);
     }
 
-    let detail: SkillDetail = {
-      description: null,
-      platforms: [],
-      author: skill.source.split("/")[0] || null,
-      githubRepo: null,
-    };
+    // Look up pre-computed trending rank
+    const trendingRank = trendingRanks.get(slug) ?? null;
 
+    let detail: SkillDetail;
     try {
       const detailHtml = await fetchPage(skillUrl);
       detail = parseDetailPage(detailHtml, skill.source);
     } catch (err) {
-      console.warn(`[skills.sh] Failed to fetch detail for ${slug}: ${(err as Error).message}`);
-      // Proceed with partial data — we still have name/installs from the leaderboard
+      console.warn(`[skills.sh] Detail fetch failed for ${slug} (attempt 1/3): ${(err as Error).message}`);
+      retryQueue.push({ skill, slug, trendingRank, attempts: 1 });
+      if (i < allSkills.length - 1) await sleep(DELAY_MS);
+      continue; // skip upsert — don't insert without detail data
     }
-
-    // Look up pre-computed trending rank
-    const trendingRank = trendingRanks.get(slug) ?? null;
 
     try {
       upsertSkill({
@@ -408,7 +431,7 @@ export async function crawlSkillsSh(): Promise<number> {
         github_repo: detail.githubRepo,
         source: "skills.sh",
         installs: skill.installs,
-        trending_rank: trendingRank || null,
+        trending_rank: trendingRank,
         platforms: detail.platforms,
         author: detail.author,
       });
@@ -420,6 +443,46 @@ export async function crawlSkillsSh(): Promise<number> {
     // Delay between detail page fetches
     if (i < allSkills.length - 1) {
       await sleep(DELAY_MS);
+    }
+  }
+
+  // -------------------------------------------------------------------------
+  // Step 7: Process retry queue — each failed item gets up to 2 more attempts
+  // -------------------------------------------------------------------------
+  if (retryQueue.length > 0) {
+    console.log(`[skills.sh] Processing ${retryQueue.length} retries...`);
+    let queue = [...retryQueue];
+    while (queue.length > 0) {
+      const nextQueue: RetryItem[] = [];
+      for (const entry of queue) {
+        const attempt = entry.attempts + 1;
+        const skillUrl = `${BASE_URL}/${entry.slug}`;
+        try {
+          await sleep(DELAY_MS * attempt);
+          const detailHtml = await fetchPage(skillUrl);
+          const detail = parseDetailPage(detailHtml, entry.skill.source);
+          upsertSkill({
+            slug: entry.slug,
+            name: entry.skill.name,
+            description: detail.description,
+            github_repo: detail.githubRepo,
+            source: "skills.sh",
+            installs: entry.skill.installs,
+            trending_rank: entry.trendingRank,
+            platforms: detail.platforms,
+            author: detail.author,
+          });
+          processed++;
+          console.log(`[skills.sh] Retry succeeded for ${entry.slug} on attempt ${attempt}/3`);
+        } catch (err) {
+          if (attempt >= 3) {
+            console.error(`[skills.sh] FAILED after 3 attempts: ${entry.slug} — ${(err as Error).message}`);
+          } else {
+            nextQueue.push({ ...entry, attempts: attempt });
+          }
+        }
+      }
+      queue = nextQueue;
     }
   }
 

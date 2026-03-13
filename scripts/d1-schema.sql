@@ -41,6 +41,7 @@ CREATE TABLE skills (
 
 CREATE INDEX idx_skills_rank ON skills(rank);
 CREATE INDEX idx_skills_score ON skills(score DESC);
+CREATE INDEX idx_skills_slug ON skills(slug);
 
 DROP TABLE IF EXISTS agents;
 
