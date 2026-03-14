@@ -56,6 +56,8 @@ export function initDb(): void {
   try {
     db.exec(`ALTER TABLE repos ADD COLUMN glama_tool_calls INTEGER DEFAULT 0`);
   } catch { /* column already exists */ }
+  try { db.exec(`ALTER TABLE repos ADD COLUMN readme_excerpt TEXT`); } catch { /* column already exists */ }
+  try { db.exec(`ALTER TABLE repos ADD COLUMN github_topics TEXT DEFAULT '[]'`); } catch { /* column already exists */ }
 
   // Skills table
   db.exec(`
@@ -121,6 +123,10 @@ export interface RepoRow {
   matched_queries: string;
   score: number | null;
   rank: number | null;
+  readme_excerpt: string | null;
+  github_topics: string;
+  glama_weekly_downloads: number;
+  glama_tool_calls: number;
 }
 
 export function upsertRepo(repo: {
@@ -283,6 +289,28 @@ export function updateEnrichment(
     `UPDATE repos SET closed_issues = ?, contributors = ?, last_crawled_at = datetime('now')
      WHERE id = ?`
   ).run(data.closed_issues, data.contributors, id);
+}
+
+export function updateReadmeAndTopics(
+  id: number,
+  data: { readme_excerpt: string | null; github_topics: string[] }
+): void {
+  const db = getDb();
+  db.prepare(
+    `UPDATE repos SET readme_excerpt = ?, github_topics = ? WHERE id = ?`
+  ).run(data.readme_excerpt, JSON.stringify(data.github_topics), id);
+}
+
+export function getReposNeedingContent(limit: number): RepoRow[] {
+  const db = getDb();
+  return db
+    .prepare(
+      `SELECT * FROM repos
+       WHERE readme_excerpt IS NULL
+       ORDER BY stars DESC
+       LIMIT ?`
+    )
+    .all(limit) as RepoRow[];
 }
 
 export function getRepoCount(): number {

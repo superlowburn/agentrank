@@ -2,13 +2,19 @@
 interface Props {
   title: string;
   description?: string;
-  activeTab?: 'skills' | 'tools' | 'agents';
+  activeTab?: 'skills' | 'tools' | 'agents' | 'submit';
+  jsonLd?: object;
+  keywords?: string;
+  canonicalUrl?: string;
 }
 
 const {
   title,
   description = 'The reputation layer for AI skills, tools & agents. Ranked by real signals, updated daily.',
   activeTab = 'skills',
+  jsonLd,
+  keywords,
+  canonicalUrl,
 } = Astro.props;
 ---
 
@@ -26,6 +32,9 @@ const {
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content="The reputation layer for AI skills, tools & agents. Ranked by real signals, updated daily." />
     <title>{title}</title>
+    {keywords && <meta name="keywords" content={keywords} />}
+    {canonicalUrl && <link rel="canonical" href={canonicalUrl} />}
+    {jsonLd && <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />}
     <style>
       :root {
         --bg: #0a0a0a;
@@ -189,11 +198,12 @@ const {
     <header>
       <div class="container">
         <div class="header-top">
-          <h1><a href="/">AgentRank</a></h1>
+          <h1><a href="/">BETA AgentRank</a></h1>
           <nav class="tabs">
             <a href="/" class={activeTab === 'skills' ? 'active' : ''}>Skills</a>
             <a href="/tools/" class={activeTab === 'tools' ? 'active' : ''}>Tools</a>
             <a href="/agents/" class={activeTab === 'agents' ? 'active' : ''}>Agents <span class="badge-beta">beta</span></a>
+            <a href="/submit/" class={activeTab === 'submit' ? 'active' : ''}>Submit</a>
           </nav>
         </div>
         <span class="tagline">The reputation layer for AI skills, tools & agents</span>

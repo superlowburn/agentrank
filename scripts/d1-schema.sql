@@ -16,7 +16,11 @@ CREATE TABLE tools (
   license TEXT,
   last_commit_at TEXT,
   is_archived INTEGER NOT NULL DEFAULT 0,
-  matched_queries TEXT NOT NULL DEFAULT '[]'
+  matched_queries TEXT NOT NULL DEFAULT '[]',
+  readme_excerpt TEXT,
+  github_topics TEXT NOT NULL DEFAULT '[]',
+  glama_weekly_downloads INTEGER NOT NULL DEFAULT 0,
+  glama_tool_calls INTEGER NOT NULL DEFAULT 0
 );
 
 CREATE INDEX idx_tools_full_name ON tools(full_name);
@@ -58,4 +62,22 @@ CREATE TABLE agents (
   registered_at TEXT NOT NULL DEFAULT (datetime('now')),
   verified INTEGER NOT NULL DEFAULT 0,
   status TEXT NOT NULL DEFAULT 'pending'
+);
+
+-- Submissions table — survives pipeline DROP/CREATE cycles
+CREATE TABLE IF NOT EXISTS submissions (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  type TEXT NOT NULL,
+  github_url TEXT,
+  github_repo TEXT,
+  registry_url TEXT,
+  name TEXT,
+  description TEXT,
+  contact_email TEXT NOT NULL,
+  owner_name TEXT,
+  owner_url TEXT,
+  existing_slug TEXT,
+  existing_type TEXT,
+  status TEXT NOT NULL DEFAULT 'pending',
+  submitted_at TEXT NOT NULL DEFAULT (datetime('now'))
 );

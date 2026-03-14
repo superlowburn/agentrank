@@ -3,6 +3,7 @@ import Base from '../../layouts/Base.astro';
 import { scoreColor, formatInstalls, sourceLabel } from '../../data/skills';
 import { relativeTime } from '../../data/tools';
 import { getSkillAdvice } from '../../data/advice';
+import { generateSkillSummary, generateContextSentences, generateSkillJsonLd } from '../../data/content-gen';
 
 const { slug } = Astro.params;
 
@@ -21,6 +22,10 @@ if (!row) {
 if (!row) {
   return Astro.redirect('/404');
 }
+
+const claim = await env.DB.prepare(
+  'SELECT owner_name, owner_url FROM submissions WHERE existing_slug = ? AND status = ? LIMIT 1'
+).bind(decoded, 'approved').first();
 
 const skill = {
   rank: row.rank as number,
@@ -44,8 +49,9 @@ let repoData: {
   contributors: number;
 } | null = null;
 
+let readmeExcerpt: string | null = null;
 if (skill.github_repo) {
-  const repoRow = await env.DB.prepare('SELECT stars, last_commit_at, open_issues, closed_issues, contributors FROM tools WHERE full_name = ?')
+  const repoRow = await env.DB.prepare('SELECT stars, last_commit_at, open_issues, closed_issues, contributors, readme_excerpt FROM tools WHERE full_name = ?')
     .bind(skill.github_repo)
     .first();
   if (repoRow) {
@@ -56,6 +62,7 @@ if (skill.github_repo) {
       closed_issues: repoRow.closed_issues as number,
       contributors: repoRow.contributors as number,
     };
+    readmeExcerpt = repoRow.readme_excerpt as string | null;
   }
 }
 
@@ -98,9 +105,38 @@ const badgeUrl = `${SITE_URL}/api/badge/skill/${slug}`;
 const pageUrl = `${SITE_URL}/skill/${slug}`;
 const mdSnippet = `[![AgentRank](${badgeUrl})](${pageUrl})`;
 const htmlSnippet = `<a href="${pageUrl}"><img src="${badgeUrl}" alt="AgentRank"></a>`;
+
+const totalSkills = (await env.DB.prepare('SELECT COUNT(*) as count FROM skills').first())?.count as number || 0;
+const summary = generateSkillSummary({
+  name: skill.name,
+  description: skill.description,
+  source: skill.source,
+  author: skill.author,
+  platforms: skill.platforms,
+});
+const contextSentences = generateContextSentences({
+  rank: skill.rank,
+  score: skill.score,
+}, totalSkills);
+const jsonLd = generateSkillJsonLd({
+  name: skill.name,
+  slug: skill.slug,
+  description: skill.description,
+  source: skill.source,
+  author: skill.author,
+  score: skill.score,
+  platforms: skill.platforms,
+}, pageUrl);
+const keywordsStr = [skill.source, ...skill.platforms.slice(0, 5), 'AI skill', 'agent skill'].join(', ');
+
+// Related skills
+const relatedRows = await env.DB.prepare(
+  'SELECT slug, name, score, rank FROM skills WHERE slug != ? AND score IS NOT NULL ORDER BY score DESC LIMIT 5'
+).bind(skill.slug).all();
+const relatedSkills = relatedRows.results || [];
 ---
 
-<Base title={`${skill.name} — AgentRank`} description={skill.description || `AgentRank profile for ${skill.name}`} activeTab="skills">
+<Base title={`${skill.name} — AgentRank`} description={summary} activeTab="skills" jsonLd={jsonLd} keywords={keywordsStr} canonicalUrl={pageUrl}>
   <div class="back">
     <a href="/">&larr; Back to leaderboard</a>
   </div>
@@ -114,9 +150,25 @@ const htmlSnippet = `<a href="${pageUrl}"><img src="${badgeUrl}" alt="AgentRank"
       <span class="rank-badge">Rank #{skill.rank}</span>
       {skill.author && <span class="author-badge">by {skill.author}</span>}
     </div>
+    {claim && (
+      <div class="claimed-badge">
+        Claimed by {claim.owner_name as string}
+        {(claim.owner_url as string) && <a href={claim.owner_url as string}>&rarr;</a>}
+      </div>
+    )}
   </div>
 
   {skill.description && <p class="description">{skill.description}</p>}
+
+  <section class="summary">
+    <h3>Overview</h3>
+    <p class="summary-text">{summary}</p>
+    <div class="context-sentences">
+      {contextSentences.map((s) => (
+        <p class="context-line">{s}</p>
+      ))}
+    </div>
+  </section>
 
   <section class="signals">
     <h3>Signal Breakdown</h3>
@@ -270,11 +322,40 @@ const htmlSnippet = `<a href="${pageUrl}"><img src="${badgeUrl}" alt="AgentRank"
 
   {skill.platforms.length > 0 && (
     <section class="queries">
-      <h3>Compatible Platforms</h3>
+      <h3>Supported Platforms</h3>
       <div class="tags">
         {skill.platforms.map((p) => (
           <span class="tag">{p}</span>
         ))}
+      </div>
+    </section>
+  )}
+
+  {readmeExcerpt && (
+    <section class="readme-excerpt">
+      <h3>From the README</h3>
+      <pre class="readme-text">{readmeExcerpt}</pre>
+      {githubLink && (
+        <a href={`${githubLink}#readme`} class="readme-link" target="_blank" rel="noopener noreferrer">Read full README on GitHub &rarr;</a>
+      )}
+    </section>
+  )}
+
+  {relatedSkills.length > 0 && (
+    <section class="related">
+      <h3>Top Ranked Skills</h3>
+      <div class="related-list">
+        {relatedSkills.map((r) => {
+          const rSlug = (r.slug as string).replace(/\//g, '--').replace(/:/g, '-');
+          return (
+            <a href={`/skill/${rSlug}/`} class="related-item">
+              <span class="related-name">{(r.name as string) || (r.slug as string)}</span>
+              <span class="related-score" style={`color: ${scoreColor(r.score as number)}`}>
+                {(r.score as number).toFixed(1)}
+              </span>
+            </a>
+          );
+        })}
       </div>
     </section>
   )}
@@ -286,12 +367,10 @@ const htmlSnippet = `<a href="${pageUrl}"><img src="${badgeUrl}" alt="AgentRank"
     {registryLink && (
       <a href={registryLink} target="_blank" rel="noopener noreferrer">View on {sourceLabel(skill.source)} &rarr;</a>
     )}
-    {skill.source === 'skills.sh' && (
-      <div class="install-cmd">
-        <span class="install-label">Install:</span>
-        <code>npx skillsadd {skill.slug}</code>
-      </div>
-    )}
+  </div>
+
+  <div class="claim-cta">
+    Are you the maintainer? <a href={`/submit/?claim=${slug}&type=skill`}>Claim this listing</a>
   </div>
 
   <script>
@@ -434,25 +513,6 @@ const htmlSnippet = `<a href="${pageUrl}"><img src="${badgeUrl}" alt="AgentRank"
     font-weight: 600;
   }
 
-  .install-cmd {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    font-size: 0.85rem;
-  }
-
-  .install-label {
-    color: var(--text-muted);
-  }
-
-  .install-cmd code {
-    background: var(--bg-surface);
-    border: 1px solid var(--border);
-    padding: 0.25rem 0.6rem;
-    border-radius: 3px;
-    font-size: 0.8rem;
-  }
-
   .advice-list {
     display: flex;
     flex-direction: column;
@@ -559,5 +619,99 @@ const htmlSnippet = `<a href="${pageUrl}"><img src="${badgeUrl}" alt="AgentRank"
   .copy-btn:hover {
     border-color: var(--accent);
     color: var(--accent);
+  }
+
+  .claim-cta {
+    margin-top: 1.5rem;
+    padding-top: 1rem;
+    font-size: 0.8rem;
+    color: var(--text-muted);
+  }
+
+  .claimed-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.75rem;
+    color: var(--accent);
+    margin-top: 0.25rem;
+  }
+
+  .summary {
+    margin-bottom: 2rem;
+  }
+
+  .summary-text {
+    font-size: 0.9rem;
+    color: var(--text);
+    line-height: 1.6;
+    margin-bottom: 0.5rem;
+  }
+
+  .context-sentences {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+  }
+
+  .context-line {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+  }
+
+  .readme-excerpt {
+    margin-bottom: 2rem;
+  }
+
+  .readme-text {
+    font-size: 0.8rem;
+    color: var(--text);
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 1rem;
+    overflow-x: auto;
+    white-space: pre-wrap;
+    word-break: break-word;
+    max-height: 400px;
+    overflow-y: auto;
+    line-height: 1.5;
+    margin-bottom: 0.5rem;
+  }
+
+  .readme-link {
+    font-size: 0.8rem;
+  }
+
+  .related-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+  }
+
+  .related-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.4rem 0.6rem;
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    text-decoration: none;
+    font-size: 0.8rem;
+  }
+
+  .related-item:hover {
+    border-color: var(--accent);
+    text-decoration: none;
+  }
+
+  .related-name {
+    color: var(--text);
+  }
+
+  .related-score {
+    font-weight: 600;
+    font-size: 0.75rem;
   }
 </style>

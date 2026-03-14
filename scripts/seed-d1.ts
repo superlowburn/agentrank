@@ -21,6 +21,7 @@ const esc = (v: unknown): string => {
 const toolRows = db.prepare(`
   SELECT full_name, url, description, stars, forks, open_issues, closed_issues,
          contributors, dependents, language, license, last_commit_at, is_archived, matched_queries,
+         readme_excerpt, github_topics, glama_weekly_downloads, glama_tool_calls,
          score, rank
   FROM repos
   WHERE score IS NOT NULL AND rank IS NOT NULL
@@ -30,11 +31,11 @@ const toolRows = db.prepare(`
 for (let i = 0; i < toolRows.length; i += CHUNK_SIZE) {
   const chunk = toolRows.slice(i, i + CHUNK_SIZE);
   const values = chunk.map((r) => {
-    return `(${r.rank}, ${esc(r.full_name)}, ${esc(r.url)}, ${esc(r.description)}, ${r.score}, ${r.stars}, ${r.forks}, ${r.open_issues}, ${r.closed_issues}, ${r.contributors}, ${r.dependents ?? 0}, ${esc(r.language)}, ${esc(r.license)}, ${esc(r.last_commit_at)}, ${r.is_archived ? 1 : 0}, ${esc(r.matched_queries)})`;
+    return `(${r.rank}, ${esc(r.full_name)}, ${esc(r.url)}, ${esc(r.description)}, ${r.score}, ${r.stars}, ${r.forks}, ${r.open_issues}, ${r.closed_issues}, ${r.contributors}, ${r.dependents ?? 0}, ${esc(r.language)}, ${esc(r.license)}, ${esc(r.last_commit_at)}, ${r.is_archived ? 1 : 0}, ${esc(r.matched_queries)}, ${esc(r.readme_excerpt)}, ${esc(r.github_topics)}, ${r.glama_weekly_downloads ?? 0}, ${r.glama_tool_calls ?? 0})`;
   });
 
   lines.push(
-    `INSERT INTO tools (rank, full_name, url, description, score, stars, forks, open_issues, closed_issues, contributors, dependents, language, license, last_commit_at, is_archived, matched_queries) VALUES\n${values.join(',\n')};`
+    `INSERT INTO tools (rank, full_name, url, description, score, stars, forks, open_issues, closed_issues, contributors, dependents, language, license, last_commit_at, is_archived, matched_queries, readme_excerpt, github_topics, glama_weekly_downloads, glama_tool_calls) VALUES\n${values.join(',\n')};`
   );
 }
 

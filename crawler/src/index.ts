@@ -10,6 +10,7 @@ import { initDb, getDb, getRepoCount, getSkillCount, getTopReposForDependentsRef
 import { SEARCH_QUERIES } from "./queries.js";
 import { runSearch } from "./search.js";
 import { enrichRepos } from "./enrich.js";
+import { enrichContent } from "./enrich-content.js";
 import { crawlSkillsSh } from "./skills.js";
 import { crawlGlama } from "./glama.js";
 import { crawlClawHub } from "./clawhub.js";
@@ -92,6 +93,10 @@ async function main(): Promise<void> {
   // Enrichment phase
   console.log("\n=== Enrichment Phase ===");
   await enrichRepos(octokit);
+
+  // Content enrichment phase (README + GitHub topics)
+  console.log("\n=== Content Enrichment Phase ===");
+  await enrichContent(octokit, 300);
 
   // Skills crawling phase — run all three in parallel
   console.log("\n=== Skills Crawling Phase (parallel) ===");
