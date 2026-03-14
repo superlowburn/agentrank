@@ -23,10 +23,6 @@ if (!row) {
   return Astro.redirect('/404');
 }
 
-const claim = await env.DB.prepare(
-  'SELECT owner_name, owner_url FROM submissions WHERE existing_slug = ? AND status = ? LIMIT 1'
-).bind(decoded, 'approved').first();
-
 const skill = {
   rank: row.rank as number,
   slug: row.slug as string,
@@ -164,33 +160,28 @@ const relatedSkills = relatedRows.results || [];
   </div>
 
   <div class="tool-header">
-    <h2>{skill.name}</h2>
-    <div class="tool-meta">
-      <span class="score-badge" style={`color: ${scoreColor(skill.score)}`}>
-        Score: {skill.score.toFixed(1)}
-      </span>
-      <span class="rank-badge">Rank #{skill.rank}</span>
-      {skill.author && <span class="author-badge">by {skill.author}</span>}
-    </div>
-    {claim && (
-      <div class="claimed-badge">
-        Claimed by {claim.owner_name as string}
-        {(claim.owner_url as string) && <a href={claim.owner_url as string}>&rarr;</a>}
+    <div class="tool-header-left">
+      <h2>{skill.name}</h2>
+      <div class="tool-meta">
+        <span class="rank-pill">#{skill.rank} of {totalSkills}</span>
+        {skill.author && <span class="author-badge">by {skill.author}</span>}
       </div>
-    )}
+    </div>
+    <div class="score-ring" style={`border-color: ${scoreColor(skill.score)}`}>
+      <span class="score-number" style={`color: ${scoreColor(skill.score)}`}>{Math.round(skill.score)}</span>
+      <span class="score-label">score</span>
+    </div>
   </div>
 
   {skill.description && <p class="description">{skill.description}</p>}
 
-  <section class="summary">
-    <h3>Overview</h3>
-    <p class="summary-text">{summary}</p>
+  {contextSentences.length > 0 && (
     <div class="context-sentences">
       {contextSentences.map((s) => (
-        <p class="context-line">{s}</p>
+        <span class="context-line">{s}</span>
       ))}
     </div>
-  </section>
+  )}
 
   <section class="signals">
     <h3>Signal Breakdown</h3>
@@ -391,10 +382,6 @@ const relatedSkills = relatedRows.results || [];
     )}
   </div>
 
-  <div class="claim-cta">
-    Are you the maintainer? <a href={`/submit/?claim=${slug}&type=skill`}>Claim this listing</a>
-  </div>
-
   <script>
     document.querySelectorAll('.copy-btn').forEach(btn => {
       btn.addEventListener('click', () => {
@@ -423,40 +410,91 @@ const relatedSkills = relatedRows.results || [];
   }
 
   .tool-header {
-    margin-bottom: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1rem;
+    margin-bottom: 0.5rem;
   }
 
-  .tool-header h2 {
-    font-size: 1.5rem;
+  .tool-header-left {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .tool-header-left h2 {
+    font-size: 1.4rem;
     font-weight: 700;
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.25rem;
+    line-height: 1.3;
   }
 
   .tool-meta {
     display: flex;
-    gap: 1rem;
     align-items: center;
-  }
-
-  .score-badge {
-    font-weight: 700;
-    font-size: 1rem;
-  }
-
-  .rank-badge {
-    color: var(--text-muted);
-    font-size: 0.85rem;
+    gap: 0.5rem;
+    margin-top: 0.25rem;
   }
 
   .author-badge {
     color: var(--text-muted);
-    font-size: 0.85rem;
+    font-size: 0.8rem;
   }
 
   .description {
     color: var(--text-muted);
+    margin-top: 0;
+    margin-bottom: 0.5rem;
+    font-size: 0.85rem;
+    line-height: 1.5;
+  }
+
+  .score-ring {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    border: 3px solid;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .score-number {
+    font-size: 1.4rem;
+    font-weight: 800;
+    line-height: 1;
+  }
+
+  .score-label {
+    font-size: 0.55rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-muted);
+    margin-top: 2px;
+  }
+
+  .rank-pill {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    background: var(--bg);
+    border: 1px solid var(--border);
+    padding: 0.15rem 0.5rem;
+    border-radius: 10px;
+    white-space: nowrap;
+  }
+
+  .context-sentences {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 1rem;
     margin-bottom: 2rem;
-    font-size: 0.9rem;
+  }
+
+  .context-line {
+    font-size: 0.8rem;
+    color: var(--text-muted);
   }
 
   section {
@@ -469,6 +507,12 @@ const relatedSkills = relatedRows.results || [];
     letter-spacing: 0.05em;
     color: var(--text-muted);
     margin-bottom: 0.75rem;
+  }
+
+  @media (max-width: 480px) {
+    .tool-header {
+      gap: 0.75rem;
+    }
   }
 
   .signal-list {
@@ -643,43 +687,7 @@ const relatedSkills = relatedRows.results || [];
     color: var(--accent);
   }
 
-  .claim-cta {
-    margin-top: 1.5rem;
-    padding-top: 1rem;
-    font-size: 0.8rem;
-    color: var(--text-muted);
-  }
 
-  .claimed-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.35rem;
-    font-size: 0.75rem;
-    color: var(--accent);
-    margin-top: 0.25rem;
-  }
-
-  .summary {
-    margin-bottom: 2rem;
-  }
-
-  .summary-text {
-    font-size: 0.9rem;
-    color: var(--text);
-    line-height: 1.6;
-    margin-bottom: 0.5rem;
-  }
-
-  .context-sentences {
-    display: flex;
-    flex-direction: column;
-    gap: 0.15rem;
-  }
-
-  .context-line {
-    font-size: 0.8rem;
-    color: var(--text-muted);
-  }
 
   .readme-excerpt {
     margin-bottom: 2rem;
