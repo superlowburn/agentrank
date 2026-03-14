@@ -92,7 +92,9 @@ export const prerender = true;
   // Check for ?claim= param
   const params = new URLSearchParams(window.location.search);
   const claimSlug = params.get('claim');
-  const claimType = params.get('type');
+  let claimType = params.get('type');
+  const validTypes = ['skill', 'tool'];
+  if (claimType && !validTypes.includes(claimType)) claimType = 'skill';
 
   if (claimSlug) {
     showClaimMode(claimSlug, claimType || 'skill');

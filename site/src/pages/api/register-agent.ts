@@ -15,6 +15,15 @@ export const POST: APIRoute = async ({ request, locals }) => {
     data = Object.fromEntries(formData.entries()) as Record<string, string>;
   }
 
+  // Validate email format
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(data.contact_email?.trim() || '')) {
+    return new Response(JSON.stringify({ success: false, error: 'Invalid email address' }), {
+      status: 400,
+      headers: { 'Content-Type': 'application/json' },
+    });
+  }
+
   // Validate required fields
   const required = ['name', 'description', 'owner_name', 'owner_url', 'contact_email'];
   for (const field of required) {
@@ -28,6 +37,15 @@ export const POST: APIRoute = async ({ request, locals }) => {
 
   // Generate slug
   const slug = data.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+
+  // Check for reserved slugs
+  const reserved = ['api', 'admin', 'submit', 'tools', 'skills', 'agents', 'api-docs'];
+  if (reserved.includes(slug)) {
+    return new Response(JSON.stringify({ success: false, error: 'That name is reserved' }), {
+      status: 400,
+      headers: { 'Content-Type': 'application/json' },
+    });
+  }
 
   // Parse capabilities
   const capabilities = data.capabilities

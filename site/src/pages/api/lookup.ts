@@ -6,6 +6,10 @@ export const GET: APIRoute = async ({ url, locals }) => {
   const { env } = (locals as any).runtime;
   const input = url.searchParams.get('url') || '';
 
+  if (input.length > 500) {
+    return json({ found: false, error: 'URL too long' });
+  }
+
   // Parse owner/repo from GitHub URL
   const match = input.match(/github\.com\/([^/]+\/[^/]+)/);
   if (!match) {

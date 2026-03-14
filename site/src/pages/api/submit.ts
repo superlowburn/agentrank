@@ -18,6 +18,10 @@ export const POST: APIRoute = async ({ request, locals }) => {
   if (!data.contact_email?.trim()) {
     return json({ success: false, error: 'Email is required' }, 400);
   }
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(data.contact_email.trim())) {
+    return json({ success: false, error: 'Invalid email address' }, 400);
+  }
 
   // Need at least one identifier
   if (!data.github_url?.trim() && !data.registry_url?.trim() && !data.name?.trim()) {
