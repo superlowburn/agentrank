@@ -82,6 +82,14 @@ export function initDb(): void {
     CREATE INDEX IF NOT EXISTS idx_skills_rank ON skills(rank);
   `);
 
+  // Add GitHub enrichment columns to skills (safe if already exist)
+  try { db.exec(`ALTER TABLE skills ADD COLUMN gh_stars INTEGER`); } catch { /* column already exists */ }
+  try { db.exec(`ALTER TABLE skills ADD COLUMN gh_open_issues INTEGER`); } catch { /* column already exists */ }
+  try { db.exec(`ALTER TABLE skills ADD COLUMN gh_closed_issues INTEGER`); } catch { /* column already exists */ }
+  try { db.exec(`ALTER TABLE skills ADD COLUMN gh_contributors INTEGER`); } catch { /* column already exists */ }
+  try { db.exec(`ALTER TABLE skills ADD COLUMN gh_last_commit_at TEXT`); } catch { /* column already exists */ }
+  try { db.exec(`ALTER TABLE skills ADD COLUMN gh_is_archived INTEGER DEFAULT 0`); } catch { /* column already exists */ }
+
   // Agents table
   db.exec(`
     CREATE TABLE IF NOT EXISTS agents (
@@ -214,6 +222,12 @@ export interface SkillRow {
   last_crawled_at: string;
   score: number | null;
   rank: number | null;
+  gh_stars: number | null;
+  gh_open_issues: number | null;
+  gh_closed_issues: number | null;
+  gh_contributors: number | null;
+  gh_last_commit_at: string | null;
+  gh_is_archived: number;
 }
 
 export function upsertSkill(skill: {
@@ -244,7 +258,7 @@ export function upsertSkill(skill: {
     slug: skill.slug,
     name: skill.name,
     description: skill.description,
-    github_repo: skill.github_repo,
+    github_repo: skill.github_repo?.replace(/^https?:\/\/github\.com\//, '') ?? null,
     source: skill.source,
     installs: skill.installs,
     trending_rank: skill.trending_rank ?? null,
@@ -346,6 +360,41 @@ export function getTopReposForDependentsRefresh(limit: number): RepoRow[] {
        LIMIT ?`
     )
     .all(limit) as RepoRow[];
+}
+
+export interface SkillGithubData {
+  gh_stars: number;
+  gh_open_issues: number;
+  gh_closed_issues: number;
+  gh_contributors: number;
+  gh_last_commit_at: string | null;
+  gh_is_archived: number;
+}
+
+export function getSkillsNeedingGithubEnrichment(limit: number): SkillRow[] {
+  const db = getDb();
+  return db
+    .prepare(
+      `SELECT * FROM skills
+       WHERE github_repo IS NOT NULL AND gh_stars IS NULL
+       ORDER BY installs DESC
+       LIMIT ?`
+    )
+    .all(limit) as SkillRow[];
+}
+
+export function updateSkillGithubData(slug: string, data: SkillGithubData): void {
+  const db = getDb();
+  db.prepare(
+    `UPDATE skills SET
+       gh_stars = ?, gh_open_issues = ?, gh_closed_issues = ?,
+       gh_contributors = ?, gh_last_commit_at = ?, gh_is_archived = ?
+     WHERE slug = ?`
+  ).run(
+    data.gh_stars, data.gh_open_issues, data.gh_closed_issues,
+    data.gh_contributors, data.gh_last_commit_at, data.gh_is_archived,
+    slug
+  );
 }
 
 export function closeDb(): void {

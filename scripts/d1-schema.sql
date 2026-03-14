@@ -40,7 +40,13 @@ CREATE TABLE skills (
   platforms TEXT NOT NULL DEFAULT '[]',
   author TEXT,
   score REAL,
-  rank INTEGER
+  rank INTEGER,
+  gh_stars INTEGER,
+  gh_open_issues INTEGER,
+  gh_closed_issues INTEGER,
+  gh_contributors INTEGER,
+  gh_last_commit_at TEXT,
+  gh_is_archived INTEGER DEFAULT 0
 );
 
 CREATE INDEX idx_skills_rank ON skills(rank);

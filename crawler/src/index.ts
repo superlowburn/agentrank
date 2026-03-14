@@ -14,6 +14,7 @@ import { enrichContent } from "./enrich-content.js";
 import { crawlSkillsSh } from "./skills.js";
 import { crawlGlama } from "./glama.js";
 import { crawlClawHub } from "./clawhub.js";
+import { enrichSkillsGithub } from "./enrich-skills.js";
 import { getDependentsCount, sleep, randomDelay } from "./dependents.js";
 
 // CRAWL_MODE=incremental: only search repos created in last 2 days, skip fork/noise cleanup
@@ -119,6 +120,10 @@ async function main(): Promise<void> {
   console.log(`\nskills.sh: ${skillsShCount} skills processed`);
   console.log(`Glama: ${glamaResult.total} servers processed, ${glamaResult.matched} matched to repos`);
   console.log(`ClawHub: ${clawHubCount} skills processed`);
+
+  // Skills GitHub enrichment phase
+  console.log("\n=== Skills GitHub Enrichment Phase ===");
+  await enrichSkillsGithub(octokit, 500);
 
   // Dependents refresh — top repos by stars
   const dependentsLimit = isIncremental ? 500 : 1000;

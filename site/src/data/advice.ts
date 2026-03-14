@@ -86,39 +86,7 @@ export function getSkillAdvice(
 ): Advice[] {
   const items: Advice[] = [];
 
-  // No GitHub repo linked — biggest unlock
-  if (!skill.github_repo) {
-    items.push({
-      signal: 'GitHub',
-      message: 'Link a GitHub repository to unlock richer scoring — freshness, issue health, contributors, and stars all factor in',
-      impact: 'high',
-    });
-  }
-
-  // Short/no description
-  const descLen = skill.description?.length ?? 0;
-  if (descLen < 150) {
-    items.push({
-      signal: 'Description',
-      message: descLen === 0
-        ? 'Add a detailed description (150+ chars) to improve discoverability'
-        : 'Expand your description to 150+ characters for better discoverability',
-      impact: 'low',
-    });
-  }
-
-  // Few platforms
-  if (skill.platforms.length < 3) {
-    items.push({
-      signal: 'Platforms',
-      message: skill.platforms.length === 0
-        ? 'Add platform support information to increase your platform breadth score'
-        : `Only ${skill.platforms.length} platform${skill.platforms.length === 1 ? '' : 's'} listed — supporting more platforms improves your score`,
-      impact: 'medium',
-    });
-  }
-
-  // Repo-level advice if linked
+  // Repo-level advice (from linked repo or skill-level GitHub enrichment)
   if (repoData) {
     const daysSinceCommit = Math.floor(
       (Date.now() - new Date(repoData.last_commit_at).getTime()) / (1000 * 60 * 60 * 24)
@@ -140,6 +108,33 @@ export function getSkillAdvice(
         impact: 'high',
       });
     }
+
+    if (repoData.contributors <= 1) {
+      items.push({
+        signal: 'Contributors',
+        message: 'Single-contributor projects carry bus-factor risk — welcoming contributors boosts confidence',
+        impact: 'medium',
+      });
+    }
+
+    if (repoData.stars < 50) {
+      items.push({
+        signal: 'Stars',
+        message: 'Low star count — promote the project, write docs, and engage the community to drive adoption',
+        impact: 'low',
+      });
+    }
+  }
+
+  // Few platforms
+  if (skill.platforms.length < 3) {
+    items.push({
+      signal: 'Platforms',
+      message: skill.platforms.length === 0
+        ? 'Publish to more platforms (skills.sh, Glama, ClawHub) for broader reach'
+        : `Only ${skill.platforms.length} platform${skill.platforms.length === 1 ? '' : 's'} listed — publishing to more platforms improves your score`,
+      impact: 'medium',
+    });
   }
 
   return items.slice(0, 3);

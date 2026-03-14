@@ -41,6 +41,12 @@ interface SkillRow {
   trending_rank: number | null;
   platforms: string;
   author: string | null;
+  gh_stars: number | null;
+  gh_open_issues: number | null;
+  gh_closed_issues: number | null;
+  gh_contributors: number | null;
+  gh_last_commit_at: string | null;
+  gh_is_archived: number;
 }
 
 interface RepoRow {
@@ -115,6 +121,7 @@ export function scoreSkills(): void {
   }
 
   // Find max GitHub values across linked skills for normalization
+  // Check both repo table matches and skill-level GitHub data
   let maxStars = 0;
   let maxContributors = 0;
   for (const skill of skills) {
@@ -122,6 +129,9 @@ export function scoreSkills(): void {
     if (repo) {
       maxStars = Math.max(maxStars, repo.stars);
       maxContributors = Math.max(maxContributors, repo.contributors);
+    } else if (skill.gh_stars !== null) {
+      maxStars = Math.max(maxStars, skill.gh_stars);
+      maxContributors = Math.max(maxContributors, skill.gh_contributors ?? 0);
     }
   }
 
@@ -129,6 +139,10 @@ export function scoreSkills(): void {
 
   // Score each skill
   const scored: Array<{ id: number; score: number }> = [];
+
+  let ghFromRepo = 0;
+  let ghFromSkill = 0;
+  let registryOnly = 0;
 
   for (const skill of skills) {
     const repo = findRepo(skill, repoLookup, repoByUrl);
@@ -142,7 +156,7 @@ export function scoreSkills(): void {
     let score: number;
 
     if (repo) {
-      // Full scoring with GitHub signals
+      // Full scoring with GitHub signals from repos table
       const freshness = computeFreshness(repo.last_commit_at, repo.is_archived);
       const issueHealth = computeIssueHealth(repo.open_issues, repo.closed_issues);
       const starsNorm = logNormalize(repo.stars, maxStars);
@@ -157,6 +171,24 @@ export function scoreSkills(): void {
         contribNorm * 0.10 +
         descQuality * 0.05
       );
+      ghFromRepo++;
+    } else if (skill.gh_stars !== null) {
+      // Fallback: use skill-level GitHub data
+      const freshness = computeFreshness(skill.gh_last_commit_at, skill.gh_is_archived);
+      const issueHealth = computeIssueHealth(skill.gh_open_issues ?? 0, skill.gh_closed_issues ?? 0);
+      const starsNorm = logNormalize(skill.gh_stars, maxStars);
+      const contribNorm = logNormalize(skill.gh_contributors ?? 0, maxContributors);
+
+      score = (
+        installsNorm * 0.30 +
+        freshness * 0.20 +
+        issueHealth * 0.15 +
+        starsNorm * 0.10 +
+        platformBreadth * 0.10 +
+        contribNorm * 0.10 +
+        descQuality * 0.05
+      );
+      ghFromSkill++;
     } else {
       // Registry-only scoring (redistribute GitHub 55% → installs 67%, platform 22%, desc 11%)
       score = (
@@ -164,10 +196,13 @@ export function scoreSkills(): void {
         platformBreadth * 0.22 +
         descQuality * 0.11
       );
+      registryOnly++;
     }
 
     scored.push({ id: skill.id, score: Math.round(score * 100 * 100) / 100 });
   }
+
+  console.log(`GitHub from repos: ${ghFromRepo}, from skill enrichment: ${ghFromSkill}, registry-only: ${registryOnly}`);
 
   // Sort by score descending
   scored.sort((a, b) => b.score - a.score);

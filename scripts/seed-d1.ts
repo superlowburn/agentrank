@@ -45,7 +45,8 @@ console.log(`Tools: ${toolRows.length} rows`);
 
 // --- Skills ---
 const skillRows = db.prepare(`
-  SELECT slug, name, description, github_repo, source, installs, trending_rank, platforms, author, score, rank
+  SELECT slug, name, description, github_repo, source, installs, trending_rank, platforms, author, score, rank,
+         gh_stars, gh_open_issues, gh_closed_issues, gh_contributors, gh_last_commit_at, gh_is_archived
   FROM skills
   WHERE score IS NOT NULL AND rank IS NOT NULL
   ORDER BY rank ASC
@@ -54,11 +55,11 @@ const skillRows = db.prepare(`
 for (let i = 0; i < skillRows.length; i += CHUNK_SIZE) {
   const chunk = skillRows.slice(i, i + CHUNK_SIZE);
   const values = chunk.map((r) => {
-    return `(${esc(r.slug)}, ${esc(r.name)}, ${esc(r.description)}, ${esc(r.github_repo)}, ${esc(r.source)}, ${r.installs}, ${r.trending_rank ?? 'NULL'}, ${esc(r.platforms)}, ${esc(r.author)}, ${r.score}, ${r.rank})`;
+    return `(${esc(r.slug)}, ${esc(r.name)}, ${esc(r.description)}, ${esc(r.github_repo)}, ${esc(r.source)}, ${r.installs}, ${r.trending_rank ?? 'NULL'}, ${esc(r.platforms)}, ${esc(r.author)}, ${r.score}, ${r.rank}, ${r.gh_stars ?? 'NULL'}, ${r.gh_open_issues ?? 'NULL'}, ${r.gh_closed_issues ?? 'NULL'}, ${r.gh_contributors ?? 'NULL'}, ${esc(r.gh_last_commit_at)}, ${r.gh_is_archived ?? 0})`;
   });
 
   lines.push(
-    `INSERT INTO skills (slug, name, description, github_repo, source, installs, trending_rank, platforms, author, score, rank) VALUES\n${values.join(',\n')};`
+    `INSERT INTO skills (slug, name, description, github_repo, source, installs, trending_rank, platforms, author, score, rank, gh_stars, gh_open_issues, gh_closed_issues, gh_contributors, gh_last_commit_at, gh_is_archived) VALUES\n${values.join(',\n')};`
   );
 }
 

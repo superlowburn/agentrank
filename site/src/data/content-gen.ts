@@ -44,14 +44,33 @@ export function generateSkillSummary(skill: {
   source: string;
   author: string | null;
   platforms: string[];
+  stars?: number;
+  issueHealth?: number;
 }): string {
   const sourceLabel = skill.source === 'skills.sh' ? 'skills.sh' : skill.source === 'glama' ? 'Glama' : skill.source === 'clawhub' ? 'ClawHub' : skill.source;
-  const authorPart = skill.author ? ` by ${skill.author}` : '';
+
+  // Deduplicate author — skip "by X" if the name already contains the author
+  const nameLC = skill.name.toLowerCase();
+  const authorLC = skill.author?.toLowerCase() ?? '';
+  const authorPart = skill.author && !nameLC.includes(authorLC) ? ` by ${skill.author}` : '';
 
   let summary = `${skill.name} is a ${sourceLabel} skill${authorPart}.`;
 
   if (skill.description) {
     summary += ` ${skill.description}`;
+  }
+
+  // Add quality signal sentence
+  const signals: string[] = [];
+  if (skill.stars !== undefined && skill.stars > 0) {
+    const formatted = skill.stars >= 1000 ? `${(skill.stars / 1000).toFixed(1).replace(/\.0$/, '')}K` : `${skill.stars}`;
+    signals.push(`${formatted} stars`);
+  }
+  if (skill.issueHealth !== undefined && skill.issueHealth > 0) {
+    signals.push(`${Math.round(skill.issueHealth * 100)}% issue closure rate`);
+  }
+  if (signals.length > 0) {
+    summary += ` Actively maintained with ${signals.join(' and ')}.`;
   }
 
   if (skill.platforms.length > 0) {

@@ -66,6 +66,17 @@ if (skill.github_repo) {
   }
 }
 
+// Fallback: use skill-level GitHub data if tools table join failed
+if (!repoData && row.gh_stars !== null) {
+  repoData = {
+    stars: row.gh_stars as number,
+    last_commit_at: row.gh_last_commit_at as string,
+    open_issues: row.gh_open_issues as number,
+    closed_issues: row.gh_closed_issues as number,
+    contributors: row.gh_contributors as number,
+  };
+}
+
 // Compute signal bars
 const installsBar = Math.min(100, Math.log(1 + skill.installs) / Math.log(1 + 200000) * 100);
 
@@ -97,7 +108,9 @@ const registryLink = skill.source === 'skills.sh'
     ? `https://glama.ai/mcp/servers/${skill.slug}`
     : null;
 
-const githubLink = skill.github_repo ? `https://github.com/${skill.github_repo}` : null;
+const githubLink = skill.github_repo
+  ? (skill.github_repo.startsWith('http') ? skill.github_repo : `https://github.com/${skill.github_repo}`)
+  : null;
 
 const advice = skill.score <= 85 ? getSkillAdvice(skill, repoData) : [];
 const SITE_URL = 'https://agentrank-ai.com';
@@ -113,10 +126,19 @@ const summary = generateSkillSummary({
   source: skill.source,
   author: skill.author,
   platforms: skill.platforms,
+  ...(repoData ? {
+    stars: repoData.stars,
+    issueHealth: issueHealth ?? undefined,
+  } : {}),
 });
 const contextSentences = generateContextSentences({
   rank: skill.rank,
   score: skill.score,
+  ...(repoData ? {
+    stars: repoData.stars,
+    contributors: repoData.contributors,
+    last_commit_at: repoData.last_commit_at,
+  } : {}),
 }, totalSkills);
 const jsonLd = generateSkillJsonLd({
   name: skill.name,

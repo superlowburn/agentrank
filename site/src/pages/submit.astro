@@ -1,0 +1,491 @@
+---
+import Layout from '../layouts/Base.astro';
+export const prerender = true;
+---
+
+<Layout title="Submit or Claim" activeTab="submit">
+  <section class="submit-page">
+    <div class="hero">
+      <h1>List your skill. Claim your rank.</h1>
+      <p>Already indexed? Claim your listing to add maintainer info. New project? Submit it for inclusion.</p>
+    </div>
+
+    <div class="lookup-section" id="lookup-section">
+      <label for="lookup-url">Paste your GitHub URL</label>
+      <div class="lookup-row">
+        <input type="url" id="lookup-url" placeholder="https://github.com/owner/repo" />
+        <button type="button" id="lookup-btn">Look Up</button>
+      </div>
+      <p class="alt-link">or <a href="#" id="manual-link">submit manually</a></p>
+    </div>
+
+    <div id="result-area" class="result-area" style="display:none;"></div>
+
+    <form id="submit-form" style="display:none;" method="POST" action="/api/submit">
+      <div id="claim-info" class="claim-info" style="display:none;"></div>
+
+      <div class="field" id="field-github-url">
+        <label for="github_url">GitHub URL</label>
+        <input type="url" name="github_url" id="github_url" placeholder="https://github.com/owner/repo" />
+      </div>
+
+      <div class="field" id="field-registry-url" style="display:none;">
+        <label for="registry_url">Registry URL (npm, PyPI, etc.)</label>
+        <input type="url" name="registry_url" id="registry_url" placeholder="https://www.npmjs.com/package/..." />
+      </div>
+
+      <div class="field" id="field-name">
+        <label for="name">Project Name</label>
+        <input type="text" name="name" id="name" />
+      </div>
+
+      <div class="field" id="field-description">
+        <label for="description">Description</label>
+        <input type="text" name="description" id="description" />
+      </div>
+
+      <div class="field">
+        <label for="contact_email">Your Email <span class="required">*</span></label>
+        <input type="email" name="contact_email" id="contact_email" required />
+      </div>
+
+      <div class="field">
+        <label for="owner_name">Your Name (optional)</label>
+        <input type="text" name="owner_name" id="owner_name" />
+      </div>
+
+      <div class="field">
+        <label for="owner_url">Your URL (optional)</label>
+        <input type="url" name="owner_url" id="owner_url" placeholder="https://..." />
+      </div>
+
+      <input type="hidden" name="existing_slug" id="existing_slug" />
+      <input type="hidden" name="existing_type" id="existing_type" />
+
+      <button type="submit" id="submit-btn">Submit</button>
+      <div id="form-message" class="form-message"></div>
+    </form>
+  </section>
+</Layout>
+
+<script>
+  const lookupSection = document.getElementById('lookup-section')!;
+  const lookupUrl = document.getElementById('lookup-url') as HTMLInputElement;
+  const lookupBtn = document.getElementById('lookup-btn')!;
+  const manualLink = document.getElementById('manual-link')!;
+  const resultArea = document.getElementById('result-area')!;
+  const form = document.getElementById('submit-form') as HTMLFormElement;
+  const claimInfo = document.getElementById('claim-info')!;
+  const formMessage = document.getElementById('form-message')!;
+
+  const fieldGithubUrl = document.getElementById('field-github-url')!;
+  const fieldRegistryUrl = document.getElementById('field-registry-url')!;
+  const fieldName = document.getElementById('field-name')!;
+  const fieldDescription = document.getElementById('field-description')!;
+
+  function esc(s: string): string {
+    const d = document.createElement('div');
+    d.textContent = s;
+    return d.innerHTML;
+  }
+
+  // Check for ?claim= param
+  const params = new URLSearchParams(window.location.search);
+  const claimSlug = params.get('claim');
+  const claimType = params.get('type');
+
+  if (claimSlug) {
+    showClaimMode(claimSlug, claimType || 'skill');
+  }
+
+  function showClaimMode(slug: string, type: string) {
+    lookupSection.style.display = 'none';
+    resultArea.style.display = 'none';
+
+    const readable = slug.replace(/--/g, '/');
+    claimInfo.innerHTML = `<p>Claiming: <strong>${esc(readable)}</strong> (${esc(type)})</p>`;
+    claimInfo.style.display = 'block';
+
+    (document.getElementById('existing_slug') as HTMLInputElement).value = slug;
+    (document.getElementById('existing_type') as HTMLInputElement).value = type;
+
+    // Hide fields not needed for claim
+    fieldGithubUrl.style.display = 'none';
+    fieldRegistryUrl.style.display = 'none';
+    fieldName.style.display = 'none';
+    fieldDescription.style.display = 'none';
+
+    form.style.display = 'block';
+  }
+
+  lookupBtn.addEventListener('click', async () => {
+    const url = lookupUrl.value.trim();
+    if (!url) return;
+
+    lookupBtn.textContent = 'Looking up...';
+    lookupBtn.setAttribute('disabled', 'true');
+
+    try {
+      const res = await fetch(`/api/lookup?url=${encodeURIComponent(url)}`);
+      const data = await res.json();
+
+      if (data.found) {
+        showFoundResult(data, url);
+      } else {
+        await tryGithubApi(url);
+      }
+    } catch {
+      showNewForm(url);
+    } finally {
+      lookupBtn.textContent = 'Look Up';
+      lookupBtn.removeAttribute('disabled');
+    }
+  });
+
+  function showFoundResult(data: any, url: string) {
+    const detailUrl = data.type === 'skill' ? `/skill/${data.slug}/` : `/tool/${encodeURIComponent(data.slug)}/`;
+    resultArea.innerHTML = `
+      <div class="result-card found">
+        <h3>${esc(data.name)}</h3>
+        <p>${esc(data.description || '')}</p>
+        <div class="result-meta">
+          <span>Score: ${esc(String(data.score))}</span>
+          <span>Rank: #${esc(String(data.rank))}</span>
+          <a href="${esc(detailUrl)}">View listing &rarr;</a>
+        </div>
+        <p class="result-action">This project is already indexed. Want to claim it?</p>
+        <button type="button" id="claim-found-btn" class="claim-btn">Claim This Listing</button>
+      </div>
+    `;
+    resultArea.style.display = 'block';
+
+    document.getElementById('claim-found-btn')!.addEventListener('click', () => {
+      (document.getElementById('existing_slug') as HTMLInputElement).value = data.slug;
+      (document.getElementById('existing_type') as HTMLInputElement).value = data.type;
+      (document.getElementById('github_url') as HTMLInputElement).value = url;
+
+      claimInfo.innerHTML = `<p>Claiming: <strong>${esc(data.name)}</strong></p>`;
+      claimInfo.style.display = 'block';
+      fieldGithubUrl.style.display = 'none';
+      fieldRegistryUrl.style.display = 'none';
+      fieldName.style.display = 'none';
+      fieldDescription.style.display = 'none';
+      form.style.display = 'block';
+    });
+  }
+
+  async function tryGithubApi(url: string) {
+    const match = url.match(/github\.com\/([^/]+\/[^/]+)/);
+    if (!match) {
+      showNewForm(url);
+      return;
+    }
+    const repo = match[1].replace(/\.git$/, '');
+
+    try {
+      const res = await fetch(`https://api.github.com/repos/${repo}`);
+      if (res.ok) {
+        const gh = await res.json();
+        resultArea.innerHTML = `
+          <div class="result-card not-found">
+            <h3>${esc(gh.full_name)}</h3>
+            <p>${esc(gh.description || 'No description')}</p>
+            <p class="result-action">This project isn't indexed yet. Submit it for inclusion.</p>
+          </div>
+        `;
+        resultArea.style.display = 'block';
+
+        (document.getElementById('github_url') as HTMLInputElement).value = url;
+        (document.getElementById('name') as HTMLInputElement).value = gh.name;
+        (document.getElementById('description') as HTMLInputElement).value = gh.description || '';
+
+        fieldRegistryUrl.style.display = 'none';
+        form.style.display = 'block';
+      } else {
+        showNewForm(url);
+      }
+    } catch {
+      showNewForm(url);
+    }
+  }
+
+  function showNewForm(url: string) {
+    resultArea.innerHTML = `
+      <div class="result-card not-found">
+        <p>No match found. Submit your project details below.</p>
+      </div>
+    `;
+    resultArea.style.display = 'block';
+
+    (document.getElementById('github_url') as HTMLInputElement).value = url;
+    fieldRegistryUrl.style.display = 'block';
+    form.style.display = 'block';
+  }
+
+  manualLink.addEventListener('click', (e) => {
+    e.preventDefault();
+    lookupSection.style.display = 'none';
+    resultArea.style.display = 'none';
+    fieldRegistryUrl.style.display = 'block';
+    form.style.display = 'block';
+  });
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const btn = document.getElementById('submit-btn') as HTMLButtonElement;
+    btn.textContent = 'Submitting...';
+    btn.disabled = true;
+    formMessage.textContent = '';
+    formMessage.className = 'form-message';
+
+    const fd = new FormData(form);
+    const body = Object.fromEntries(fd.entries());
+
+    try {
+      const res = await fetch('/api/submit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+      });
+      const data = await res.json();
+
+      if (data.success) {
+        formMessage.textContent = data.type === 'claim'
+          ? 'Claim submitted! We\'ll review and get back to you.'
+          : 'Submitted! We\'ll review your project for inclusion.';
+        formMessage.className = 'form-message success';
+        form.reset();
+      } else {
+        formMessage.textContent = data.error || 'Something went wrong.';
+        formMessage.className = 'form-message error';
+      }
+    } catch {
+      formMessage.textContent = 'Network error. Please try again.';
+      formMessage.className = 'form-message error';
+    } finally {
+      btn.textContent = 'Submit';
+      btn.disabled = false;
+    }
+  });
+</script>
+
+<style>
+  .submit-page {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 2rem 1rem;
+  }
+
+  .hero {
+    text-align: center;
+    margin-bottom: 2.5rem;
+  }
+
+  .hero h1 {
+    font-size: 1.6rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .hero p {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+  }
+
+  .lookup-section {
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+
+  .lookup-section label {
+    display: block;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    margin-bottom: 0.5rem;
+  }
+
+  .lookup-row {
+    display: flex;
+    gap: 0.5rem;
+    max-width: 500px;
+    margin: 0 auto;
+  }
+
+  .lookup-row input {
+    flex: 1;
+    padding: 0.6rem 0.75rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--text);
+    font-size: 0.9rem;
+  }
+
+  .lookup-row input:focus {
+    outline: none;
+    border-color: var(--accent);
+  }
+
+  #lookup-btn {
+    padding: 0.6rem 1.2rem;
+    background: var(--accent);
+    color: #000;
+    border: none;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    font-size: 0.9rem;
+  }
+
+  #lookup-btn:hover {
+    opacity: 0.9;
+  }
+
+  #lookup-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  .alt-link {
+    margin-top: 0.75rem;
+    font-size: 0.8rem;
+    color: var(--text-muted);
+  }
+
+  .alt-link a {
+    color: var(--accent);
+    text-decoration: none;
+  }
+
+  .result-area {
+    margin-bottom: 1.5rem;
+  }
+
+  .result-card {
+    padding: 1.25rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+  }
+
+  .result-card h3 {
+    margin: 0 0 0.5rem;
+    font-size: 1rem;
+  }
+
+  .result-card p {
+    margin: 0 0 0.5rem;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+  }
+
+  .result-meta {
+    display: flex;
+    gap: 1rem;
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    margin-bottom: 0.75rem;
+  }
+
+  .result-meta a {
+    color: var(--accent);
+    text-decoration: none;
+  }
+
+  .result-action {
+    font-size: 0.85rem;
+    color: var(--text);
+    margin-top: 0.75rem;
+  }
+
+  .claim-btn {
+    margin-top: 0.5rem;
+    padding: 0.5rem 1rem;
+    background: var(--accent);
+    color: #000;
+    border: none;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    font-size: 0.85rem;
+  }
+
+  .claim-info {
+    padding: 1rem;
+    background: var(--surface);
+    border: 1px solid var(--accent);
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
+  }
+
+  .claim-info p {
+    margin: 0;
+    font-size: 0.9rem;
+  }
+
+  .field {
+    margin-bottom: 1rem;
+  }
+
+  .field label {
+    display: block;
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    margin-bottom: 0.3rem;
+  }
+
+  .field input, .field textarea {
+    width: 100%;
+    padding: 0.55rem 0.65rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--text);
+    font-size: 0.85rem;
+    box-sizing: border-box;
+  }
+
+  .field input:focus, .field textarea:focus {
+    outline: none;
+    border-color: var(--accent);
+  }
+
+  .required {
+    color: var(--accent);
+  }
+
+  button[type="submit"] {
+    width: 100%;
+    padding: 0.65rem;
+    background: var(--accent);
+    color: #000;
+    border: none;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    font-size: 0.9rem;
+    margin-top: 0.5rem;
+  }
+
+  button[type="submit"]:hover {
+    opacity: 0.9;
+  }
+
+  button[type="submit"]:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  .form-message {
+    margin-top: 1rem;
+    font-size: 0.85rem;
+    text-align: center;
+  }
+
+  .form-message.success {
+    color: #4ade80;
+  }
+
+  .form-message.error {
+    color: #f87171;
+  }
+</style>
