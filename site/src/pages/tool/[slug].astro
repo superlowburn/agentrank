@@ -1,6 +1,7 @@
 ---
 import Base from '../../layouts/Base.astro';
 import { toSlug, formatStars, relativeTime, scoreColor, type Tool } from '../../data/tools';
+import { getAdvice } from '../../data/advice';
 
 const { slug } = Astro.params;
 const fullName = slug!.replace('--', '/');
@@ -55,6 +56,13 @@ const signals = [
   { name: 'Description', value: descQuality === 0 ? 'None' : descQuality === 0.3 ? 'Brief' : descQuality === 0.7 ? 'Good' : 'Detailed', bar: descQuality * 100 },
   { name: 'License', value: tool.license || 'None', bar: licHealth * 100 },
 ];
+
+const advice = tool.score <= 85 ? getAdvice(tool) : [];
+const SITE_URL = 'https://agentrank-ai.com';
+const badgeUrl = `${SITE_URL}/api/badge/tool/${slug}`;
+const pageUrl = `${SITE_URL}/tool/${slug}`;
+const mdSnippet = `[![AgentRank](${badgeUrl})](${pageUrl})`;
+const htmlSnippet = `<a href="${pageUrl}"><img src="${badgeUrl}" alt="AgentRank"></a>`;
 ---
 
 <Base title={`${tool.full_name} — AgentRank`} description={tool.description || `AgentRank profile for ${tool.full_name}`} activeTab="tools">
@@ -94,6 +102,45 @@ const signals = [
     </div>
   </section>
 
+  {advice.length > 0 && (
+    <section class="advice">
+      <h3>How to Improve</h3>
+      <div class="advice-list">
+        {advice.map((a) => (
+          <div class="advice-card">
+            <div class="advice-header">
+              <span class={`impact-dot impact-${a.impact}`}></span>
+              <span class="advice-signal">{a.signal}</span>
+              <span class={`impact-label impact-${a.impact}`}>{a.impact} impact</span>
+            </div>
+            <p class="advice-message">{a.message}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+  )}
+
+  <section class="badge-embed">
+    <h3>Badge</h3>
+    <div class="badge-preview">
+      <img src={`/api/badge/tool/${slug}`} alt={`AgentRank score for ${tool.full_name}`} />
+    </div>
+    <div class="snippet">
+      <label>Markdown</label>
+      <div class="snippet-row">
+        <code class="snippet-code">{mdSnippet}</code>
+        <button class="copy-btn" data-copy={mdSnippet}>Copy</button>
+      </div>
+    </div>
+    <div class="snippet">
+      <label>HTML</label>
+      <div class="snippet-row">
+        <code class="snippet-code">{htmlSnippet}</code>
+        <button class="copy-btn" data-copy={htmlSnippet}>Copy</button>
+      </div>
+    </div>
+  </section>
+
   <section class="metadata">
     <h3>Details</h3>
     <dl>
@@ -123,6 +170,18 @@ const signals = [
   <div class="github-link">
     <a href={tool.url} target="_blank" rel="noopener noreferrer">View on GitHub &rarr;</a>
   </div>
+
+  <script>
+    document.querySelectorAll('.copy-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const text = btn.getAttribute('data-copy') || '';
+        navigator.clipboard.writeText(text).then(() => {
+          btn.textContent = 'Copied!';
+          setTimeout(() => { btn.textContent = 'Copy'; }, 2000);
+        });
+      });
+    });
+  </script>
 </Base>
 
 <style>
@@ -268,6 +327,114 @@ const signals = [
 
   .github-link a {
     font-weight: 600;
+  }
+
+  .advice-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .advice-card {
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 0.75rem;
+  }
+
+  .advice-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.35rem;
+  }
+
+  .impact-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .impact-dot.impact-high { background: #22c55e; }
+  .impact-dot.impact-medium { background: #eab308; }
+  .impact-dot.impact-low { background: #6b7280; }
+
+  .advice-signal {
+    font-weight: 600;
+    font-size: 0.8rem;
+  }
+
+  .impact-label {
+    font-size: 0.7rem;
+    margin-left: auto;
+  }
+
+  .impact-label.impact-high { color: #22c55e; }
+  .impact-label.impact-medium { color: #eab308; }
+  .impact-label.impact-low { color: #6b7280; }
+
+  .advice-message {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    margin: 0;
+    line-height: 1.4;
+  }
+
+  .badge-embed {
+    margin-bottom: 2rem;
+  }
+
+  .badge-preview {
+    margin-bottom: 0.75rem;
+  }
+
+  .badge-preview img {
+    height: 20px;
+  }
+
+  .snippet {
+    margin-bottom: 0.5rem;
+  }
+
+  .snippet label {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    display: block;
+    margin-bottom: 0.25rem;
+  }
+
+  .snippet-row {
+    display: flex;
+    gap: 0.5rem;
+    align-items: stretch;
+  }
+
+  .snippet-code {
+    flex: 1;
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    padding: 0.35rem 0.5rem;
+    border-radius: 3px;
+    font-size: 0.7rem;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+
+  .copy-btn {
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    padding: 0.35rem 0.6rem;
+    font-size: 0.7rem;
+    cursor: pointer;
+    color: var(--text-muted);
+    white-space: nowrap;
+  }
+
+  .copy-btn:hover {
+    border-color: var(--accent);
+    color: var(--accent);
   }
 
   @media (prefers-color-scheme: light) {
