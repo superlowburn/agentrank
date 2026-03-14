@@ -9,11 +9,13 @@ const ROOT = join(__dirname, '..');
 const db = new Database(join(ROOT, 'data', 'agentrank.db'), { readonly: true });
 
 const lines: string[] = [];
-const CHUNK_SIZE = 50;
+const CHUNK_SIZE = 10;
 
-const esc = (v: unknown): string => {
+const esc = (v: unknown, maxLen?: number): string => {
   if (v === null || v === undefined) return 'NULL';
-  const s = String(v).replace(/'/g, "''");
+  let s = String(v);
+  if (maxLen && s.length > maxLen) s = s.slice(0, maxLen);
+  s = s.replace(/'/g, "''");
   return `'${s}'`;
 };
 
@@ -31,7 +33,7 @@ const toolRows = db.prepare(`
 for (let i = 0; i < toolRows.length; i += CHUNK_SIZE) {
   const chunk = toolRows.slice(i, i + CHUNK_SIZE);
   const values = chunk.map((r) => {
-    return `(${r.rank}, ${esc(r.full_name)}, ${esc(r.url)}, ${esc(r.description)}, ${r.score}, ${r.stars}, ${r.forks}, ${r.open_issues}, ${r.closed_issues}, ${r.contributors}, ${r.dependents ?? 0}, ${esc(r.language)}, ${esc(r.license)}, ${esc(r.last_commit_at)}, ${r.is_archived ? 1 : 0}, ${esc(r.matched_queries)}, ${esc(r.readme_excerpt)}, ${esc(r.github_topics)}, ${r.glama_weekly_downloads ?? 0}, ${r.glama_tool_calls ?? 0})`;
+    return `(${r.rank}, ${esc(r.full_name)}, ${esc(r.url)}, ${esc(r.description)}, ${r.score}, ${r.stars}, ${r.forks}, ${r.open_issues}, ${r.closed_issues}, ${r.contributors}, ${r.dependents ?? 0}, ${esc(r.language)}, ${esc(r.license)}, ${esc(r.last_commit_at)}, ${r.is_archived ? 1 : 0}, ${esc(r.matched_queries)}, ${esc(r.readme_excerpt, 1000)}, ${esc(r.github_topics)}, ${r.glama_weekly_downloads ?? 0}, ${r.glama_tool_calls ?? 0})`;
   });
 
   lines.push(
