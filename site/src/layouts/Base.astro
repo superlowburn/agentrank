@@ -2,7 +2,7 @@
 interface Props {
   title: string;
   description?: string;
-  activeTab?: 'skills' | 'tools' | 'agents' | 'submit';
+  activeTab?: 'skills' | 'tools' | 'agents' | 'submit' | 'api';
   jsonLd?: object;
   keywords?: string;
   canonicalUrl?: string;
@@ -204,6 +204,7 @@ const {
             <a href="/tools/" class={activeTab === 'tools' ? 'active' : ''}>Tools</a>
             <a href="/agents/" class={activeTab === 'agents' ? 'active' : ''}>Agents <span class="badge-beta">beta</span></a>
             <a href="/submit/" class={activeTab === 'submit' ? 'active' : ''}>Submit</a>
+            <a href="/api-docs/" class={activeTab === 'api' ? 'active' : ''}>API</a>
           </nav>
         </div>
         <span class="tagline">The reputation layer for AI skills, tools & agents</span>
@@ -216,7 +217,7 @@ const {
     </main>
     <footer>
       <div class="container">
-        Scored by real signals, updated daily &middot; Last built {new Date().toISOString().slice(0, 10)}
+        Scored by real signals, updated daily &middot; <a href="https://github.com/superlowburn/agentrank" target="_blank" rel="noopener noreferrer">Open source on GitHub</a> &middot; Built by <a href="https://x.com/comforteagle" target="_blank" rel="noopener noreferrer">@comforteagle</a>
       </div>
     </footer>
   </body>

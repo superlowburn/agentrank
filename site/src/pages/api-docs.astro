@@ -1,0 +1,318 @@
+---
+import Base from '../layouts/Base.astro';
+export const prerender = true;
+---
+
+<Base title="API — AgentRank" description="Query the AgentRank index programmatically. Search, lookup, and badge endpoints." activeTab="api">
+  <div class="docs-intro">
+    <p>Query the AgentRank index programmatically. All endpoints are free, unauthenticated, and CORS-enabled.</p>
+    <p class="base-url">Base URL: <code>https://agentrank-ai.com</code></p>
+  </div>
+
+  <nav class="quick-nav">
+    <a href="#search">Search</a>
+    <a href="#lookup">Lookup</a>
+    <a href="#badges">Badges</a>
+    <a href="#usage-notes">Usage Notes</a>
+  </nav>
+
+  <section class="endpoint" id="search">
+    <h2><span class="method-badge">GET</span> /api/search</h2>
+    <p class="endpoint-desc">Search the index for skills and tools by keyword.</p>
+
+    <h3>Parameters</h3>
+    <table class="params-table">
+      <thead>
+        <tr><th>Param</th><th>Type</th><th>Required</th><th>Description</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><code>q</code></td><td>string</td><td>Yes</td><td>Search query</td></tr>
+        <tr><td><code>type</code></td><td>string</td><td>No</td><td><code>tool</code> or <code>skill</code>. Omit to search both.</td></tr>
+        <tr><td><code>limit</code></td><td>number</td><td>No</td><td>1&ndash;50, default 10</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Example</h3>
+    <pre class="code-block">curl "https://agentrank-ai.com/api/search?q=playwright&limit=3"</pre>
+
+    <h3>Response</h3>
+    <pre class="code-block">{`{
+  "query": "playwright",
+  "results": [
+    {
+      "type": "skill",
+      "slug": "glama:playwright-mcp-server",
+      "name": "Playwright MCP Server",
+      "description": "Browser automation and testing via Playwright",
+      "score": 82.4,
+      "rank": 12,
+      "url": "https://agentrank-ai.com/skill/glama-playwright-mcp-server/"
+    },
+    {
+      "type": "tool",
+      "slug": "microsoft/playwright-mcp",
+      "name": "microsoft/playwright-mcp",
+      "description": "Playwright Tools for MCP",
+      "score": 78.1,
+      "rank": 34,
+      "url": "https://agentrank-ai.com/tool/microsoft/playwright-mcp/"
+    }
+  ]
+}`}</pre>
+    <p class="cache-note">Cache: 5min CDN / 1min browser</p>
+  </section>
+
+  <section class="endpoint" id="lookup">
+    <h2><span class="method-badge">GET</span> /api/lookup</h2>
+    <p class="endpoint-desc">Look up a specific entry by its GitHub URL.</p>
+
+    <h3>Parameters</h3>
+    <table class="params-table">
+      <thead>
+        <tr><th>Param</th><th>Type</th><th>Required</th><th>Description</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><code>url</code></td><td>string</td><td>Yes</td><td>GitHub repository URL</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Example</h3>
+    <pre class="code-block">curl "https://agentrank-ai.com/api/lookup?url=https://github.com/microsoft/playwright-mcp"</pre>
+
+    <h3>Response (found)</h3>
+    <pre class="code-block">{`{
+  "found": true,
+  "type": "skill",
+  "slug": "glama:playwright-mcp-server",
+  "name": "Playwright MCP Server",
+  "description": "Browser automation and testing via Playwright",
+  "score": 82.4,
+  "rank": 12
+}`}</pre>
+
+    <h3>Response (not found)</h3>
+    <pre class="code-block">{`{
+  "found": false
+}`}</pre>
+  </section>
+
+  <section class="endpoint" id="badges">
+    <h2><span class="method-badge">GET</span> /api/badge/skill/{`{slug}`} &nbsp; /api/badge/tool/{`{slug}`}</h2>
+    <p class="endpoint-desc">Returns an SVG badge showing the AgentRank score. Embed in READMEs, docs, or websites.</p>
+
+    <h3>Preview</h3>
+    <div class="badge-preview">
+      <img src="/api/badge/skill/glama-playwright-mcp-server" alt="AgentRank badge example" />
+    </div>
+
+    <h3>Markdown</h3>
+    <pre class="code-block">[![AgentRank](https://agentrank-ai.com/api/badge/skill/YOUR-SLUG)](https://agentrank-ai.com/skill/YOUR-SLUG/)</pre>
+
+    <h3>HTML</h3>
+    <pre class="code-block">{`<a href="https://agentrank-ai.com/skill/YOUR-SLUG/">
+  <img src="https://agentrank-ai.com/api/badge/skill/YOUR-SLUG" alt="AgentRank">
+</a>`}</pre>
+
+    <p class="cache-note">Cache: 24h CDN / 1h browser</p>
+  </section>
+
+  <section class="endpoint" id="usage-notes">
+    <h2>Usage Notes</h2>
+    <ul class="usage-list">
+      <li>No authentication required.</li>
+      <li>All JSON endpoints return <code>Access-Control-Allow-Origin: *</code> for browser use.</li>
+      <li>Data updates daily. Scores reflect the latest crawl.</li>
+      <li>Be reasonable with request volume. No formal rate limit, but excessive traffic may be throttled.</li>
+      <li>Badge SVGs are lightweight and CDN-cached -- safe to embed anywhere.</li>
+    </ul>
+  </section>
+</Base>
+
+<style>
+  .docs-intro {
+    margin-bottom: 1.5rem;
+  }
+
+  .docs-intro p {
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .base-url code {
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    padding: 0.15rem 0.4rem;
+    border-radius: 3px;
+    font-size: 0.8rem;
+  }
+
+  .quick-nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 2rem;
+    padding: 0.75rem;
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+  }
+
+  .quick-nav a {
+    font-size: 0.8rem;
+    padding: 0.25rem 0.6rem;
+    border-radius: 3px;
+    color: var(--text-muted);
+    text-decoration: none;
+  }
+
+  .quick-nav a:hover {
+    color: var(--accent);
+    text-decoration: none;
+  }
+
+  .endpoint {
+    margin-bottom: 2.5rem;
+    padding-left: 1rem;
+    border-left: 3px solid var(--accent);
+  }
+
+  .endpoint:last-child {
+    border-left-color: var(--border);
+  }
+
+  .endpoint h2 {
+    font-size: 1rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+
+  .endpoint h3 {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-muted);
+    margin-top: 1rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .method-badge {
+    display: inline-block;
+    background: var(--accent);
+    color: var(--bg);
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 0.15rem 0.5rem;
+    border-radius: 3px;
+    letter-spacing: 0.05em;
+  }
+
+  .endpoint-desc {
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .params-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.8rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .params-table th {
+    text-align: left;
+    color: var(--text-muted);
+    font-weight: 600;
+    padding: 0.4rem 0.6rem;
+    border-bottom: 1px solid var(--border);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+
+  .params-table td {
+    padding: 0.4rem 0.6rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .params-table code {
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    padding: 0.1rem 0.3rem;
+    border-radius: 2px;
+    font-size: 0.75rem;
+  }
+
+  .code-block {
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 0.75rem 1rem;
+    font-size: 0.75rem;
+    overflow-x: auto;
+    white-space: pre;
+    line-height: 1.5;
+    margin-bottom: 0.5rem;
+  }
+
+  .cache-note {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    margin-top: 0.25rem;
+  }
+
+  .badge-preview {
+    margin: 0.5rem 0;
+  }
+
+  .badge-preview img {
+    height: 20px;
+  }
+
+  .usage-list {
+    list-style: none;
+    padding: 0;
+  }
+
+  .usage-list li {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    padding: 0.3rem 0;
+    padding-left: 1rem;
+    position: relative;
+  }
+
+  .usage-list li::before {
+    content: '\2022';
+    position: absolute;
+    left: 0;
+    color: var(--accent);
+  }
+
+  .usage-list code {
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    padding: 0.1rem 0.3rem;
+    border-radius: 2px;
+    font-size: 0.75rem;
+  }
+
+  @media (max-width: 480px) {
+    .endpoint {
+      padding-left: 0.75rem;
+    }
+
+    .endpoint h2 {
+      font-size: 0.9rem;
+    }
+
+    .params-table {
+      font-size: 0.75rem;
+    }
+  }
+</style>
