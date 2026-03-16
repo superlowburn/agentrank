@@ -10,10 +10,13 @@
  * Cookies are extracted from Chrome via pycookiecheat.
  *
  * Usage:
- *   npx tsx scripts/tweet-bot.ts              # post a tweet now
+ *   npx tsx scripts/tweet-bot.ts              # post a random template tweet
  *   npx tsx scripts/tweet-bot.ts --dry-run    # preview without posting
  *   npx tsx scripts/tweet-bot.ts --now        # post immediately (no variance delay)
  *   npx tsx scripts/tweet-bot.ts --refresh    # re-extract cookies from Chrome first
+ *   npx tsx scripts/tweet-bot.ts --type movers      # biggest movers this week
+ *   npx tsx scripts/tweet-bot.ts --type new-tools   # new tools in the index
+ *   npx tsx scripts/tweet-bot.ts --type top10       # weekly top 10 snapshot
  */
 
 import { resolve, dirname } from "path";
@@ -363,11 +366,120 @@ function pickTemplate(tools: Tool[]): string {
   return tweet;
 }
 
+// --- Scheduled content generators (read from live API) ---
+
+interface MoverEntry {
+  full_name: string;
+  tool_type: string;
+  current_rank: number;
+  prev_rank: number;
+  rank_delta: number;
+  current_score: number;
+  stars: number;
+  url: string;
+}
+
+interface NewToolEntry {
+  full_name: string;
+  tool_type: string;
+  rank: number;
+  score: number;
+  stars: number;
+  first_seen: string;
+  url: string;
+}
+
+async function fetchMovers(days = 7): Promise<MoverEntry[]> {
+  const res = await fetch(`${API_BASE}/v1/movers?days=${days}&limit=10&type=tool`);
+  if (!res.ok) return [];
+  const data = (await res.json()) as { movers: MoverEntry[] };
+  return data.movers || [];
+}
+
+async function fetchNewTools(days = 7): Promise<NewToolEntry[]> {
+  const res = await fetch(`${API_BASE}/v1/new-tools?days=${days}&limit=20&type=tool`);
+  if (!res.ok) return [];
+  const data = (await res.json()) as { tools: NewToolEntry[] };
+  return data.tools || [];
+}
+
+async function fetchTop10(): Promise<Tool[]> {
+  const res = await fetch(`${API_BASE}/search?q=mcp&limit=30`);
+  const data = (await res.json()) as { results: Tool[] };
+  return (data.results || [])
+    .filter((r) => r.type === "tool")
+    .sort((a, b) => a.rank - b.rank)
+    .slice(0, 10);
+}
+
+function generateMoversTweet(movers: MoverEntry[]): string | null {
+  const gainers = movers.filter((m) => m.rank_delta > 0).slice(0, 3);
+  const losers = movers.filter((m) => m.rank_delta < 0).slice(0, 2);
+
+  if (gainers.length === 0 && losers.length === 0) return null;
+
+  const lines: string[] = [];
+  for (const m of gainers) {
+    const handle = getTwitterHandle(m.full_name);
+    const repo = m.full_name.split("/")[1];
+    lines.push(`+${m.rank_delta} ${handle}/${repo} (#${m.prev_rank} → #${m.current_rank})`);
+  }
+  for (const m of losers) {
+    const handle = getTwitterHandle(m.full_name);
+    const repo = m.full_name.split("/")[1];
+    lines.push(`${m.rank_delta} ${handle}/${repo} (#${m.prev_rank} → #${m.current_rank})`);
+  }
+
+  return `Biggest movers this week on AgentRank:
+
+${lines.join("\n")}
+
+Rankings update nightly from GitHub signals. Full leaderboard: agentrank-ai.com/tools`;
+}
+
+function generateNewToolsTweet(tools: NewToolEntry[]): string | null {
+  if (tools.length === 0) return null;
+
+  const top = tools.slice(0, 3);
+  const lines = top.map((t) => {
+    const handle = getTwitterHandle(t.full_name);
+    const repo = t.full_name.split("/")[1];
+    return `- ${handle}/${repo} (score: ${Math.round(t.score)})`;
+  });
+
+  return `${tools.length} new tool${tools.length === 1 ? "" : "s"} entered the AgentRank index this week.
+
+Top newcomers:
+${lines.join("\n")}
+
+Ranked from day one by real GitHub signals.
+
+agentrank-ai.com/tools`;
+}
+
+function generateTop10Tweet(tools: Tool[]): string | null {
+  if (tools.length === 0) return null;
+
+  const lines = tools.map((t) => {
+    const handle = getTwitterHandle(t.slug);
+    const repo = t.slug.split("/")[1];
+    return `${t.rank}. ${handle}/${repo} — ${t.score}`;
+  });
+
+  return `AgentRank top 10 MCP servers this week:
+
+${lines.join("\n")}
+
+Scored nightly. Full index: agentrank-ai.com/tools`;
+}
+
 // --- Main ---
 
 async function main() {
   const args = process.argv.slice(2);
   const dryRun = args.includes("--dry-run");
+  const typeArg = args.find((a) => a.startsWith("--type="))?.split("=")[1]
+    ?? (args.indexOf("--type") !== -1 ? args[args.indexOf("--type") + 1] : null);
 
   if (args.includes("--refresh")) {
     refreshCookies();
@@ -381,15 +493,54 @@ async function main() {
     await new Promise((r) => setTimeout(r, delayMs));
   }
 
-  console.log("Fetching top tools from AgentRank...");
-  const tools = await fetchTopTools(5);
+  let tweet: string | null = null;
 
-  if (tools.length === 0) {
-    console.error("No tools returned from API");
-    process.exit(1);
+  if (typeArg === "movers") {
+    console.log("Fetching biggest movers from AgentRank...");
+    const movers = await fetchMovers(7);
+    if (movers.length === 0) {
+      console.error("No mover data available (rank_history may not be populated yet)");
+      process.exit(1);
+    }
+    tweet = generateMoversTweet(movers);
+    if (!tweet) {
+      console.error("Not enough rank change data for a movers tweet");
+      process.exit(1);
+    }
+  } else if (typeArg === "new-tools") {
+    console.log("Fetching new tools from AgentRank...");
+    const newTools = await fetchNewTools(7);
+    if (newTools.length === 0) {
+      console.error("No new tools this week (rank_history may not be populated yet)");
+      process.exit(1);
+    }
+    tweet = generateNewToolsTweet(newTools);
+    if (!tweet) {
+      console.error("No new tools tweet generated");
+      process.exit(1);
+    }
+  } else if (typeArg === "top10") {
+    console.log("Fetching top 10 tools from AgentRank...");
+    const top10 = await fetchTop10();
+    if (top10.length === 0) {
+      console.error("No tools returned from API");
+      process.exit(1);
+    }
+    tweet = generateTop10Tweet(top10);
+    if (!tweet) {
+      console.error("No top10 tweet generated");
+      process.exit(1);
+    }
+  } else {
+    // Default: random template from existing pool
+    console.log("Fetching top tools from AgentRank...");
+    const tools = await fetchTopTools(5);
+    if (tools.length === 0) {
+      console.error("No tools returned from API");
+      process.exit(1);
+    }
+    tweet = pickTemplate(tools);
   }
-
-  const tweet = pickTemplate(tools);
 
   if (dryRun) {
     console.log("=== DRY RUN ===");
