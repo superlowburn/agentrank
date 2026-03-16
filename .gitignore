@@ -15,3 +15,5 @@ site/.wrangler/
 .wrangler/
 .DS_Store
 .claude/
+.tweet-bot-cookies.json
+.tweet-bot-history.json

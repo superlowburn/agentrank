@@ -124,6 +124,21 @@ CREATE TABLE IF NOT EXISTS claims (
 CREATE INDEX IF NOT EXISTS idx_claims_tool ON claims(tool_full_name);
 CREATE INDEX IF NOT EXISTS idx_claims_user ON claims(github_username);
 
+-- Rank history — daily snapshots for computing movers/new-tools
+-- survives pipeline DROP/CREATE cycles
+CREATE TABLE IF NOT EXISTS rank_history (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  snapshot_date TEXT NOT NULL,           -- YYYY-MM-DD UTC
+  tool_full_name TEXT NOT NULL,
+  tool_type TEXT NOT NULL DEFAULT 'tool', -- 'tool' or 'skill'
+  rank INTEGER NOT NULL,
+  score REAL NOT NULL,
+  stars INTEGER NOT NULL DEFAULT 0,
+  UNIQUE(snapshot_date, tool_full_name, tool_type)
+);
+CREATE INDEX IF NOT EXISTS idx_rh_date ON rank_history(snapshot_date);
+CREATE INDEX IF NOT EXISTS idx_rh_tool ON rank_history(tool_full_name, tool_type);
+
 -- Submissions table — survives pipeline DROP/CREATE cycles
 CREATE TABLE IF NOT EXISTS submissions (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
