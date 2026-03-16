@@ -10,5 +10,10 @@
   ],
   "dependencies": {
     "@octokit/rest": "^22.0.1"
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "^7.6.13",
+    "better-sqlite3": "^12.8.0",
+    "playwright": "^1.58.2"
   }
 }
