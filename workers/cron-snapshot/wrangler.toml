@@ -1,0 +1,14 @@
+name = "agentrank-cron-snapshot"
+main = "src/index.ts"
+compatibility_date = "2024-09-23"
+compatibility_flags = ["nodejs_compat"]
+
+[[d1_databases]]
+binding = "DB"
+database_name = "agentrank-db"
+database_id = "946abec6-5f2b-4177-b1cb-b84769a20883"
+
+[triggers]
+# Daily snapshot at 6:00 UTC (after nightly crawler/scorer finishes)
+# Weekly top10 tweet at 14:00 UTC every Monday
+crons = ["0 6 * * *", "0 14 * * 1"]
