@@ -1,0 +1,146 @@
+[
+  {
+    "repo": "PrefectHQ/fastmcp",
+    "rank": 1,
+    "score": 90.7,
+    "handle": "@PrefectIO",
+    "tweet": "Congrats @PrefectIO — your fastmcp is ranked #1 on AgentRank with a score of 90.7.\n\nSee your full breakdown: agentrank-ai.com/tool/PrefectHQ--fastmcp",
+    "status": "pending",
+    "posted_at": null
+  },
+  {
+    "repo": "mark3labs/mcp-go",
+    "rank": 2,
+    "score": 88.4,
+    "handle": "@mark3labs",
+    "tweet": "Congrats @mark3labs — your mcp-go is ranked #2 on AgentRank with a score of 88.4.\n\nSee your full breakdown: agentrank-ai.com/tool/mark3labs--mcp-go",
+    "status": "pending",
+    "posted_at": null
+  },
+  {
+    "repo": "laravel/boost",
+    "rank": 3,
+    "score": 84.3,
+    "handle": "@laravelphp",
+    "tweet": "Congrats @laravelphp — your boost is ranked #3 on AgentRank with a score of 84.3.\n\nSee your full breakdown: agentrank-ai.com/tool/laravel--boost",
+    "status": "pending",
+    "posted_at": null
+  },
+  {
+    "repo": "punkpeye/mcp-proxy",
+    "rank": 5,
+    "score": 78.5,
+    "handle": "@punkpeye",
+    "tweet": "Congrats @punkpeye — your mcp-proxy is ranked #5 on AgentRank with a score of 78.5.\n\nSee your full breakdown: agentrank-ai.com/tool/punkpeye--mcp-proxy",
+    "status": "pending",
+    "posted_at": null
+  },
+  {
+    "repo": "mcp-use/mcp-use",
+    "rank": 6,
+    "score": 77.8,
+    "handle": "@pietrozullo",
+    "tweet": "Congrats @pietrozullo — your mcp-use is ranked #6 on AgentRank with a score of 77.8.\n\nSee your full breakdown: agentrank-ai.com/tool/mcp-use--mcp-use",
+    "status": "pending",
+    "posted_at": null
+  },
+  {
+    "repo": "kreuzberg-dev/kreuzberg",
+    "rank": 10,
+    "score": 74.7,
+    "handle": "@kreuzberg_dev",
+    "tweet": "Congrats @kreuzberg_dev — your kreuzberg is ranked #10 on AgentRank with a score of 74.7.\n\nSee your full breakdown: agentrank-ai.com/tool/kreuzberg-dev--kreuzberg",
+    "status": "pending",
+    "posted_at": null
+  },
+  {
+    "repo": "NVIDIA/NeMo-Agent-Toolkit",
+    "rank": 11,
+    "score": 74.1,
+    "handle": "@nvidia",
+    "tweet": "Congrats @nvidia — your NeMo-Agent-Toolkit is ranked #11 on AgentRank with a score of 74.1.\n\nSee your full breakdown: agentrank-ai.com/tool/NVIDIA--NeMo-Agent-Toolkit",
+    "status": "pending",
+    "posted_at": null
+  },
+  {
+    "repo": "rust-mcp-stack/rust-mcp-sdk",
+    "rank": 13,
+    "score": 70.4,
+    "handle": "@rustmcp",
+    "tweet": "Congrats @rustmcp — your rust-mcp-sdk is ranked #13 on AgentRank with a score of 70.4.\n\nSee your full breakdown: agentrank-ai.com/tool/rust-mcp-stack--rust-mcp-sdk",
+    "status": "pending",
+    "posted_at": null
+  },
+  {
+    "repo": "mongodb-js/mongodb-mcp-server",
+    "rank": 14,
+    "score": 70.1,
+    "handle": "@mongodb",
+    "tweet": "Congrats @mongodb — your mongodb-mcp-server is ranked #14 on AgentRank with a score of 70.1.\n\nSee your full breakdown: agentrank-ai.com/tool/mongodb-js--mongodb-mcp-server",
+    "status": "pending",
+    "posted_at": null
+  },
+  {
+    "repo": "TanStack/cli",
+    "rank": 17,
+    "score": 68.6,
+    "handle": "@tan_stack",
+    "tweet": "Congrats @tan_stack — your TanStack CLI is ranked #17 on AgentRank with a score of 68.6.\n\nSee your full breakdown: agentrank-ai.com/tool/TanStack--cli",
+    "status": "pending",
+    "posted_at": null
+  },
+  {
+    "repo": "getsentry/XcodeBuildMCP",
+    "rank": 18,
+    "score": 68.5,
+    "handle": "@sentry",
+    "tweet": "Congrats @sentry — your XcodeBuildMCP is ranked #18 on AgentRank with a score of 68.5.\n\nSee your full breakdown: agentrank-ai.com/tool/getsentry--XcodeBuildMCP",
+    "status": "pending",
+    "posted_at": null
+  },
+  {
+    "repo": "brightdata/brightdata-mcp",
+    "rank": 19,
+    "score": 68.2,
+    "handle": "@brightdatacom",
+    "tweet": "Congrats @brightdatacom — your brightdata-mcp is ranked #19 on AgentRank with a score of 68.2.\n\nSee your full breakdown: agentrank-ai.com/tool/brightdata--brightdata-mcp",
+    "status": "pending",
+    "posted_at": null
+  },
+  {
+    "repo": "bytebase/dbhub",
+    "rank": 23,
+    "score": 67.6,
+    "handle": "@Bytebase",
+    "tweet": "Congrats @Bytebase — your dbhub is ranked #23 on AgentRank with a score of 67.6.\n\nSee your full breakdown: agentrank-ai.com/tool/bytebase--dbhub",
+    "status": "pending",
+    "posted_at": null
+  },
+  {
+    "repo": "microsoft/playwright-mcp",
+    "rank": 25,
+    "score": 66.8,
+    "handle": "@microsoft",
+    "tweet": "Congrats @microsoft — your playwright-mcp is ranked #25 on AgentRank with a score of 66.8.\n\nSee your full breakdown: agentrank-ai.com/tool/microsoft--playwright-mcp",
+    "status": "pending",
+    "posted_at": null
+  },
+  {
+    "repo": "Flux159/mcp-server-kubernetes",
+    "rank": 27,
+    "score": 66.1,
+    "handle": "@flux159",
+    "tweet": "Congrats @flux159 — your mcp-server-kubernetes is ranked #27 on AgentRank with a score of 66.1.\n\nSee your full breakdown: agentrank-ai.com/tool/Flux159--mcp-server-kubernetes",
+    "status": "pending",
+    "posted_at": null
+  },
+  {
+    "repo": "tavily-ai/tavily-mcp",
+    "rank": 30,
+    "score": 65.5,
+    "handle": "@tavilyai",
+    "tweet": "Congrats @tavilyai — your tavily-mcp is ranked #30 on AgentRank with a score of 65.5.\n\nSee your full breakdown: agentrank-ai.com/tool/tavily-ai--tavily-mcp",
+    "status": "pending",
+    "posted_at": null
+  }
+]

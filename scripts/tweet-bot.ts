@@ -24,12 +24,13 @@ import { fileURLToPath } from "url";
 import { readFileSync, writeFileSync, existsSync } from "fs";
 import { execSync } from "child_process";
 import { chromium } from "playwright";
-import { TIER1_CONTACTS } from "./lib/tier1-contacts.js";
+import { TIER1_CONTACTS, isTier1 } from "./lib/tier1-contacts.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const API_BASE = "https://agentrank-ai.com/api";
 const COOKIES_FILE = resolve(__dirname, "../.tweet-bot-cookies.json");
 const HISTORY_FILE = resolve(__dirname, "../.tweet-bot-history.json");
+const CAMPAIGN_FILE = resolve(__dirname, "maintainer-campaign.json");
 
 // GitHub org/user -> Twitter handle mapping
 const TWITTER_HANDLES: Record<string, string> = {
@@ -457,6 +458,26 @@ Ranked from day one by real GitHub signals.
 agentrank-ai.com/tools`;
 }
 
+function generateLaunchTweet(tools: Tool[]): string {
+  const top3 = tools.slice(0, 3);
+  const lines = top3.map((t) => {
+    const handle = getTwitterHandle(t.slug);
+    const repo = t.slug.split("/")[1];
+    return `${t.rank}. ${handle} ${repo} (${t.score})`;
+  });
+
+  return `Indexed 25,000+ MCP servers and agent tools.
+
+Scored by real signals, not vibes. Updated nightly.
+
+Top ranked:
+${lines.join("\n")}
+
+cc @browser_use @microsoft
+
+agentrank-ai.com/tools`;
+}
+
 function generateTop10Tweet(tools: Tool[]): string | null {
   if (tools.length === 0) return null;
 
@@ -471,6 +492,55 @@ function generateTop10Tweet(tools: Tool[]): string | null {
 ${lines.join("\n")}
 
 Scored nightly. Full index: agentrank-ai.com/tools`;
+}
+
+// --- Maintainer Outreach Campaign ---
+
+interface CampaignEntry {
+  repo: string;
+  rank: number;
+  score: number;
+  handle: string;
+  tweet: string;
+  status: "pending" | "done" | "skipped";
+  posted_at: string | null;
+}
+
+function loadCampaign(): CampaignEntry[] {
+  if (!existsSync(CAMPAIGN_FILE)) {
+    console.error("No maintainer-campaign.json found");
+    process.exit(1);
+  }
+  return JSON.parse(readFileSync(CAMPAIGN_FILE, "utf-8")) as CampaignEntry[];
+}
+
+function saveCampaign(entries: CampaignEntry[]): void {
+  writeFileSync(CAMPAIGN_FILE, JSON.stringify(entries, null, 2));
+}
+
+function nextCampaignTweet(): { entry: CampaignEntry; index: number } | null {
+  const entries = loadCampaign();
+  const idx = entries.findIndex((e) => e.status === "pending");
+  if (idx === -1) return null;
+  return { entry: entries[idx], index: idx };
+}
+
+function markCampaignDone(index: number): void {
+  const entries = loadCampaign();
+  entries[index].status = "done";
+  entries[index].posted_at = new Date().toISOString();
+  saveCampaign(entries);
+}
+
+function campaignStatus(): void {
+  const entries = loadCampaign();
+  const done = entries.filter((e) => e.status === "done").length;
+  const pending = entries.filter((e) => e.status === "pending").length;
+  console.log(`Campaign: ${done} done, ${pending} pending of ${entries.length} total`);
+  for (const e of entries) {
+    const icon = e.status === "done" ? "✓" : e.status === "skipped" ? "–" : "·";
+    console.log(`  ${icon} #${e.rank} ${e.repo} (${e.handle}) [${e.status}]${e.posted_at ? " @ " + e.posted_at : ""}`);
+  }
 }
 
 // --- Main ---
@@ -519,6 +589,14 @@ async function main() {
       console.error("No new tools tweet generated");
       process.exit(1);
     }
+  } else if (typeArg === "launch") {
+    console.log("Fetching top tools for launch tweet...");
+    const tools = await fetchTopTools(5);
+    if (tools.length === 0) {
+      console.error("No tools returned from API");
+      process.exit(1);
+    }
+    tweet = generateLaunchTweet(tools);
   } else if (typeArg === "top10") {
     console.log("Fetching top 10 tools from AgentRank...");
     const top10 = await fetchTop10();
@@ -531,6 +609,43 @@ async function main() {
       console.error("No top10 tweet generated");
       process.exit(1);
     }
+  } else if (typeArg === "maintainer-outreach") {
+    if (args.includes("--status")) {
+      campaignStatus();
+      return;
+    }
+    const next = nextCampaignTweet();
+    if (!next) {
+      console.log("Maintainer outreach campaign complete — all entries done.");
+      return;
+    }
+    const { entry, index } = next;
+    // Safety: never tag tier1 contacts
+    const handleClean = entry.handle.replace(/^@/, "").toLowerCase();
+    if (isTier1(handleClean)) {
+      console.error(`BLOCKED: ${entry.handle} is a tier-1 contact. Skipping.`);
+      const entries = loadCampaign();
+      entries[index].status = "skipped";
+      saveCampaign(entries);
+      return;
+    }
+    console.log(`Outreach #${entry.rank}: ${entry.repo} -> ${entry.handle}`);
+    tweet = entry.tweet;
+    if (dryRun) {
+      console.log("=== DRY RUN ===");
+      console.log(tweet);
+      console.log(`\nCharacters: ${tweet.length}`);
+      return;
+    }
+    const ok = await postTweetPlaywright(tweet);
+    if (ok) {
+      markCampaignDone(index);
+      console.log(`Campaign entry ${index + 1}/${loadCampaign().length} marked done.`);
+    } else {
+      console.error("Failed to post outreach tweet.");
+      process.exit(1);
+    }
+    return;
   } else {
     // Default: random template from existing pool
     console.log("Fetching top tools from AgentRank...");
