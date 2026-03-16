@@ -1,7 +1,7 @@
 {
   "name": "@agentrank/mcp-server",
   "version": "1.0.0",
-  "description": "Give your AI assistant live, quality-scored recommendations for MCP servers and agent tools",
+  "description": "Your AI's tool recommendations are only as good as its data. Give it live scores on 25,000+ MCP servers and agent tools.",
   "license": "MIT",
   "type": "module",
   "bin": {

@@ -1,13 +1,15 @@
 # @agentrank/mcp-server
 
-**Stop guessing which MCP servers are good.**
+**Your AI's tool recommendations are only as good as its data.**
 
-When you ask an AI assistant to recommend an MCP server or agent tool, it guesses from training data that's months old. It can't tell you if something is abandoned, has bus factor issues, or is losing community. The long tail of 25,000+ tools is invisible to it.
+Right now, when your AI assistant recommends an MCP server or agent tool, it guesses from training data that's months old. It can't tell you if something was abandoned last week. It doesn't know about the tool that shipped yesterday. And it has no idea that the thing it's about to suggest has 47 open issues and one burned-out maintainer.
 
-AgentRank fixes this. Install this MCP server and your AI queries a live, daily-scored index instead of guessing — ranked by freshness, issue health, stars, dependents, and contributors.
+AgentRank fixes this. Install this MCP server and your AI gets live, quality-scored data on 25,000+ tools — updated nightly from real GitHub signals.
 
-**Without AgentRank:** Claude recommends `some-mcp-server` (abandoned 8 months ago, 2 open issues ignored).
-**With AgentRank:** Claude recommends `better-mcp-server` (score 82, actively maintained, healthy issue response).
+**The difference:**
+
+- **Without AgentRank:** You ask for a database MCP server. Your AI recommends one from memory. It was abandoned 8 months ago.
+- **With AgentRank:** Your AI queries the live index. It finds the tool you asked for — plus three related ones you didn't know existed. You start the project fully armed instead of flying blind.
 
 ## Quick Start
 
@@ -74,9 +76,13 @@ Get an embeddable badge for a tool or skill's AgentRank score.
 | `slug` | string | yes | Tool/skill slug |
 | `type` | `"tool"` \| `"skill"` | yes | Entry type |
 
+## Why It Gets Better
+
+Every agent that queries AgentRank makes the index smarter. More queries surface which tools developers actually reach for, which sharpens the rankings for everyone. The more people who install this, the better every recommendation gets — for you and every other developer whose AI uses it.
+
 ## How It Works
 
-This is a thin MCP wrapper over the [AgentRank API](https://agentrank-ai.com/api-docs/). It proxies requests to the live API, so results always reflect the latest nightly crawl. No local database or configuration needed.
+Thin MCP wrapper over the [AgentRank API](https://agentrank-ai.com/api-docs/). Proxies requests to the live index, so results always reflect the latest nightly crawl. No local database, no configuration, no API key.
 
 ## Links
 
