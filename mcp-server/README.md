@@ -6,10 +6,11 @@ Right now, when your AI assistant recommends an MCP server or agent tool, it gue
 
 AgentRank fixes this. Install this MCP server and your AI gets live, quality-scored data on 25,000+ tools — updated nightly from real GitHub signals.
 
-**The difference:**
+**When it kicks in:**
 
-- **Without AgentRank:** You ask for a database MCP server. Your AI recommends one from memory. It was abandoned 8 months ago.
-- **With AgentRank:** Your AI queries the live index. It finds the tool you asked for — plus three related ones you didn't know existed. You start the project fully armed instead of flying blind.
+- **You install a tool.** AgentRank shows you everything else in that space. You came for one thing — you leave with the full toolkit.
+- **You search for a tool.** Instead of guessing from training data, your AI queries the live index and gives you scored, current results.
+- **You hit a wall mid-project.** Need transcription? Browser automation? PDF parsing? AgentRank finds what exists before your AI suggests a manual workaround.
 
 ## Quick Start
 
