@@ -1,0 +1,111 @@
+{
+  "payload": {
+    "type": "hosted",
+    "stateful": false,
+    "hasAuthAdapter": false,
+    "serverCard": {
+      "serverInfo": {
+        "name": "agentrank",
+        "version": "1.0.0"
+      },
+      "tools": [
+        {
+          "name": "search",
+          "description": "Search the AgentRank index for MCP servers, agent tools, or AI skills. Returns quality-scored results ranked by real signals (stars, freshness, issue health, contributors, dependents).",
+          "inputSchema": {
+            "type": "object",
+            "properties": {
+              "query": {
+                "type": "string",
+                "description": "Search terms, e.g. \"database\", \"playwright\", \"slack\""
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "tool",
+                  "skill"
+                ],
+                "description": "Filter to tools (GitHub repos) or skills (registry entries). Omit for both."
+              },
+              "limit": {
+                "type": "number",
+                "minimum": 1,
+                "maximum": 50,
+                "description": "Number of results (default 10, max 50)"
+              }
+            },
+            "required": [
+              "query"
+            ],
+            "additionalProperties": false,
+            "$schema": "http://json-schema.org/draft-07/schema#"
+          },
+          "execution": {
+            "taskSupport": "forbidden"
+          }
+        },
+        {
+          "name": "lookup",
+          "description": "Look up a specific GitHub repository in the AgentRank index. Returns its score, rank, and listing details if found.",
+          "inputSchema": {
+            "type": "object",
+            "properties": {
+              "github_url": {
+                "type": "string",
+                "description": "GitHub repository URL, e.g. \"https://github.com/owner/repo\""
+              }
+            },
+            "required": [
+              "github_url"
+            ],
+            "additionalProperties": false,
+            "$schema": "http://json-schema.org/draft-07/schema#"
+          },
+          "execution": {
+            "taskSupport": "forbidden"
+          }
+        },
+        {
+          "name": "get_badge_url",
+          "description": "Get an embeddable AgentRank badge URL for a tool or skill. Returns markdown and HTML snippets for README embedding.",
+          "inputSchema": {
+            "type": "object",
+            "properties": {
+              "slug": {
+                "type": "string",
+                "description": "Tool or skill slug, e.g. \"microsoft/playwright-mcp\" or \"glama-playwright-mcp-server\""
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "tool",
+                  "skill"
+                ],
+                "description": "Whether this is a tool or skill"
+              }
+            },
+            "required": [
+              "slug",
+              "type"
+            ],
+            "additionalProperties": false,
+            "$schema": "http://json-schema.org/draft-07/schema#"
+          },
+          "execution": {
+            "taskSupport": "forbidden"
+          }
+        }
+      ],
+      "resources": [],
+      "prompts": []
+    },
+    "source": {
+      "commit": "cc5641765da96dfa69587483b2ccbaae221d18ae",
+      "branch": "main"
+    }
+  },
+  "artifacts": {
+    "module": "module.js",
+    "sourcemap": "module.js.map"
+  }
+}
