@@ -15,6 +15,7 @@ import { crawlSkillsSh } from "./skills.js";
 import { crawlGlama } from "./glama.js";
 import { crawlClawHub } from "./clawhub.js";
 import { enrichSkillsGithub } from "./enrich-skills.js";
+import { enrichRegistryDownloads } from "./enrich-registry.js";
 import { getDependentsCount, sleep, randomDelay } from "./dependents.js";
 
 // CRAWL_MODE=incremental: only search repos created in last 2 days, skip fork/noise cleanup
@@ -124,6 +125,12 @@ async function main(): Promise<void> {
   // Skills GitHub enrichment phase
   console.log("\n=== Skills GitHub Enrichment Phase ===");
   await enrichSkillsGithub(octokit, 500);
+
+  // Registry download enrichment (npm + PyPI)
+  console.log("\n=== Registry Download Enrichment Phase (npm + PyPI) ===");
+  await enrichRegistryDownloads(1500).catch((err) => {
+    console.error("Registry enrichment failed:", err);
+  });
 
   // Dependents refresh — top repos by stars
   const dependentsLimit = isIncremental ? 500 : 1000;

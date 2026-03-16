@@ -9,6 +9,8 @@ export interface RepoData {
   is_archived: number;
   description: string | null;
   license: string | null;
+  npm_downloads: number;
+  pypi_downloads: number;
 }
 
 export interface Signals {
@@ -17,6 +19,7 @@ export interface Signals {
   issueHealth: number;
   contributors: number;
   dependents: number;
+  downloads: number;
   descriptionQuality: number;
   licenseHealth: number;
 }
@@ -89,5 +92,8 @@ export function computeSignals(repo: RepoData): Signals {
     licenseHealth = 0.6;
   }
 
-  return { stars, freshness, issueHealth, contributors, dependents, descriptionQuality, licenseHealth };
+  // Downloads: weekly downloads from npm or PyPI — take the higher of the two
+  const downloads = Math.max(repo.npm_downloads ?? 0, repo.pypi_downloads ?? 0);
+
+  return { stars, freshness, issueHealth, contributors, dependents, downloads, descriptionQuality, licenseHealth };
 }

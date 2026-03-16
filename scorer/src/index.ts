@@ -18,6 +18,8 @@ interface DbRepo extends RepoData {
   url: string;
   language: string | null;
   matched_queries: string;
+  npm_package: string | null;
+  pypi_package: string | null;
 }
 
 function main(): void {
@@ -25,6 +27,13 @@ function main(): void {
 
   const db = new Database(DB_PATH);
   db.pragma("journal_mode = WAL");
+
+  // Add registry download columns if they don't exist yet
+  try { db.exec(`ALTER TABLE repos ADD COLUMN npm_downloads INTEGER NOT NULL DEFAULT 0`); } catch { /* ok */ }
+  try { db.exec(`ALTER TABLE repos ADD COLUMN pypi_downloads INTEGER NOT NULL DEFAULT 0`); } catch { /* ok */ }
+  try { db.exec(`ALTER TABLE repos ADD COLUMN npm_package TEXT`); } catch { /* ok */ }
+  try { db.exec(`ALTER TABLE repos ADD COLUMN pypi_package TEXT`); } catch { /* ok */ }
+  try { db.exec(`ALTER TABLE repos ADD COLUMN registry_checked_at TEXT`); } catch { /* ok */ }
 
   // Create score_snapshots table if it doesn't exist
   db.exec(`
@@ -84,18 +93,19 @@ function main(): void {
   const maxStars = 1000;        // 1k stars = top-tier popularity signal
   const maxContributors = 20;   // 20 contributors = well-maintained team project
   const maxDependents = 100;    // 100 dependents = widely adopted
+  const maxDownloads = 10000;   // 10k weekly downloads = widely adopted package
   // Log dataset maxes for informational purposes only
   const datasetMaxStars = Math.max(...rawSignals.map((r) => r.signals.stars));
   const datasetMaxContributors = Math.max(...rawSignals.map((r) => r.signals.contributors));
   const datasetMaxDependents = Math.max(...rawSignals.map((r) => r.signals.dependents));
-  console.log(`Dataset maxes — stars: ${datasetMaxStars}, contributors: ${datasetMaxContributors}, dependents: ${datasetMaxDependents}`);
-  console.log(`Reference maxes (for normalization) — stars: ${maxStars}, contributors: ${maxContributors}, dependents: ${maxDependents}`);
+  const datasetMaxDownloads = Math.max(...rawSignals.map((r) => r.signals.downloads));
+  console.log(`Dataset maxes — stars: ${datasetMaxStars}, contributors: ${datasetMaxContributors}, dependents: ${datasetMaxDependents}, downloads: ${datasetMaxDownloads}`);
+  console.log(`Reference maxes (for normalization) — stars: ${maxStars}, contributors: ${maxContributors}, dependents: ${maxDependents}, downloads: ${maxDownloads}`);
 
-  // Normalize and score — use per-repo weights based on whether THAT repo has dependents.
-  // A global hasDependents flag would waste 24% of weight for the 90%+ of repos with 0 dependents.
+  // Normalize and score — use per-repo weights based on which optional signals have real data.
   const scored = rawSignals.map((r) => {
-    const normalized = normalizeSignals(r.signals, maxStars, maxContributors, maxDependents);
-    const weights = getWeights(r.signals.dependents > 0);
+    const normalized = normalizeSignals(r.signals, maxStars, maxContributors, maxDependents, maxDownloads);
+    const weights = getWeights(r.signals.dependents > 0, r.signals.downloads > 0);
     const score = Math.round(weightedScore(normalized, weights) * 100 * 100) / 100; // 0-100, 2 decimal places
     return { id: r.id, score, signals: normalized };
   });
@@ -129,6 +139,10 @@ function main(): void {
     closed_issues: r.closed_issues,
     contributors: r.contributors,
     dependents: r.dependents,
+    npm_downloads: r.npm_downloads ?? 0,
+    pypi_downloads: r.pypi_downloads ?? 0,
+    npm_package: r.npm_package ?? null,
+    pypi_package: r.pypi_package ?? null,
     language: r.language,
     license: r.license,
     last_commit_at: r.last_commit_at,

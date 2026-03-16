@@ -59,6 +59,13 @@ export function initDb(): void {
   try { db.exec(`ALTER TABLE repos ADD COLUMN readme_excerpt TEXT`); } catch { /* column already exists */ }
   try { db.exec(`ALTER TABLE repos ADD COLUMN github_topics TEXT DEFAULT '[]'`); } catch { /* column already exists */ }
 
+  // Package registry download columns
+  try { db.exec(`ALTER TABLE repos ADD COLUMN npm_downloads INTEGER NOT NULL DEFAULT 0`); } catch { /* column already exists */ }
+  try { db.exec(`ALTER TABLE repos ADD COLUMN pypi_downloads INTEGER NOT NULL DEFAULT 0`); } catch { /* column already exists */ }
+  try { db.exec(`ALTER TABLE repos ADD COLUMN npm_package TEXT`); } catch { /* column already exists */ }
+  try { db.exec(`ALTER TABLE repos ADD COLUMN pypi_package TEXT`); } catch { /* column already exists */ }
+  try { db.exec(`ALTER TABLE repos ADD COLUMN registry_checked_at TEXT`); } catch { /* column already exists */ }
+
   // Skills table
   db.exec(`
     CREATE TABLE IF NOT EXISTS skills (
@@ -135,6 +142,11 @@ export interface RepoRow {
   github_topics: string;
   glama_weekly_downloads: number;
   glama_tool_calls: number;
+  npm_downloads: number;
+  pypi_downloads: number;
+  npm_package: string | null;
+  pypi_package: string | null;
+  registry_checked_at: string | null;
 }
 
 export function upsertRepo(repo: {
@@ -395,6 +407,47 @@ export function updateSkillGithubData(slug: string, data: SkillGithubData): void
     data.gh_contributors, data.gh_last_commit_at, data.gh_is_archived,
     slug
   );
+}
+
+export function getReposNeedingRegistryEnrichment(language: string, limit: number): RepoRow[] {
+  const db = getDb();
+  return db
+    .prepare(
+      `SELECT * FROM repos
+       WHERE language = ?
+         AND registry_checked_at IS NULL
+       ORDER BY stars DESC
+       LIMIT ?`
+    )
+    .all(language, limit) as RepoRow[];
+}
+
+export function getReposNeedingRegistryEnrichmentMulti(languages: string[], limit: number): RepoRow[] {
+  const db = getDb();
+  const placeholders = languages.map(() => "?").join(", ");
+  return db
+    .prepare(
+      `SELECT * FROM repos
+       WHERE language IN (${placeholders})
+         AND registry_checked_at IS NULL
+       ORDER BY stars DESC
+       LIMIT ?`
+    )
+    .all(...languages, limit) as RepoRow[];
+}
+
+export function updateNpmDownloads(id: number, packageName: string | null, downloads: number): void {
+  const db = getDb();
+  db.prepare(
+    `UPDATE repos SET npm_package = ?, npm_downloads = ?, registry_checked_at = datetime('now') WHERE id = ?`
+  ).run(packageName, downloads, id);
+}
+
+export function updatePypiDownloads(id: number, packageName: string | null, downloads: number): void {
+  const db = getDb();
+  db.prepare(
+    `UPDATE repos SET pypi_package = ?, pypi_downloads = ?, registry_checked_at = datetime('now') WHERE id = ?`
+  ).run(packageName, downloads, id);
 }
 
 export function closeDb(): void {
