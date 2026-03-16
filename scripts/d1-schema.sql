@@ -89,6 +89,18 @@ CREATE INDEX IF NOT EXISTS idx_reqlog_path ON request_log(path);
 -- Migration (run once on existing D1):
 -- ALTER TABLE request_log ADD COLUMN query TEXT;
 
+-- Rate limits table — survives pipeline DROP/CREATE cycles
+CREATE TABLE IF NOT EXISTS rate_limits (
+  ip TEXT NOT NULL,
+  window TEXT NOT NULL,  -- YYYY-MM-DDTHH:MM
+  count INTEGER NOT NULL DEFAULT 1,
+  PRIMARY KEY (ip, window)
+);
+CREATE INDEX IF NOT EXISTS idx_ratelimits_window ON rate_limits(window);
+-- Migration (run once on existing D1):
+-- CREATE TABLE IF NOT EXISTS rate_limits (ip TEXT NOT NULL, window TEXT NOT NULL, count INTEGER NOT NULL DEFAULT 1, PRIMARY KEY (ip, window));
+-- CREATE INDEX IF NOT EXISTS idx_ratelimits_window ON rate_limits(window);
+
 -- Submissions table — survives pipeline DROP/CREATE cycles
 CREATE TABLE IF NOT EXISTS submissions (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
