@@ -2,15 +2,15 @@
 interface Props {
   title: string;
   description?: string;
-  activeTab?: 'skills' | 'tools' | 'agents' | 'submit' | 'api';
-  jsonLd?: object;
+  activeTab?: 'skills' | 'tools' | 'agents' | 'movers' | 'submit' | 'api';
+  jsonLd?: object | object[];
   keywords?: string;
   canonicalUrl?: string;
 }
 
 const {
   title,
-  description = 'The reputation layer for AI skills, tools & agents. Ranked by real signals, updated daily.',
+  description = 'Stop guessing which MCP servers and agent tools are good. AgentRank scores 25,000+ tools daily by real signals — freshness, issue health, adoption.',
   activeTab = 'skills',
   jsonLd,
   keywords,
@@ -25,17 +25,20 @@ const {
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content={description} />
     <meta property="og:title" content={title} />
-    <meta property="og:description" content="The reputation layer for AI skills, tools & agents. Ranked by real signals, updated daily." />
-    <meta property="og:url" content="https://agentrank-ai.com" />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonicalUrl || 'https://agentrank-ai.com'} />
     <meta property="og:type" content="website" />
     <meta name="twitter:card" content="summary" />
     <meta name="twitter:title" content={title} />
-    <meta name="twitter:description" content="The reputation layer for AI skills, tools & agents. Ranked by real signals, updated daily." />
+    <meta name="twitter:description" content={description} />
     <title>{title}</title>
     <link rel="alternate" type="application/atom+xml" title="AgentRank Rankings" href="/feed.xml" />
     {keywords && <meta name="keywords" content={keywords} />}
     {canonicalUrl && <link rel="canonical" href={canonicalUrl} />}
-    {jsonLd && <script type="application/ld+json" set:html={JSON.stringify(jsonLd).replace(/<\//g, '<\\/')} />}
+    {jsonLd && (Array.isArray(jsonLd)
+      ? jsonLd.map((item) => <script type="application/ld+json" set:html={JSON.stringify(item).replace(/<\//g, '<\\/')} />)
+      : <script type="application/ld+json" set:html={JSON.stringify(jsonLd).replace(/<\//g, '<\\/')} />
+    )}
     <style>
       :root {
         --bg: #0a0a0a;
@@ -203,6 +206,7 @@ const {
           <nav class="tabs">
             <a href="/" class={activeTab === 'skills' ? 'active' : ''}>Skills</a>
             <a href="/tools/" class={activeTab === 'tools' ? 'active' : ''}>Tools</a>
+            <a href="/movers/" class={activeTab === 'movers' ? 'active' : ''}>Movers</a>
             <a href="/agents/" class={activeTab === 'agents' ? 'active' : ''}>Agents <span class="badge-beta">beta</span></a>
             <a href="/submit/" class={activeTab === 'submit' ? 'active' : ''}>Submit</a>
             <a href="/api-docs/" class={activeTab === 'api' ? 'active' : ''}>API</a>

@@ -1,6 +1,13 @@
 # @agentrank/mcp-server
 
-MCP server for querying the [AgentRank](https://agentrank-ai.com) index — a daily-updated, quality-scored directory of every MCP server, agent tool, and AI skill on GitHub.
+**Stop guessing which MCP servers are good.**
+
+When you ask an AI assistant to recommend an MCP server or agent tool, it guesses from training data that's months old. It can't tell you if something is abandoned, has bus factor issues, or is losing community. The long tail of 25,000+ tools is invisible to it.
+
+AgentRank fixes this. Install this MCP server and your AI queries a live, daily-scored index instead of guessing — ranked by freshness, issue health, stars, dependents, and contributors.
+
+**Without AgentRank:** Claude recommends `some-mcp-server` (abandoned 8 months ago, 2 open issues ignored).
+**With AgentRank:** Claude recommends `better-mcp-server` (score 82, actively maintained, healthy issue response).
 
 ## Quick Start
 

@@ -1,7 +1,7 @@
 {
   "name": "@agentrank/mcp-server",
   "version": "1.0.0",
-  "description": "MCP server for querying the AgentRank index of MCP servers, agent tools, and AI skills",
+  "description": "Give your AI assistant live, quality-scored recommendations for MCP servers and agent tools",
   "license": "MIT",
   "type": "module",
   "bin": {
