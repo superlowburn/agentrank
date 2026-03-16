@@ -78,19 +78,24 @@ function main(): void {
     signals: computeSignals(repo),
   }));
 
-  // Find maxes for normalization
-  const maxStars = Math.max(...rawSignals.map((r) => r.signals.stars));
-  const maxContributors = Math.max(...rawSignals.map((r) => r.signals.contributors));
-  const maxDependents = Math.max(...rawSignals.map((r) => r.signals.dependents));
-  const hasDependents = maxDependents > 0;
-  const weights = getWeights(hasDependents);
+  // Use absolute reference maxes for stable, interpretable normalization.
+  // These represent "fully credible" thresholds — repos above these values all receive a 1.0 signal.
+  // Using dataset maxes caused extreme compression because a few outlier repos pulled the scale up.
+  const maxStars = 1000;        // 1k stars = top-tier popularity signal
+  const maxContributors = 20;   // 20 contributors = well-maintained team project
+  const maxDependents = 100;    // 100 dependents = widely adopted
+  // Log dataset maxes for informational purposes only
+  const datasetMaxStars = Math.max(...rawSignals.map((r) => r.signals.stars));
+  const datasetMaxContributors = Math.max(...rawSignals.map((r) => r.signals.contributors));
+  const datasetMaxDependents = Math.max(...rawSignals.map((r) => r.signals.dependents));
+  console.log(`Dataset maxes — stars: ${datasetMaxStars}, contributors: ${datasetMaxContributors}, dependents: ${datasetMaxDependents}`);
+  console.log(`Reference maxes (for normalization) — stars: ${maxStars}, contributors: ${maxContributors}, dependents: ${maxDependents}`);
 
-  console.log(`Max stars: ${maxStars}, max contributors: ${maxContributors}, max dependents: ${maxDependents}`);
-  console.log(`Weights:`, weights);
-
-  // Normalize and score
+  // Normalize and score — use per-repo weights based on whether THAT repo has dependents.
+  // A global hasDependents flag would waste 24% of weight for the 90%+ of repos with 0 dependents.
   const scored = rawSignals.map((r) => {
     const normalized = normalizeSignals(r.signals, maxStars, maxContributors, maxDependents);
+    const weights = getWeights(r.signals.dependents > 0);
     const score = Math.round(weightedScore(normalized, weights) * 100 * 100) / 100; // 0-100, 2 decimal places
     return { id: r.id, score, signals: normalized };
   });

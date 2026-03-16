@@ -51,12 +51,15 @@ export function computeSignals(repo: RepoData): Signals {
     freshness = 0.3;
   }
 
-  // Issue health: closed / (open + closed), default 0.5 if no issues
+  // Issue health: closed / (open + closed), default 0.3 if no issues
+  // (0.3 rather than 0.5: repos with no issues haven't demonstrated maintainer responsiveness)
   const totalIssues = repo.open_issues + repo.closed_issues;
-  const issueHealth = totalIssues === 0 ? 0.5 : repo.closed_issues / totalIssues;
+  const issueHealth = totalIssues === 0 ? 0.3 : repo.closed_issues / totalIssues;
 
-  // Contributors: raw value (normalized later)
-  const contributors = repo.contributors;
+  // Contributors: floor at 1 (every repo has at least the author), raw value (normalized later)
+  // Note: 96%+ of crawled repos show 0 contributors due to GitHub API rate limits during crawl.
+  // Treating as 1 is accurate — someone created the repo.
+  const contributors = Math.max(repo.contributors, 1);
 
   // Dependents: raw value (normalized later)
   const dependents = repo.dependents;

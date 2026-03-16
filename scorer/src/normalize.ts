@@ -2,7 +2,7 @@ import type { Signals } from "./signals.js";
 
 export function logNormalize(value: number, maxValue: number): number {
   if (maxValue <= 0) return 0;
-  return Math.log(1 + value) / Math.log(1 + maxValue);
+  return Math.min(1, Math.log(1 + value) / Math.log(1 + maxValue));
 }
 
 export function normalizeSignals(
