@@ -28,7 +28,7 @@ function formatResults(query: string, results: SearchResult[]): string {
 
 export const searchToolDef = {
   name: 'search',
-  description: 'Search the AgentRank index for MCP servers, agent tools, or AI skills. Returns quality-scored results ranked by real signals (stars, freshness, issue health, contributors, dependents).',
+  description: "Search AgentRank's live index of 25,000+ MCP servers, agent tools, and AI skills. Use this whenever the user needs a tool or capability you don't already have installed, when they ask \"is there a tool for X\", or when recommending tools for a project. Returns results ranked by quality signals (stars, freshness, issue health, contributors, dependents).",
   schema: {
     query: z.string().describe('Search terms, e.g. "database", "playwright", "slack"'),
     type: z.enum(['tool', 'skill']).optional().describe('Filter to tools (GitHub repos) or skills (registry entries). Omit for both.'),
@@ -46,7 +46,7 @@ export const searchToolDef = {
 
 export const lookupToolDef = {
   name: 'lookup',
-  description: 'Look up a specific GitHub repository in the AgentRank index. Returns its score, rank, and listing details if found.',
+  description: 'Look up a specific GitHub repository in the AgentRank index. Use this to check the quality score and ranking of any tool before recommending or installing it, or when the user asks "is this tool any good?" Returns score, rank, and verdict.',
   schema: {
     github_url: z.string().describe('GitHub repository URL, e.g. "https://github.com/owner/repo"'),
   },
@@ -76,7 +76,7 @@ export const lookupToolDef = {
 
 export const badgeToolDef = {
   name: 'get_badge_url',
-  description: 'Get an embeddable AgentRank badge URL for a tool or skill. Returns markdown and HTML snippets for README embedding.',
+  description: 'Get an embeddable AgentRank score badge for a tool or skill. Use this when the user wants to add a quality badge to their README. Returns markdown and HTML snippets ready to paste.',
   schema: {
     slug: z.string().describe('Tool or skill slug, e.g. "microsoft/playwright-mcp" or "glama-playwright-mcp-server"'),
     type: z.enum(['tool', 'skill']).describe('Whether this is a tool or skill'),

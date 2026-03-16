@@ -3,7 +3,7 @@ openapi: "3.0.3"
 info:
   title: AgentRank API
   version: 1.0.0
-  description: The reputation layer for AI skills, tools & agents. Query the index programmatically.
+  description: Google for AI agents. Live ranked index of 25,000+ MCP servers and agent tools. Query programmatically.
   contact:
     url: https://agentrank-ai.com
 

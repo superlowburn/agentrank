@@ -2,38 +2,11 @@
 
 ## Launch Tweet (@comforteagle)
 
-### Option A (Problem-first)
-Your AI guesses tool recommendations from months-old training data. It has no idea if something was abandoned last week.
+I built Google for AI agents.
 
-I built AgentRank — a live index of 25,000+ MCP servers and agent tools, scored daily from real GitHub signals.
+Install one skill and your AI automatically searches 25,000+ MCP servers and agent tools whenever it needs one. Scored daily from real GitHub signals. No configuration, no prompting — it just works.
 
-Install the MCP server, your AI stops guessing.
-
-https://agentrank-ai.com
-
-### Option B (Data-first)
-I indexed every MCP server and agent tool on GitHub. 25,000+ repos, scored nightly.
-
-Top 10 right now:
-1. fastmcp (90.7)
-2. mcp-go (88.4)
-3. laravel/boost (84.3)
-4. go-sdk (80.9)
-5. mcp-proxy (78.5)
-
-Your AI can query this live. One command to install:
-npx agentrank-mcp-server
-
-https://agentrank-ai.com
-
-### Option C (Short + punchy)
-Built a live leaderboard for every MCP server and agent tool on GitHub.
-
-25,000+ repos. Scored daily. Your AI can query it.
-
-npx agentrank-mcp-server
-
-https://agentrank-ai.com
+agentrank-ai.com
 
 ---
 
@@ -89,23 +62,16 @@ Install it once, benefit forever: npx agentrank-mcp-server
 ## Reddit Posts
 
 ### r/ClaudeAI / r/ClaudeCode
-**Title:** I built an MCP server that gives Claude live tool recommendations instead of guessing from training data
+**Title:** AgentRank: Google for AI agents — install once and your AI automatically searches 25,000+ scored MCP servers
 
 **Body:**
-When Claude recommends an MCP server or agent tool, it's guessing from training data. It can't tell you if something was abandoned, if there's a better alternative, or if something new shipped yesterday.
+I built Google for AI agents.
 
-I built AgentRank — a live index of 25,000+ MCP servers and agent tools scored daily from real GitHub signals (stars, freshness, issue health, contributors, dependents).
-
-Install the MCP server and Claude gets live, scored results:
+Install one skill and your AI automatically searches 25,000+ MCP servers and agent tools whenever it needs one. Scored daily from real GitHub signals (stars, freshness, issue health, contributors, dependents). No configuration, no prompting — it just works.
 
 ```
 claude mcp add agentrank -- npx -y agentrank-mcp-server
 ```
-
-Three triggers:
-- Install a tool → see everything else in that space
-- Search for a tool → get scored, current results
-- Hit a wall → find what exists before your AI suggests a manual workaround
 
 Open source: https://github.com/superlowburn/agentrank
 Browse the index: https://agentrank-ai.com
