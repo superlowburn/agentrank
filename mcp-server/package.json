@@ -1,6 +1,6 @@
 {
   "name": "agentrank-mcp-server",
-  "version": "1.1.1",
+  "version": "1.2.0",
   "description": "Google for AI agents. Gives your AI live search across 25,000+ scored MCP servers and tools.",
   "license": "MIT",
   "type": "module",
