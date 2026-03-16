@@ -32,6 +32,7 @@ const {
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content="The reputation layer for AI skills, tools & agents. Ranked by real signals, updated daily." />
     <title>{title}</title>
+    <link rel="alternate" type="application/atom+xml" title="AgentRank Rankings" href="/feed.xml" />
     {keywords && <meta name="keywords" content={keywords} />}
     {canonicalUrl && <link rel="canonical" href={canonicalUrl} />}
     {jsonLd && <script type="application/ld+json" set:html={JSON.stringify(jsonLd).replace(/<\//g, '<\\/')} />}
@@ -217,7 +218,7 @@ const {
     </main>
     <footer>
       <div class="container">
-        Scored by real signals, updated daily &middot; <a href="https://github.com/superlowburn/agentrank" target="_blank" rel="noopener noreferrer">Open source on GitHub</a> &middot; Built by <a href="https://x.com/comforteagle" target="_blank" rel="noopener noreferrer">@comforteagle</a>
+        Scored by real signals, updated daily &middot; <a href="https://github.com/superlowburn/agentrank" target="_blank" rel="noopener noreferrer">Open source on GitHub</a> &middot; <a href="/feed.xml">RSS</a> &middot; Built by <a href="https://x.com/comforteagle" target="_blank" rel="noopener noreferrer">@comforteagle</a>
       </div>
     </footer>
     <!-- Cloudflare Web Analytics -->

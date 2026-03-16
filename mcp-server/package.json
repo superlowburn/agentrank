@@ -1,0 +1,36 @@
+{
+  "name": "@agentrank/mcp-server",
+  "version": "1.0.0",
+  "description": "MCP server for querying the AgentRank index of MCP servers, agent tools, and AI skills",
+  "license": "MIT",
+  "type": "module",
+  "bin": {
+    "agentrank-mcp": "./dist/index.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "start": "node dist/index.js"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.27.1",
+    "zod": "^3.25.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.8.0"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "keywords": [
+    "mcp",
+    "mcp-server",
+    "agentrank",
+    "ai-tools",
+    "agent-tools",
+    "model-context-protocol"
+  ]
+}

@@ -5,7 +5,8 @@
   "workspaces": [
     "crawler",
     "scorer",
-    "site"
+    "site",
+    "mcp-server"
   ],
   "dependencies": {
     "@octokit/rest": "^22.0.1"
