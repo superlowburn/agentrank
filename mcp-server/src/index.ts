@@ -4,14 +4,25 @@ import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import { searchToolDef, lookupToolDef, badgeToolDef } from './tools.js';
 
-const server = new McpServer({
-  name: 'agentrank',
-  version: '1.0.0',
-});
+function createServerInstance() {
+  const srv = new McpServer({
+    name: 'agentrank',
+    version: '1.0.0',
+  });
 
-server.tool(searchToolDef.name, searchToolDef.description, searchToolDef.schema, searchToolDef.handler);
-server.tool(lookupToolDef.name, lookupToolDef.description, lookupToolDef.schema, lookupToolDef.handler);
-server.tool(badgeToolDef.name, badgeToolDef.description, badgeToolDef.schema, badgeToolDef.handler);
+  srv.tool(searchToolDef.name, searchToolDef.description, searchToolDef.schema, searchToolDef.handler);
+  srv.tool(lookupToolDef.name, lookupToolDef.description, lookupToolDef.schema, lookupToolDef.handler);
+  srv.tool(badgeToolDef.name, badgeToolDef.description, badgeToolDef.schema, badgeToolDef.handler);
+
+  return srv;
+}
+
+// Smithery sandbox scanning support
+export function createSandboxServer() {
+  return createServerInstance();
+}
+
+const server = createServerInstance();
 
 async function main() {
   const transport = new StdioServerTransport();

@@ -1,0 +1,446 @@
+openapi: "3.0.3"
+
+info:
+  title: AgentRank API
+  version: 1.0.0
+  description: The reputation layer for AI skills, tools & agents. Query the index programmatically.
+  contact:
+    url: https://agentrank-ai.com
+
+servers:
+  - url: https://agentrank-ai.com
+
+paths:
+  /api/search:
+    get:
+      operationId: searchIndex
+      summary: Search the index for skills and tools
+      description: Full-text search across the AgentRank index. Returns matching skills and tools with their scores and rankings.
+      parameters:
+        - name: q
+          in: query
+          required: true
+          description: Search query
+          schema:
+            type: string
+        - name: type
+          in: query
+          required: false
+          description: Filter by entry type
+          schema:
+            type: string
+            enum:
+              - tool
+              - skill
+        - name: limit
+          in: query
+          required: false
+          description: Maximum number of results to return
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 50
+            default: 10
+      responses:
+        "200":
+          description: Search results
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+              description: "s-maxage=300, max-age=60"
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+              description: CORS header, value is "*"
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - query
+                  - results
+                properties:
+                  query:
+                    type: string
+                  results:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/SearchResult"
+        "400":
+          description: Missing required query parameter
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - results
+                  - error
+                properties:
+                  results:
+                    type: array
+                    items: {}
+                    example: []
+                  error:
+                    type: string
+                    example: "Missing query parameter: q"
+
+  /api/lookup:
+    get:
+      operationId: lookupByGitHubUrl
+      summary: Look up by GitHub URL
+      description: Find a skill or tool in the index by its GitHub repository URL.
+      parameters:
+        - name: url
+          in: query
+          required: true
+          description: GitHub repository URL
+          schema:
+            type: string
+            format: uri
+      responses:
+        "200":
+          description: Lookup result
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/LookupFound"
+                  - $ref: "#/components/schemas/LookupNotFound"
+                  - $ref: "#/components/schemas/LookupError"
+
+  /api/badge/skill/{slug}:
+    get:
+      operationId: getSkillBadge
+      summary: Get SVG score badge for a skill
+      description: Returns an SVG image badge showing the AgentRank score for the given skill.
+      parameters:
+        - name: slug
+          in: path
+          required: true
+          description: Skill slug
+          schema:
+            type: string
+      responses:
+        "200":
+          description: SVG badge image
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+              description: "s-maxage=86400, max-age=3600"
+          content:
+            image/svg+xml:
+              schema:
+                type: string
+
+  /api/badge/tool/{slug}:
+    get:
+      operationId: getToolBadge
+      summary: Get SVG score badge for a tool
+      description: Returns an SVG image badge showing the AgentRank score for the given tool.
+      parameters:
+        - name: slug
+          in: path
+          required: true
+          description: Tool slug
+          schema:
+            type: string
+      responses:
+        "200":
+          description: SVG badge image
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+              description: "s-maxage=86400, max-age=3600"
+          content:
+            image/svg+xml:
+              schema:
+                type: string
+
+  /api/submit:
+    post:
+      operationId: submitToolOrSkill
+      summary: Submit a new tool/skill or claim an existing one
+      description: Submit a new tool or skill to the AgentRank index, or claim ownership of an existing entry.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SubmitRequest"
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: "#/components/schemas/SubmitRequest"
+      responses:
+        "201":
+          description: Submission accepted
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - success
+                  - type
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  type:
+                    type: string
+                    enum:
+                      - new
+                      - claim
+        "400":
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "409":
+          description: Conflict (duplicate entry)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /api/register-agent:
+    post:
+      operationId: registerAgent
+      summary: Register an AI agent
+      description: Register a new AI agent with the AgentRank index.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RegisterAgentRequest"
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: "#/components/schemas/RegisterAgentRequest"
+      responses:
+        "201":
+          description: Agent registered successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - success
+                  - slug
+                  - status
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  slug:
+                    type: string
+                  status:
+                    type: string
+                    example: pending
+        "400":
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "409":
+          description: Conflict (duplicate agent)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /api/status:
+    get:
+      operationId: healthCheck
+      summary: Health check
+      description: Returns the current health status of the AgentRank API.
+      responses:
+        "200":
+          description: Health status
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - status
+                  - timestamp
+                  - response_ms
+                  - checks
+                properties:
+                  status:
+                    type: string
+                    enum:
+                      - ok
+                      - degraded
+                  timestamp:
+                    type: string
+                    format: date-time
+                  response_ms:
+                    type: number
+                  checks:
+                    type: object
+                    additionalProperties: true
+
+components:
+  schemas:
+    SearchResult:
+      type: object
+      required:
+        - type
+        - slug
+        - name
+        - description
+        - score
+        - rank
+        - url
+      properties:
+        type:
+          type: string
+          enum:
+            - tool
+            - skill
+        slug:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+          nullable: true
+        score:
+          type: number
+        rank:
+          type: integer
+        url:
+          type: string
+          format: uri
+
+    LookupFound:
+      type: object
+      required:
+        - found
+        - type
+        - slug
+        - name
+        - description
+        - score
+        - rank
+      properties:
+        found:
+          type: boolean
+          example: true
+        type:
+          type: string
+          enum:
+            - skill
+            - tool
+        slug:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+          nullable: true
+        score:
+          type: number
+        rank:
+          type: integer
+
+    LookupNotFound:
+      type: object
+      required:
+        - found
+      properties:
+        found:
+          type: boolean
+          example: false
+
+    LookupError:
+      type: object
+      required:
+        - found
+        - error
+      properties:
+        found:
+          type: boolean
+          example: false
+        error:
+          type: string
+
+    SubmitRequest:
+      type: object
+      required:
+        - contact_email
+      properties:
+        github_url:
+          type: string
+          format: uri
+        registry_url:
+          type: string
+          format: uri
+        name:
+          type: string
+        description:
+          type: string
+        contact_email:
+          type: string
+          format: email
+        owner_name:
+          type: string
+        owner_url:
+          type: string
+          format: uri
+        existing_slug:
+          type: string
+        existing_type:
+          type: string
+
+    RegisterAgentRequest:
+      type: object
+      required:
+        - name
+        - description
+        - owner_name
+        - owner_url
+        - contact_email
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        owner_name:
+          type: string
+        owner_url:
+          type: string
+          format: uri
+        contact_email:
+          type: string
+          format: email
+        capabilities:
+          type: string
+          description: Comma-separated list of capabilities
+        endpoint_url:
+          type: string
+          format: uri
+
+    ErrorResponse:
+      type: object
+      required:
+        - error
+      properties:
+        error:
+          type: string

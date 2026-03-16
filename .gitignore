@@ -6,6 +6,7 @@ data/*.db-wal
 data/d1-seed.sql
 data/ranked.json
 data/ranked-skills.json
+data/movers.json
 .env
 *.log
 site/dist/

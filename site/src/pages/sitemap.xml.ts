@@ -1,0 +1,66 @@
+import type { APIRoute } from 'astro';
+
+export const prerender = false;
+
+const SITE = 'https://agentrank-ai.com';
+
+const STATIC_PAGES = [
+  { path: '/', changefreq: 'daily' },
+  { path: '/tools/', changefreq: 'daily' },
+  { path: '/agents/', changefreq: 'daily' },
+  { path: '/submit/', changefreq: 'weekly' },
+  { path: '/api-docs/', changefreq: 'weekly' },
+];
+
+function escapeXml(s: string): string {
+  return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&apos;');
+}
+
+export const GET: APIRoute = async ({ locals }) => {
+  const { env } = (locals as any).runtime;
+  const db = env.DB;
+
+  const [toolRows, skillRows] = await Promise.all([
+    db.prepare('SELECT full_name FROM tools WHERE score IS NOT NULL').all(),
+    db.prepare('SELECT slug FROM skills WHERE score IS NOT NULL').all(),
+  ]);
+
+  const today = new Date().toISOString().slice(0, 10);
+
+  let urls = '';
+
+  for (const page of STATIC_PAGES) {
+    urls += `  <url>
+    <loc>${SITE}${page.path}</loc>
+    <lastmod>${today}</lastmod>
+    <changefreq>${page.changefreq}</changefreq>
+  </url>\n`;
+  }
+
+  for (const row of toolRows.results as { full_name: string }[]) {
+    const slug = row.full_name.replace('/', '--');
+    urls += `  <url>
+    <loc>${SITE}/tool/${escapeXml(slug)}/</loc>
+    <changefreq>weekly</changefreq>
+  </url>\n`;
+  }
+
+  for (const row of skillRows.results as { slug: string }[]) {
+    const slug = row.slug.replace(/\//g, '--').replace(/:/g, '-');
+    urls += `  <url>
+    <loc>${SITE}/skill/${escapeXml(slug)}/</loc>
+    <changefreq>weekly</changefreq>
+  </url>\n`;
+  }
+
+  const xml = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+${urls}</urlset>`;
+
+  return new Response(xml, {
+    headers: {
+      'Content-Type': 'application/xml',
+      'Cache-Control': 'public, s-maxage=86400, max-age=3600',
+    },
+  });
+};

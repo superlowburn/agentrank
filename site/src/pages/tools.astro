@@ -8,9 +8,23 @@ import { toSlug, formatStars, relativeTime, scoreColor } from '../data/tools';
 const TOP_N = 500;
 const tools = getTopTools(TOP_N);
 const totalCount = getAllTools().length;
+
+const itemListJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'ItemList',
+  name: 'Top MCP Servers & Agent Tools',
+  itemListOrder: 'https://schema.org/ItemListOrderDescending',
+  numberOfItems: Math.min(tools.length, 10),
+  itemListElement: tools.slice(0, 10).map((tool, i) => ({
+    '@type': 'ListItem',
+    position: i + 1,
+    name: tool.full_name,
+    url: `https://agentrank-ai.com/tool/${toSlug(tool.full_name)}/`,
+  })),
+};
 ---
 
-<Base title="AgentRank — Every MCP server & agent tool, ranked" activeTab="tools">
+<Base title="AgentRank — Every MCP server & agent tool, ranked" activeTab="tools" canonicalUrl="https://agentrank-ai.com/tools/" jsonLd={itemListJsonLd}>
   <div class="controls">
     <input type="text" id="search" placeholder="Search tools..." autocomplete="off" />
     <span class="count"><span id="visible-count">{tools.length}</span> of {totalCount.toLocaleString('en-US')} tools (top {TOP_N})</span>

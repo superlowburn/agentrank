@@ -6,6 +6,7 @@ import { computeSignals, type RepoData } from "./signals.js";
 import { normalizeSignals } from "./normalize.js";
 import { getWeights, weightedScore } from "./weights.js";
 import { scoreSkills } from "./skills-scorer.js";
+import { generateMovers } from "./movers.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const DB_PATH = path.resolve(__dirname, "../../data/agentrank.db");
@@ -24,6 +25,43 @@ function main(): void {
 
   const db = new Database(DB_PATH);
   db.pragma("journal_mode = WAL");
+
+  // Create score_snapshots table if it doesn't exist
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS score_snapshots (
+      snapshot_date TEXT NOT NULL,
+      type TEXT NOT NULL,
+      identifier TEXT NOT NULL,
+      score REAL NOT NULL,
+      rank INTEGER NOT NULL,
+      PRIMARY KEY (snapshot_date, type, identifier)
+    )
+  `);
+
+  // Snapshot current tool scores before re-scoring (idempotent: skip if today's snapshot exists)
+  const today = new Date().toISOString().slice(0, 10);
+  const existingSnapshot = db.prepare(
+    "SELECT 1 FROM score_snapshots WHERE snapshot_date = ? AND type = 'tool' LIMIT 1"
+  ).get(today);
+
+  if (!existingSnapshot) {
+    const toolsWithScores = db.prepare(
+      "SELECT full_name, score, rank FROM repos WHERE score IS NOT NULL AND rank IS NOT NULL"
+    ).all() as Array<{ full_name: string; score: number; rank: number }>;
+
+    if (toolsWithScores.length > 0) {
+      const insertSnapshot = db.prepare(
+        "INSERT OR IGNORE INTO score_snapshots (snapshot_date, type, identifier, score, rank) VALUES (?, 'tool', ?, ?, ?)"
+      );
+      const snapshotMany = db.transaction(() => {
+        for (const t of toolsWithScores) {
+          insertSnapshot.run(today, t.full_name, t.score, t.rank);
+        }
+      });
+      snapshotMany();
+      console.log(`Snapshotted ${toolsWithScores.length} tool scores for ${today}`);
+    }
+  }
 
   const repos = db.prepare("SELECT * FROM repos").all() as DbRepo[];
   console.log(`Scoring ${repos.length} repos`);
@@ -107,6 +145,10 @@ function main(): void {
   // Score skills
   console.log("\n" + "=".repeat(50));
   scoreSkills();
+
+  // Generate movers data
+  console.log("\n" + "=".repeat(50));
+  generateMovers();
 }
 
 main();

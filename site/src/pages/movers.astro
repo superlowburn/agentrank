@@ -1,0 +1,377 @@
+---
+export const prerender = true;
+
+import Base from '../layouts/Base.astro';
+import { getMovers } from '../data/movers';
+import { toSkillSlug } from '../data/skills';
+import { toSlug } from '../data/tools';
+
+const movers = getMovers();
+---
+
+<Base title="AgentRank — Weekly Movers" activeTab="movers" canonicalUrl="https://agentrank-ai.com/movers/">
+  {!movers.has_data ? (
+    <div class="empty-state">
+      <h2>Weekly Movers</h2>
+      <p>Movers data will be available after the first week of tracking. Check back soon.</p>
+    </div>
+  ) : (
+    <>
+      <div class="header-info">
+        <h2>Weekly Movers</h2>
+        <span class="meta">vs {movers.comparison_date} ({movers.days_span}d ago)</span>
+      </div>
+
+      <div class="tabs" id="mover-tabs">
+        <button class="tab active" data-tab="skills">Skills</button>
+        <button class="tab" data-tab="tools">Tools</button>
+      </div>
+
+      <div class="tab-content active" id="tab-skills">
+        {movers.skills.gainers.length > 0 && (
+          <>
+            <h3 class="section-title">Top Gainers</h3>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Rank</th>
+                    <th>Name</th>
+                    <th>Score</th>
+                    <th>Change</th>
+                    <th>Rank Move</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {movers.skills.gainers.map((m) => (
+                    <tr>
+                      <td class="rank">{m.current_rank}</td>
+                      <td class="name"><a href={`/skill/${toSkillSlug(m.identifier)}/`}>{m.name || m.identifier}</a></td>
+                      <td class="score">{m.current_score.toFixed(1)}</td>
+                      <td class="change positive">+{m.score_change.toFixed(2)}</td>
+                      <td class="rank-move">{m.rank_change > 0 ? `+${m.rank_change}` : m.rank_change === 0 ? '—' : String(m.rank_change)}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </>
+        )}
+
+        {movers.skills.losers.length > 0 && (
+          <>
+            <h3 class="section-title">Top Losers</h3>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Rank</th>
+                    <th>Name</th>
+                    <th>Score</th>
+                    <th>Change</th>
+                    <th>Rank Move</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {movers.skills.losers.map((m) => (
+                    <tr>
+                      <td class="rank">{m.current_rank}</td>
+                      <td class="name"><a href={`/skill/${toSkillSlug(m.identifier)}/`}>{m.name || m.identifier}</a></td>
+                      <td class="score">{m.current_score.toFixed(1)}</td>
+                      <td class="change negative">{m.score_change.toFixed(2)}</td>
+                      <td class="rank-move">{m.rank_change > 0 ? `+${m.rank_change}` : m.rank_change === 0 ? '—' : String(m.rank_change)}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </>
+        )}
+
+        {movers.skills.new_entries.length > 0 && (
+          <>
+            <h3 class="section-title">New This Week</h3>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Rank</th>
+                    <th>Name</th>
+                    <th>Score</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {movers.skills.new_entries.slice(0, 20).map((e) => (
+                    <tr>
+                      <td class="rank">{e.rank}</td>
+                      <td class="name"><a href={`/skill/${toSkillSlug(e.identifier)}/`}>{e.name || e.identifier}</a></td>
+                      <td class="score">{e.score.toFixed(1)}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </>
+        )}
+
+        {movers.skills.gainers.length === 0 && movers.skills.losers.length === 0 && movers.skills.new_entries.length === 0 && (
+          <p class="no-data">No skill score changes this week.</p>
+        )}
+      </div>
+
+      <div class="tab-content" id="tab-tools">
+        {movers.tools.gainers.length > 0 && (
+          <>
+            <h3 class="section-title">Top Gainers</h3>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Rank</th>
+                    <th>Name</th>
+                    <th>Score</th>
+                    <th>Change</th>
+                    <th>Rank Move</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {movers.tools.gainers.map((m) => (
+                    <tr>
+                      <td class="rank">{m.current_rank}</td>
+                      <td class="name"><a href={`/tool/${toSlug(m.identifier)}/`}>{m.name || m.identifier}</a></td>
+                      <td class="score">{m.current_score.toFixed(1)}</td>
+                      <td class="change positive">+{m.score_change.toFixed(2)}</td>
+                      <td class="rank-move">{m.rank_change > 0 ? `+${m.rank_change}` : m.rank_change === 0 ? '—' : String(m.rank_change)}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </>
+        )}
+
+        {movers.tools.losers.length > 0 && (
+          <>
+            <h3 class="section-title">Top Losers</h3>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Rank</th>
+                    <th>Name</th>
+                    <th>Score</th>
+                    <th>Change</th>
+                    <th>Rank Move</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {movers.tools.losers.map((m) => (
+                    <tr>
+                      <td class="rank">{m.current_rank}</td>
+                      <td class="name"><a href={`/tool/${toSlug(m.identifier)}/`}>{m.name || m.identifier}</a></td>
+                      <td class="score">{m.current_score.toFixed(1)}</td>
+                      <td class="change negative">{m.score_change.toFixed(2)}</td>
+                      <td class="rank-move">{m.rank_change > 0 ? `+${m.rank_change}` : m.rank_change === 0 ? '—' : String(m.rank_change)}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </>
+        )}
+
+        {movers.tools.new_entries.length > 0 && (
+          <>
+            <h3 class="section-title">New This Week</h3>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Rank</th>
+                    <th>Name</th>
+                    <th>Score</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {movers.tools.new_entries.slice(0, 20).map((e) => (
+                    <tr>
+                      <td class="rank">{e.rank}</td>
+                      <td class="name"><a href={`/tool/${toSlug(e.identifier)}/`}>{e.name || e.identifier}</a></td>
+                      <td class="score">{e.score.toFixed(1)}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </>
+        )}
+
+        {movers.tools.gainers.length === 0 && movers.tools.losers.length === 0 && movers.tools.new_entries.length === 0 && (
+          <p class="no-data">No tool score changes this week.</p>
+        )}
+      </div>
+    </>
+  )}
+</Base>
+
+<style>
+  .empty-state {
+    text-align: center;
+    padding: 3rem 1rem;
+  }
+
+  .empty-state h2 {
+    margin-bottom: 0.75rem;
+  }
+
+  .empty-state p {
+    color: var(--text-muted);
+  }
+
+  .header-info {
+    display: flex;
+    align-items: baseline;
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  .header-info h2 {
+    font-size: 1.1rem;
+  }
+
+  .meta {
+    color: var(--text-muted);
+    font-size: 0.8rem;
+  }
+
+  .tabs {
+    display: flex;
+    gap: 0.25rem;
+    margin-bottom: 1.5rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .tab {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    font-family: inherit;
+    font-size: 0.85rem;
+    padding: 0.4rem 0.75rem;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+  }
+
+  .tab:hover {
+    color: var(--text);
+  }
+
+  .tab.active {
+    color: var(--accent);
+    font-weight: 700;
+    border-bottom-color: var(--accent);
+  }
+
+  .tab-content {
+    display: none;
+  }
+
+  .tab-content.active {
+    display: block;
+  }
+
+  .section-title {
+    font-size: 0.9rem;
+    margin: 1.5rem 0 0.5rem;
+    color: var(--text-muted);
+  }
+
+  .section-title:first-child {
+    margin-top: 0;
+  }
+
+  .table-wrap {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.85rem;
+    margin-bottom: 1rem;
+  }
+
+  th {
+    background: var(--bg-surface);
+    border-bottom: 2px solid var(--border);
+    padding: 0.5rem 0.75rem;
+    text-align: left;
+    font-weight: 600;
+    white-space: nowrap;
+    color: var(--text-muted);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  td {
+    padding: 0.4rem 0.75rem;
+    border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+  }
+
+  tr:hover td {
+    background: var(--bg-hover);
+  }
+
+  .rank {
+    color: var(--text-muted);
+    width: 3rem;
+  }
+
+  .name a {
+    color: var(--text);
+    font-weight: 500;
+  }
+
+  .name a:hover {
+    color: var(--accent);
+  }
+
+  .change.positive {
+    color: #22c55e;
+    font-weight: 600;
+  }
+
+  .change.negative {
+    color: #ef4444;
+    font-weight: 600;
+  }
+
+  .rank-move {
+    color: var(--text-muted);
+  }
+
+  .no-data {
+    color: var(--text-muted);
+    padding: 2rem 0;
+    text-align: center;
+  }
+</style>
+
+<script>
+  const tabs = document.querySelectorAll('.tab');
+  const contents = document.querySelectorAll('.tab-content');
+
+  tabs.forEach((tab) => {
+    tab.addEventListener('click', () => {
+      const target = (tab as HTMLElement).dataset.tab!;
+      tabs.forEach((t) => t.classList.remove('active'));
+      contents.forEach((c) => c.classList.remove('active'));
+      tab.classList.add('active');
+      document.getElementById(`tab-${target}`)!.classList.add('active');
+    });
+  });
+</script>

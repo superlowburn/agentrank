@@ -1,0 +1,475 @@
+---
+export const prerender = false;
+
+const { env } = (Astro.locals as any).runtime;
+const token = Astro.url.searchParams.get('token') ?? '';
+
+if (!env.DASH_TOKEN || token !== env.DASH_TOKEN) {
+  return new Response('<html><body style="background:#0a0a0a;color:#e5e5e5;font-family:monospace;display:flex;justify-content:center;align-items:center;height:100vh;margin:0"><h1>403 Forbidden</h1></body></html>', {
+    status: 403,
+    headers: { 'Content-Type': 'text/html' },
+  });
+}
+---
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>AgentRank Dashboard</title>
+  <style>
+    :root {
+      --bg: #0a0a0a;
+      --bg-surface: #141414;
+      --bg-hover: #1a1a1a;
+      --text: #e5e5e5;
+      --text-muted: #a1a1aa;
+      --accent: #22c55e;
+      --border: #27272a;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: ui-monospace, 'Cascadia Code', 'Source Code Pro', Menlo, Consolas, monospace;
+      font-size: 14px;
+      line-height: 1.6;
+      padding: 2rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    h1 { font-size: 1.25rem; margin-bottom: 1.5rem; color: var(--accent); }
+    h2 { font-size: 1rem; margin: 1.5rem 0 0.75rem; color: var(--accent); }
+    h3 { font-size: 0.875rem; margin: 1rem 0 0.5rem; color: var(--text-muted); }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 0.75rem;
+      margin-bottom: 1.5rem;
+    }
+    .card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 1rem;
+    }
+    .card-label { color: var(--text-muted); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; }
+    .card-value { font-size: 1.5rem; font-weight: bold; margin: 0.25rem 0; }
+    .card-sub { color: var(--text-muted); font-size: 0.75rem; }
+
+    .expand-btn {
+      display: block;
+      width: 100%;
+      padding: 0.75rem;
+      background: transparent;
+      color: var(--text-muted);
+      border: 1px dashed var(--border);
+      border-radius: 6px;
+      font-family: inherit;
+      font-size: 0.875rem;
+      cursor: pointer;
+      margin: 1rem 0;
+      transition: border-color 0.15s, color 0.15s;
+    }
+    .expand-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+    .section { display: none; }
+    .section.loaded { display: block; }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.8125rem;
+      margin-bottom: 1rem;
+    }
+    th {
+      text-align: left;
+      color: var(--text-muted);
+      font-weight: normal;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      padding: 0.375rem 0.5rem;
+      border-bottom: 1px solid var(--border);
+    }
+    td {
+      padding: 0.375rem 0.5rem;
+      border-bottom: 1px solid var(--border);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 300px;
+    }
+    tr:hover td { background: var(--bg-hover); }
+    td.num { text-align: right; font-variant-numeric: tabular-nums; }
+
+    .bar-row { display: flex; align-items: center; gap: 0.5rem; margin: 0.25rem 0; font-size: 0.8125rem; }
+    .bar-label { width: 80px; text-align: right; color: var(--text-muted); flex-shrink: 0; }
+    .bar-track { flex: 1; height: 18px; background: var(--bg-surface); border-radius: 3px; overflow: hidden; }
+    .bar-fill { height: 100%; background: var(--accent); border-radius: 3px; min-width: 2px; transition: width 0.3s; }
+    .bar-count { width: 60px; font-variant-numeric: tabular-nums; color: var(--text-muted); flex-shrink: 0; }
+
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+    @media (max-width: 800px) { .grid-2 { grid-template-columns: 1fr; } }
+
+    .loading { color: var(--text-muted); padding: 1rem 0; }
+    .error { color: #ef4444; padding: 0.5rem 0; }
+
+    .pct-bar { display: inline-block; height: 12px; background: var(--accent); border-radius: 2px; margin-right: 0.5rem; vertical-align: middle; }
+
+    .type-page { color: #60a5fa; }
+    .type-api { color: #facc15; }
+    .type-mcp { color: #c084fc; }
+    .legend { display: flex; gap: 1rem; font-size: 0.75rem; margin-bottom: 0.5rem; }
+    .legend span::before { content: ''; display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 4px; vertical-align: middle; }
+    .legend .l-page::before { background: #60a5fa; }
+    .legend .l-api::before { background: #facc15; }
+    .legend .l-mcp::before { background: #c084fc; }
+
+    .stacked-bar { display: flex; height: 18px; border-radius: 3px; overflow: hidden; }
+    .stacked-bar .seg-page { background: #60a5fa; }
+    .stacked-bar .seg-api { background: #facc15; }
+    .stacked-bar .seg-mcp { background: #c084fc; }
+
+    .ua-cell { max-width: 200px; font-size: 0.6875rem; color: var(--text-muted); }
+  </style>
+</head>
+<body>
+  <h1>AgentRank Dashboard</h1>
+
+  <div class="cards" id="cards">
+    <div class="card"><div class="card-label">Loading...</div></div>
+  </div>
+
+  <button class="expand-btn" id="btn-l1" onclick="loadLevel(1)">Distributions & Top 20 [click to load]</button>
+  <div class="section" id="section-l1"></div>
+
+  <button class="expand-btn" id="btn-l2" onclick="loadLevel(2)">Deep Dive & Submissions [click to load]</button>
+  <div class="section" id="section-l2"></div>
+
+  <script define:vars={{ token }}>
+    const TOKEN = token;
+    const API = '/api/dash';
+
+    async function fetchLevel(level) {
+      const res = await fetch(`${API}?level=${level}&token=${encodeURIComponent(TOKEN)}`);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      return (await res.json()).data;
+    }
+
+    function fmt(n) {
+      if (n == null) return '-';
+      return typeof n === 'number' ? n.toLocaleString() : n;
+    }
+
+    function timeAgo(dateStr) {
+      if (!dateStr) return '-';
+      const d = new Date(dateStr);
+      const days = Math.floor((Date.now() - d.getTime()) / 86400000);
+      if (days === 0) return 'today';
+      if (days === 1) return '1 day ago';
+      if (days < 30) return `${days} days ago`;
+      if (days < 365) return `${Math.floor(days / 30)} months ago`;
+      return `${Math.floor(days / 365)}y ago`;
+    }
+
+    function makeCard(label, value, sub) {
+      return `<div class="card"><div class="card-label">${label}</div><div class="card-value">${value}</div>${sub ? `<div class="card-sub">${sub}</div>` : ''}</div>`;
+    }
+
+    function reqSummary(rows) {
+      const byType = { page: 0, api: 0, mcp: 0 };
+      let total = 0;
+      for (const r of rows) { byType[r.type] = r.count; total += r.count; }
+      return { total, byType };
+    }
+
+    function reqSub(byType) {
+      return `<span class="type-page">${fmt(byType.page)} page</span> / <span class="type-api">${fmt(byType.api)} api</span> / <span class="type-mcp">${fmt(byType.mcp)} mcp</span>`;
+    }
+
+    function makeBars(items, labelKey, countKey) {
+      const max = Math.max(...items.map(i => i[countKey]));
+      return items.map(i =>
+        `<div class="bar-row">
+          <span class="bar-label">${i[labelKey]}</span>
+          <div class="bar-track"><div class="bar-fill" style="width:${(i[countKey] / max * 100).toFixed(1)}%"></div></div>
+          <span class="bar-count">${fmt(i[countKey])}</span>
+        </div>`
+      ).join('');
+    }
+
+    function makeTable(rows, cols) {
+      if (!rows.length) return '<p class="loading">No data</p>';
+      const hdr = cols.map(c => `<th>${c.label}</th>`).join('');
+      const body = rows.map(r =>
+        '<tr>' + cols.map(c => {
+          const v = c.fmt ? c.fmt(r[c.key], r) : fmt(r[c.key]);
+          return `<td class="${c.num ? 'num' : ''}">${v}</td>`;
+        }).join('') + '</tr>'
+      ).join('');
+      return `<table><thead><tr>${hdr}</tr></thead><tbody>${body}</tbody></table>`;
+    }
+
+    function shortAgent(ua) {
+      if (!ua) return 'unknown';
+      // Known AI/agent patterns first
+      const agentMatch = ua.match(/(Claude[\w-]*|ChatGPT[\w-]*|OpenAI[\w-]*|Anthropic[\w-]*|AgentRank-MCP|Cursor|Copilot|Windsurf|Codex|Perplexity|GPTBot|Bard|Gemini)[\/ ]?([\d.]*)/i);
+      if (agentMatch) return agentMatch[2] ? `${agentMatch[1]}/${agentMatch[2]}` : agentMatch[1];
+      // Common tools
+      const toolMatch = ua.match(/(curl|python-requests|httpx|axios|node-fetch|got|undici|Go-http-client|Java|okhttp|PostmanRuntime|Insomnia|wget)[\/ ]?([\d.]*)/i);
+      if (toolMatch) return toolMatch[2] ? `${toolMatch[1]}/${toolMatch[2]}` : toolMatch[1];
+      // Browser — show just the browser name
+      if (ua.includes('Chrome') && !ua.includes('Edg')) return 'Chrome';
+      if (ua.includes('Edg/')) return 'Edge';
+      if (ua.includes('Firefox')) return 'Firefox';
+      if (ua.includes('Safari') && !ua.includes('Chrome')) return 'Safari';
+      // Truncate unknown
+      return ua.length > 40 ? ua.slice(0, 37) + '...' : ua;
+    }
+
+    function buildStackedBars(rows, labelKey) {
+      // Pivot rows into { label: { page, api, mcp, total } }
+      const buckets = {};
+      for (const r of rows) {
+        if (!buckets[r[labelKey]]) buckets[r[labelKey]] = { page: 0, api: 0, mcp: 0, total: 0 };
+        buckets[r[labelKey]][r.type] = r.count;
+        buckets[r[labelKey]].total += r.count;
+      }
+      const entries = Object.entries(buckets);
+      if (!entries.length) return '<p class="loading">No traffic data yet</p>';
+      const max = Math.max(...entries.map(([, v]) => v.total));
+      return entries.map(([label, v]) => {
+        const pPage = max ? (v.page / max * 100) : 0;
+        const pApi = max ? (v.api / max * 100) : 0;
+        const pMcp = max ? (v.mcp / max * 100) : 0;
+        return `<div class="bar-row">
+          <span class="bar-label">${label.slice(-5)}</span>
+          <div class="bar-track"><div class="stacked-bar" style="width:${((v.total / max) * 100).toFixed(1)}%">
+            ${v.page ? `<div class="seg-page" style="width:${(v.page/v.total*100).toFixed(1)}%"></div>` : ''}
+            ${v.api ? `<div class="seg-api" style="width:${(v.api/v.total*100).toFixed(1)}%"></div>` : ''}
+            ${v.mcp ? `<div class="seg-mcp" style="width:${(v.mcp/v.total*100).toFixed(1)}%"></div>` : ''}
+          </div></div>
+          <span class="bar-count">${fmt(v.total)}</span>
+        </div>`;
+      }).join('');
+    }
+
+    function buildHourlyTraffic(rows) { return buildStackedBars(rows, 'hour'); }
+    function buildDailyTraffic(rows) { return buildStackedBars(rows, 'day'); }
+
+    // Level 0
+    fetchLevel(0).then(d => {
+      const r24 = reqSummary(d.reqs_24h);
+      const r7d = reqSummary(d.reqs_7d);
+      document.getElementById('cards').innerHTML = [
+        makeCard('Tools', fmt(d.tools.total), `avg ${d.tools.avg_score} / top ${d.tools.top_score}`),
+        makeCard('Skills', fmt(d.skills.total), `avg ${d.skills.avg_score} / top ${d.skills.top_score}`),
+        makeCard('Agents', fmt(d.agents.total)),
+        makeCard('Pending', fmt(d.pending.total)),
+        makeCard('Archived', fmt(d.archived.total)),
+        makeCard('Freshness', timeAgo(d.tools.latest_commit), 'latest commit'),
+        makeCard('Requests (24h)', fmt(r24.total), reqSub(r24.byType)),
+        makeCard('Requests (7d)', fmt(r7d.total), reqSub(r7d.byType)),
+        makeCard('Agent Clients (7d)', fmt(d.unique_agents_7d), 'distinct API/MCP user-agents'),
+      ].join('');
+      // Auto-load level 1 & 2
+      loadLevel(1);
+      loadLevel(2);
+    }).catch(e => {
+      document.getElementById('cards').innerHTML = `<div class="error">Failed to load: ${e.message}</div>`;
+    });
+
+    // Level 1 & 2
+    async function loadLevel(level) {
+      const btn = document.getElementById(`btn-l${level}`);
+      const section = document.getElementById(`section-l${level}`);
+      btn.textContent = 'Loading...';
+      btn.disabled = true;
+
+      try {
+        const d = await fetchLevel(level);
+        btn.style.display = 'none';
+
+        if (level === 1) {
+          // Build hourly traffic bars
+          const hourlyHtml = buildHourlyTraffic(d.hourly_traffic);
+
+          section.innerHTML = `
+            <h2>Agent Activity (7d)</h2>
+            <div class="grid-2">
+              <div>
+                <h3>API/MCP Clients</h3>
+                ${d.agent_clients.length ? makeTable(d.agent_clients, [
+                  { key: 'ua', label: 'Agent', fmt: (v) => `<span title="${(v||'').replace(/"/g, '&quot;')}">${shortAgent(v)}</span>` },
+                  { key: 'requests', label: 'Requests', num: true },
+                  { key: 'first_seen', label: 'First Seen', fmt: (v) => v ? v.slice(5, 16) : '-' },
+                  { key: 'last_seen', label: 'Last Seen', fmt: (v) => v ? v.slice(5, 16) : '-' },
+                ]) : '<p class="loading">No API/MCP traffic yet</p>'}
+              </div>
+              <div>
+                <h3>Top Searches</h3>
+                ${d.top_searches.length ? makeTable(d.top_searches, [
+                  { key: 'query', label: 'Query' },
+                  { key: 'count', label: 'Count', num: true },
+                ]) : '<p class="loading">No search queries logged yet</p>'}
+                <h3>Top Lookups</h3>
+                ${d.top_lookups.length ? makeTable(d.top_lookups, [
+                  { key: 'query', label: 'URL' },
+                  { key: 'count', label: 'Count', num: true },
+                ]) : '<p class="loading">No lookups logged yet</p>'}
+              </div>
+            </div>
+            <h2>Hourly Traffic (24h)</h2>
+            <div class="legend"><span class="l-page">page</span><span class="l-api">api</span><span class="l-mcp">mcp</span></div>
+            ${hourlyHtml}
+            <div class="grid-2">
+              <div>
+                <h2>Top Paths (7d)</h2>
+                ${makeTable(d.top_paths, [
+                  { key: 'path', label: 'Path' },
+                  { key: 'total', label: 'Total', num: true },
+                  { key: 'pages', label: 'Page', num: true },
+                  { key: 'apis', label: 'API', num: true },
+                  { key: 'mcps', label: 'MCP', num: true },
+                ])}
+              </div>
+              <div>
+                <h2>Top Countries (7d)</h2>
+                ${d.top_countries.length ? makeBars(d.top_countries, 'country', 'count') : '<p class="loading">No data yet</p>'}
+              </div>
+            </div>
+            <div class="grid-2">
+              <div>
+                <h2>Score Distribution (Tools)</h2>
+                ${makeBars(d.score_distribution, 'bucket', 'count')}
+              </div>
+              <div>
+                <h2>Freshness</h2>
+                ${makeBars(d.freshness, 'bucket', 'count')}
+              </div>
+            </div>
+            <div class="grid-2">
+              <div>
+                <h2>Languages (Top 15)</h2>
+                ${makeBars(d.languages, 'language', 'count')}
+              </div>
+              <div>
+                <h2>Licenses (Top 10)</h2>
+                ${makeBars(d.licenses, 'license', 'count')}
+              </div>
+            </div>
+            <h2>Top 20 Tools</h2>
+            ${makeTable(d.top_tools, [
+              { key: 'rank', label: '#', num: true },
+              { key: 'full_name', label: 'Name' },
+              { key: 'score', label: 'Score', num: true },
+              { key: 'stars', label: 'Stars', num: true },
+              { key: 'last_commit_at', label: 'Last Commit', fmt: timeAgo },
+            ])}
+            <h2>Top 20 Skills</h2>
+            ${makeTable(d.top_skills, [
+              { key: 'rank', label: '#', num: true },
+              { key: 'name', label: 'Name' },
+              { key: 'score', label: 'Score', num: true },
+              { key: 'installs', label: 'Installs', num: true },
+              { key: 'source', label: 'Source' },
+            ])}
+          `;
+        } else if (level === 2) {
+          const c = d.completeness;
+          const pctBar = (pct) => `<span class="pct-bar" style="width:${pct}px"></span>${pct}%`;
+          const dailyHtml = buildDailyTraffic(d.daily_traffic);
+
+          section.innerHTML = `
+            <h2>Daily Traffic (30d)</h2>
+            <div class="legend"><span class="l-page">page</span><span class="l-api">api</span><span class="l-mcp">mcp</span></div>
+            ${dailyHtml}
+            <h2>Recent Requests (last 50)</h2>
+            ${d.recent_requests.length ? makeTable(d.recent_requests, [
+              { key: 'ts', label: 'Time', fmt: (v) => v ? v.slice(5, 16) : '-' },
+              { key: 'method', label: 'Method' },
+              { key: 'path', label: 'Path' },
+              { key: 'type', label: 'Type', fmt: (v) => `<span class="type-${v}">${v}</span>` },
+              { key: 'status', label: 'Status', num: true },
+              { key: 'country', label: 'Country' },
+              { key: 'duration_ms', label: 'ms', num: true },
+              { key: 'ua', label: 'User-Agent', fmt: (v) => `<span class="ua-cell">${(v||'').slice(0, 60)}</span>` },
+            ]) : '<p class="loading">No requests logged yet</p>'}
+            <h2>Data Completeness</h2>
+            <table>
+              <thead><tr><th>Field</th><th>Coverage</th></tr></thead>
+              <tbody>
+                <tr><td>Description</td><td>${pctBar(c.pct_description)}</td></tr>
+                <tr><td>README excerpt</td><td>${pctBar(c.pct_readme)}</td></tr>
+                <tr><td>License</td><td>${pctBar(c.pct_license)}</td></tr>
+                <tr><td>Language</td><td>${pctBar(c.pct_language)}</td></tr>
+                <tr><td>Dependents > 0</td><td>${pctBar(c.pct_dependents)}</td></tr>
+              </tbody>
+            </table>
+            <div class="grid-2">
+              <div>
+                <h2>Best Maintained (close ratio, >10 issues)</h2>
+                ${makeTable(d.best_maintained, [
+                  { key: 'full_name', label: 'Name' },
+                  { key: 'close_ratio', label: 'Ratio', num: true },
+                  { key: 'closed_issues', label: 'Closed', num: true },
+                  { key: 'open_issues', label: 'Open', num: true },
+                ])}
+              </div>
+              <div>
+                <h2>Most Depended-On</h2>
+                ${makeTable(d.most_depended, [
+                  { key: 'full_name', label: 'Name' },
+                  { key: 'dependents', label: 'Deps', num: true },
+                  { key: 'stars', label: 'Stars', num: true },
+                  { key: 'score', label: 'Score', num: true },
+                ])}
+              </div>
+            </div>
+            <div class="grid-2">
+              <div>
+                <h2>Most Starred</h2>
+                ${makeTable(d.most_starred, [
+                  { key: 'full_name', label: 'Name' },
+                  { key: 'stars', label: 'Stars', num: true },
+                  { key: 'score', label: 'Score', num: true },
+                  { key: 'dependents', label: 'Deps', num: true },
+                ])}
+              </div>
+              <div>
+                <h2>Skill Sources</h2>
+                ${makeTable(d.skill_sources, [
+                  { key: 'source', label: 'Source' },
+                  { key: 'count', label: 'Count', num: true },
+                  { key: 'avg_score', label: 'Avg Score', num: true },
+                ])}
+              </div>
+            </div>
+            <h2>Score Distribution (Skills)</h2>
+            ${makeBars(d.skill_score_distribution, 'bucket', 'count')}
+            <h2>Submissions Queue (${d.submissions_queue.length})</h2>
+            ${d.submissions_queue.length
+              ? makeTable(d.submissions_queue, [
+                  { key: 'id', label: 'ID', num: true },
+                  { key: 'type', label: 'Type' },
+                  { key: 'name', label: 'Name' },
+                  { key: 'github_url', label: 'GitHub' },
+                  { key: 'contact_email', label: 'Email' },
+                  { key: 'submitted_at', label: 'When', fmt: timeAgo },
+                ])
+              : '<p class="loading">Queue empty</p>'
+            }
+          `;
+        }
+        section.classList.add('loaded');
+      } catch (e) {
+        section.innerHTML = `<div class="error">Failed to load level ${level}: ${e.message}</div>`;
+        section.classList.add('loaded');
+        btn.style.display = 'none';
+      }
+    }
+  </script>
+</body>
+</html>

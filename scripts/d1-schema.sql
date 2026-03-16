@@ -70,6 +70,25 @@ CREATE TABLE agents (
   status TEXT NOT NULL DEFAULT 'pending'
 );
 
+-- Request log — survives pipeline DROP/CREATE cycles
+CREATE TABLE IF NOT EXISTS request_log (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  ts TEXT NOT NULL DEFAULT (datetime('now')),
+  path TEXT NOT NULL,
+  method TEXT NOT NULL DEFAULT 'GET',
+  type TEXT NOT NULL,
+  status INTEGER,
+  ua TEXT,
+  country TEXT,
+  duration_ms INTEGER,
+  query TEXT  -- search term (q=) or lookup URL (url=) for API requests
+);
+CREATE INDEX IF NOT EXISTS idx_reqlog_ts ON request_log(ts);
+CREATE INDEX IF NOT EXISTS idx_reqlog_type ON request_log(type);
+CREATE INDEX IF NOT EXISTS idx_reqlog_path ON request_log(path);
+-- Migration (run once on existing D1):
+-- ALTER TABLE request_log ADD COLUMN query TEXT;
+
 -- Submissions table — survives pipeline DROP/CREATE cycles
 CREATE TABLE IF NOT EXISTS submissions (
   id INTEGER PRIMARY KEY AUTOINCREMENT,

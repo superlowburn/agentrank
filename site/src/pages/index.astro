@@ -9,9 +9,56 @@ const TOP_N = 500;
 const allSkills = getAllSkills();
 const skills = getTopSkills(TOP_N);
 const totalCount = allSkills.length;
+
+const websiteJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  name: 'AgentRank',
+  url: 'https://agentrank-ai.com',
+  description: 'The reputation layer for AI skills, tools & agents. Ranked by real signals, updated daily.',
+  potentialAction: {
+    '@type': 'SearchAction',
+    target: {
+      '@type': 'EntryPoint',
+      urlTemplate: 'https://agentrank-ai.com/api/search?q={search_term_string}',
+    },
+    'query-input': 'required name=search_term_string',
+  },
+};
+
+const itemListJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'ItemList',
+  name: 'Top AI Skills',
+  itemListOrder: 'https://schema.org/ItemListOrderDescending',
+  numberOfItems: Math.min(skills.length, 10),
+  itemListElement: skills.slice(0, 10).map((skill, i) => ({
+    '@type': 'ListItem',
+    position: i + 1,
+    name: skill.name || skill.slug,
+    url: `https://agentrank-ai.com/skill/${toSkillSlug(skill.slug)}/`,
+  })),
+};
 ---
 
-<Base title="AgentRank — The reputation layer for AI skills, tools & agents" activeTab="skills">
+<Base title="AgentRank — The reputation layer for AI skills, tools & agents" activeTab="skills" canonicalUrl="https://agentrank-ai.com/" jsonLd={[websiteJsonLd, itemListJsonLd]}>
+  <div class="install-banner">
+    <div class="install-pitch">
+      <strong>Give your AI live tool rankings.</strong>
+      <span class="install-sub">Install the AgentRank skill and every recommendation is scored, current, and backed by real data.</span>
+    </div>
+    <div class="install-options">
+      <div class="install-option">
+        <span class="install-label">Claude Code</span>
+        <code class="install-cmd" title="Click to copy">claude mcp add agentrank -- npx -y agentrank-mcp-server</code>
+      </div>
+      <div class="install-option">
+        <span class="install-label">Claude Desktop / Cursor / Windsurf</span>
+        <code class="install-cmd" title="Click to copy">{'{"command":"npx","args":["-y","agentrank-mcp-server"]}'}</code>
+      </div>
+    </div>
+  </div>
+
   <div class="controls">
     <input type="text" id="search" placeholder="Search skills..." autocomplete="off" />
     <span class="count"><span id="visible-count">{skills.length}</span> of {totalCount.toLocaleString('en-US')} skills</span>
@@ -56,6 +103,81 @@ const totalCount = allSkills.length;
 </Base>
 
 <style>
+  .install-banner {
+    background: var(--bg-surface);
+    border: 1px solid var(--accent);
+    border-radius: 6px;
+    padding: 1rem 1.25rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .install-pitch strong {
+    font-size: 0.95rem;
+  }
+
+  .install-sub {
+    color: var(--text-muted);
+    font-size: 0.8rem;
+    margin-left: 0.5rem;
+  }
+
+  .install-options {
+    display: flex;
+    gap: 1.5rem;
+    margin-top: 0.75rem;
+    flex-wrap: wrap;
+  }
+
+  .install-option {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    min-width: 0;
+    flex: 1;
+  }
+
+  .install-label {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-muted);
+    font-weight: 600;
+  }
+
+  .install-cmd {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 0.4rem 0.6rem;
+    font-size: 0.78rem;
+    color: var(--accent);
+    cursor: pointer;
+    overflow-x: auto;
+    white-space: nowrap;
+    transition: border-color 0.15s;
+  }
+
+  .install-cmd:hover {
+    border-color: var(--accent);
+  }
+
+  .install-cmd.copied {
+    border-color: var(--accent);
+  }
+
+  @media (max-width: 640px) {
+    .install-sub {
+      display: block;
+      margin-left: 0;
+      margin-top: 0.25rem;
+    }
+
+    .install-options {
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+  }
+
   .controls {
     display: flex;
     justify-content: space-between;
@@ -272,6 +394,19 @@ const totalCount = allSkills.length;
       });
 
       rows.forEach((row) => tbody.appendChild(row));
+    });
+  });
+
+  document.querySelectorAll('.install-cmd').forEach((el) => {
+    el.addEventListener('click', () => {
+      navigator.clipboard.writeText(el.textContent!.trim());
+      el.classList.add('copied');
+      const orig = el.textContent;
+      el.textContent = 'Copied!';
+      setTimeout(() => {
+        el.textContent = orig;
+        el.classList.remove('copied');
+      }, 1500);
     });
   });
 </script>

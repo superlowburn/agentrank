@@ -92,6 +92,43 @@ export function scoreSkills(): void {
   const db = new Database(DB_PATH);
   db.pragma("journal_mode = WAL");
 
+  // Create score_snapshots table if it doesn't exist
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS score_snapshots (
+      snapshot_date TEXT NOT NULL,
+      type TEXT NOT NULL,
+      identifier TEXT NOT NULL,
+      score REAL NOT NULL,
+      rank INTEGER NOT NULL,
+      PRIMARY KEY (snapshot_date, type, identifier)
+    )
+  `);
+
+  // Snapshot current skill scores before re-scoring (idempotent: skip if today's snapshot exists)
+  const today = new Date().toISOString().slice(0, 10);
+  const existingSnapshot = db.prepare(
+    "SELECT 1 FROM score_snapshots WHERE snapshot_date = ? AND type = 'skill' LIMIT 1"
+  ).get(today);
+
+  if (!existingSnapshot) {
+    const skillsWithScores = db.prepare(
+      "SELECT slug, score, rank FROM skills WHERE score IS NOT NULL AND rank IS NOT NULL"
+    ).all() as Array<{ slug: string; score: number; rank: number }>;
+
+    if (skillsWithScores.length > 0) {
+      const insertSnapshot = db.prepare(
+        "INSERT OR IGNORE INTO score_snapshots (snapshot_date, type, identifier, score, rank) VALUES (?, 'skill', ?, ?, ?)"
+      );
+      const snapshotMany = db.transaction(() => {
+        for (const s of skillsWithScores) {
+          insertSnapshot.run(today, s.slug, s.score, s.rank);
+        }
+      });
+      snapshotMany();
+      console.log(`Snapshotted ${skillsWithScores.length} skill scores for ${today}`);
+    }
+  }
+
   const skills = db.prepare("SELECT * FROM skills").all() as SkillRow[];
   console.log(`Scoring ${skills.length} skills`);
 

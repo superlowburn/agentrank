@@ -38,6 +38,7 @@ export async function search(
 
   const res = await fetch(`${BASE_URL}/api/search?${params}`, {
     signal: AbortSignal.timeout(10_000),
+    headers: { 'User-Agent': 'AgentRank-MCP/1.0' },
   });
   if (!res.ok) throw new Error(`AgentRank API error: ${res.status}`);
   return res.json() as Promise<SearchResponse>;
@@ -47,6 +48,7 @@ export async function lookup(githubUrl: string): Promise<LookupResponse> {
   const params = new URLSearchParams({ url: githubUrl });
   const res = await fetch(`${BASE_URL}/api/lookup?${params}`, {
     signal: AbortSignal.timeout(10_000),
+    headers: { 'User-Agent': 'AgentRank-MCP/1.0' },
   });
   if (!res.ok) throw new Error(`AgentRank API error: ${res.status}`);
   return res.json() as Promise<LookupResponse>;

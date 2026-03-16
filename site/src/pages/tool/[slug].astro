@@ -262,6 +262,19 @@ const relatedTools = relatedRows.results || [];
     <a href={tool.url} target="_blank" rel="noopener noreferrer">View on GitHub &rarr;</a>
   </div>
 
+  <div class="share-section">
+    <h3>Share</h3>
+    <div class="share-buttons">
+      <a
+        href={`https://x.com/intent/tweet?text=${encodeURIComponent(`${tool.full_name} scored ${tool.score.toFixed(1)} on AgentRank`)}&url=${encodeURIComponent(pageUrl)}`}
+        target="_blank"
+        rel="noopener noreferrer"
+        class="share-btn share-twitter"
+      >Share on X</a>
+      <button class="share-btn copy-link-btn" data-copy={pageUrl}>Copy link</button>
+    </div>
+  </div>
+
   <div class="claim-cta">
     Are you the maintainer? <a href={`/submit/?claim=${slug}&type=tool`}>Claim this listing</a>
   </div>
@@ -273,6 +286,15 @@ const relatedTools = relatedRows.results || [];
         navigator.clipboard.writeText(text).then(() => {
           btn.textContent = 'Copied!';
           setTimeout(() => { btn.textContent = 'Copy'; }, 2000);
+        });
+      });
+    });
+    document.querySelectorAll('.copy-link-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const text = btn.getAttribute('data-copy') || '';
+        navigator.clipboard.writeText(text).then(() => {
+          btn.textContent = 'Copied!';
+          setTimeout(() => { btn.textContent = 'Copy link'; }, 2000);
         });
       });
     });
@@ -530,6 +552,33 @@ const relatedTools = relatedRows.results || [];
   .copy-btn:hover {
     border-color: var(--accent);
     color: var(--accent);
+  }
+
+  .share-section {
+    margin-top: 2rem;
+  }
+
+  .share-buttons {
+    display: flex;
+    gap: 0.5rem;
+  }
+
+  .share-btn {
+    font-size: 0.75rem;
+    padding: 0.35rem 0.75rem;
+    border-radius: 3px;
+    border: 1px solid var(--border);
+    background: var(--bg-surface);
+    color: var(--text-muted);
+    cursor: pointer;
+    text-decoration: none;
+    font-family: inherit;
+  }
+
+  .share-btn:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    text-decoration: none;
   }
 
   .claim-cta {
