@@ -15,8 +15,8 @@ if (!row) {
 }
 
 const claim = await env.DB.prepare(
-  'SELECT owner_name, owner_url FROM submissions WHERE existing_slug = ? AND status = ? LIMIT 1'
-).bind(fullName, 'approved').first();
+  'SELECT github_username, tagline, logo_url, is_deprecated FROM claims WHERE tool_full_name = ? AND status = ? LIMIT 1'
+).bind(fullName, 'active').first();
 
 const tool: Tool = {
   rank: row.rank as number,
@@ -113,9 +113,12 @@ const relatedTools = relatedRows.results || [];
     </div>
     {claim && (
       <div class="claimed-badge">
-        Claimed by {claim.owner_name as string}
-        {(claim.owner_url as string) && <a href={claim.owner_url as string}>&rarr;</a>}
+        Maintained by <a href={`https://github.com/${claim.github_username as string}`} target="_blank" rel="noopener noreferrer">@{claim.github_username as string}</a>
+        {(claim.is_deprecated as number) === 1 && <span class="deprecated-badge">deprecated</span>}
       </div>
+    )}
+    {claim && (claim.tagline as string) && (
+      <p class="claim-tagline">{claim.tagline as string}</p>
     )}
   </div>
 
@@ -276,7 +279,7 @@ const relatedTools = relatedRows.results || [];
   </div>
 
   <div class="claim-cta">
-    Are you the maintainer? <a href={`/submit/?claim=${slug}&type=tool`}>Claim this listing</a>
+    Are you the maintainer? <a href={`/claim/${slug}/`}>Claim this listing</a>
   </div>
 
   <script>
@@ -595,6 +598,21 @@ const relatedTools = relatedRows.results || [];
     font-size: 0.75rem;
     color: var(--accent);
     margin-top: 0.25rem;
+  }
+
+  .claim-tagline {
+    font-size: 0.82rem;
+    color: var(--text-muted);
+    margin-top: 0.2rem;
+    font-style: italic;
+  }
+
+  .deprecated-badge {
+    font-size: 0.65rem;
+    padding: 0.1rem 0.35rem;
+    border-radius: 3px;
+    background: #78350f;
+    color: #fbbf24;
   }
 
   .summary {

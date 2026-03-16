@@ -1,0 +1,406 @@
+---
+import Base from '../../layouts/Base.astro';
+
+const { slug } = Astro.params;
+const fullName = slug!.replace('--', '/');
+
+const { env } = Astro.locals.runtime;
+
+const row = await env.DB.prepare(
+  'SELECT full_name, url, description, rank, score FROM tools WHERE full_name = ?'
+).bind(fullName).first();
+
+if (!row) {
+  return Astro.redirect('/404');
+}
+
+// Parse session cookie
+function parseCookies(header: string): Record<string, string> {
+  return Object.fromEntries(
+    header.split('; ').filter(Boolean).map((c) => {
+      const i = c.indexOf('=');
+      return [c.slice(0, i), c.slice(i + 1)];
+    })
+  );
+}
+
+const cookies = parseCookies(Astro.request.headers.get('cookie') || '');
+const rawSession = cookies.claim_session ? decodeURIComponent(cookies.claim_session) : null;
+const colonIdx = rawSession ? rawSession.indexOf(':') : -1;
+const sessionSlug = rawSession ? rawSession.slice(0, colonIdx) : null;
+const githubUsername = rawSession ? rawSession.slice(colonIdx + 1) : null;
+const isAuthenticated = sessionSlug === slug && !!githubUsername;
+
+// Load existing claim if authenticated
+const existingClaim = isAuthenticated
+  ? await env.DB.prepare(
+      'SELECT tagline, category, logo_url, is_deprecated FROM claims WHERE tool_full_name = ? AND github_username = ? AND verified = 1'
+    ).bind(fullName, githubUsername).first()
+  : null;
+
+const urlParams = new URL(Astro.request.url).searchParams;
+const justVerified = urlParams.get('verified') === '1';
+const errorCode = urlParams.get('error');
+
+const ERROR_MESSAGES: Record<string, string> = {
+  cancelled: 'GitHub authorization was cancelled.',
+  invalid_state: 'Invalid OAuth state. Please try again.',
+  csrf: 'Security check failed. Please try again.',
+  token: 'Failed to get GitHub access token. Please try again.',
+  user: 'Failed to get your GitHub user info. Please try again.',
+  not_contributor: `You must be a contributor or owner of ${fullName} to claim this listing.`,
+};
+
+const CATEGORIES = [
+  { value: 'mcp-server', label: 'MCP Server' },
+  { value: 'agent-framework', label: 'Agent Framework' },
+  { value: 'ai-tool', label: 'AI Tool' },
+  { value: 'llm-client', label: 'LLM Client' },
+  { value: 'code-assistant', label: 'Code Assistant' },
+  { value: 'data-processing', label: 'Data Processing' },
+  { value: 'browser-automation', label: 'Browser Automation' },
+  { value: 'database', label: 'Database' },
+  { value: 'search', label: 'Search' },
+  { value: 'monitoring', label: 'Monitoring' },
+  { value: 'communication', label: 'Communication' },
+  { value: 'other', label: 'Other' },
+];
+---
+
+<Base title={`Claim ${fullName} — AgentRank`} description={`Claim and enrich the ${fullName} listing on AgentRank`}>
+  <div class="back">
+    <a href={`/tool/${slug}/`}>&larr; Back to {fullName}</a>
+  </div>
+
+  <div class="claim-header">
+    <h2>Claim listing</h2>
+    <p class="tool-name">{fullName}</p>
+    {row.description && <p class="tool-desc">{row.description as string}</p>}
+  </div>
+
+  {errorCode && (
+    <div class="error-banner">
+      {ERROR_MESSAGES[errorCode] || 'Something went wrong. Please try again.'}
+    </div>
+  )}
+
+  {justVerified && !errorCode && (
+    <div class="success-banner">
+      Verified as <strong>@{githubUsername}</strong>. You can now enrich this listing.
+    </div>
+  )}
+
+  {!isAuthenticated ? (
+    <div class="auth-section">
+      <p class="auth-desc">
+        To claim this listing you must be a contributor or owner of the
+        <a href={row.url as string} target="_blank" rel="noopener noreferrer">{fullName}</a> repository.
+        We verify ownership via GitHub.
+      </p>
+      <a href={`/api/auth/github?tool=${slug}&type=tool`} class="github-btn">
+        Verify with GitHub
+      </a>
+    </div>
+  ) : (
+    <form id="claim-form" class="claim-form">
+      <input type="hidden" id="tool-slug" value={slug} />
+
+      <div class="form-group">
+        <label for="tagline">Tagline <span class="hint">(max 200 chars)</span></label>
+        <input
+          type="text"
+          id="tagline"
+          name="tagline"
+          maxlength="200"
+          placeholder="A short description that captures what this tool does"
+          value={existingClaim?.tagline as string || ''}
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="category">Primary category</label>
+        <select id="category" name="category">
+          <option value="">— Select a category —</option>
+          {CATEGORIES.map((c) => (
+            <option value={c.value} selected={existingClaim?.category === c.value}>
+              {c.label}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="logo_url">Logo URL <span class="hint">(https:// only)</span></label>
+        <input
+          type="url"
+          id="logo_url"
+          name="logo_url"
+          placeholder="https://example.com/logo.png"
+          value={existingClaim?.logo_url as string || ''}
+        />
+      </div>
+
+      <div class="form-group checkbox-group">
+        <label>
+          <input
+            type="checkbox"
+            id="is_deprecated"
+            name="is_deprecated"
+            checked={existingClaim?.is_deprecated === 1}
+          />
+          Mark as deprecated
+        </label>
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="save-btn" id="save-btn">Save changes</button>
+        <span id="save-status" class="save-status"></span>
+      </div>
+    </form>
+  )}
+</Base>
+
+<script>
+  const form = document.getElementById('claim-form') as HTMLFormElement | null;
+  if (form) {
+    const slugEl = document.getElementById('tool-slug') as HTMLInputElement;
+    const saveBtn = document.getElementById('save-btn') as HTMLButtonElement;
+    const statusEl = document.getElementById('save-status') as HTMLSpanElement;
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      saveBtn.disabled = true;
+      statusEl.textContent = 'Saving...';
+      statusEl.className = 'save-status';
+
+      const data = {
+        tagline: (document.getElementById('tagline') as HTMLInputElement).value.trim() || undefined,
+        category: (document.getElementById('category') as HTMLSelectElement).value || undefined,
+        logo_url: (document.getElementById('logo_url') as HTMLInputElement).value.trim() || undefined,
+        is_deprecated: (document.getElementById('is_deprecated') as HTMLInputElement).checked,
+      };
+
+      try {
+        const res = await fetch(`/api/claim/${slugEl.value}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data),
+        });
+        const result = await res.json() as { success: boolean; error?: string };
+        if (result.success) {
+          statusEl.textContent = 'Saved.';
+          statusEl.className = 'save-status ok';
+        } else {
+          statusEl.textContent = result.error || 'Save failed.';
+          statusEl.className = 'save-status err';
+        }
+      } catch {
+        statusEl.textContent = 'Network error. Please try again.';
+        statusEl.className = 'save-status err';
+      } finally {
+        saveBtn.disabled = false;
+        setTimeout(() => { statusEl.textContent = ''; }, 3000);
+      }
+    });
+  }
+</script>
+
+<style>
+  .back {
+    margin-bottom: 1.5rem;
+  }
+
+  .back a {
+    color: var(--text-muted);
+    font-size: 0.8rem;
+  }
+
+  .back a:hover {
+    color: var(--accent);
+  }
+
+  .claim-header {
+    margin-bottom: 2rem;
+  }
+
+  .claim-header h2 {
+    font-size: 1.3rem;
+    font-weight: 700;
+    margin-bottom: 0.25rem;
+  }
+
+  .tool-name {
+    color: var(--accent);
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+  }
+
+  .tool-desc {
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    margin-top: 0.25rem;
+  }
+
+  .error-banner {
+    background: #3f1515;
+    border: 1px solid #7f1d1d;
+    color: #fca5a5;
+    padding: 0.75rem 1rem;
+    border-radius: 4px;
+    font-size: 0.85rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .success-banner {
+    background: #14291d;
+    border: 1px solid #166534;
+    color: #86efac;
+    padding: 0.75rem 1rem;
+    border-radius: 4px;
+    font-size: 0.85rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .auth-section {
+    max-width: 480px;
+  }
+
+  .auth-desc {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    margin-bottom: 1.25rem;
+    line-height: 1.6;
+  }
+
+  .github-btn {
+    display: inline-block;
+    background: var(--accent);
+    color: #000;
+    font-weight: 700;
+    padding: 0.6rem 1.25rem;
+    border-radius: 4px;
+    text-decoration: none;
+    font-size: 0.85rem;
+    letter-spacing: 0.02em;
+  }
+
+  .github-btn:hover {
+    opacity: 0.88;
+    text-decoration: none;
+  }
+
+  .claim-form {
+    max-width: 560px;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+  }
+
+  .form-group label {
+    font-size: 0.8rem;
+    font-weight: 600;
+  }
+
+  .hint {
+    font-weight: 400;
+    color: var(--text-muted);
+  }
+
+  .form-group input[type="text"],
+  .form-group input[type="url"],
+  .form-group select {
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 0.5rem 0.75rem;
+    color: var(--text);
+    font-family: inherit;
+    font-size: 0.85rem;
+    width: 100%;
+  }
+
+  .form-group input:focus,
+  .form-group select:focus {
+    outline: none;
+    border-color: var(--accent);
+  }
+
+  .form-group select option {
+    background: var(--bg-surface);
+  }
+
+  .checkbox-group label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-weight: 400;
+  }
+
+  .checkbox-group input[type="checkbox"] {
+    width: 14px;
+    height: 14px;
+    accent-color: var(--accent);
+  }
+
+  .form-actions {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .save-btn {
+    background: var(--accent);
+    color: #000;
+    font-weight: 700;
+    padding: 0.5rem 1.25rem;
+    border: none;
+    border-radius: 4px;
+    font-family: inherit;
+    font-size: 0.85rem;
+    cursor: pointer;
+  }
+
+  .save-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .save-btn:hover:not(:disabled) {
+    opacity: 0.88;
+  }
+
+  .save-status {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+  }
+
+  .save-status.ok {
+    color: var(--accent);
+  }
+
+  .save-status.err {
+    color: #f87171;
+  }
+
+  @media (prefers-color-scheme: light) {
+    .error-banner {
+      background: #fef2f2;
+      border-color: #fecaca;
+      color: #b91c1c;
+    }
+
+    .success-banner {
+      background: #f0fdf4;
+      border-color: #bbf7d0;
+      color: #15803d;
+    }
+  }
+</style>

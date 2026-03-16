@@ -7,3 +7,11 @@ pages_build_output_dir = "./dist"
 binding = "DB"
 database_name = "agentrank-db"
 database_id = "946abec6-5f2b-4177-b1cb-b84769a20883"
+
+# GitHub OAuth — required for maintainer claim flow
+# Set via Cloudflare Pages dashboard: Settings > Environment Variables
+# Or locally in .dev.vars:
+#   GITHUB_CLIENT_ID=your_client_id
+#   GITHUB_CLIENT_SECRET=your_client_secret
+# Register OAuth app at: https://github.com/settings/developers
+# Callback URL: https://agentrank-ai.com/api/auth/github/callback

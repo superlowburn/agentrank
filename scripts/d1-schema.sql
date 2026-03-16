@@ -101,6 +101,27 @@ CREATE INDEX IF NOT EXISTS idx_ratelimits_window ON rate_limits(window);
 -- CREATE TABLE IF NOT EXISTS rate_limits (ip TEXT NOT NULL, window TEXT NOT NULL, count INTEGER NOT NULL DEFAULT 1, PRIMARY KEY (ip, window));
 -- CREATE INDEX IF NOT EXISTS idx_ratelimits_window ON rate_limits(window);
 
+-- Claims table — verified maintainer claims via GitHub OAuth
+-- survives pipeline DROP/CREATE cycles
+CREATE TABLE IF NOT EXISTS claims (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  tool_full_name TEXT NOT NULL,            -- "owner/repo" from tools.full_name
+  tool_type TEXT NOT NULL DEFAULT 'tool',  -- 'tool' or 'skill'
+  github_username TEXT NOT NULL,
+  github_user_id INTEGER NOT NULL,
+  tagline TEXT,                            -- short description/tagline (max 200 chars)
+  category TEXT,                           -- primary category
+  logo_url TEXT,                           -- https:// URL for logo/icon
+  is_deprecated INTEGER NOT NULL DEFAULT 0,
+  verified INTEGER NOT NULL DEFAULT 1,
+  status TEXT NOT NULL DEFAULT 'active',   -- 'active', 'removed'
+  created_at TEXT NOT NULL DEFAULT (datetime('now')),
+  updated_at TEXT NOT NULL DEFAULT (datetime('now')),
+  UNIQUE(tool_full_name, github_username)
+);
+CREATE INDEX IF NOT EXISTS idx_claims_tool ON claims(tool_full_name);
+CREATE INDEX IF NOT EXISTS idx_claims_user ON claims(github_username);
+
 -- Submissions table — survives pipeline DROP/CREATE cycles
 CREATE TABLE IF NOT EXISTS submissions (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
