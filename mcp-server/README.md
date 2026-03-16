@@ -1,4 +1,4 @@
-# @agentrank/mcp-server
+# agentrank-mcp-server
 
 **Your AI's tool recommendations are only as good as its data.**
 
@@ -22,7 +22,7 @@ Add to your Claude Desktop config (`~/Library/Application Support/Claude/claude_
   "mcpServers": {
     "agentrank": {
       "command": "npx",
-      "args": ["-y", "@agentrank/mcp-server"]
+      "args": ["-y", "agentrank-mcp-server"]
     }
   }
 }
@@ -31,7 +31,7 @@ Add to your Claude Desktop config (`~/Library/Application Support/Claude/claude_
 ### Claude Code
 
 ```bash
-claude mcp add agentrank -- npx -y @agentrank/mcp-server
+claude mcp add agentrank -- npx -y agentrank-mcp-server
 ```
 
 ### Cursor / Windsurf
@@ -42,7 +42,7 @@ Add to your MCP configuration:
 {
   "agentrank": {
     "command": "npx",
-    "args": ["-y", "@agentrank/mcp-server"]
+    "args": ["-y", "agentrank-mcp-server"]
   }
 }
 ```
