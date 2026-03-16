@@ -104,8 +104,10 @@ function slugFromUrl(url: string): string | null {
 /**
  * Extract GitHub full_name from a server detail page.
  * Looks for links to github.com/{owner}/{repo}.
+ * Uses the Glama slug (e.g. "dynatrace-oss/dynatrace-mcp") to prefer
+ * candidates whose owner matches the slug's owner.
  */
-function extractGitHubRepo(html: string): string | null {
+function extractGitHubRepo(html: string, slug: string): string | null {
   // Match github.com links that look like repo URLs (not just github.com/owner)
   // Prioritize explicit repo links, not just any github reference
   const patterns = [
@@ -146,8 +148,29 @@ function extractGitHubRepo(html: string): string | null {
   // If there's only one candidate, use it
   if (candidates.size === 1) return candidates.values().next().value!;
 
-  // If multiple, prefer one that matches the slug pattern (author matches)
-  return candidates.values().next().value!;
+  // Multiple candidates — prefer the one whose owner matches the slug's owner
+  const slugOwner = slug.split("/")[0]?.toLowerCase();
+  const slugRepo = slug.split("/")[1]?.toLowerCase();
+  const candidateArr = Array.from(candidates);
+
+  // Best match: owner AND repo name match (or are contained in) the slug
+  for (const c of candidateArr) {
+    const [cOwner, cRepo] = c.toLowerCase().split("/");
+    if (cOwner === slugOwner && (cRepo === slugRepo || cRepo?.includes(slugRepo) || slugRepo?.includes(cRepo))) {
+      return c;
+    }
+  }
+
+  // Good match: owner matches
+  for (const c of candidateArr) {
+    const cOwner = c.toLowerCase().split("/")[0];
+    if (cOwner === slugOwner) {
+      return c;
+    }
+  }
+
+  // Fallback: return first candidate
+  return candidateArr[0];
 }
 
 /**
@@ -342,7 +365,7 @@ function parseDetailPage(html: string, slug: string): GlamaServer {
     name: extractName(html),
     description: extractDescription(html),
     author,
-    githubRepo: extractGitHubRepo(html),
+    githubRepo: extractGitHubRepo(html, slug),
     weeklyDownloads: extractWeeklyDownloads(html),
     toolCount: extractToolCount(html),
     qualityGrade: extractQualityGrade(html),

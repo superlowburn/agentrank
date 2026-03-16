@@ -15,10 +15,10 @@
  *   Contributors:       10%  (from GitHub)
  *   Description:         5%  (from registry)
  *
- * Without GitHub (redistributed):
- *   Installs:           67%
- *   Platform Breadth:   22%
- *   Description:        11%
+ * Without GitHub (imputed neutral values):
+ *   Same weights as above, with freshness=0.5, issueHealth=0.5,
+ *   stars=0, contributors=0. Produces a baseline ~17.5 points from
+ *   neutral imputation.
  */
 
 import Database from "better-sqlite3";
@@ -157,7 +157,11 @@ export function scoreSkills(): void {
 
     if (repo) {
       // Full scoring with GitHub signals from repos table
-      const freshness = computeFreshness(repo.last_commit_at, repo.is_archived);
+      let freshness = computeFreshness(repo.last_commit_at, repo.is_archived);
+      // Freshness floor for established tools
+      if (repo.stars >= 200 && freshness < 0.3) {
+        freshness = 0.3;
+      }
       const issueHealth = computeIssueHealth(repo.open_issues, repo.closed_issues);
       const starsNorm = logNormalize(repo.stars, maxStars);
       const contribNorm = logNormalize(repo.contributors, maxContributors);
@@ -174,7 +178,11 @@ export function scoreSkills(): void {
       ghFromRepo++;
     } else if (skill.gh_stars !== null) {
       // Fallback: use skill-level GitHub data
-      const freshness = computeFreshness(skill.gh_last_commit_at, skill.gh_is_archived);
+      let freshness = computeFreshness(skill.gh_last_commit_at, skill.gh_is_archived);
+      // Freshness floor for established tools
+      if ((skill.gh_stars ?? 0) >= 200 && freshness < 0.3) {
+        freshness = 0.3;
+      }
       const issueHealth = computeIssueHealth(skill.gh_open_issues ?? 0, skill.gh_closed_issues ?? 0);
       const starsNorm = logNormalize(skill.gh_stars, maxStars);
       const contribNorm = logNormalize(skill.gh_contributors ?? 0, maxContributors);
@@ -190,11 +198,15 @@ export function scoreSkills(): void {
       );
       ghFromSkill++;
     } else {
-      // Registry-only scoring (redistribute GitHub 55% → installs 67%, platform 22%, desc 11%)
+      // Registry-only: impute neutral for freshness/issue health, 0 for stars/contributors
       score = (
-        installsNorm * 0.67 +
-        platformBreadth * 0.22 +
-        descQuality * 0.11
+        installsNorm * 0.30 +
+        0.5 * 0.20 +           // freshness: neutral
+        0.5 * 0.15 +           // issue health: neutral (same default as "no issues")
+        0.0 * 0.10 +           // stars: no evidence
+        platformBreadth * 0.10 +
+        0.0 * 0.10 +           // contributors: no evidence
+        descQuality * 0.05
       );
       registryOnly++;
     }

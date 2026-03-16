@@ -11,6 +11,10 @@ const db = new Database(join(ROOT, 'data', 'agentrank.db'), { readonly: true });
 const lines: string[] = [];
 const CHUNK_SIZE = 10;
 
+// Clear existing data before re-seeding
+lines.push('DELETE FROM tools;');
+lines.push('DELETE FROM skills;');
+
 const esc = (v: unknown, maxLen?: number): string => {
   if (v === null || v === undefined) return 'NULL';
   let s = String(v);

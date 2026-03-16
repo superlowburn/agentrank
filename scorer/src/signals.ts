@@ -17,7 +17,6 @@ export interface Signals {
   issueHealth: number;
   contributors: number;
   dependents: number;
-  forks: number;
   descriptionQuality: number;
   licenseHealth: number;
 }
@@ -46,6 +45,12 @@ export function computeSignals(repo: RepoData): Signals {
     freshness = Math.max(0, Math.exp(-(days - 90) / 90) * 0.1);
   }
 
+  // Freshness floor for established tools: prevent obliteration of stable, adopted projects
+  const isEstablished = repo.stars >= 200 || repo.dependents >= 5;
+  if (isEstablished && freshness < 0.3) {
+    freshness = 0.3;
+  }
+
   // Issue health: closed / (open + closed), default 0.5 if no issues
   const totalIssues = repo.open_issues + repo.closed_issues;
   const issueHealth = totalIssues === 0 ? 0.5 : repo.closed_issues / totalIssues;
@@ -55,9 +60,6 @@ export function computeSignals(repo: RepoData): Signals {
 
   // Dependents: raw value (normalized later)
   const dependents = repo.dependents;
-
-  // Forks: raw value (normalized later)
-  const forks = repo.forks;
 
   // Description quality: proxy for maintainer investment
   const desc = repo.description;
@@ -84,5 +86,5 @@ export function computeSignals(repo: RepoData): Signals {
     licenseHealth = 0.6;
   }
 
-  return { stars, freshness, issueHealth, contributors, dependents, forks, descriptionQuality, licenseHealth };
+  return { stars, freshness, issueHealth, contributors, dependents, descriptionQuality, licenseHealth };
 }

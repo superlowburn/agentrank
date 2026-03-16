@@ -9,8 +9,7 @@ export function normalizeSignals(
   signals: Signals,
   maxStars: number,
   maxContributors: number,
-  maxDependents: number,
-  maxForks: number
+  maxDependents: number
 ): Signals {
   return {
     stars: logNormalize(signals.stars, maxStars),
@@ -18,7 +17,6 @@ export function normalizeSignals(
     issueHealth: signals.issueHealth, // already 0-1
     contributors: logNormalize(signals.contributors, maxContributors),
     dependents: logNormalize(signals.dependents, maxDependents),
-    forks: logNormalize(signals.forks, maxForks),
     descriptionQuality: signals.descriptionQuality, // already 0-1
     licenseHealth: signals.licenseHealth, // already 0-1
   };

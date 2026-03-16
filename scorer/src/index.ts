@@ -44,16 +44,15 @@ function main(): void {
   const maxStars = Math.max(...rawSignals.map((r) => r.signals.stars));
   const maxContributors = Math.max(...rawSignals.map((r) => r.signals.contributors));
   const maxDependents = Math.max(...rawSignals.map((r) => r.signals.dependents));
-  const maxForks = Math.max(...rawSignals.map((r) => r.signals.forks));
   const hasDependents = maxDependents > 0;
   const weights = getWeights(hasDependents);
 
-  console.log(`Max stars: ${maxStars}, max contributors: ${maxContributors}, max dependents: ${maxDependents}, max forks: ${maxForks}`);
+  console.log(`Max stars: ${maxStars}, max contributors: ${maxContributors}, max dependents: ${maxDependents}`);
   console.log(`Weights:`, weights);
 
   // Normalize and score
   const scored = rawSignals.map((r) => {
-    const normalized = normalizeSignals(r.signals, maxStars, maxContributors, maxDependents, maxForks);
+    const normalized = normalizeSignals(r.signals, maxStars, maxContributors, maxDependents);
     const score = Math.round(weightedScore(normalized, weights) * 100 * 100) / 100; // 0-100, 2 decimal places
     return { id: r.id, score, signals: normalized };
   });
