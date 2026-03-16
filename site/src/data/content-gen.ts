@@ -2,6 +2,140 @@ import type { Tool } from './tools';
 
 const PERMISSIVE_LICENSES = ['MIT', 'Apache-2.0', 'BSD-2-Clause', 'BSD-3-Clause', 'ISC', 'Unlicense'];
 
+export const CATEGORIES: Record<string, string> = {
+  'mcp-server': 'MCP Server',
+  'agent-framework': 'Agent Framework',
+  'ai-tool': 'AI Tool',
+  'llm-client': 'LLM Client',
+  'code-assistant': 'Code Assistant',
+  'data-processing': 'Data Processing',
+  'browser-automation': 'Browser Automation',
+  'database': 'Database',
+  'search': 'Search',
+  'monitoring': 'Monitoring',
+  'communication': 'Communication',
+  'other': 'Other',
+};
+
+export function classifyTool(tool: {
+  description: string | null;
+  matched_queries: string[];
+  github_topics?: string[];
+  full_name: string;
+}): string {
+  const text = [
+    tool.description || '',
+    (tool.github_topics || []).join(' '),
+    tool.full_name,
+  ].join(' ').toLowerCase();
+
+  const queries = (tool.matched_queries || []).join(' ').toLowerCase();
+
+  // Agent framework / SDK (check before MCP server)
+  if (/\b(multi[- ]?agent|orchestrat|workflow)\b/.test(text) ||
+      /a2a/.test(queries) ||
+      /\b(sdk|framework|library|toolkit)\b.*\b(mcp|agent|llm)\b|\b(mcp|agent|llm)\b.*\b(sdk|framework|library|toolkit)\b/.test(text)) {
+    return 'agent-framework';
+  }
+
+  // Browser automation
+  if (/\b(playwright|puppeteer|selenium|headless.*browser|browser.*automat|web.*scrape|scraping)\b/.test(text)) {
+    return 'browser-automation';
+  }
+
+  // Database
+  if (/\b(postgres|postgresql|mysql|sqlite|mongodb|redis|cassandra|supabase|neon|planetscale|cockroach|turso|libsql|database.*server|sql.*server)\b/.test(text)) {
+    return 'database';
+  }
+
+  // Search / RAG / Vector
+  if (/\b(vector.*store|vector.*db|embedding.*search|semantic.*search|rag\b|retrieval.*augment|pinecone|weaviate|qdrant|chroma|milvus|opensearch|elasticsearch)\b/.test(text)) {
+    return 'search';
+  }
+
+  // Monitoring / Observability
+  if (/\b(prometheus|grafana|datadog|sentry|opentelemetry|otel|observability|telemetry|tracing)\b/.test(text)) {
+    return 'monitoring';
+  }
+
+  // Communication
+  if (/\b(slack|discord|telegram|twilio|sendgrid|mailgun|smtp|email.*send|send.*email|webhook.*notif)\b/.test(text)) {
+    return 'communication';
+  }
+
+  // LLM Client / Gateway
+  if (/\b(litellm|llm.*gateway|llm.*proxy|llm.*router|ai.*gateway|openai.*compat|model.*router)\b/.test(text)) {
+    return 'llm-client';
+  }
+
+  // Data processing
+  if (/\b(apache.*kafka|apache.*spark|apache.*airflow|dbt\b|etl\b|data.*pipeline|data.*ingestion|data.*transform)\b/.test(text)) {
+    return 'data-processing';
+  }
+
+  // MCP server (catch-all for MCP-tagged tools)
+  if (/mcp|model.*context.*protocol/.test(queries)) {
+    return 'mcp-server';
+  }
+
+  return 'ai-tool';
+}
+
+export function classifySkill(skill: {
+  description: string | null;
+  name: string | null;
+  slug: string;
+  source: string;
+}): string {
+  const text = [
+    skill.description || '',
+    skill.name || '',
+    skill.slug,
+  ].join(' ').toLowerCase();
+
+  // Browser automation
+  if (/\b(playwright|puppeteer|selenium|browser.*use|browser.*automat|web.*scrape|headless)\b/.test(text)) {
+    return 'browser-automation';
+  }
+
+  // Database
+  if (/\b(postgres|postgresql|mysql|sqlite|mongodb|redis|supabase|neon|database)\b/.test(text)) {
+    return 'database';
+  }
+
+  // Search / RAG
+  if (/\b(vector.*store|vector.*db|semantic.*search|rag\b|embedding|pinecone|weaviate|qdrant|chroma)\b/.test(text)) {
+    return 'search';
+  }
+
+  // Monitoring
+  if (/\b(prometheus|grafana|datadog|sentry|opentelemetry|observability|telemetry|tracing)\b/.test(text)) {
+    return 'monitoring';
+  }
+
+  // Communication
+  if (/\b(slack|discord|telegram|twilio|sendgrid|email.*send|webhook)\b/.test(text)) {
+    return 'communication';
+  }
+
+  // Agent framework
+  if (/\b(framework|orchestrat|multi[- ]?agent|workflow.*agent|agent.*workflow)\b/.test(text)) {
+    return 'agent-framework';
+  }
+
+  // MCP server — Glama source is MCP servers
+  if (skill.source === 'glama' || /\b(mcp|model.*context.*protocol)\b/.test(text)) {
+    return 'mcp-server';
+  }
+
+  // Code assistant
+  if (/\b(github|copilot|lint|linting|test.*run|ci.*cd|deploy|turborepo|eslint|prettier)\b/.test(text)) {
+    return 'code-assistant';
+  }
+
+  return 'ai-tool';
+}
+
 export function getCategoryFromQueries(matchedQueries: string[]): string {
   for (const q of matchedQueries) {
     if (q.toLowerCase().includes('mcp server') || q.toLowerCase().includes('model context protocol')) return 'MCP server';

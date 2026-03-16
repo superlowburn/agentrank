@@ -15,6 +15,7 @@ export interface Tool {
   last_commit_at: string;
   is_archived: boolean;
   matched_queries: string[];
+  category?: string;
 }
 
 export function toSlug(fullName: string): string {

@@ -10,6 +10,7 @@ export interface Skill {
   github_repo: string | null;
   author: string | null;
   trending_rank: number | null;
+  category?: string;
 }
 
 export function toSkillSlug(slug: string): string {

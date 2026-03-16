@@ -20,7 +20,8 @@ CREATE TABLE tools (
   readme_excerpt TEXT,
   github_topics TEXT NOT NULL DEFAULT '[]',
   glama_weekly_downloads INTEGER NOT NULL DEFAULT 0,
-  glama_tool_calls INTEGER NOT NULL DEFAULT 0
+  glama_tool_calls INTEGER NOT NULL DEFAULT 0,
+  category TEXT
 );
 
 CREATE INDEX idx_tools_full_name ON tools(full_name);
@@ -46,7 +47,8 @@ CREATE TABLE skills (
   gh_closed_issues INTEGER,
   gh_contributors INTEGER,
   gh_last_commit_at TEXT,
-  gh_is_archived INTEGER DEFAULT 0
+  gh_is_archived INTEGER DEFAULT 0,
+  category TEXT
 );
 
 CREATE INDEX idx_skills_rank ON skills(rank);

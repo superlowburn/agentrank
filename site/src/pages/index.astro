@@ -4,11 +4,14 @@ export const prerender = true;
 import Base from '../layouts/Base.astro';
 import { getTopSkills, getAllSkills } from '../data/ranked-skills';
 import { toSkillSlug, formatInstalls, platformBadges, scoreColor, sourceLabel } from '../data/skills';
+import { CATEGORIES } from '../data/content-gen';
 
 const TOP_N = 500;
 const allSkills = getAllSkills();
 const skills = getTopSkills(TOP_N);
 const totalCount = allSkills.length;
+
+const usedCategories = [...new Set(skills.map((s) => s.category).filter(Boolean))].sort() as string[];
 
 const websiteJsonLd = {
   '@context': 'https://schema.org',
@@ -61,6 +64,12 @@ const itemListJsonLd = {
 
   <div class="controls">
     <input type="text" id="search" placeholder="Search skills..." autocomplete="off" />
+    <select id="category-filter">
+      <option value="">All categories</option>
+      {usedCategories.map((cat) => (
+        <option value={cat}>{CATEGORIES[cat] || cat}</option>
+      ))}
+    </select>
     <span class="count"><span id="visible-count">{skills.length}</span> of {totalCount.toLocaleString('en-US')} skills</span>
   </div>
 
@@ -78,7 +87,7 @@ const itemListJsonLd = {
       </thead>
       <tbody id="tbody">
         {skills.map((skill) => (
-          <tr>
+          <tr data-category={skill.category || ''}>
             <td class="rank">{skill.rank}</td>
             <td class="name">
               <a href={`/skill/${toSkillSlug(skill.slug)}/`}>{skill.name || skill.slug}</a>
@@ -199,6 +208,22 @@ const itemListJsonLd = {
   }
 
   #search:focus {
+    outline: 1px solid var(--accent);
+    border-color: var(--accent);
+  }
+
+  #category-filter {
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 0.5rem 0.75rem;
+    border-radius: 4px;
+    font-family: inherit;
+    font-size: 0.85rem;
+    cursor: pointer;
+  }
+
+  #category-filter:focus {
     outline: 1px solid var(--accent);
     border-color: var(--accent);
   }
@@ -332,23 +357,31 @@ const itemListJsonLd = {
   const tbody = document.getElementById('tbody')!;
   const rows = Array.from(tbody.querySelectorAll('tr'));
   const searchInput = document.getElementById('search') as HTMLInputElement;
+  const categoryFilter = document.getElementById('category-filter') as HTMLSelectElement;
   const visibleCount = document.getElementById('visible-count')!;
 
   let currentSort = { col: '', dir: 'asc' };
 
-  searchInput.addEventListener('input', () => {
+  function applyFilters() {
     const q = searchInput.value.toLowerCase();
+    const cat = categoryFilter.value;
     let count = 0;
     rows.forEach((row) => {
       const name = row.querySelector('.name')!.textContent!.toLowerCase();
       const source = row.querySelector('.source')!.textContent!.toLowerCase();
       const platforms = row.querySelector('.platforms')!.textContent!.toLowerCase();
-      const matches = !q || name.includes(q) || source.includes(q) || platforms.includes(q);
-      row.classList.toggle('hidden-row', !matches);
-      if (matches) count++;
+      const rowCat = (row as HTMLElement).dataset.category || '';
+      const matchesSearch = !q || name.includes(q) || source.includes(q) || platforms.includes(q);
+      const matchesCat = !cat || rowCat === cat;
+      const visible = matchesSearch && matchesCat;
+      row.classList.toggle('hidden-row', !visible);
+      if (visible) count++;
     });
     visibleCount.textContent = String(count);
-  });
+  }
+
+  searchInput.addEventListener('input', applyFilters);
+  categoryFilter.addEventListener('change', applyFilters);
 
   document.querySelectorAll('th.sortable').forEach((th) => {
     th.addEventListener('click', () => {

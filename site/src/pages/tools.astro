@@ -4,10 +4,14 @@ export const prerender = true;
 import Base from '../layouts/Base.astro';
 import { getTopTools, getAllTools } from '../data/ranked';
 import { toSlug, formatStars, relativeTime, scoreColor } from '../data/tools';
+import { CATEGORIES } from '../data/content-gen';
 
 const TOP_N = 500;
 const tools = getTopTools(TOP_N);
 const totalCount = getAllTools().length;
+
+// Collect categories that actually appear in the data
+const usedCategories = [...new Set(tools.map((t) => t.category).filter(Boolean))].sort() as string[];
 
 const itemListJsonLd = {
   '@context': 'https://schema.org',
@@ -27,6 +31,12 @@ const itemListJsonLd = {
 <Base title="AgentRank — Every MCP server & agent tool, ranked" activeTab="tools" canonicalUrl="https://agentrank-ai.com/tools/" jsonLd={itemListJsonLd}>
   <div class="controls">
     <input type="text" id="search" placeholder="Search tools..." autocomplete="off" />
+    <select id="category-filter">
+      <option value="">All categories</option>
+      {usedCategories.map((cat) => (
+        <option value={cat}>{CATEGORIES[cat] || cat}</option>
+      ))}
+    </select>
     <span class="count"><span id="visible-count">{tools.length}</span> of {totalCount.toLocaleString('en-US')} tools (top {TOP_N})</span>
   </div>
 
@@ -45,7 +55,7 @@ const itemListJsonLd = {
       </thead>
       <tbody id="tbody">
         {tools.map((tool) => (
-          <tr>
+          <tr data-category={tool.category || ''}>
             <td class="rank">{tool.rank}</td>
             <td class="name">
               <a href={`/tool/${toSlug(tool.full_name)}/`}>{tool.full_name}</a>
@@ -89,6 +99,22 @@ const itemListJsonLd = {
   }
 
   #search:focus {
+    outline: 1px solid var(--accent);
+    border-color: var(--accent);
+  }
+
+  #category-filter {
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 0.5rem 0.75rem;
+    border-radius: 4px;
+    font-family: inherit;
+    font-size: 0.85rem;
+    cursor: pointer;
+  }
+
+  #category-filter:focus {
     outline: 1px solid var(--accent);
     border-color: var(--accent);
   }
@@ -217,22 +243,30 @@ const itemListJsonLd = {
   const tbody = document.getElementById('tbody')!;
   const rows = Array.from(tbody.querySelectorAll('tr'));
   const searchInput = document.getElementById('search') as HTMLInputElement;
+  const categoryFilter = document.getElementById('category-filter') as HTMLSelectElement;
   const visibleCount = document.getElementById('visible-count')!;
 
   let currentSort = { col: '', dir: 'asc' };
 
-  searchInput.addEventListener('input', () => {
+  function applyFilters() {
     const q = searchInput.value.toLowerCase();
+    const cat = categoryFilter.value;
     let count = 0;
     rows.forEach((row) => {
       const name = row.querySelector('.name')!.textContent!.toLowerCase();
       const lang = row.querySelector('.lang')!.textContent!.toLowerCase();
-      const matches = !q || name.includes(q) || lang.includes(q);
-      row.classList.toggle('hidden-row', !matches);
-      if (matches) count++;
+      const rowCat = (row as HTMLElement).dataset.category || '';
+      const matchesSearch = !q || name.includes(q) || lang.includes(q);
+      const matchesCat = !cat || rowCat === cat;
+      const visible = matchesSearch && matchesCat;
+      row.classList.toggle('hidden-row', !visible);
+      if (visible) count++;
     });
     visibleCount.textContent = String(count);
-  });
+  }
+
+  searchInput.addEventListener('input', applyFilters);
+  categoryFilter.addEventListener('change', applyFilters);
 
   document.querySelectorAll('th.sortable').forEach((th) => {
     th.addEventListener('click', () => {

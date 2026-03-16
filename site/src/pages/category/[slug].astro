@@ -1,0 +1,241 @@
+---
+export const prerender = true;
+
+import Base from '../../layouts/Base.astro';
+import { getAllTools } from '../../data/ranked';
+import { getAllSkills } from '../../data/ranked-skills';
+import { toSlug, formatStars, relativeTime, scoreColor } from '../../data/tools';
+import { toSkillSlug, formatInstalls, sourceLabel } from '../../data/skills';
+import { CATEGORIES } from '../../data/content-gen';
+
+export function getStaticPaths() {
+  const allTools = getAllTools();
+  const allSkills = getAllSkills();
+
+  const toolCats = new Set(allTools.map((t) => t.category).filter(Boolean));
+  const skillCats = new Set(allSkills.map((s) => s.category).filter(Boolean));
+  const allCats = new Set([...toolCats, ...skillCats]);
+
+  return [...allCats].map((slug) => ({ params: { slug } }));
+}
+
+const { slug } = Astro.params;
+const label = CATEGORIES[slug!] || slug!;
+
+const allTools = getAllTools().filter((t) => t.category === slug);
+const allSkills = getAllSkills().filter((s) => s.category === slug);
+
+const pageUrl = `https://agentrank-ai.com/category/${slug}/`;
+---
+
+<Base
+  title={`${label} — AgentRank`}
+  description={`Top ${label} MCP servers, agent tools, and skills ranked by real signals.`}
+  canonicalUrl={pageUrl}
+>
+  <div class="breadcrumb">
+    <a href="/tools/">Tools</a> / <a href="/">Skills</a> / <span>{label}</span>
+  </div>
+
+  <h2 class="category-heading">{label}</h2>
+  <p class="category-sub">
+    {allTools.length} tool{allTools.length !== 1 ? 's' : ''} &middot; {allSkills.length} skill{allSkills.length !== 1 ? 's' : ''}
+  </p>
+
+  {allTools.length > 0 && (
+    <section>
+      <h3 class="section-heading">Tools</h3>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Name</th>
+              <th>Score</th>
+              <th>Stars</th>
+              <th>Last Commit</th>
+              <th>Language</th>
+            </tr>
+          </thead>
+          <tbody>
+            {allTools.map((tool, i) => (
+              <tr>
+                <td class="rank">{i + 1}</td>
+                <td class="name">
+                  <a href={`/tool/${toSlug(tool.full_name)}/`}>{tool.full_name}</a>
+                  {tool.is_archived && <span class="badge archived">archived</span>}
+                </td>
+                <td class="score">
+                  <span class="score-bar" style={`--w: ${tool.score}%; --c: ${scoreColor(tool.score)}`}>
+                    {tool.score.toFixed(1)}
+                  </span>
+                </td>
+                <td class="muted">{formatStars(tool.stars)}</td>
+                <td class="muted">{relativeTime(tool.last_commit_at)}</td>
+                <td class="muted">{tool.language || '—'}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </section>
+  )}
+
+  {allSkills.length > 0 && (
+    <section>
+      <h3 class="section-heading">Skills</h3>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Name</th>
+              <th>Score</th>
+              <th>Installs</th>
+              <th>Source</th>
+            </tr>
+          </thead>
+          <tbody>
+            {allSkills.map((skill, i) => (
+              <tr>
+                <td class="rank">{i + 1}</td>
+                <td class="name">
+                  <a href={`/skill/${toSkillSlug(skill.slug)}/`}>{skill.name || skill.slug}</a>
+                </td>
+                <td class="score">
+                  <span class="score-bar" style={`--w: ${skill.score}%; --c: ${scoreColor(skill.score)}`}>
+                    {skill.score.toFixed(1)}
+                  </span>
+                </td>
+                <td class="muted">{formatInstalls(skill.installs)}</td>
+                <td class="muted">{sourceLabel(skill.source)}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </section>
+  )}
+</Base>
+
+<style>
+  .breadcrumb {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    margin-bottom: 1.5rem;
+  }
+
+  .breadcrumb a {
+    color: var(--text-muted);
+  }
+
+  .breadcrumb a:hover {
+    color: var(--accent);
+  }
+
+  .category-heading {
+    font-size: 1.4rem;
+    font-weight: 700;
+    margin-bottom: 0.25rem;
+  }
+
+  .category-sub {
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    margin-bottom: 2rem;
+  }
+
+  section {
+    margin-bottom: 3rem;
+  }
+
+  .section-heading {
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-muted);
+    margin-bottom: 0.75rem;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 0.5rem;
+  }
+
+  .table-wrap {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.85rem;
+  }
+
+  th {
+    background: var(--bg-surface);
+    border-bottom: 2px solid var(--border);
+    padding: 0.5rem 0.75rem;
+    text-align: left;
+    font-weight: 600;
+    white-space: nowrap;
+    color: var(--text-muted);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  td {
+    padding: 0.4rem 0.75rem;
+    border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+  }
+
+  tr:hover td {
+    background: var(--bg-hover);
+  }
+
+  .rank {
+    color: var(--text-muted);
+    width: 3rem;
+  }
+
+  .name a {
+    color: var(--text);
+    font-weight: 500;
+  }
+
+  .name a:hover {
+    color: var(--accent);
+  }
+
+  .badge {
+    font-size: 0.65rem;
+    padding: 0.1rem 0.35rem;
+    border-radius: 3px;
+    margin-left: 0.5rem;
+    vertical-align: middle;
+    background: #78350f;
+    color: #fbbf24;
+  }
+
+  .score-bar {
+    display: inline-block;
+    padding: 0.1rem 0.5rem;
+    border-radius: 3px;
+    background: linear-gradient(90deg, var(--c) var(--w), transparent var(--w));
+    background-color: var(--bg-surface);
+    min-width: 4rem;
+    font-weight: 600;
+  }
+
+  .muted {
+    color: var(--text-muted);
+  }
+
+  @media (prefers-color-scheme: light) {
+    .badge {
+      background: #fef3c7;
+      color: #92400e;
+    }
+  }
+</style>
