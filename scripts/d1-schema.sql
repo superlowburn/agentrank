@@ -173,6 +173,42 @@ CREATE INDEX IF NOT EXISTS idx_ic_slug ON install_checkpoints(slug, checked_at);
 -- CREATE TABLE IF NOT EXISTS install_checkpoints (id INTEGER PRIMARY KEY AUTOINCREMENT, slug TEXT NOT NULL, source TEXT NOT NULL DEFAULT 'skills.sh', installs INTEGER NOT NULL, checked_at TEXT NOT NULL DEFAULT (datetime('now')));
 -- CREATE INDEX IF NOT EXISTS idx_ic_slug ON install_checkpoints(slug, checked_at);
 
+-- API keys table — Pro API infrastructure
+-- survives pipeline DROP/CREATE cycles
+CREATE TABLE IF NOT EXISTS api_keys (
+  id TEXT PRIMARY KEY,                        -- UUID
+  key_hash TEXT NOT NULL UNIQUE,              -- SHA-256 hex of the raw key
+  key_prefix TEXT NOT NULL,                  -- first 16 chars for display (e.g. "ark_pro_a1b2c3d4")
+  name TEXT,                                  -- user-friendly label
+  tier TEXT NOT NULL DEFAULT 'free',         -- 'free' | 'pro' | 'enterprise'
+  owner_email TEXT,
+  is_active INTEGER NOT NULL DEFAULT 1,
+  created_at TEXT NOT NULL DEFAULT (datetime('now')),
+  revoked_at TEXT,
+  last_used_at TEXT
+);
+CREATE INDEX IF NOT EXISTS idx_apikeys_hash ON api_keys(key_hash);
+CREATE INDEX IF NOT EXISTS idx_apikeys_active ON api_keys(is_active);
+-- Migration (run once on existing D1):
+-- CREATE TABLE IF NOT EXISTS api_keys (id TEXT PRIMARY KEY, key_hash TEXT NOT NULL UNIQUE, key_prefix TEXT NOT NULL, name TEXT, tier TEXT NOT NULL DEFAULT 'free', owner_email TEXT, is_active INTEGER NOT NULL DEFAULT 1, created_at TEXT NOT NULL DEFAULT (datetime('now')), revoked_at TEXT, last_used_at TEXT);
+-- CREATE INDEX IF NOT EXISTS idx_apikeys_hash ON api_keys(key_hash);
+-- CREATE INDEX IF NOT EXISTS idx_apikeys_active ON api_keys(is_active);
+
+-- API usage per key per day per endpoint
+-- survives pipeline DROP/CREATE cycles
+CREATE TABLE IF NOT EXISTS api_usage (
+  api_key_id TEXT NOT NULL,
+  date TEXT NOT NULL,                         -- YYYY-MM-DD UTC
+  endpoint TEXT NOT NULL,                    -- 'total' or specific path
+  request_count INTEGER NOT NULL DEFAULT 0,
+  PRIMARY KEY (api_key_id, date, endpoint),
+  FOREIGN KEY (api_key_id) REFERENCES api_keys(id)
+);
+CREATE INDEX IF NOT EXISTS idx_apiusage_key ON api_usage(api_key_id, date);
+-- Migration (run once on existing D1):
+-- CREATE TABLE IF NOT EXISTS api_usage (api_key_id TEXT NOT NULL, date TEXT NOT NULL, endpoint TEXT NOT NULL, request_count INTEGER NOT NULL DEFAULT 0, PRIMARY KEY (api_key_id, date, endpoint), FOREIGN KEY (api_key_id) REFERENCES api_keys(id));
+-- CREATE INDEX IF NOT EXISTS idx_apiusage_key ON api_usage(api_key_id, date);
+
 -- Submissions table — survives pipeline DROP/CREATE cycles
 CREATE TABLE IF NOT EXISTS submissions (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
