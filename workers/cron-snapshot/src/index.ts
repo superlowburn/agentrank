@@ -13,6 +13,73 @@ export interface Env {
   DB: D1Database;
 }
 
+// ---------------------------------------------------------------------------
+// Skill install tracking — fetch AgentRank's own install count from skills.sh
+// ---------------------------------------------------------------------------
+
+const SKILLS_SH_SLUGS = [
+  // Our own skill listing on skills.sh (source/skillId format)
+  // Adjust if the slug changes after submission
+  "agentrank-ai/agentrank",
+];
+
+async function fetchSkillInstalls(slug: string): Promise<number | null> {
+  // The skills.sh leaderboard embeds skill data as RSC streaming JSON
+  // Extract install count for our specific skill
+  const url = `https://skills.sh/${slug}`;
+  try {
+    const res = await fetch(url, {
+      headers: { "User-Agent": "AgentRank/1.0 (https://agentrank-ai.com)" },
+    });
+    if (!res.ok) return null;
+    const html = await res.text();
+
+    // Try meta tag with total installs first
+    const installsMatch = html.match(/"installs"\s*:\s*(\d+)/);
+    if (installsMatch?.[1]) {
+      return parseInt(installsMatch[1], 10);
+    }
+
+    // Fallback: look for install count patterns in RSC payload
+    const countMatch = html.match(/(\d{1,8})\s+(?:total\s+)?installs?/i);
+    if (countMatch?.[1]) {
+      return parseInt(countMatch[1], 10);
+    }
+
+    return null;
+  } catch {
+    return null;
+  }
+}
+
+async function checkpointSkillInstalls(db: D1Database): Promise<void> {
+  for (const slug of SKILLS_SH_SLUGS) {
+    const installs = await fetchSkillInstalls(slug);
+    if (installs === null) {
+      console.log(`[cron-snapshot] Could not fetch install count for ${slug} (skill may not be listed yet)`);
+      continue;
+    }
+
+    // Only record if value changed since the last checkpoint
+    const last = await db
+      .prepare(`SELECT installs FROM install_checkpoints WHERE slug = ? ORDER BY checked_at DESC LIMIT 1`)
+      .bind(slug)
+      .first<{ installs: number }>();
+
+    if (last && last.installs === installs) {
+      console.log(`[cron-snapshot] ${slug} installs unchanged at ${installs}`);
+      continue;
+    }
+
+    await db
+      .prepare(`INSERT INTO install_checkpoints (slug, source, installs) VALUES (?, 'skills.sh', ?)`)
+      .bind(slug, installs)
+      .run();
+
+    console.log(`[cron-snapshot] ${slug} installs: ${last?.installs ?? 'new'} → ${installs}`);
+  }
+}
+
 // GitHub org/user -> Twitter handle mapping (keep in sync with tweet-bot.ts)
 const TWITTER_HANDLES: Record<string, string> = {
   PrefectHQ: "@PrefectIO",
@@ -265,7 +332,10 @@ export default {
     const inserted = await snapshotRankings(env.DB, today);
     console.log(`[cron-snapshot] Snapshot complete: ${inserted} rows inserted for ${today}`);
 
-    // Step 2: On Mondays, log weekly content for the bot to consume
+    // Step 2: Always check our own skill install counts
+    await checkpointSkillInstalls(env.DB);
+
+    // Step 3: On Mondays, log weekly content for the bot to consume
     // The bot reads from /api/v1/movers and /api/v1/new-tools — no storage needed here.
     // Just log for observability; the API endpoints do the computation live.
     if (isMonday) {

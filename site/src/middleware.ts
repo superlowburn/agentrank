@@ -30,13 +30,16 @@ export const onRequest = defineMiddleware(async (ctx, next) => {
   const type = classifyRequest(path, ua);
   const country = ctx.request.headers.get('cf-ipcountry') ?? null;
   const query = extractQuery(path, ctx.url);
+  const rawReferrer = ctx.request.headers.get('referer') ?? null;
+  // Strip query strings and fragments from referrer; store origin+path only
+  const referrer = rawReferrer ? (() => { try { const u = new URL(rawReferrer); return (u.origin + u.pathname).slice(0, 500); } catch { return rawReferrer.slice(0, 500); } })() : null;
 
   try {
     const { env } = (ctx.locals as any).runtime;
     if (env.DB) {
       const stmt = env.DB.prepare(
-        `INSERT INTO request_log (path, method, type, status, ua, country, duration_ms, query)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?)`
+        `INSERT INTO request_log (path, method, type, status, ua, country, duration_ms, query, referrer)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`
       ).bind(
         path,
         ctx.request.method,
@@ -46,6 +49,7 @@ export const onRequest = defineMiddleware(async (ctx, next) => {
         country,
         duration,
         query?.slice(0, 500) ?? null,
+        referrer,
       );
 
       // Fire-and-forget via waitUntil if available (Cloudflare)

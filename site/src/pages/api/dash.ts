@@ -27,7 +27,7 @@ async function level0(db: any) {
 }
 
 async function level1(db: any) {
-  const [scoreDist, languages, freshness, licenses, topTools, topSkills, hourlyTraffic, topPaths, topCountries, agentClients, topSearches, topLookups] = await Promise.all([
+  const [scoreDist, languages, freshness, licenses, topTools, topSkills, hourlyTraffic, topPaths, topCountries, agentClients, topSearches, topLookups, topReferrers] = await Promise.all([
     db.prepare(`SELECT
       CASE
         WHEN score < 10 THEN '0-9'
@@ -68,6 +68,8 @@ async function level1(db: any) {
     db.prepare(`SELECT query, COUNT(*) AS count FROM request_log WHERE ts > datetime('now', '-7 days') AND path = '/api/search' AND query IS NOT NULL AND query != '' GROUP BY query ORDER BY count DESC LIMIT 20`).all(),
     // Top lookup URLs (7d)
     db.prepare(`SELECT query, COUNT(*) AS count FROM request_log WHERE ts > datetime('now', '-7 days') AND path = '/api/lookup' AND query IS NOT NULL AND query != '' GROUP BY query ORDER BY count DESC LIMIT 20`).all(),
+    // Top referrers (7d) — page visits with a non-self referrer
+    db.prepare(`SELECT referrer, COUNT(*) AS count FROM request_log WHERE ts > datetime('now', '-7 days') AND type = 'page' AND referrer IS NOT NULL AND referrer != '' AND referrer NOT LIKE '%agentrank-ai.com%' GROUP BY referrer ORDER BY count DESC LIMIT 20`).all(),
   ]);
   return {
     score_distribution: scoreDist.results,
@@ -82,11 +84,12 @@ async function level1(db: any) {
     agent_clients: agentClients.results,
     top_searches: topSearches.results,
     top_lookups: topLookups.results,
+    top_referrers: topReferrers.results,
   };
 }
 
 async function level2(db: any) {
-  const [completeness, bestMaintained, mostDepended, mostStarred, skillSources, submissionsQueue, skillScoreDist, recentRequests, dailyTraffic] = await Promise.all([
+  const [completeness, bestMaintained, mostDepended, mostStarred, skillSources, submissionsQueue, skillScoreDist, recentRequests, dailyTraffic, apiEndpointsByDay, installTrend] = await Promise.all([
     db.prepare(`SELECT
       ROUND(100.0 * COUNT(CASE WHEN description IS NOT NULL AND description != '' THEN 1 END) / COUNT(*), 1) AS pct_description,
       ROUND(100.0 * COUNT(CASE WHEN readme_excerpt IS NOT NULL AND readme_excerpt != '' THEN 1 END) / COUNT(*), 1) AS pct_readme,
@@ -119,7 +122,28 @@ async function level2(db: any) {
       GROUP BY bucket ORDER BY bucket`).all(),
     db.prepare(`SELECT path, type, method, status, ua, country, ts, duration_ms FROM request_log ORDER BY id DESC LIMIT 50`).all(),
     db.prepare(`SELECT strftime('%Y-%m-%d', ts) AS day, type, COUNT(*) AS count FROM request_log WHERE ts > datetime('now', '-30 days') GROUP BY day, type ORDER BY day`).all(),
+    // Per-API-endpoint per-day breakdown (30d) — top 10 most active API paths
+    db.prepare(`SELECT path, strftime('%Y-%m-%d', ts) AS day, COUNT(*) AS count FROM request_log WHERE ts > datetime('now', '-30 days') AND type = 'api' GROUP BY path, day ORDER BY day DESC, count DESC`).all(),
+    // Install trend for our own skill on skills.sh
+    db.prepare(`SELECT slug, installs, checked_at FROM install_checkpoints ORDER BY checked_at DESC LIMIT 90`).all(),
   ]);
+
+  // Pivot api_endpoints_by_day: top 10 paths, then daily counts
+  const endpointDayRaw = (apiEndpointsByDay.results || []) as { path: string; day: string; count: number }[];
+  const pathTotals = new Map<string, number>();
+  for (const r of endpointDayRaw) {
+    pathTotals.set(r.path, (pathTotals.get(r.path) ?? 0) + r.count);
+  }
+  const top10Paths = Array.from(pathTotals.entries())
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 10)
+    .map(([path]) => path);
+  const apiEndpointTrend = top10Paths.map(path => ({
+    path,
+    total: pathTotals.get(path) ?? 0,
+    days: endpointDayRaw.filter(r => r.path === path).map(r => ({ day: r.day, count: r.count })),
+  }));
+
   return {
     completeness,
     best_maintained: bestMaintained.results,
@@ -130,6 +154,8 @@ async function level2(db: any) {
     skill_score_distribution: skillScoreDist.results,
     recent_requests: recentRequests.results,
     daily_traffic: dailyTraffic.results,
+    api_endpoint_trend: apiEndpointTrend,
+    install_trend: installTrend.results,
   };
 }
 

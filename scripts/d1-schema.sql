@@ -90,6 +90,7 @@ CREATE INDEX IF NOT EXISTS idx_reqlog_type ON request_log(type);
 CREATE INDEX IF NOT EXISTS idx_reqlog_path ON request_log(path);
 -- Migration (run once on existing D1):
 -- ALTER TABLE request_log ADD COLUMN query TEXT;
+-- ALTER TABLE request_log ADD COLUMN referrer TEXT;
 
 -- Rate limits table — survives pipeline DROP/CREATE cycles
 CREATE TABLE IF NOT EXISTS rate_limits (
@@ -152,6 +153,20 @@ CREATE INDEX IF NOT EXISTS idx_email_subscribers_source ON email_subscribers(sou
 -- CREATE TABLE IF NOT EXISTS email_subscribers (id INTEGER PRIMARY KEY AUTOINCREMENT, email TEXT NOT NULL, source TEXT NOT NULL DEFAULT 'homepage', subscribed_at TEXT NOT NULL DEFAULT (datetime('now')));
 -- CREATE UNIQUE INDEX IF NOT EXISTS idx_email_subscribers_email ON email_subscribers(email);
 -- CREATE INDEX IF NOT EXISTS idx_email_subscribers_source ON email_subscribers(source);
+
+-- Install checkpoints — tracks our own skill install counts over time (from skills.sh)
+-- survives pipeline DROP/CREATE cycles
+CREATE TABLE IF NOT EXISTS install_checkpoints (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  slug TEXT NOT NULL,                          -- skill slug, e.g. 'agentrank'
+  source TEXT NOT NULL DEFAULT 'skills.sh',   -- where the count came from
+  installs INTEGER NOT NULL,
+  checked_at TEXT NOT NULL DEFAULT (datetime('now'))
+);
+CREATE INDEX IF NOT EXISTS idx_ic_slug ON install_checkpoints(slug, checked_at);
+-- Migration (run once on existing D1):
+-- CREATE TABLE IF NOT EXISTS install_checkpoints (id INTEGER PRIMARY KEY AUTOINCREMENT, slug TEXT NOT NULL, source TEXT NOT NULL DEFAULT 'skills.sh', installs INTEGER NOT NULL, checked_at TEXT NOT NULL DEFAULT (datetime('now')));
+-- CREATE INDEX IF NOT EXISTS idx_ic_slug ON install_checkpoints(slug, checked_at);
 
 -- Submissions table — survives pipeline DROP/CREATE cycles
 CREATE TABLE IF NOT EXISTS submissions (

@@ -321,6 +321,8 @@ if (!env.DASH_TOKEN || token !== env.DASH_TOKEN) {
                 ]) : '<p class="loading">No lookups logged yet</p>'}
               </div>
             </div>
+            <h2>Top Referrers (7d)</h2>
+            ${(d.top_referrers || []).length ? makeBars(d.top_referrers, 'referrer', 'count') : '<p class="loading">No external referrers yet</p>'}
             <h2>Hourly Traffic (24h)</h2>
             <div class="legend"><span class="l-page">page</span><span class="l-api">api</span><span class="l-mcp">mcp</span></div>
             ${hourlyHtml}
@@ -449,6 +451,23 @@ if (!env.DASH_TOKEN || token !== env.DASH_TOKEN) {
             </div>
             <h2>Score Distribution (Skills)</h2>
             ${makeBars(d.skill_score_distribution, 'bucket', 'count')}
+            <h2>API Requests by Endpoint (30d)</h2>
+            ${(d.api_endpoint_trend || []).length
+              ? makeTable(d.api_endpoint_trend, [
+                  { key: 'path', label: 'Endpoint' },
+                  { key: 'total', label: 'Total (30d)', num: true },
+                ])
+              : '<p class="loading">No API traffic logged yet</p>'
+            }
+            <h2>AgentRank Skill Install Trend</h2>
+            ${(d.install_trend || []).length
+              ? makeTable(d.install_trend, [
+                  { key: 'slug', label: 'Skill' },
+                  { key: 'installs', label: 'Installs', num: true },
+                  { key: 'checked_at', label: 'Checked', fmt: (v) => v ? v.slice(0, 16) : '-' },
+                ])
+              : '<p class="loading">No install data yet — skill not yet listed on skills.sh or first checkpoint pending</p>'
+            }
             <h2>Submissions Queue (${d.submissions_queue.length})</h2>
             ${d.submissions_queue.length
               ? makeTable(d.submissions_queue, [
