@@ -2,7 +2,7 @@
 interface Props {
   title: string;
   description?: string;
-  activeTab?: 'skills' | 'tools' | 'agents' | 'movers' | 'submit' | 'api';
+  activeTab?: 'skills' | 'tools' | 'agents' | 'movers' | 'submit' | 'api' | 'blog';
   jsonLd?: object | object[];
   keywords?: string;
   canonicalUrl?: string;
@@ -155,10 +155,11 @@ const {
       }
 
       header .tagline {
-        color: var(--text-muted);
-        font-size: 0.8rem;
+        color: var(--text);
+        font-size: 0.82rem;
         width: 100%;
-        margin-top: 0.35rem;
+        margin-top: 0.4rem;
+        opacity: 0.7;
       }
 
       footer {
@@ -216,6 +217,7 @@ const {
             <a href="/agents/" class={activeTab === 'agents' ? 'active' : ''}>Agents <span class="badge-beta">beta</span></a>
             <a href="/submit/" class={activeTab === 'submit' ? 'active' : ''}>Submit</a>
             <a href="/api-docs/" class={activeTab === 'api' ? 'active' : ''}>API</a>
+            <a href="/blog/" class={activeTab === 'blog' ? 'active' : ''}>Blog</a>
           </nav>
         </div>
         <span class="tagline">Google for AI agents. 25,000+ tools indexed.</span>
