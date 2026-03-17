@@ -2,6 +2,7 @@
 export const prerender = true;
 
 import Base from '../../layouts/Base.astro';
+import BlogSubscribeCTA from '../../components/BlogSubscribeCTA.astro';
 
 const publishDate = '2026-03-17';
 
@@ -411,6 +412,7 @@ await server.connect(transport);</code></pre>
       </div>
     </section>
 
+    <BlogSubscribeCTA source="blog" />
     <footer class="post-footer">
       <p class="methodology">
         <strong>Methodology:</strong> Framework scores from the AgentRank index crawled March 2026.

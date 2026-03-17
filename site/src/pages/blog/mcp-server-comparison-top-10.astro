@@ -2,6 +2,7 @@
 export const prerender = true;
 
 import Base from '../../layouts/Base.astro';
+import BlogSubscribeCTA from '../../components/BlogSubscribeCTA.astro';
 
 const publishDate = '2026-03-17';
 
@@ -180,11 +181,11 @@ const tools = [
 const insights = [
   {
     title: 'Stars vs score: the divergence is real',
-    body: 'The most-starred tool in the top 10 is benborla/mcp-server-mysql at 1,335 stars — but it ranks 6th by score. The lowest-starred tool is motherduckdb/mcp-server-motherduck at 439 stars — and it scores highest. Stars lag. The score leads.',
+    body: 'The most-starred tool in the top 10 is <a href="/tool/benborla--mcp-server-mysql/" class="inline-link">benborla/mcp-server-mysql</a> at 1,335 stars — but it ranks 6th by score. The lowest-starred tool is <a href="/tool/motherduckdb--mcp-server-motherduck/" class="inline-link">motherduckdb/mcp-server-motherduck</a> at 439 stars — and it scores highest. Stars lag. The score leads.',
   },
   {
     title: 'Official servers dominate',
-    body: 'Eight of the top 10 are official servers from the tool\'s vendor or maintaining organization. The two exceptions (benborla/mcp-server-mysql and kubernetes-sigs/mcp-k8s) both have 20+ contributors. Official backing and high contributor counts are the two paths to consistent top-10 placement.',
+    body: 'Eight of the top 10 are official servers from the tool\'s vendor or maintaining organization. The two exceptions (<a href="/tool/benborla--mcp-server-mysql/" class="inline-link">benborla/mcp-server-mysql</a> and <a href="/tool/kubernetes-sigs--mcp-k8s/" class="inline-link">kubernetes-sigs/mcp-k8s</a>) both have 20+ contributors. Official backing and high contributor counts are the two paths to consistent top-10 placement.',
   },
   {
     title: 'Security is the surprise category',
@@ -288,30 +289,32 @@ const insights = [
         All 10 tools had commits within the last 30 days. This isn't coincidental — active maintenance
         is the single strongest predictor of overall quality, and the top 10 all have it.
         The tightest cluster: six tools committed within the last two weeks, including
-        mongodb-js/mongodb-mcp-server, qdrant/mcp-server-qdrant, and semgrep/semgrep-mcp (all March 13–14).
+        <a href="/tool/mongodb-js--mongodb-mcp-server/" class="inline-link">mongodb-js/mongodb-mcp-server</a>,
+        <a href="/tool/qdrant--mcp-server-qdrant/" class="inline-link">qdrant/mcp-server-qdrant</a>, and
+        <a href="/tool/semgrep--semgrep-mcp/" class="inline-link">semgrep/semgrep-mcp</a> (all March 13–14).
       </p>
 
       <h3>Issue health (25% of score)</h3>
       <p>
-        The top-scoring tool for issue health is motherduckdb/mcp-server-motherduck at <strong>94%</strong> close rate.
-        The lowest in the top 10 is kubernetes-sigs/mcp-k8s at <strong>79%</strong> — still exceptional
+        The top-scoring tool for issue health is <a href="/tool/motherduckdb--mcp-server-motherduck/" class="inline-link">motherduckdb/mcp-server-motherduck</a> at <strong>94%</strong> close rate.
+        The lowest in the top 10 is <a href="/tool/kubernetes-sigs--mcp-k8s/" class="inline-link">kubernetes-sigs/mcp-k8s</a> at <strong>79%</strong> — still exceptional
         for a project with the scale and activity of the Kubernetes ecosystem.
         The average across the full index is 43%. Everything in the top 10 is at least 79%.
       </p>
 
       <h3>Inbound dependents (25% of score)</h3>
       <p>
-        motherduckdb/mcp-server-motherduck leads at <strong>67 downstream repos</strong>, followed by
-        kubernetes-sigs/mcp-k8s at 52 and mongodb-js/mongodb-mcp-server at 54.
+        <a href="/tool/motherduckdb--mcp-server-motherduck/" class="inline-link">motherduckdb/mcp-server-motherduck</a> leads at <strong>67 downstream repos</strong>, followed by
+        <a href="/tool/kubernetes-sigs--mcp-k8s/" class="inline-link">kubernetes-sigs/mcp-k8s</a> at 52 and <a href="/tool/mongodb-js--mongodb-mcp-server/" class="inline-link">mongodb-js/mongodb-mcp-server</a> at 54.
         High dependent counts signal real production adoption — someone has committed to using this in their stack.
         The full index average is under 3 dependents per tool.
       </p>
 
       <h3>Contributors (10% of score)</h3>
       <p>
-        kubernetes-sigs/mcp-k8s leads with <strong>34 contributors</strong>. benborla/mcp-server-mysql
+        <a href="/tool/kubernetes-sigs--mcp-k8s/" class="inline-link">kubernetes-sigs/mcp-k8s</a> leads with <strong>34 contributors</strong>. <a href="/tool/benborla--mcp-server-mysql/" class="inline-link">benborla/mcp-server-mysql</a>
         follows with 27 — remarkable for a community (non-vendor) project.
-        The minimum in the top 10 is 14 (aquasecurity/trivy-mcp).
+        The minimum in the top 10 is 14 (<a href="/tool/aquasecurity--trivy-mcp/" class="inline-link">aquasecurity/trivy-mcp</a>).
         The full index average is under 3 contributors per repo.
       </p>
 
@@ -319,7 +322,7 @@ const insights = [
       <p>
         Stars matter least in the score formula — and the top 10 demonstrate why. The highest-scoring
         tool (motherduckdb, 88.66) has the fewest stars (439). The highest-starred tool
-        (benborla/mcp-server-mysql, 1,335) ranks 6th. Stars measure historical attention.
+        (<a href="/tool/benborla--mcp-server-mysql/" class="inline-link">benborla/mcp-server-mysql</a>, 1,335) ranks 6th. Stars measure historical attention.
         The other four signals measure current quality.
       </p>
     </section>
@@ -331,7 +334,7 @@ const insights = [
         {insights.map((insight) => (
           <div class="insight-card">
             <h3>{insight.title}</h3>
-            <p>{insight.body}</p>
+            <p set:html={insight.body} />
           </div>
         ))}
       </div>
@@ -371,6 +374,7 @@ const insights = [
       </div>
     </section>
 
+    <BlogSubscribeCTA source="blog" />
     <footer class="post-footer">
       <p class="methodology">
         <strong>Methodology:</strong> Data from the AgentRank index crawled March 2026.
@@ -390,6 +394,11 @@ const insights = [
       max-width: 720px;
       margin: 0 auto;
       padding: 2rem 0 3rem;
+    }
+
+    .inline-link {
+      color: var(--accent);
+      font-weight: 600;
     }
 
     .breadcrumb {

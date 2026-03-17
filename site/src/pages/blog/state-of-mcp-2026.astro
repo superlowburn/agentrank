@@ -2,6 +2,7 @@
 export const prerender = true;
 
 import Base from '../../layouts/Base.astro';
+import BlogSubscribeCTA from '../../components/BlogSubscribeCTA.astro';
 
 const publishDate = '2026-03-16';
 
@@ -84,11 +85,11 @@ const top10 = [
 ];
 
 const mostStarred = [
-  { name: 'punkpeye/awesome-mcp-servers', stars: 83027, score: 71.48, desc: 'Curated list of MCP servers' },
-  { name: 'modelcontextprotocol/servers', stars: 81030, score: 77.01, desc: 'Official MCP server reference implementations' },
-  { name: 'microsoft/playwright-mcp', stars: 28849, score: 94.81, desc: 'Playwright automation MCP server' },
-  { name: 'github/github-mcp-server', stars: 27865, score: 85.44, desc: 'Official GitHub MCP server' },
-  { name: 'PrefectHQ/fastmcp', stars: 23659, score: 94.73, desc: 'Pythonic MCP framework' },
+  { name: 'punkpeye/awesome-mcp-servers', slug: 'punkpeye--awesome-mcp-servers', stars: 83027, score: 71.48, desc: 'Curated list of MCP servers' },
+  { name: 'modelcontextprotocol/servers', slug: 'modelcontextprotocol--servers', stars: 81030, score: 77.01, desc: 'Official MCP server reference implementations' },
+  { name: 'microsoft/playwright-mcp', slug: 'microsoft--playwright-mcp', stars: 28849, score: 94.81, desc: 'Playwright automation MCP server' },
+  { name: 'github/github-mcp-server', slug: 'github--github-mcp-server', stars: 27865, score: 85.44, desc: 'Official GitHub MCP server' },
+  { name: 'PrefectHQ/fastmcp', slug: 'PrefectHQ--fastmcp', stars: 23659, score: 94.73, desc: 'Pythonic MCP framework' },
 ];
 
 const licenseBreakdown = [
@@ -298,8 +299,8 @@ const licenseBreakdown = [
       <p>
         <strong>Only 152 tools (0.6%) reach the Elite tier (80+).</strong> These are the tools with strong community
         adoption, active maintenance, responsive issue management, and meaningful dependents. Getting into this tier
-        isn't just about stars — microsoft/playwright-mcp has 28,000+ stars and scores 94.81, but a solo side project
-        with 1,400 stars and excellent issue health (like microsoft/azure-devops-mcp at 97.17) can outscore it.
+        isn't just about stars — <a href="/tool/microsoft--playwright-mcp/" class="inline-link">microsoft/playwright-mcp</a> has 28,000+ stars and scores 94.81, but a solo side project
+        with 1,400 stars and excellent issue health (like <a href="/tool/microsoft--azure-devops-mcp/" class="inline-link">microsoft/azure-devops-mcp</a> at 97.17) can outscore it.
       </p>
       <p>
         The <strong>Medium tier (40–59) holds 24.9%</strong> of the ecosystem — tools that have found some users
@@ -342,16 +343,16 @@ const licenseBreakdown = [
       </table>
 
       <p>
-        A few things stand out here. <strong>microsoft/playwright-mcp (#7, score 94.81)</strong> is the most-installed
-        MCP tool by far at 1.77 million Glama installs — but it ranks #7, not #1, because CoplayDev/unity-mcp has
+        A few things stand out here. <strong><a href="/tool/microsoft--playwright-mcp/" class="inline-link">microsoft/playwright-mcp</a> (#7, score 94.81)</strong> is the most-installed
+        MCP tool by far at 1.77 million Glama installs — but it ranks #7, not #1, because <a href="/tool/CoplayDev--unity-mcp/" class="inline-link">CoplayDev/unity-mcp</a> has
         superior issue health and freshness signals. Stars and installs alone don't win the index.
       </p>
       <p>
-        <strong>Two Microsoft repos appear in the top 10</strong> — azure-devops-mcp and playwright-mcp.
+        <strong>Two Microsoft repos appear in the top 10</strong> — <a href="/tool/microsoft--azure-devops-mcp/" class="inline-link">azure-devops-mcp</a> and <a href="/tool/microsoft--playwright-mcp/" class="inline-link">playwright-mcp</a>.
         Microsoft's investment in MCP tooling is paying off in both stars and quality signals.
       </p>
       <p>
-        <strong>PHP gets a top-3 entry</strong> via laravel/boost. The Laravel community adopted MCP fast
+        <strong>PHP gets a top-3 entry</strong> via <a href="/tool/laravel--boost/" class="inline-link">laravel/boost</a>. The Laravel community adopted MCP fast
         and the official Laravel team's involvement gives it strong maintenance signals.
       </p>
     </section>
@@ -376,7 +377,7 @@ const licenseBreakdown = [
         <tbody>
           {mostStarred.map((repo) => (
             <tr>
-              <td class="tool-link-plain">{repo.name}</td>
+              <td class="tool-cell"><a href={`/tool/${repo.slug}/`} class="tool-link">{repo.name}</a></td>
               <td class="num">{repo.stars.toLocaleString('en-US')}</td>
               <td class="num">{repo.score}</td>
               <td class="muted-cell">{repo.desc}</td>
@@ -386,8 +387,8 @@ const licenseBreakdown = [
       </table>
 
       <p>
-        The delta between stars and score is telling. punkpeye/awesome-mcp-servers has <strong>83,027 stars</strong>
-        but scores only 71.48 — it's a curated list, not an active tool. github/github-mcp-server has
+        The delta between stars and score is telling. <a href="/tool/punkpeye--awesome-mcp-servers/" class="inline-link">punkpeye/awesome-mcp-servers</a> has <strong>83,027 stars</strong>
+        but scores only 71.48 — it's a curated list, not an active tool. <a href="/tool/github--github-mcp-server/" class="inline-link">github/github-mcp-server</a> has
         27,865 stars and scores 85.44 because it's actively maintained by GitHub.
         Use the AgentRank score, not star count, when choosing a tool to depend on.
       </p>
@@ -482,14 +483,14 @@ const licenseBreakdown = [
 
       <h3>4. Corporate-backed tools dominate the top tier</h3>
       <p>
-        Microsoft (2 entries), Google (go-sdk), Laravel Foundation (laravel/boost), PrefectHQ (fastmcp),
+        Microsoft (2 entries), Google (go-sdk), Laravel Foundation (<a href="/tool/laravel--boost/" class="inline-link">laravel/boost</a>), PrefectHQ (<a href="/tool/PrefectHQ--fastmcp/" class="inline-link">fastmcp</a>),
         and NVIDIA (NeMo) all appear in the Elite tier. Corporate backing correlates strongly with multi-contributor,
-        actively-maintained tools. Not always — unity-mcp (#1 overall) is community-built — but the correlation is real.
+        actively-maintained tools. Not always — <a href="/tool/CoplayDev--unity-mcp/" class="inline-link">unity-mcp</a> (#1 overall) is community-built — but the correlation is real.
       </p>
 
       <h3>5. The install gap is massive</h3>
       <p>
-        microsoft/playwright-mcp has 1.77 million Glama installs. The #2 skill (emerzon/mt-data-mcp) has 1.25 million.
+        <a href="/tool/microsoft--playwright-mcp/" class="inline-link">microsoft/playwright-mcp</a> has 1.77 million Glama installs. The #2 skill (<a href="/tool/emerzon--mt-data-mcp/" class="inline-link">emerzon/mt-data-mcp</a>) has 1.25 million.
         The median Glama install count is in the hundreds. The top 5 tools have more installs than the next 3,000 combined.
         Network effects in tool adoption are extreme — first-mover advantage is everything right now.
       </p>
@@ -506,6 +507,7 @@ const licenseBreakdown = [
       </div>
     </section>
 
+    <BlogSubscribeCTA source="blog" />
     <footer class="post-footer">
       <p class="methodology">
         <strong>Methodology:</strong> Data sourced from the AgentRank index crawled March 13–14, 2026.
@@ -526,6 +528,11 @@ const licenseBreakdown = [
       max-width: 720px;
       margin: 0 auto;
       padding: 2rem 0 3rem;
+    }
+
+    .inline-link {
+      color: var(--accent);
+      font-weight: 600;
     }
 
     .breadcrumb {

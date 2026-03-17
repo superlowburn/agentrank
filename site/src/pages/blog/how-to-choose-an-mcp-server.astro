@@ -2,6 +2,7 @@
 export const prerender = true;
 
 import Base from '../../layouts/Base.astro';
+import BlogSubscribeCTA from '../../components/BlogSubscribeCTA.astro';
 
 const publishDate = '2026-03-17';
 
@@ -100,13 +101,13 @@ const tiers = [
     tier: 'Production-ready',
     scoreRange: '80–100',
     description: 'High freshness, strong issue health, real dependents. These are the tools you can build on.',
-    example: 'mongodb-js/mongodb-mcp-server (88.44), redis/mcp-redis (86.59)',
+    example: '<a href="/tool/mongodb-js--mongodb-mcp-server/" class="inline-link">mongodb-js/mongodb-mcp-server</a> (88.44), <a href="/tool/redis--mcp-redis/" class="inline-link">redis/mcp-redis</a> (86.59)',
   },
   {
     tier: 'Active and viable',
     scoreRange: '65–79',
     description: 'Good signals overall but missing one or two. Still worth using — monitor freshness quarterly.',
-    example: 'bytebase/dbhub (78.46), neondatabase/mcp-server-neon (78.85)',
+    example: '<a href="/tool/bytebase--dbhub/" class="inline-link">bytebase/dbhub</a> (78.46), <a href="/tool/neondatabase--mcp-server-neon/" class="inline-link">neondatabase/mcp-server-neon</a> (78.85)',
   },
   {
     tier: 'Experimental',
@@ -237,7 +238,7 @@ const tiers = [
               <td class="tier-name">{tier.tier}</td>
               <td class="num score-cell">{tier.scoreRange}</td>
               <td class="tier-desc">{tier.description}</td>
-              <td class="tier-example">{tier.example}</td>
+              <td class="tier-example" set:html={tier.example} />
             </tr>
           ))}
         </tbody>
@@ -339,6 +340,7 @@ const tiers = [
       </div>
     </section>
 
+    <BlogSubscribeCTA source="blog" />
     <footer class="post-footer">
       <p class="methodology">
         <strong>Methodology:</strong> Data from the AgentRank index crawled March 2026.

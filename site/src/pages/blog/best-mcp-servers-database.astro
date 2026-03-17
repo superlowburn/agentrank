@@ -2,6 +2,7 @@
 export const prerender = true;
 
 import Base from '../../layouts/Base.astro';
+import BlogSubscribeCTA from '../../components/BlogSubscribeCTA.astro';
 
 const publishDate = '2026-03-17';
 
@@ -278,7 +279,7 @@ const stats = {
       <p>
         Three of the top seven are official servers from the database vendor: Redis, MongoDB, Neon, and dbt Labs.
         Official servers are safer long-term bets — they track API changes and breaking upgrades.
-        Community servers (like benborla/mcp-server-mysql) can be excellent, but check the contributor count
+        Community servers (like <a href="/tool/benborla--mcp-server-mysql/" class="inline-link">benborla/mcp-server-mysql</a>) can be excellent, but check the contributor count
         and last commit date before depending on them in production.
       </p>
 
@@ -287,12 +288,12 @@ const stats = {
         Most of these tools default to or only support read access. That's not a limitation — it's a
         deliberate choice to make agents safe to run against production data. If you need write access,
         verify it's supported and understand what safety constraints exist.
-        bytebase/dbhub and mongodb-js/mongodb-mcp-server both support writes.
+        <a href="/tool/bytebase--dbhub/" class="inline-link">bytebase/dbhub</a> and <a href="/tool/mongodb-js--mongodb-mcp-server/" class="inline-link">mongodb-js/mongodb-mcp-server</a> both support writes.
       </p>
 
       <h3>Score vs stars</h3>
       <p>
-        bytebase/dbhub has 2,302 stars but scores 78.46. motherduckdb/mcp-server-motherduck has only
+        <a href="/tool/bytebase--dbhub/" class="inline-link">bytebase/dbhub</a> has 2,302 stars but scores 78.46. <a href="/tool/motherduckdb--mcp-server-motherduck/" class="inline-link">motherduckdb/mcp-server-motherduck</a> has only
         439 stars but scores 88.66 — better freshness and issue health signals. Stars measure historical
         attention; the AgentRank score measures current maintenance quality. Use the score when
         deciding what to depend on.
@@ -309,6 +310,7 @@ const stats = {
       </div>
     </section>
 
+    <BlogSubscribeCTA source="blog" />
     <footer class="post-footer">
       <p class="methodology">
         <strong>Methodology:</strong> Data from the AgentRank index crawled March 2026.

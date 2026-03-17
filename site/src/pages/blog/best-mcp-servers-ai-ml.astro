@@ -2,6 +2,7 @@
 export const prerender = true;
 
 import Base from '../../layouts/Base.astro';
+import BlogSubscribeCTA from '../../components/BlogSubscribeCTA.astro';
 
 const publishDate = '2026-03-17';
 
@@ -183,7 +184,7 @@ const stats = {
       </p>
       <ul>
         <li><strong>Official vendor servers exist</strong> but are still early. Qdrant, Milvus, ChromaDB, and HuggingFace all have official MCP servers — none has hit critical mass yet.</li>
-        <li><strong>RAG tools score higher</strong> because they're general-purpose and attract more contributors. ForLoopCodes/contextplus (88.41) and agentset-ai/agentset (71.91) both have strong signals despite being newer.</li>
+        <li><strong>RAG tools score higher</strong> because they're general-purpose and attract more contributors. <a href="/tool/ForLoopCodes--contextplus/" class="inline-link">ForLoopCodes/contextplus</a> (88.41) and <a href="/tool/agentset-ai--agentset/" class="inline-link">agentset-ai/agentset</a> (71.91) both have strong signals despite being newer.</li>
         <li><strong>The freshness cliff matters here</strong>. chroma-core/chroma-mcp last committed September 2025 — almost six months ago. That's the biggest risk signal in this category.</li>
       </ul>
     </section>
@@ -294,7 +295,7 @@ const stats = {
         actively maintained with commits through March 2026.
       </p>
 
-      <h3>agentset-ai/agentset (71.91)</h3>
+      <h3><a href="/tool/agentset-ai--agentset/" class="inline-link">agentset-ai/agentset</a> (71.91)</h3>
       <p>
         The most general-purpose RAG platform in the index. 1,915 stars, supports 22+ file formats,
         built-in citations, deep research mode, and an MCP server interface. Open source with TypeScript.
@@ -302,7 +303,7 @@ const stats = {
         agentset is the strongest option that's not domain-specific.
       </p>
 
-      <h3>paiml/paiml-mcp-agent-toolkit (88.57)</h3>
+      <h3><a href="/tool/paiml--paiml-mcp-agent-toolkit/" class="inline-link">paiml/paiml-mcp-agent-toolkit</a> (88.57)</h3>
       <p>
         Written in Rust — unusual in the MCP ecosystem — and designed to make AI-generated code more
         deterministic. Focuses on code quality signals (complexity, dead code, dependency analysis) rather
@@ -355,26 +356,26 @@ const stats = {
 
       <h3>Building a RAG pipeline</h3>
       <p>
-        Start with <strong>agentset-ai/agentset</strong> for general document ingestion and retrieval,
-        or <strong>ForLoopCodes/contextplus</strong> if your primary use case is code navigation.
-        Pair with <strong>qdrant/mcp-server-qdrant</strong> if you want control over the vector store layer.
+        Start with <strong><a href="/tool/agentset-ai--agentset/" class="inline-link">agentset-ai/agentset</a></strong> for general document ingestion and retrieval,
+        or <strong><a href="/tool/ForLoopCodes--contextplus/" class="inline-link">ForLoopCodes/contextplus</a></strong> if your primary use case is code navigation.
+        Pair with <strong><a href="/tool/qdrant--mcp-server-qdrant/" class="inline-link">qdrant/mcp-server-qdrant</a></strong> if you want control over the vector store layer.
       </p>
 
       <h3>Semantic search over a codebase</h3>
       <p>
-        <strong>ForLoopCodes/contextplus</strong> is purpose-built for this. It's the best-maintained
+        <strong><a href="/tool/ForLoopCodes--contextplus/" class="inline-link">ForLoopCodes/contextplus</a></strong> is purpose-built for this. It's the best-maintained
         and highest-scoring codebase search tool in the index.
       </p>
 
       <h3>Accessing HuggingFace models and datasets</h3>
       <p>
-        <strong>huggingface/hf-mcp-server</strong> is the only option here with credible quality signals.
+        <strong><a href="/tool/huggingface--hf-mcp-server/" class="inline-link">huggingface/hf-mcp-server</a></strong> is the only option here with credible quality signals.
         It's official and actively maintained.
       </p>
 
       <h3>Using ChromaDB locally</h3>
       <p>
-        <strong>chroma-core/chroma-mcp</strong> is the right tool but monitor the repo for activity —
+        <strong><a href="/tool/chroma-core--chroma-mcp/" class="inline-link">chroma-core/chroma-mcp</a></strong> is the right tool but monitor the repo for activity —
         the September 2025 last commit is worth watching. Check for updates before pinning a version in production.
       </p>
 
@@ -389,6 +390,7 @@ const stats = {
       </div>
     </section>
 
+    <BlogSubscribeCTA source="blog" />
     <footer class="post-footer">
       <p class="methodology">
         <strong>Methodology:</strong> Data from the AgentRank index crawled March 2026.

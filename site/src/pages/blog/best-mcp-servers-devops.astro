@@ -2,6 +2,7 @@
 export const prerender = true;
 
 import Base from '../../layouts/Base.astro';
+import BlogSubscribeCTA from '../../components/BlogSubscribeCTA.astro';
 
 const publishDate = '2026-03-17';
 
@@ -257,7 +258,7 @@ const stats = {
         one clear winner. Each has a different trade-off.
       </p>
 
-      <h3>reza-gholizade/k8s-mcp-server (91.66)</h3>
+      <h3><a href="/tool/reza-gholizade--k8s-mcp-server/" class="inline-link">reza-gholizade/k8s-mcp-server</a> (91.66)</h3>
       <p>
         The highest-scoring Kubernetes tool despite only 149 stars. Its score is driven by
         exceptional freshness and issue health signals — the maintainer is actively responding to issues
@@ -265,21 +266,21 @@ const stats = {
         this is a good example: fewer stars but better maintenance discipline than the higher-starred options.
       </p>
 
-      <h3>rohitg00/kubectl-mcp-server (88.11)</h3>
+      <h3><a href="/tool/rohitg00--kubectl-mcp-server/" class="inline-link">rohitg00/kubectl-mcp-server</a> (88.11)</h3>
       <p>
         The easiest to install — <code>npx kubectl-mcp-server</code> or <code>pip install kubectl-mcp-server</code>.
         849 stars, wraps kubectl and helm directly. Best for teams that want minimal setup and broad
         kubectl coverage without writing any configuration.
       </p>
 
-      <h3>containers/kubernetes-mcp-server (84.92)</h3>
+      <h3><a href="/tool/containers--kubernetes-mcp-server/" class="inline-link">containers/kubernetes-mcp-server</a> (84.92)</h3>
       <p>
         The official server from the containers organization. Unique feature: <strong>OpenShift support</strong>.
         If your infrastructure runs on OpenShift, this is the only server with native support.
         42 contributors and consistent commits make this the safest long-term bet for enterprise use.
       </p>
 
-      <h3>Flux159/mcp-server-kubernetes (80.38)</h3>
+      <h3><a href="/tool/Flux159--mcp-server-kubernetes/" class="inline-link">Flux159/mcp-server-kubernetes</a> (80.38)</h3>
       <p>
         The most-starred Kubernetes server at 1,348 stars with 40 contributors. Written in TypeScript.
         Good community, solid maintenance, broad coverage of Kubernetes resources. Scores slightly lower
@@ -331,27 +332,27 @@ const stats = {
 
       <h3>Best overall DevOps tool</h3>
       <p>
-        <strong>microsoft/azure-devops-mcp</strong> at 97.17 is the best-maintained DevOps MCP server in
+        <strong><a href="/tool/microsoft--azure-devops-mcp/" class="inline-link">microsoft/azure-devops-mcp</a></strong> at 97.17 is the best-maintained DevOps MCP server in
         the index by a significant margin. If you're on Azure, this is the clear choice.
       </p>
 
       <h3>Best for Kubernetes (multi-cloud)</h3>
       <p>
-        <strong>containers/kubernetes-mcp-server</strong> for enterprise and OpenShift environments.
-        <strong>reza-gholizade/k8s-mcp-server</strong> if you want the highest-quality signals in a
+        <strong><a href="/tool/containers--kubernetes-mcp-server/" class="inline-link">containers/kubernetes-mcp-server</a></strong> for enterprise and OpenShift environments.
+        <strong><a href="/tool/reza-gholizade--k8s-mcp-server/" class="inline-link">reza-gholizade/k8s-mcp-server</a></strong> if you want the highest-quality signals in a
         focused, fast-moving project.
       </p>
 
       <h3>Best for AWS</h3>
       <p>
-        <strong>alexei-led/aws-mcp-server</strong> for general AWS operations.
-        <strong>awslabs/Log-Analyzer-with-MCP</strong> specifically for log analysis and incident triage.
+        <strong><a href="/tool/alexei-led--aws-mcp-server/" class="inline-link">alexei-led/aws-mcp-server</a></strong> for general AWS operations.
+        <strong><a href="/tool/awslabs--Log-Analyzer-with-MCP/" class="inline-link">awslabs/Log-Analyzer-with-MCP</a></strong> specifically for log analysis and incident triage.
       </p>
 
       <h3>Best for GCP</h3>
       <p>
-        <strong>googleapis/gcloud-mcp</strong> for broad coverage.
-        <strong>GoogleCloudPlatform/cloud-run-mcp</strong> specifically for deployment automation.
+        <strong><a href="/tool/googleapis--gcloud-mcp/" class="inline-link">googleapis/gcloud-mcp</a></strong> for broad coverage.
+        <strong><a href="/tool/GoogleCloudPlatform--cloud-run-mcp/" class="inline-link">GoogleCloudPlatform/cloud-run-mcp</a></strong> specifically for deployment automation.
       </p>
 
       <div class="cta-box">
@@ -365,6 +366,7 @@ const stats = {
       </div>
     </section>
 
+    <BlogSubscribeCTA source="blog" />
     <footer class="post-footer">
       <p class="methodology">
         <strong>Methodology:</strong> Data from the AgentRank index crawled March 2026.

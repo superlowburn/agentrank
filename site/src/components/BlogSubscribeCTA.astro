@@ -1,0 +1,162 @@
+---
+interface Props {
+  source?: string;
+}
+const { source = 'blog' } = Astro.props;
+---
+
+<div class="blog-subscribe-cta">
+  <p class="cta-headline">Get the weekly AgentRank digest</p>
+  <p class="cta-sub">Top movers, new tools, ecosystem insights — straight to your inbox.</p>
+  <form class="blog-subscribe-form" data-source={source} novalidate>
+    <div class="blog-subscribe-row">
+      <input
+        type="email"
+        name="email"
+        placeholder="you@example.com"
+        autocomplete="email"
+        required
+      />
+      <button type="submit">Subscribe</button>
+    </div>
+    <span class="blog-subscribe-msg" aria-live="polite"></span>
+  </form>
+</div>
+
+<style>
+  .blog-subscribe-cta {
+    background: var(--bg-surface);
+    border: 1px solid var(--accent);
+    border-radius: 6px;
+    padding: 1.25rem 1.5rem;
+    margin: 2rem 0;
+  }
+
+  .cta-headline {
+    font-size: 0.95rem !important;
+    font-weight: 700;
+    color: var(--text) !important;
+    margin-bottom: 0.25rem !important;
+    opacity: 1 !important;
+  }
+
+  .cta-sub {
+    font-size: 0.82rem !important;
+    color: var(--text-muted) !important;
+    margin-bottom: 0.85rem !important;
+    opacity: 1 !important;
+  }
+
+  .blog-subscribe-form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+
+  .blog-subscribe-row {
+    display: flex;
+    gap: 0.5rem;
+  }
+
+  .blog-subscribe-row input[type="email"] {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 0.45rem 0.75rem;
+    border-radius: 4px;
+    font-family: inherit;
+    font-size: 0.85rem;
+    flex: 1;
+    min-width: 0;
+  }
+
+  .blog-subscribe-row input[type="email"]:focus {
+    outline: 1px solid var(--accent);
+    border-color: var(--accent);
+  }
+
+  .blog-subscribe-row button {
+    background: var(--accent);
+    color: #000;
+    border: none;
+    border-radius: 4px;
+    padding: 0.45rem 1rem;
+    font-family: inherit;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: opacity 0.15s;
+  }
+
+  .blog-subscribe-row button:hover {
+    opacity: 0.85;
+  }
+
+  .blog-subscribe-row button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .blog-subscribe-msg {
+    font-size: 0.78rem;
+    min-height: 1em;
+  }
+
+  .blog-subscribe-msg.success {
+    color: var(--accent);
+  }
+
+  .blog-subscribe-msg.error {
+    color: #ef4444;
+  }
+
+  @media (max-width: 480px) {
+    .blog-subscribe-row {
+      flex-direction: column;
+    }
+  }
+</style>
+
+<script>
+  document.querySelectorAll<HTMLFormElement>('.blog-subscribe-form').forEach((form) => {
+    const source = form.dataset.source || 'blog';
+    const input = form.querySelector<HTMLInputElement>('input[type="email"]')!;
+    const btn = form.querySelector<HTMLButtonElement>('button')!;
+    const msg = form.querySelector<HTMLSpanElement>('.blog-subscribe-msg')!;
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const email = input.value.trim();
+      if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        msg.textContent = 'Please enter a valid email address.';
+        msg.className = 'blog-subscribe-msg error';
+        return;
+      }
+      btn.disabled = true;
+      msg.textContent = '';
+      msg.className = 'blog-subscribe-msg';
+      try {
+        const res = await fetch('/api/subscribe', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, source }),
+        });
+        const data = await res.json();
+        if (data.success) {
+          msg.textContent = data.already ? "You're already subscribed." : "You're in. Updates coming your way.";
+          msg.className = 'blog-subscribe-msg success';
+          input.value = '';
+        } else {
+          msg.textContent = data.error || 'Something went wrong.';
+          msg.className = 'blog-subscribe-msg error';
+          btn.disabled = false;
+        }
+      } catch {
+        msg.textContent = 'Network error. Please try again.';
+        msg.className = 'blog-subscribe-msg error';
+        btn.disabled = false;
+      }
+    });
+  });
+</script>
