@@ -80,6 +80,12 @@ const itemListJsonLd = {
     <span class="count"><span id="visible-count">{skills.length}</span> of {totalCount.toLocaleString('en-US')} skills</span>
   </div>
 
+  <div class="category-nav">
+    {usedCategories.map((cat) => (
+      <a href={`/category/${cat}/`} class="cat-chip">{CATEGORIES[cat] || cat}</a>
+    ))}
+  </div>
+
   <div class="table-wrap">
     <table id="leaderboard">
       <thead>
@@ -119,6 +125,30 @@ const itemListJsonLd = {
 </Base>
 
 <style>
+  .category-nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-bottom: 1rem;
+  }
+
+  .cat-chip {
+    font-size: 0.75rem;
+    padding: 0.2rem 0.6rem;
+    border-radius: 3px;
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+    background: var(--bg-surface);
+    text-decoration: none;
+    transition: color 0.15s, border-color 0.15s;
+  }
+
+  .cat-chip:hover {
+    color: var(--accent);
+    border-color: var(--accent);
+    text-decoration: none;
+  }
+
   .install-banner {
     background: var(--bg-surface);
     border: 1px solid var(--accent);

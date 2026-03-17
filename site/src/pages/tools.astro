@@ -47,6 +47,16 @@ const itemListJsonLd = {
     <span class="count"><span id="visible-count">{tools.length}</span> of {totalCount.toLocaleString('en-US')} tools (top {TOP_N})</span>
   </div>
 
+  <div class="category-nav">
+    {usedCategories.map((cat) => (
+      <a href={`/category/${cat}/`} class="cat-chip">{CATEGORIES[cat] || cat}</a>
+    ))}
+    <a href="/category/python/" class="cat-chip">Python</a>
+    <a href="/category/typescript/" class="cat-chip">TypeScript</a>
+    <a href="/category/go/" class="cat-chip">Go</a>
+    <a href="/category/rust/" class="cat-chip">Rust</a>
+  </div>
+
   <div class="table-wrap">
     <table id="leaderboard">
       <thead>
@@ -91,6 +101,30 @@ const itemListJsonLd = {
     align-items: center;
     margin-bottom: 1rem;
     gap: 1rem;
+  }
+
+  .category-nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-bottom: 1rem;
+  }
+
+  .cat-chip {
+    font-size: 0.75rem;
+    padding: 0.2rem 0.6rem;
+    border-radius: 3px;
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+    background: var(--bg-surface);
+    text-decoration: none;
+    transition: color 0.15s, border-color 0.15s;
+  }
+
+  .cat-chip:hover {
+    color: var(--accent);
+    border-color: var(--accent);
+    text-decoration: none;
   }
 
   #search {

@@ -8,25 +8,85 @@ import { toSlug, formatStars, relativeTime, scoreColor } from '../../data/tools'
 import { toSkillSlug, formatInstalls, sourceLabel } from '../../data/skills';
 import { CATEGORIES } from '../../data/content-gen';
 
+// Language-based virtual categories
+const LANGUAGE_CATEGORIES: Record<string, string> = {
+  python: 'Python',
+  typescript: 'TypeScript',
+  javascript: 'JavaScript',
+  go: 'Go',
+  rust: 'Rust',
+};
+
+const ALL_CATEGORY_LABELS: Record<string, string> = {
+  ...CATEGORIES,
+  ...Object.fromEntries(Object.entries(LANGUAGE_CATEGORIES).map(([k, v]) => [k, `${v} Tools`])),
+};
+
 export function getStaticPaths() {
+  const LANG_SLUGS = ['python', 'typescript', 'javascript', 'go', 'rust'];
+
   const allTools = getAllTools();
   const allSkills = getAllSkills();
 
+  // Domain/type category slugs from classified data
   const toolCats = new Set(allTools.map((t) => t.category).filter(Boolean));
   const skillCats = new Set(allSkills.map((s) => s.category).filter(Boolean));
-  const allCats = new Set([...toolCats, ...skillCats]);
+  const domainSlugs = new Set([...toolCats, ...skillCats]);
 
-  return [...allCats].map((slug) => ({ params: { slug } }));
+  // Language slugs — only include languages with enough tools to be useful
+  const langCounts: Record<string, number> = {};
+  for (const t of allTools) {
+    if (t.language) {
+      const lang = t.language.toLowerCase();
+      langCounts[lang] = (langCounts[lang] || 0) + 1;
+    }
+  }
+  const languageSlugs = LANG_SLUGS.filter((lang) => (langCounts[lang] || 0) >= 5);
+
+  const allSlugs = new Set([...domainSlugs, ...languageSlugs]);
+
+  return [...allSlugs].map((slug) => ({ params: { slug } }));
 }
 
 const { slug } = Astro.params;
-const label = CATEGORIES[slug!] || slug!;
+const isLanguageSlug = slug! in LANGUAGE_CATEGORIES;
+const label = ALL_CATEGORY_LABELS[slug!] || slug!;
 
-const allTools = getAllTools().filter((t) => t.category === slug);
-const allSkills = getAllSkills().filter((s) => s.category === slug);
+const allTools = isLanguageSlug
+  ? getAllTools().filter((t) => t.language?.toLowerCase() === slug)
+  : getAllTools().filter((t) => t.category === slug);
+
+const allSkills = isLanguageSlug
+  ? [] // skills don't have language field
+  : getAllSkills().filter((s) => s.category === slug);
 
 const pageUrl = `https://agentrank-ai.com/category/${slug}/`;
 const totalCount = allTools.length + allSkills.length;
+
+const breadcrumbJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    {
+      '@type': 'ListItem',
+      position: 1,
+      name: 'AgentRank',
+      item: 'https://agentrank-ai.com/',
+    },
+    {
+      '@type': 'ListItem',
+      position: 2,
+      name: 'Categories',
+      item: 'https://agentrank-ai.com/category/',
+    },
+    {
+      '@type': 'ListItem',
+      position: 3,
+      name: label,
+      item: pageUrl,
+    },
+  ],
+};
 
 const categoryItemListJsonLd = totalCount > 0 ? {
   '@context': 'https://schema.org',
@@ -49,6 +109,10 @@ const categoryItemListJsonLd = totalCount > 0 ? {
     })),
   ].slice(0, 10),
 } : undefined;
+
+const jsonLd = categoryItemListJsonLd
+  ? [breadcrumbJsonLd, categoryItemListJsonLd]
+  : breadcrumbJsonLd;
 ---
 
 <Base
@@ -56,20 +120,21 @@ const categoryItemListJsonLd = totalCount > 0 ? {
   description={`Top ${label} MCP servers, agent tools, and AI skills ranked by stars, freshness, and real usage signals. ${totalCount} ${label} tools and skills indexed.`}
   keywords={`${label} MCP servers, best ${label} agent tools, ${label} AI skills, top ${label} tools`}
   canonicalUrl={pageUrl}
-  jsonLd={categoryItemListJsonLd}
+  jsonLd={jsonLd}
 >
   <div class="breadcrumb">
-    <a href="/tools/">Tools</a> / <a href="/">Skills</a> / <span>{label}</span>
+    <a href="/">AgentRank</a> / <a href="/category/">Categories</a> / <span>{label}</span>
   </div>
 
   <h2 class="category-heading">{label}</h2>
   <p class="category-sub">
-    {allTools.length} tool{allTools.length !== 1 ? 's' : ''} &middot; {allSkills.length} skill{allSkills.length !== 1 ? 's' : ''}
+    {allTools.length} tool{allTools.length !== 1 ? 's' : ''}
+    {allSkills.length > 0 && <> &middot; {allSkills.length} skill{allSkills.length !== 1 ? 's' : ''}</>}
   </p>
 
   {allTools.length > 0 && (
     <section>
-      <h3 class="section-heading">Tools</h3>
+      {allSkills.length > 0 && <h3 class="section-heading">Tools</h3>}
       <div class="table-wrap">
         <table>
           <thead>

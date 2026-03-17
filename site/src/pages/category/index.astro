@@ -1,0 +1,182 @@
+---
+export const prerender = true;
+
+import Base from '../../layouts/Base.astro';
+import { getAllTools } from '../../data/ranked';
+import { getAllSkills } from '../../data/ranked-skills';
+import { CATEGORIES } from '../../data/content-gen';
+
+const allTools = getAllTools();
+const allSkills = getAllSkills();
+
+// Domain/type categories with counts
+const domainCounts: Record<string, { tools: number; skills: number }> = {};
+for (const t of allTools) {
+  if (t.category) {
+    if (!domainCounts[t.category]) domainCounts[t.category] = { tools: 0, skills: 0 };
+    domainCounts[t.category].tools++;
+  }
+}
+for (const s of allSkills) {
+  if (s.category) {
+    if (!domainCounts[s.category]) domainCounts[s.category] = { tools: 0, skills: 0 };
+    domainCounts[s.category].skills++;
+  }
+}
+
+// Language-based categories with counts
+const langCounts: Record<string, number> = {};
+for (const t of allTools) {
+  if (t.language) {
+    const lang = t.language.toLowerCase();
+    langCounts[lang] = (langCounts[lang] || 0) + 1;
+  }
+}
+
+const LANGUAGE_SLUGS: Record<string, string> = {
+  python: 'Python',
+  typescript: 'TypeScript',
+  javascript: 'JavaScript',
+  go: 'Go',
+  rust: 'Rust',
+};
+
+const languageCategories = Object.entries(LANGUAGE_SLUGS)
+  .filter(([slug]) => (langCounts[slug] || 0) >= 5)
+  .map(([slug, name]) => ({ slug, name: `${name} Tools`, count: langCounts[slug] || 0 }));
+
+const domainCategories = Object.keys(CATEGORIES)
+  .filter((slug) => domainCounts[slug])
+  .map((slug) => ({
+    slug,
+    name: CATEGORIES[slug],
+    count: (domainCounts[slug]?.tools || 0) + (domainCounts[slug]?.skills || 0),
+  }))
+  .sort((a, b) => b.count - a.count);
+
+const breadcrumbJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'AgentRank', item: 'https://agentrank-ai.com/' },
+    { '@type': 'ListItem', position: 2, name: 'Categories', item: 'https://agentrank-ai.com/category/' },
+  ],
+};
+---
+
+<Base
+  title="Browse by Category — AgentRank"
+  description="Browse MCP servers and agent tools by category: databases, browser automation, search, monitoring, communication, and more. Filtered by language: Python, TypeScript, Go, Rust."
+  keywords="MCP server categories, agent tool categories, Python MCP servers, TypeScript tools, browse by category"
+  canonicalUrl="https://agentrank-ai.com/category/"
+  jsonLd={breadcrumbJsonLd}
+>
+  <div class="breadcrumb">
+    <a href="/">AgentRank</a> / <span>Categories</span>
+  </div>
+
+  <h2 class="page-heading">Browse by Category</h2>
+  <p class="page-sub">Explore MCP servers and agent tools by domain or language.</p>
+
+  <section>
+    <h3 class="section-heading">By Domain</h3>
+    <div class="cat-grid">
+      {domainCategories.map(({ slug, name, count }) => (
+        <a href={`/category/${slug}/`} class="cat-card">
+          <span class="cat-name">{name}</span>
+          <span class="cat-count">{count.toLocaleString('en-US')} items</span>
+        </a>
+      ))}
+    </div>
+  </section>
+
+  <section>
+    <h3 class="section-heading">By Language</h3>
+    <div class="cat-grid">
+      {languageCategories.map(({ slug, name, count }) => (
+        <a href={`/category/${slug}/`} class="cat-card">
+          <span class="cat-name">{name}</span>
+          <span class="cat-count">{count.toLocaleString('en-US')} tools</span>
+        </a>
+      ))}
+    </div>
+  </section>
+</Base>
+
+<style>
+  .breadcrumb {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    margin-bottom: 1.5rem;
+  }
+
+  .breadcrumb a {
+    color: var(--text-muted);
+  }
+
+  .breadcrumb a:hover {
+    color: var(--accent);
+  }
+
+  .page-heading {
+    font-size: 1.4rem;
+    font-weight: 700;
+    margin-bottom: 0.25rem;
+  }
+
+  .page-sub {
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    margin-bottom: 2rem;
+  }
+
+  section {
+    margin-bottom: 3rem;
+  }
+
+  .section-heading {
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-muted);
+    margin-bottom: 0.75rem;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 0.5rem;
+  }
+
+  .cat-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 0.75rem;
+  }
+
+  .cat-card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    background: var(--bg-surface);
+    text-decoration: none;
+    transition: border-color 0.15s, background 0.15s;
+  }
+
+  .cat-card:hover {
+    border-color: var(--accent);
+    background: var(--bg-hover);
+    text-decoration: none;
+  }
+
+  .cat-name {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text);
+  }
+
+  .cat-count {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+  }
+</style>
