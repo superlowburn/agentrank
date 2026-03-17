@@ -12,6 +12,7 @@ export const prerender = true;
 
   <nav class="quick-nav">
     <a href="#mcp">MCP Server</a>
+    <a href="#ide-configs">IDE Configs</a>
     <a href="#v1-search">v1/search</a>
     <a href="#v1-tool">v1/tool</a>
     <a href="#v1-movers">v1/movers</a>
@@ -33,6 +34,54 @@ export const prerender = true;
     <pre class="code-block">npx agentrank-mcp-server</pre>
 
     <p class="cache-note">The MCP server wraps the same endpoints documented below. Once installed, your agent can search, lookup, and get rankings without writing any API calls.</p>
+  </section>
+
+  <section class="ide-configs" id="ide-configs">
+    <h2>IDE &amp; Editor Configs</h2>
+    <p class="ide-intro">Drop a config file into your project and your AI coding assistant will automatically query AgentRank for live tool recommendations instead of relying on stale training data.</p>
+
+    <div class="platform-grid">
+      <div class="platform-card">
+        <div class="platform-header">
+          <span class="platform-name">Cursor</span>
+          <span class="platform-file">.cursorrules</span>
+        </div>
+        <p class="platform-desc">Copy to your project root or <code>~/.cursorrules</code> for global use.</p>
+        <pre class="code-block">curl -o .cursorrules https://raw.githubusercontent.com/superlowburn/agentrank/main/skill/agentrank/cursor/.cursorrules</pre>
+        <details class="preview-toggle">
+          <summary>Preview</summary>
+          <p class="preview-note">Instructs Cursor to query <code>agentrank-ai.com/api/v1/search</code> whenever you ask for tool or MCP server recommendations. Includes trigger conditions and result formatting guidance.</p>
+        </details>
+      </div>
+
+      <div class="platform-card">
+        <div class="platform-header">
+          <span class="platform-name">VS Code + Copilot</span>
+          <span class="platform-file">.github/copilot-instructions.md</span>
+        </div>
+        <p class="platform-desc">Copy to <code>.github/copilot-instructions.md</code> in your repo root. Copilot reads this automatically.</p>
+        <pre class="code-block">mkdir -p .github && curl -o .github/copilot-instructions.md https://raw.githubusercontent.com/superlowburn/agentrank/main/skill/agentrank/vscode/copilot-instructions.md</pre>
+        <details class="preview-toggle">
+          <summary>Preview</summary>
+          <p class="preview-note">Instructs GitHub Copilot to query the AgentRank API for live tool data when recommending MCP servers, agent tools, or AI skills.</p>
+        </details>
+      </div>
+
+      <div class="platform-card">
+        <div class="platform-header">
+          <span class="platform-name">Cline</span>
+          <span class="platform-file">.clinerules</span>
+        </div>
+        <p class="platform-desc">Copy to your project root or <code>~/.clinerules</code> for global use.</p>
+        <pre class="code-block">curl -o .clinerules https://raw.githubusercontent.com/superlowburn/agentrank/main/skill/agentrank/cline/.clinerules</pre>
+        <details class="preview-toggle">
+          <summary>Preview</summary>
+          <p class="preview-note">Instructs Cline to call the AgentRank API (via curl or browser_action) for tool recommendations. Covers trigger conditions, query format, and result presentation.</p>
+        </details>
+      </div>
+    </div>
+
+    <p class="ide-source">All configs are in the <a href="https://github.com/superlowburn/agentrank/tree/main/skill/agentrank" target="_blank" rel="noopener">agentrank GitHub repo</a>. Copy, fork, or adapt them for your setup.</p>
   </section>
 
   <h2 class="section-header">V1 Endpoints</h2>
@@ -533,6 +582,113 @@ curl "https://agentrank-ai.com/api/v1/tool/glama-playwright-mcp-server"  # skill
     font-size: 0.75rem;
   }
 
+  .ide-configs {
+    margin-bottom: 2.5rem;
+  }
+
+  .ide-configs h2 {
+    font-size: 1rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+  }
+
+  .ide-intro {
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .platform-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .platform-card {
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 1rem 1.25rem;
+  }
+
+  .platform-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.4rem;
+  }
+
+  .platform-name {
+    font-weight: 700;
+    font-size: 0.9rem;
+  }
+
+  .platform-file {
+    font-family: monospace;
+    font-size: 0.75rem;
+    color: var(--accent);
+    background: var(--bg);
+    border: 1px solid var(--border);
+    padding: 0.1rem 0.4rem;
+    border-radius: 3px;
+  }
+
+  .platform-desc {
+    color: var(--text-muted);
+    font-size: 0.82rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .platform-desc code {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    padding: 0.1rem 0.3rem;
+    border-radius: 2px;
+    font-size: 0.75rem;
+  }
+
+  .preview-toggle {
+    margin-top: 0.5rem;
+  }
+
+  .preview-toggle summary {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .preview-toggle summary:hover {
+    color: var(--accent);
+  }
+
+  .preview-note {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    margin-top: 0.4rem;
+    padding-left: 0.5rem;
+    border-left: 2px solid var(--border);
+  }
+
+  .preview-note code {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    padding: 0.1rem 0.3rem;
+    border-radius: 2px;
+    font-size: 0.75rem;
+  }
+
+  .ide-source {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    margin-top: 0.5rem;
+  }
+
+  .ide-source a {
+    color: var(--accent);
+  }
+
   @media (max-width: 480px) {
     .endpoint {
       padding-left: 0.75rem;
@@ -544,6 +700,10 @@ curl "https://agentrank-ai.com/api/v1/tool/glama-playwright-mcp-server"  # skill
 
     .params-table {
       font-size: 0.75rem;
+    }
+
+    .platform-header {
+      flex-wrap: wrap;
     }
   }
 </style>
