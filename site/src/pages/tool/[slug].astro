@@ -51,21 +51,91 @@ const descQuality = !tool.description ? 0 : descLen < 50 ? 0.3 : descLen < 150 ?
 const PERMISSIVE = ['MIT', 'Apache-2.0', 'BSD-2-Clause', 'BSD-3-Clause', 'ISC', 'Unlicense'];
 const licHealth = !tool.license || tool.license === 'NOASSERTION' ? 0.2 : PERMISSIVE.includes(tool.license) ? 1.0 : 0.6;
 
+const daysSinceCommit = Math.floor((Date.now() - new Date(tool.last_commit_at).getTime()) / (1000 * 60 * 60 * 24));
+
 const signals = [
-  { name: 'Stars', value: tool.stars.toLocaleString('en-US'), bar: Math.min(100, Math.log(1 + tool.stars) / Math.log(1 + 200000) * 100), weight: 15 },
-  { name: 'Freshness', value: relativeTime(tool.last_commit_at), bar: (() => {
-    const days = Math.floor((Date.now() - new Date(tool.last_commit_at).getTime()) / (1000 * 60 * 60 * 24));
-    if (days <= 7) return 100;
-    if (days <= 90) return 100 - ((days - 7) / 83) * 60;
-    return Math.max(0, 40 * Math.exp(-(days - 90) / 180));
-  })(), weight: 25 },
-  { name: 'Issue Health', value: `${(issueHealth * 100).toFixed(0)}%`, bar: issueHealth * 100, weight: 25 },
-  { name: 'Contributors', value: tool.contributors, bar: Math.min(100, Math.log(1 + tool.contributors) / Math.log(1 + 500) * 100), weight: 10 },
-  { name: 'Dependents', value: tool.dependents > 0 ? tool.dependents.toLocaleString('en-US') : '0', bar: Math.min(100, tool.dependents > 0 ? Math.log(1 + tool.dependents) / Math.log(1 + 100000) * 100 : 0), weight: 25 },
-  { name: 'Forks', value: tool.forks.toLocaleString('en-US'), bar: Math.min(100, Math.log(1 + tool.forks) / Math.log(1 + 50000) * 100), weight: 0 },
-  { name: 'Description', value: descQuality === 0 ? 'None' : descQuality === 0.3 ? 'Brief' : descQuality === 0.7 ? 'Good' : 'Detailed', bar: descQuality * 100, weight: 0 },
-  { name: 'License', value: tool.license || 'None', bar: licHealth * 100, weight: 0 },
+  {
+    name: 'Stars',
+    value: tool.stars.toLocaleString('en-US'),
+    bar: Math.min(100, Math.log(1 + tool.stars) / Math.log(1 + 200000) * 100),
+    weight: 15,
+    driver: `${tool.stars.toLocaleString('en-US')} stars → ${tool.stars > 10000 ? 'extremely popular' : tool.stars > 1000 ? 'well-known project' : tool.stars > 100 ? 'growing community' : 'early stage'}`,
+  },
+  {
+    name: 'Freshness',
+    value: relativeTime(tool.last_commit_at),
+    bar: (() => {
+      if (daysSinceCommit <= 7) return 100;
+      if (daysSinceCommit <= 90) return 100 - ((daysSinceCommit - 7) / 83) * 60;
+      return Math.max(0, 40 * Math.exp(-(daysSinceCommit - 90) / 180));
+    })(),
+    weight: 25,
+    driver: `Last commit ${relativeTime(tool.last_commit_at)} → ${daysSinceCommit <= 7 ? 'actively maintained' : daysSinceCommit <= 30 ? 'recently updated' : daysSinceCommit <= 90 ? 'moderate activity' : 'stale'}`,
+  },
+  {
+    name: 'Issue Health',
+    value: `${(issueHealth * 100).toFixed(0)}%`,
+    bar: issueHealth * 100,
+    weight: 25,
+    driver: totalIssues === 0
+      ? 'No issues filed → no history to score'
+      : `${tool.closed_issues}/${totalIssues} issues closed → ${issueHealth >= 0.8 ? 'responsive maintainer' : issueHealth >= 0.5 ? 'decent issue management' : 'many open issues'}`,
+  },
+  {
+    name: 'Contributors',
+    value: tool.contributors,
+    bar: Math.min(100, Math.log(1 + tool.contributors) / Math.log(1 + 500) * 100),
+    weight: 10,
+    driver: `${tool.contributors} contributor${tool.contributors !== 1 ? 's' : ''} → ${tool.contributors >= 10 ? 'active community' : tool.contributors >= 3 ? 'small team' : 'solo project'}`,
+  },
+  {
+    name: 'Dependents',
+    value: tool.dependents > 0 ? tool.dependents.toLocaleString('en-US') : '0',
+    bar: Math.min(100, tool.dependents > 0 ? Math.log(1 + tool.dependents) / Math.log(1 + 100000) * 100 : 0),
+    weight: 25,
+    driver: `${tool.dependents > 0 ? tool.dependents.toLocaleString('en-US') : 'No'} dependent${tool.dependents !== 1 ? 's' : ''} → ${tool.dependents > 1000 ? 'widely adopted' : tool.dependents > 100 ? 'gaining traction' : tool.dependents > 0 ? 'few downstream users' : 'no downstream usage'}`,
+  },
+  { name: 'Forks', value: tool.forks.toLocaleString('en-US'), bar: Math.min(100, Math.log(1 + tool.forks) / Math.log(1 + 50000) * 100), weight: 0, driver: '' },
+  { name: 'Description', value: descQuality === 0 ? 'None' : descQuality === 0.3 ? 'Brief' : descQuality === 0.7 ? 'Good' : 'Detailed', bar: descQuality * 100, weight: 0, driver: '' },
+  { name: 'License', value: tool.license || 'None', bar: licHealth * 100, weight: 0, driver: '' },
 ];
+
+// Radar chart — 5 scored signals as pentagon
+const rcx = 150, rcy = 130, radarR = 85;
+const radarAngRad = [-90, -18, 54, 126, 198].map(d => d * Math.PI / 180);
+const scoredSigs = signals.slice(0, 5);
+
+const radarGridPaths = [0.2, 0.4, 0.6, 0.8, 1.0].map(lvl => {
+  const pts = radarAngRad.map(a => `${(rcx + radarR * lvl * Math.cos(a)).toFixed(1)},${(rcy + radarR * lvl * Math.sin(a)).toFixed(1)}`);
+  return `M${pts.join('L')}Z`;
+});
+
+const radarDataPath = (() => {
+  const pts = scoredSigs.map((s, i) => `${(rcx + radarR * (s.bar / 100) * Math.cos(radarAngRad[i])).toFixed(1)},${(rcy + radarR * (s.bar / 100) * Math.sin(radarAngRad[i])).toFixed(1)}`);
+  return `M${pts.join('L')}Z`;
+})();
+
+const radarAxes = radarAngRad.map(a => ({
+  x2: (rcx + radarR * Math.cos(a)).toFixed(1),
+  y2: (rcy + radarR * Math.sin(a)).toFixed(1),
+}));
+
+const radarDots = scoredSigs.map((s, i) => ({
+  cx: (rcx + radarR * (s.bar / 100) * Math.cos(radarAngRad[i])).toFixed(1),
+  cy: (rcy + radarR * (s.bar / 100) * Math.sin(radarAngRad[i])).toFixed(1),
+}));
+
+const radarLabelData = scoredSigs.map((s, i) => {
+  const lx = rcx + 113 * Math.cos(radarAngRad[i]);
+  const ly = rcy + 113 * Math.sin(radarAngRad[i]);
+  const cosA = Math.cos(radarAngRad[i]);
+  return {
+    x: lx.toFixed(1),
+    y: ly.toFixed(1),
+    anchor: cosA > 0.3 ? 'start' : cosA < -0.3 ? 'end' : 'middle',
+    name: s.name,
+  };
+});
 
 const advice = tool.score <= 85 ? getAdvice(tool) : [];
 
@@ -172,6 +242,25 @@ if (relatedTools.length < 3) {
 
   <section class="signals">
     <h3>Score Breakdown</h3>
+
+    <div class="radar-wrapper">
+      <svg class="radar-chart" viewBox="0 0 300 250" role="img" aria-label={`Score breakdown radar chart for ${tool.full_name}`}>
+        {radarGridPaths.map((d, i) => (
+          <path d={d} fill="none" stroke="var(--border)" stroke-width={i === 4 ? 1 : 0.5} />
+        ))}
+        {radarAxes.map((ax) => (
+          <line x1={rcx} y1={rcy} x2={ax.x2} y2={ax.y2} stroke="var(--border)" stroke-width="0.5" />
+        ))}
+        <path d={radarDataPath} fill="var(--accent)" fill-opacity="0.12" stroke="var(--accent)" stroke-width="1.5" stroke-linejoin="round" />
+        {radarDots.map((dot) => (
+          <circle cx={dot.cx} cy={dot.cy} r="3" fill="var(--accent)" />
+        ))}
+        {radarLabelData.map((lbl) => (
+          <text x={lbl.x} y={lbl.y} text-anchor={lbl.anchor} font-size="9" fill="var(--text-muted)" dominant-baseline="middle">{lbl.name}</text>
+        ))}
+      </svg>
+    </div>
+
     <div class="signal-list">
       {signals.map((s) => (
         <div class="signal">
@@ -187,10 +276,14 @@ if (relatedTools.length < 3) {
               <div class="signal-fill" style={`width: ${s.bar}%; background: ${scoreColor(s.bar)}`}></div>
             </div>
           )}
+          {s.driver && <p class="signal-driver">{s.driver}</p>}
         </div>
       ))}
     </div>
-    <p class="signal-note">Score weights: Freshness 25% · Issue Health 25% · Dependents 25% · Stars 15% · Contributors 10%</p>
+    <p class="signal-note">
+      Weights: Freshness 25% · Issue Health 25% · Dependents 25% · Stars 15% · Contributors 10%
+      · <a href="/methodology/" class="methodology-link">How we score →</a>
+    </p>
   </section>
 
   {advice.length > 0 && (
@@ -456,6 +549,36 @@ if (relatedTools.length < 3) {
     border-radius: 3px;
     font-weight: 600;
     letter-spacing: 0.02em;
+  }
+
+  .radar-wrapper {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 1.5rem;
+  }
+
+  .radar-chart {
+    width: 100%;
+    max-width: 260px;
+    height: auto;
+  }
+
+  .signal-driver {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    opacity: 0.75;
+    margin: 0.15rem 0 0 0;
+    font-style: italic;
+    line-height: 1.3;
+  }
+
+  .methodology-link {
+    color: var(--accent);
+    text-decoration: none;
+  }
+
+  .methodology-link:hover {
+    text-decoration: underline;
   }
 
   .signal-note {
