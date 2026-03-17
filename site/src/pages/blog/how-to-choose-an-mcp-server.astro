@@ -96,6 +96,45 @@ const questions = [
   },
 ];
 
+const categoryPicks = [
+  {
+    category: 'Database',
+    slug: 'database',
+    blogSlug: 'best-mcp-servers-database',
+    tools: [
+      { name: 'mongodb-js/mongodb-mcp-server', score: 88.44, stars: 959, desc: 'Official MongoDB MCP server for Atlas and self-hosted clusters.' },
+      { name: 'motherduckdb/mcp-server-motherduck', score: 88.31, stars: 439, desc: 'DuckDB and MotherDuck analytics via natural language queries.' },
+      { name: 'redis/mcp-redis', score: 86.59, stars: 451, desc: 'Official Redis MCP — natural language interface for agentic apps.' },
+      { name: 'benborla/mcp-server-mysql', score: 86.01, stars: 1335, desc: 'Read-only MySQL access — safe for agent-driven data exploration.' },
+      { name: 'neondatabase/mcp-server-neon', score: 78.85, stars: 561, desc: 'Serverless Postgres via Neon — create branches and run queries.' },
+    ],
+  },
+  {
+    category: 'DevOps & Infrastructure',
+    slug: 'deployment',
+    blogSlug: 'best-mcp-servers-devops',
+    tools: [
+      { name: 'microsoft/azure-devops-mcp', score: 97.17, stars: 1406, desc: 'Official Azure DevOps MCP — pipelines, repos, boards in one server.' },
+      { name: 'reza-gholizade/k8s-mcp-server', score: 91.32, stars: 149, desc: 'Kubernetes cluster management via MCP — pods, deployments, services.' },
+      { name: 'rohitg00/kubectl-mcp-server', score: 87.76, stars: 849, desc: 'Full kubectl access from any MCP-compatible agent.' },
+      { name: 'containers/kubernetes-mcp-server', score: 84.92, stars: 1273, desc: 'Kubernetes and OpenShift — official Red Hat containers project.' },
+      { name: 'alexei-led/aws-mcp-server', score: 84.16, stars: 181, desc: 'AWS CLI commands via containerized sandbox — safe execution layer.' },
+    ],
+  },
+  {
+    category: 'Productivity',
+    slug: 'communication',
+    blogSlug: 'best-mcp-servers-productivity',
+    tools: [
+      { name: 'taylorwilsdon/google_workspace_mcp', score: 90.94, stars: 1806, desc: 'Gmail, Calendar, Docs, Sheets, Drive — full Google Workspace control.' },
+      { name: 'korotovsky/slack-mcp-server', score: 83.01, stars: 1448, desc: 'Slack MCP — DMs, channels, and groups with no special permissions.' },
+      { name: 'makenotion/notion-mcp-server', score: 74.87, stars: 4039, desc: 'Official Notion MCP server for reading and writing pages.' },
+      { name: 'sooperset/mcp-atlassian', score: 72.75, stars: 4608, desc: 'Jira and Confluence via MCP — widely adopted community server.' },
+      { name: 'atlassian/atlassian-mcp-server', score: 71.88, stars: 435, desc: 'Official Atlassian remote MCP — secure Jira and Confluence access.' },
+    ],
+  },
+];
+
 const tiers = [
   {
     tier: 'Production-ready',
@@ -156,6 +195,7 @@ const tiers = [
         <li><a href="#five-signals">The five signals</a></li>
         <li><a href="#questions">Five questions to ask before committing</a></li>
         <li><a href="#tiers">Score tiers and what they mean</a></li>
+        <li><a href="#top-picks">Top picks by category</a></li>
         <li><a href="#official-vs-community">Official vs community servers</a></li>
         <li><a href="#checklist">Quick evaluation checklist</a></li>
       </ol>
@@ -247,6 +287,57 @@ const tiers = [
       <p>
         The average score across the full index is <strong>41.2</strong>. Anything above 65 is
         in the top quartile. Anything above 80 is in the top 5%.
+      </p>
+    </section>
+
+    <section id="top-picks">
+      <h2>Top picks by category</h2>
+      <p>
+        The 26% of the index that scores above 65 is still 6,600 tools. Filtered by category,
+        here are the highest-scoring servers in three developer-critical domains — pulled directly
+        from the AgentRank index as of March 2026.
+      </p>
+
+      {categoryPicks.map((cat) => (
+        <div class="cat-block">
+          <div class="cat-header">
+            <h3>{cat.category}</h3>
+            <div class="cat-links">
+              <a href={`/category/${cat.slug}/`} class="cat-link">Browse category &rarr;</a>
+              <a href={`/blog/${cat.blogSlug}/`} class="cat-link">Full rankings &rarr;</a>
+            </div>
+          </div>
+          <table class="data-table picks-table">
+            <thead>
+              <tr>
+                <th>Tool</th>
+                <th class="num">Score</th>
+                <th class="num">Stars</th>
+                <th class="hide-mobile">Notes</th>
+              </tr>
+            </thead>
+            <tbody>
+              {cat.tools.map((tool) => {
+                const slug = tool.name.replace('/', '--');
+                return (
+                  <tr>
+                    <td class="tool-cell">
+                      <a href={`/tool/${slug}/`} class="inline-link">{tool.name}</a>
+                    </td>
+                    <td class="num score-cell">{tool.score.toFixed(1)}</td>
+                    <td class="num muted">{tool.stars.toLocaleString()}</td>
+                    <td class="hide-mobile muted small-text">{tool.desc}</td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      ))}
+
+      <p class="note">
+        Scores update nightly. These rankings reflect the index as of March 17, 2026.
+        Sort by score on any <a href="/">category page</a> to see current standings.
       </p>
     </section>
 
@@ -656,6 +747,56 @@ const tiers = [
       color: var(--text-muted);
     }
 
+    /* Category picks */
+    .cat-block {
+      margin-bottom: 2rem;
+    }
+
+    .cat-header {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-bottom: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .cat-header h3 {
+      margin: 0 !important;
+    }
+
+    .cat-links {
+      display: flex;
+      gap: 1rem;
+      flex-shrink: 0;
+    }
+
+    .cat-link {
+      font-size: 0.75rem;
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    .picks-table {
+      margin: 0;
+    }
+
+    .tool-cell {
+      max-width: 220px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .muted {
+      color: var(--text-muted);
+    }
+
+    .small-text {
+      font-size: 0.75rem;
+      max-width: 260px;
+    }
+
     /* Checklist */
     .checklist {
       display: flex;
@@ -725,6 +866,19 @@ const tiers = [
 
       .tier-example {
         display: none;
+      }
+
+      .hide-mobile {
+        display: none;
+      }
+
+      .cat-header {
+        flex-direction: column;
+        gap: 0.25rem;
+      }
+
+      .tool-cell {
+        max-width: 140px;
       }
     }
   </style>
