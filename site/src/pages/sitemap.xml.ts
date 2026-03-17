@@ -11,6 +11,8 @@ const STATIC_PAGES = [
   { path: '/agents/', changefreq: 'weekly' },
   { path: '/submit/', changefreq: 'weekly' },
   { path: '/api-docs/', changefreq: 'weekly' },
+  { path: '/blog/', changefreq: 'weekly' },
+  { path: '/blog/state-of-mcp-2026/', changefreq: 'monthly' },
 ];
 
 function escapeXml(s: string): string {
