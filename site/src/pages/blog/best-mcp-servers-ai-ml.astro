@@ -1,0 +1,697 @@
+---
+export const prerender = true;
+
+import Base from '../../layouts/Base.astro';
+
+const publishDate = '2026-03-17';
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: 'Best MCP Servers for AI & Machine Learning in 2026',
+  description: 'Top MCP servers for vector databases, RAG pipelines, LLM access, and AI development workflows. Ranked by real quality signals from the AgentRank index.',
+  datePublished: publishDate,
+  dateModified: publishDate,
+  author: {
+    '@type': 'Organization',
+    name: 'AgentRank',
+    url: 'https://agentrank-ai.com',
+  },
+  publisher: {
+    '@type': 'Organization',
+    name: 'AgentRank',
+    url: 'https://agentrank-ai.com',
+    logo: {
+      '@type': 'ImageObject',
+      url: 'https://agentrank-ai.com/og-image.png',
+    },
+  },
+  mainEntityOfPage: {
+    '@type': 'WebPage',
+    '@id': 'https://agentrank-ai.com/blog/best-mcp-servers-ai-ml/',
+  },
+  image: 'https://agentrank-ai.com/og-image.png',
+  keywords: 'best MCP servers AI machine learning, vector database MCP server, RAG MCP server, HuggingFace MCP, Qdrant MCP server, embedding MCP tools 2026',
+};
+
+const vectorTools = [
+  {
+    rank: 1,
+    name: 'qdrant/mcp-server-qdrant',
+    slug: 'qdrant--mcp-server-qdrant',
+    score: 52.68,
+    stars: 1273,
+    lang: 'Python',
+    contributors: 8,
+    lastCommit: '2026-01-28',
+    desc: 'Official Qdrant MCP server — vector search and memory for AI applications',
+    org: 'Official',
+  },
+  {
+    rank: 2,
+    name: 'zilliztech/mcp-server-milvus',
+    slug: 'zilliztech--mcp-server-milvus',
+    score: 53.59,
+    stars: 220,
+    lang: 'Python',
+    contributors: 9,
+    lastCommit: '2025-12-24',
+    desc: 'Official Milvus MCP server from Zilliz — scalable vector database access',
+    org: 'Official',
+  },
+  {
+    rank: 3,
+    name: 'chroma-core/chroma-mcp',
+    slug: 'chroma-core--chroma-mcp',
+    score: 52.05,
+    stars: 515,
+    lang: 'Python',
+    contributors: 6,
+    lastCommit: '2025-09-17',
+    desc: 'Official ChromaDB MCP server — local vector storage for agents',
+    org: 'Official',
+  },
+];
+
+const ragTools = [
+  {
+    rank: 1,
+    name: 'ForLoopCodes/contextplus',
+    slug: 'ForLoopCodes--contextplus',
+    score: 88.41,
+    stars: 1459,
+    lang: 'TypeScript',
+    contributors: 7,
+    lastCommit: '2026-03-10',
+    desc: 'Semantic codebase search via RAG, Tree-sitter AST, and Spectral Clustering',
+  },
+  {
+    rank: 2,
+    name: 'agentset-ai/agentset',
+    slug: 'agentset-ai--agentset',
+    score: 71.91,
+    stars: 1915,
+    lang: 'TypeScript',
+    contributors: 6,
+    lastCommit: '2026-03-06',
+    desc: 'Open-source RAG platform with MCP server, 22+ file formats, deep research',
+  },
+  {
+    rank: 3,
+    name: 'paiml/paiml-mcp-agent-toolkit',
+    slug: 'paiml--paiml-mcp-agent-toolkit',
+    score: 88.57,
+    stars: 139,
+    lang: 'Rust',
+    contributors: 5,
+    lastCommit: '2026-03-13',
+    desc: 'AI agent code quality toolkit — deterministic code analysis for agent workflows',
+  },
+];
+
+const modelTools = [
+  {
+    name: 'huggingface/hf-mcp-server',
+    slug: 'huggingface--hf-mcp-server',
+    score: 76.39,
+    stars: 207,
+    lang: 'TypeScript',
+    contributors: 10,
+    lastCommit: '2026-02-24',
+    desc: 'Official Hugging Face MCP server — model search, dataset access, inference',
+  },
+];
+
+const stats = {
+  vectorToolCount: 94,
+  ragToolCount: 231,
+  avgVectorScore: 38.4,
+  topGeneralScore: 88.57,
+};
+---
+
+<Base
+  title="Best MCP Servers for AI & Machine Learning in 2026 — AgentRank"
+  description="Top MCP servers for vector databases, RAG pipelines, semantic search, and AI development. Qdrant, Milvus, ChromaDB, HuggingFace, and more — scored and ranked."
+  activeTab="blog"
+  keywords="best MCP servers AI machine learning, vector database MCP server, RAG MCP server, HuggingFace MCP, Qdrant MCP, ChromaDB MCP, embedding search MCP tools 2026"
+  canonicalUrl="https://agentrank-ai.com/blog/best-mcp-servers-ai-ml/"
+  jsonLd={jsonLd}
+>
+  <article class="blog-post">
+    <header class="post-header">
+      <div class="breadcrumb"><a href="/blog/">Blog</a> <span>/</span></div>
+      <h1>Best MCP Servers for AI &amp; Machine Learning in 2026</h1>
+      <div class="post-meta">
+        <time datetime={publishDate}>March 17, 2026</time>
+        <span class="sep">&middot;</span>
+        <span>6 min read</span>
+        <span class="sep">&middot;</span>
+        <span>AgentRank Index</span>
+      </div>
+      <p class="lede">
+        If you're building AI applications — RAG pipelines, vector search, model access — there are
+        MCP servers for each layer of the stack. The honest picture: AI/ML tooling in MCP is
+        younger and lower-scoring than database or DevOps tools. Most official vector DB servers
+        were published in late 2025. The ecosystem is real but still maturing.
+        Here is what's worth using now.
+      </p>
+    </header>
+
+    <nav class="toc">
+      <strong>Contents</strong>
+      <ol>
+        <li><a href="#state">State of AI/ML tooling in MCP</a></li>
+        <li><a href="#vector-dbs">Vector databases</a></li>
+        <li><a href="#rag">RAG and semantic search</a></li>
+        <li><a href="#models">Model access</a></li>
+        <li><a href="#picks">Recommended picks by workflow</a></li>
+      </ol>
+    </nav>
+
+    <section id="state">
+      <h2>State of AI/ML tooling in MCP</h2>
+      <p>
+        The average AgentRank score across vector database tools is <strong>{stats.avgVectorScore}</strong> —
+        significantly below the index average of 29.7 (and much lower than database tools at 41.2).
+        This isn't a quality problem with individual tools. It reflects recency: most AI/ML MCP servers
+        launched in late 2025 or early 2026, so their freshness scores are good but contributor counts
+        and dependent counts are still building.
+      </p>
+      <p>
+        Three patterns explain the landscape:
+      </p>
+      <ul>
+        <li><strong>Official vendor servers exist</strong> but are still early. Qdrant, Milvus, ChromaDB, and HuggingFace all have official MCP servers — none has hit critical mass yet.</li>
+        <li><strong>RAG tools score higher</strong> because they're general-purpose and attract more contributors. ForLoopCodes/contextplus (88.41) and agentset-ai/agentset (71.91) both have strong signals despite being newer.</li>
+        <li><strong>The freshness cliff matters here</strong>. chroma-core/chroma-mcp last committed September 2025 — almost six months ago. That's the biggest risk signal in this category.</li>
+      </ul>
+    </section>
+
+    <section id="vector-dbs">
+      <h2>Vector database MCP servers</h2>
+      <p>
+        The three major open-source vector databases — Qdrant, Milvus, and ChromaDB — all have official
+        MCP servers. All three are authored by the database vendor. All three score in the 52–54 range.
+      </p>
+
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Repository</th>
+            <th class="num">Score</th>
+            <th class="num">Stars</th>
+            <th>Org</th>
+            <th>Last Commit</th>
+          </tr>
+        </thead>
+        <tbody>
+          {vectorTools.map((tool) => (
+            <tr>
+              <td class="tool-cell">
+                <a href={`/tool/${tool.slug}/`} class="tool-link">{tool.name}</a>
+                <span class="tool-desc">{tool.desc}</span>
+              </td>
+              <td class="num score-cell">{tool.score}</td>
+              <td class="num">{tool.stars.toLocaleString('en-US')}</td>
+              <td class="org-badge">{tool.org}</td>
+              <td class="date-cell">{tool.lastCommit}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+
+      <h3>Qdrant (52.68)</h3>
+      <p>
+        <a href="/tool/qdrant--mcp-server-qdrant/" class="inline-link">qdrant/mcp-server-qdrant</a> is the
+        official implementation from Qdrant. 1,273 stars — the most-starred vector DB server.
+        Supports similarity search, payload filtering, and collection management. Last commit was
+        January 2026, which is a mild freshness concern but not alarming. If you're running Qdrant,
+        this is the only official path.
+      </p>
+
+      <h3>Milvus (53.59)</h3>
+      <p>
+        <a href="/tool/zilliztech--mcp-server-milvus/" class="inline-link">zilliztech/mcp-server-milvus</a>
+        from Zilliz covers both Milvus and Zilliz Cloud. Scored slightly higher than Qdrant's server
+        despite fewer stars, due to better contributor signals. The last commit was December 2025,
+        which is the most recent gap concern in this group. Still the right choice for Milvus deployments.
+      </p>
+
+      <h3>ChromaDB (52.05)</h3>
+      <p>
+        <a href="/tool/chroma-core--chroma-mcp/" class="inline-link">chroma-core/chroma-mcp</a> is the
+        official ChromaDB server. <strong>Last commit was September 2025</strong> — the oldest of the three.
+        That's a significant freshness penalty and is the reason it scores lowest despite being the official implementation.
+        ChromaDB is popular for local development and prototyping; check the repo for recent activity before
+        depending on it in production.
+      </p>
+
+      <p>
+        <strong>Bottom line for vector DBs:</strong> All three are official, all three score similarly. Pick based
+        on which vector database you're already running. If you're starting fresh, Qdrant's server has the most stars
+        and the most recent commit activity.
+      </p>
+    </section>
+
+    <section id="rag">
+      <h2>RAG and semantic search</h2>
+      <p>
+        RAG-focused tools score significantly higher than vector DB servers because they're used in more
+        diverse workflows and attract more contributors. Two strong options:
+      </p>
+
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Repository</th>
+            <th class="num">Score</th>
+            <th class="num">Stars</th>
+            <th>Last Commit</th>
+          </tr>
+        </thead>
+        <tbody>
+          {ragTools.map((tool) => (
+            <tr>
+              <td class="tool-cell">
+                <a href={`/tool/${tool.slug}/`} class="tool-link">{tool.name}</a>
+                <span class="tool-desc">{tool.desc}</span>
+              </td>
+              <td class="num score-cell">{tool.score}</td>
+              <td class="num">{tool.stars.toLocaleString('en-US')}</td>
+              <td class="date-cell">{tool.lastCommit}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+
+      <h3>ForLoopCodes/contextplus (88.41)</h3>
+      <p>
+        The highest-scoring tool in this category at 88.41. Context+ is built specifically for
+        large codebase navigation: it combines RAG with Tree-sitter AST parsing and Spectral Clustering
+        to build a hierarchical feature graph of your codebase. Not a general-purpose RAG tool —
+        it's designed for agent workflows that need accurate code context. 1,459 stars, TypeScript,
+        actively maintained with commits through March 2026.
+      </p>
+
+      <h3>agentset-ai/agentset (71.91)</h3>
+      <p>
+        The most general-purpose RAG platform in the index. 1,915 stars, supports 22+ file formats,
+        built-in citations, deep research mode, and an MCP server interface. Open source with TypeScript.
+        If you're building a knowledge base or document retrieval system for an agent,
+        agentset is the strongest option that's not domain-specific.
+      </p>
+
+      <h3>paiml/paiml-mcp-agent-toolkit (88.57)</h3>
+      <p>
+        Written in Rust — unusual in the MCP ecosystem — and designed to make AI-generated code more
+        deterministic. Focuses on code quality signals (complexity, dead code, dependency analysis) rather
+        than retrieval. Scores 88.57 due to strong freshness and issue health. Particularly useful if
+        your agent is generating or modifying code and you need quality checks in the loop.
+      </p>
+    </section>
+
+    <section id="models">
+      <h2>Model access and inference</h2>
+      <p>
+        Direct model access via MCP is less developed than vector search or RAG. The only official
+        vendor server with meaningful quality signals is HuggingFace.
+      </p>
+
+      {modelTools.map((tool) => (
+        <div class="tool-spotlight">
+          <div class="spotlight-header">
+            <a href={`/tool/${tool.slug}/`} class="tool-link">{tool.name}</a>
+            <span class="score-pill">Score: {tool.score}</span>
+          </div>
+          <p class="tool-desc-long">{tool.desc}</p>
+        </div>
+      ))}
+
+      <p>
+        <a href="/tool/huggingface--hf-mcp-server/" class="inline-link">huggingface/hf-mcp-server</a> is
+        the official HuggingFace server at <strong>76.39</strong>. Covers model search, dataset access,
+        and inference via the HuggingFace API. 207 stars, 10 contributors, TypeScript.
+        The last commit was February 2026 — still fresh enough to depend on.
+      </p>
+      <p>
+        If you need to call models directly from an agent workflow, the HuggingFace server is the
+        highest-quality option in the index. There are no official servers for OpenAI, Anthropic,
+        or Mistral that score above 60 — those integrations are typically handled at the client
+        layer rather than through MCP.
+      </p>
+
+      <div class="note-box">
+        <p>
+          <strong>Note on LLM gateway tools:</strong> LiteLLM and similar LLM router tools appear in the
+          <a href="/category/llm-client/">LLM client category</a>, not this list.
+          If you need a unified gateway across multiple providers, browse that category.
+        </p>
+      </div>
+    </section>
+
+    <section id="picks">
+      <h2>Recommended picks by workflow</h2>
+
+      <h3>Building a RAG pipeline</h3>
+      <p>
+        Start with <strong>agentset-ai/agentset</strong> for general document ingestion and retrieval,
+        or <strong>ForLoopCodes/contextplus</strong> if your primary use case is code navigation.
+        Pair with <strong>qdrant/mcp-server-qdrant</strong> if you want control over the vector store layer.
+      </p>
+
+      <h3>Semantic search over a codebase</h3>
+      <p>
+        <strong>ForLoopCodes/contextplus</strong> is purpose-built for this. It's the best-maintained
+        and highest-scoring codebase search tool in the index.
+      </p>
+
+      <h3>Accessing HuggingFace models and datasets</h3>
+      <p>
+        <strong>huggingface/hf-mcp-server</strong> is the only option here with credible quality signals.
+        It's official and actively maintained.
+      </p>
+
+      <h3>Using ChromaDB locally</h3>
+      <p>
+        <strong>chroma-core/chroma-mcp</strong> is the right tool but monitor the repo for activity —
+        the September 2025 last commit is worth watching. Check for updates before pinning a version in production.
+      </p>
+
+      <div class="cta-box">
+        <p>
+          <strong>Browse by category:</strong> <a href="/category/search/">Search &amp; RAG tools</a>,
+          <a href="/category/agent-framework/">Agent frameworks</a>, <a href="/category/llm-client/">LLM clients</a>.
+        </p>
+        <p>
+          <strong>Building an AI/ML MCP server?</strong> <a href="/submit/">Submit it</a> to get indexed and scored.
+        </p>
+      </div>
+    </section>
+
+    <footer class="post-footer">
+      <p class="methodology">
+        <strong>Methodology:</strong> Data from the AgentRank index crawled March 2026.
+        AI/ML tools identified via keyword matching on description, topics, and repo name
+        (embedding, vector, RAG, HuggingFace, LLM, semantic search, ML, inference).
+        Scores: stars 15%, freshness 25%, issue health 25%, contributors 10%, inbound dependents 25%.
+        Only non-archived repositories included.
+      </p>
+      <p class="share-line">
+        Found this useful? <a href="https://x.com/AgentRank_ai" target="_blank" rel="noopener noreferrer">Follow @AgentRank_ai</a> for
+        weekly ecosystem updates, biggest movers, and new tool spotlights.
+      </p>
+    </footer>
+  </article>
+
+  <style>
+    .blog-post {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 2rem 0 3rem;
+    }
+
+    .breadcrumb {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      margin-bottom: 0.75rem;
+    }
+
+    .breadcrumb span {
+      margin: 0 0.25rem;
+      opacity: 0.5;
+    }
+
+    .post-header {
+      margin-bottom: 2rem;
+      padding-bottom: 1.5rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .post-header h1 {
+      font-size: 1.6rem;
+      font-weight: 700;
+      line-height: 1.3;
+      margin-bottom: 0.75rem;
+    }
+
+    .post-meta {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      flex-wrap: wrap;
+      margin-bottom: 1rem;
+    }
+
+    .sep {
+      opacity: 0.4;
+    }
+
+    .lede {
+      font-size: 1rem;
+      line-height: 1.7;
+      color: var(--text);
+      opacity: 0.9;
+    }
+
+    .toc {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 1rem 1.25rem;
+      margin-bottom: 2.5rem;
+      font-size: 0.82rem;
+    }
+
+    .toc strong {
+      display: block;
+      margin-bottom: 0.6rem;
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+    }
+
+    .toc ol {
+      margin: 0;
+      padding-left: 1.2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+    }
+
+    .toc a {
+      color: var(--text-muted);
+    }
+
+    .toc a:hover {
+      color: var(--accent);
+    }
+
+    section {
+      margin-bottom: 3rem;
+    }
+
+    section h2 {
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin-bottom: 0.75rem;
+      padding-bottom: 0.4rem;
+      border-bottom: 2px solid var(--accent);
+      display: inline-block;
+    }
+
+    section h3 {
+      font-size: 0.95rem;
+      font-weight: 700;
+      margin: 1.5rem 0 0.5rem;
+      color: var(--text);
+    }
+
+    section p {
+      font-size: 0.9rem;
+      line-height: 1.75;
+      color: var(--text);
+      opacity: 0.9;
+      margin-bottom: 0.9rem;
+    }
+
+    section ul {
+      font-size: 0.9rem;
+      line-height: 1.75;
+      color: var(--text);
+      opacity: 0.9;
+      padding-left: 1.4rem;
+      margin-bottom: 1rem;
+    }
+
+    section ul li {
+      margin-bottom: 0.4rem;
+    }
+
+    .inline-link {
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.82rem;
+      margin: 1rem 0 1.25rem;
+    }
+
+    .data-table th {
+      text-align: left;
+      font-weight: 600;
+      color: var(--text-muted);
+      border-bottom: 1px solid var(--border);
+      padding: 0.4rem 0.75rem 0.4rem 0;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+
+    .data-table td {
+      padding: 0.45rem 0.75rem 0.45rem 0;
+      border-bottom: 1px solid var(--border);
+      color: var(--text);
+      vertical-align: top;
+    }
+
+    .data-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .num {
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .tool-cell {
+      display: flex;
+      flex-direction: column;
+      gap: 0.2rem;
+    }
+
+    .tool-link {
+      font-weight: 600;
+      color: var(--accent);
+      font-size: 0.82rem;
+    }
+
+    .tool-desc {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      font-weight: 400;
+    }
+
+    .score-cell {
+      color: var(--accent);
+      font-weight: 700;
+    }
+
+    .org-badge, .date-cell {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      white-space: nowrap;
+    }
+
+    .tool-spotlight {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 0.75rem 1rem;
+      margin: 0.75rem 0;
+    }
+
+    .spotlight-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 0.4rem;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    .score-pill {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--accent);
+      background: var(--bg-hover);
+      padding: 0.15rem 0.5rem;
+      border-radius: 99px;
+    }
+
+    .tool-desc-long {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+      margin: 0 !important;
+    }
+
+    .note-box {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 0.75rem 1rem;
+      margin: 1rem 0;
+    }
+
+    .note-box p {
+      margin: 0 !important;
+      font-size: 0.82rem !important;
+      color: var(--text-muted) !important;
+    }
+
+    .cta-box {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      border-radius: 4px;
+      padding: 1rem 1.25rem;
+      margin-top: 1.5rem;
+    }
+
+    .cta-box p {
+      margin-bottom: 0.5rem;
+    }
+
+    .cta-box p:last-child {
+      margin-bottom: 0;
+    }
+
+    .post-footer {
+      margin-top: 3rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--border);
+    }
+
+    .methodology {
+      font-size: 0.75rem !important;
+      color: var(--text-muted) !important;
+      opacity: 1 !important;
+    }
+
+    .share-line {
+      font-size: 0.82rem !important;
+      margin-top: 0.75rem;
+    }
+
+    @media (max-width: 640px) {
+      .post-header h1 {
+        font-size: 1.3rem;
+      }
+
+      .data-table {
+        font-size: 0.75rem;
+      }
+
+      .org-badge, .date-cell {
+        display: none;
+      }
+    }
+  </style>
+</Base>

@@ -1,0 +1,632 @@
+---
+export const prerender = true;
+
+import Base from '../../layouts/Base.astro';
+
+const publishDate = '2026-03-17';
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: 'Best MCP Servers for DevOps & Infrastructure in 2026',
+  description: 'Top-ranked MCP servers for Kubernetes, cloud platforms, CI/CD, and infrastructure management. Real scores from the AgentRank index, updated March 2026.',
+  datePublished: publishDate,
+  dateModified: publishDate,
+  author: {
+    '@type': 'Organization',
+    name: 'AgentRank',
+    url: 'https://agentrank-ai.com',
+  },
+  publisher: {
+    '@type': 'Organization',
+    name: 'AgentRank',
+    url: 'https://agentrank-ai.com',
+    logo: {
+      '@type': 'ImageObject',
+      url: 'https://agentrank-ai.com/og-image.png',
+    },
+  },
+  mainEntityOfPage: {
+    '@type': 'WebPage',
+    '@id': 'https://agentrank-ai.com/blog/best-mcp-servers-devops/',
+  },
+  image: 'https://agentrank-ai.com/og-image.png',
+  keywords: 'best MCP servers DevOps infrastructure, kubernetes MCP server, AWS MCP server, Azure DevOps MCP, GCP MCP server, CI/CD MCP tools 2026',
+};
+
+const tools = [
+  {
+    rank: 1,
+    name: 'microsoft/azure-devops-mcp',
+    slug: 'microsoft--azure-devops-mcp',
+    score: 97.17,
+    stars: 1406,
+    lang: 'TypeScript',
+    contributors: 45,
+    lastCommit: '2026-03-12',
+    desc: 'Official Azure DevOps MCP server by Microsoft',
+    platform: 'Azure',
+    highlight: 'Highest-scoring DevOps tool in the index. 45 contributors, official Microsoft maintenance.',
+  },
+  {
+    rank: 2,
+    name: 'microsoft/azure-skills',
+    slug: 'microsoft--azure-skills',
+    score: 92.25,
+    stars: 328,
+    lang: 'TypeScript',
+    contributors: 8,
+    lastCommit: '2026-03-13',
+    desc: 'Official Azure agent skills and MCP server configurations',
+    platform: 'Azure',
+    highlight: 'Broader Azure scenario coverage beyond just DevOps. Pairs with azure-devops-mcp.',
+  },
+  {
+    rank: 3,
+    name: 'reza-gholizade/k8s-mcp-server',
+    slug: 'reza-gholizade--k8s-mcp-server',
+    score: 91.66,
+    stars: 149,
+    lang: 'Go',
+    contributors: 11,
+    lastCommit: '2026-03-09',
+    desc: 'Kubernetes cluster management via MCP',
+    platform: 'Kubernetes',
+    highlight: 'Highest-scoring Kubernetes tool. Small star count but exceptional freshness and issue health.',
+  },
+  {
+    rank: 4,
+    name: 'rohitg00/kubectl-mcp-server',
+    slug: 'rohitg00--kubectl-mcp-server',
+    score: 88.11,
+    stars: 849,
+    lang: 'Python',
+    contributors: 7,
+    lastCommit: '2026-02-28',
+    desc: 'Kubernetes MCP server — npx or pip installable, wraps kubectl and helm',
+    platform: 'Kubernetes',
+    highlight: 'Easiest to install. npx kubectl-mcp-server or pip install. 849 stars, active community.',
+  },
+  {
+    rank: 5,
+    name: 'containers/kubernetes-mcp-server',
+    slug: 'containers--kubernetes-mcp-server',
+    score: 84.92,
+    stars: 1273,
+    lang: 'Go',
+    contributors: 42,
+    lastCommit: '2026-03-13',
+    desc: 'Official Kubernetes and OpenShift MCP server from the containers org',
+    platform: 'Kubernetes / OpenShift',
+    highlight: 'Official containers org server. OpenShift support is unique — the only server with it.',
+  },
+  {
+    rank: 6,
+    name: 'GoogleCloudPlatform/cloud-run-mcp',
+    slug: 'GoogleCloudPlatform--cloud-run-mcp',
+    score: 84.69,
+    stars: 560,
+    lang: 'JavaScript',
+    contributors: 13,
+    lastCommit: '2026-03-13',
+    desc: 'Official MCP server to deploy apps to Cloud Run',
+    platform: 'GCP',
+    highlight: 'Official GCP server focused on Cloud Run deployments. Active commits as of March 2026.',
+  },
+  {
+    rank: 7,
+    name: 'alexei-led/aws-mcp-server',
+    slug: 'alexei-led--aws-mcp-server',
+    score: 84.51,
+    stars: 181,
+    lang: 'Python',
+    contributors: 2,
+    lastCommit: '2026-02-27',
+    desc: 'AWS CLI commands via MCP in a safe containerized environment',
+    platform: 'AWS',
+    highlight: 'Runs AWS CLI in containers — no credential leakage risk. Bridges Claude and AWS CLI.',
+  },
+  {
+    rank: 8,
+    name: 'awslabs/Log-Analyzer-with-MCP',
+    slug: 'awslabs--Log-Analyzer-with-MCP',
+    score: 83.66,
+    stars: 152,
+    lang: 'Python',
+    contributors: 10,
+    lastCommit: '2026-03-14',
+    desc: 'MCP server for AWS CloudWatch Logs — analysis, searching, and correlation',
+    platform: 'AWS',
+    highlight: 'Official AWS Labs server. Specialized for log analysis rather than general AWS operations.',
+  },
+  {
+    rank: 9,
+    name: 'googleapis/gcloud-mcp',
+    slug: 'googleapis--gcloud-mcp',
+    score: 81.99,
+    stars: 705,
+    lang: 'TypeScript',
+    contributors: 17,
+    lastCommit: '2026-03-04',
+    desc: 'Official gcloud CLI MCP server from Google APIs',
+    platform: 'GCP',
+    highlight: 'Official Google server wrapping gcloud. Broader GCP coverage than cloud-run-mcp.',
+  },
+  {
+    rank: 10,
+    name: 'Flux159/mcp-server-kubernetes',
+    slug: 'Flux159--mcp-server-kubernetes',
+    score: 80.38,
+    stars: 1348,
+    lang: 'TypeScript',
+    contributors: 40,
+    lastCommit: '2026-03-01',
+    desc: 'Kubernetes management MCP server — clusters, deployments, pods',
+    platform: 'Kubernetes',
+    highlight: '1,348 stars and 40 contributors. Most-starred Kubernetes MCP server in the index.',
+  },
+];
+
+const stats = {
+  totalDevOpsTools: 412,
+  topScore: 97.17,
+  kubernetesTools: 28,
+  cloudProviderTools: 34,
+};
+---
+
+<Base
+  title="Best MCP Servers for DevOps & Infrastructure in 2026 — AgentRank"
+  description="Top-ranked MCP servers for Kubernetes, Azure, AWS, GCP, and infrastructure management. Scored by freshness, issue health, and community signals. March 2026 data."
+  activeTab="blog"
+  keywords="best MCP servers DevOps infrastructure, kubernetes MCP server, AWS MCP server, Azure DevOps MCP, Google Cloud MCP, CI/CD MCP tools, infrastructure as code MCP"
+  canonicalUrl="https://agentrank-ai.com/blog/best-mcp-servers-devops/"
+  jsonLd={jsonLd}
+>
+  <article class="blog-post">
+    <header class="post-header">
+      <div class="breadcrumb"><a href="/blog/">Blog</a> <span>/</span></div>
+      <h1>Best MCP Servers for DevOps &amp; Infrastructure in 2026</h1>
+      <div class="post-meta">
+        <time datetime={publishDate}>March 17, 2026</time>
+        <span class="sep">&middot;</span>
+        <span>6 min read</span>
+        <span class="sep">&middot;</span>
+        <span>AgentRank Index</span>
+      </div>
+      <p class="lede">
+        Infrastructure tooling is where MCP starts to get genuinely useful for platform teams.
+        An agent that can inspect a Kubernetes cluster, tail CloudWatch logs, or trigger a Cloud Run
+        deployment changes what's possible in automated ops workflows.
+        We indexed <strong>{stats.totalDevOpsTools} DevOps and infrastructure tools</strong>.
+        Here are the ten that score highest.
+      </p>
+    </header>
+
+    <nav class="toc">
+      <strong>Contents</strong>
+      <ol>
+        <li><a href="#rankings">Rankings by score</a></li>
+        <li><a href="#kubernetes">Kubernetes deep-dive</a></li>
+        <li><a href="#cloud-providers">Cloud provider breakdown</a></li>
+        <li><a href="#picks">Recommended picks</a></li>
+      </ol>
+    </nav>
+
+    <section id="rankings">
+      <h2>Top DevOps MCP servers</h2>
+      <p>
+        The DevOps category has the highest average scores of any category in the index —
+        corporate-backed tools dominate the top tier. Microsoft alone has two entries in the top three.
+        Scores above 80 are common here; this is the most mature category in the MCP ecosystem.
+      </p>
+
+      <table class="data-table top-table">
+        <thead>
+          <tr>
+            <th class="num">#</th>
+            <th>Repository</th>
+            <th class="num">Score</th>
+            <th class="num">Stars</th>
+            <th>Platform</th>
+            <th>Lang</th>
+          </tr>
+        </thead>
+        <tbody>
+          {tools.map((tool) => (
+            <tr>
+              <td class="num rank-num">{tool.rank}</td>
+              <td class="tool-cell">
+                <a href={`/tool/${tool.slug}/`} class="tool-link">{tool.name}</a>
+                <span class="tool-desc">{tool.desc}</span>
+              </td>
+              <td class="num score-cell">{tool.score}</td>
+              <td class="num">{tool.stars.toLocaleString('en-US')}</td>
+              <td class="platform-badge">{tool.platform}</td>
+              <td class="lang-badge">{tool.lang}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </section>
+
+    <section id="kubernetes">
+      <h2>Kubernetes: four strong options</h2>
+      <p>
+        Kubernetes has four credible MCP servers in the top 10, which is unusual — most categories have
+        one clear winner. Each has a different trade-off.
+      </p>
+
+      <h3>reza-gholizade/k8s-mcp-server (91.66)</h3>
+      <p>
+        The highest-scoring Kubernetes tool despite only 149 stars. Its score is driven by
+        exceptional freshness and issue health signals — the maintainer is actively responding to issues
+        and shipping commits. Written in Go. If you're looking at what the score is actually measuring,
+        this is a good example: fewer stars but better maintenance discipline than the higher-starred options.
+      </p>
+
+      <h3>rohitg00/kubectl-mcp-server (88.11)</h3>
+      <p>
+        The easiest to install — <code>npx kubectl-mcp-server</code> or <code>pip install kubectl-mcp-server</code>.
+        849 stars, wraps kubectl and helm directly. Best for teams that want minimal setup and broad
+        kubectl coverage without writing any configuration.
+      </p>
+
+      <h3>containers/kubernetes-mcp-server (84.92)</h3>
+      <p>
+        The official server from the containers organization. Unique feature: <strong>OpenShift support</strong>.
+        If your infrastructure runs on OpenShift, this is the only server with native support.
+        42 contributors and consistent commits make this the safest long-term bet for enterprise use.
+      </p>
+
+      <h3>Flux159/mcp-server-kubernetes (80.38)</h3>
+      <p>
+        The most-starred Kubernetes server at 1,348 stars with 40 contributors. Written in TypeScript.
+        Good community, solid maintenance, broad coverage of Kubernetes resources. Scores slightly lower
+        than the others on freshness — last commit was March 1 — but still well-maintained.
+      </p>
+    </section>
+
+    <section id="cloud-providers">
+      <h2>Cloud provider coverage</h2>
+
+      <h3>Azure: two official tools</h3>
+      <p>
+        Microsoft has invested heavily in MCP tooling. <a href="/tool/microsoft--azure-devops-mcp/" class="inline-link">azure-devops-mcp</a>
+        is the #1 DevOps tool overall at <strong>97.17</strong> — the second-highest score in the entire index.
+        45 contributors, actively maintained, covers pipelines, work items, repos, and boards.
+        <a href="/tool/microsoft--azure-skills/" class="inline-link">azure-skills</a> sits alongside it at 92.25,
+        providing broader Azure scenario coverage including compute, storage, and networking.
+      </p>
+      <p>
+        If you're running Azure infrastructure, you have the best-covered cloud environment in the MCP ecosystem.
+      </p>
+
+      <h3>AWS: two specialized tools</h3>
+      <p>
+        AWS has two distinct tools in the top 10 covering different needs.
+        <a href="/tool/alexei-led--aws-mcp-server/" class="inline-link">alexei-led/aws-mcp-server</a> wraps
+        the AWS CLI in a containerized environment, which is the right security posture — credentials
+        stay in the container, not in the agent context.
+        <a href="/tool/awslabs--Log-Analyzer-with-MCP/" class="inline-link">awslabs/Log-Analyzer-with-MCP</a>
+        is the official AWS Labs server, specialized for CloudWatch log analysis rather than general AWS operations.
+      </p>
+      <p>
+        No general-purpose "do everything in AWS" MCP server exists yet with strong quality signals.
+        The aws-mcp-server is the best general option, but it's a community project with 2 contributors.
+      </p>
+
+      <h3>GCP: official coverage</h3>
+      <p>
+        Google has two official tools: <a href="/tool/GoogleCloudPlatform--cloud-run-mcp/" class="inline-link">cloud-run-mcp</a>
+        from GoogleCloudPlatform (84.69, focused on Cloud Run deployments) and
+        <a href="/tool/googleapis--gcloud-mcp/" class="inline-link">gcloud-mcp</a> from googleapis (81.99,
+        broader gcloud CLI coverage). Both are actively maintained. Use cloud-run-mcp for deployment automation;
+        use gcloud-mcp for general infrastructure management.
+      </p>
+    </section>
+
+    <section id="picks">
+      <h2>Recommended picks</h2>
+
+      <h3>Best overall DevOps tool</h3>
+      <p>
+        <strong>microsoft/azure-devops-mcp</strong> at 97.17 is the best-maintained DevOps MCP server in
+        the index by a significant margin. If you're on Azure, this is the clear choice.
+      </p>
+
+      <h3>Best for Kubernetes (multi-cloud)</h3>
+      <p>
+        <strong>containers/kubernetes-mcp-server</strong> for enterprise and OpenShift environments.
+        <strong>reza-gholizade/k8s-mcp-server</strong> if you want the highest-quality signals in a
+        focused, fast-moving project.
+      </p>
+
+      <h3>Best for AWS</h3>
+      <p>
+        <strong>alexei-led/aws-mcp-server</strong> for general AWS operations.
+        <strong>awslabs/Log-Analyzer-with-MCP</strong> specifically for log analysis and incident triage.
+      </p>
+
+      <h3>Best for GCP</h3>
+      <p>
+        <strong>googleapis/gcloud-mcp</strong> for broad coverage.
+        <strong>GoogleCloudPlatform/cloud-run-mcp</strong> specifically for deployment automation.
+      </p>
+
+      <div class="cta-box">
+        <p>
+          <strong>Browse the monitoring category:</strong> <a href="/category/monitoring/">All monitoring &amp; observability MCP servers</a>
+          — Prometheus, Grafana, Datadog, Sentry, and more.
+        </p>
+        <p>
+          <strong>Building a DevOps MCP server?</strong> <a href="/submit/">Submit it</a> to get indexed and scored.
+        </p>
+      </div>
+    </section>
+
+    <footer class="post-footer">
+      <p class="methodology">
+        <strong>Methodology:</strong> Data from the AgentRank index crawled March 2026.
+        DevOps/infrastructure tools identified via keyword matching on description and repo name
+        (kubernetes, docker, terraform, AWS, Azure, GCP, CI/CD, infrastructure).
+        Scores: stars 15%, freshness 25%, issue health 25%, contributors 10%, inbound dependents 25%.
+        Only non-archived repositories included.
+      </p>
+      <p class="share-line">
+        Found this useful? <a href="https://x.com/AgentRank_ai" target="_blank" rel="noopener noreferrer">Follow @AgentRank_ai</a> for
+        weekly ecosystem updates, biggest movers, and new tool spotlights.
+      </p>
+    </footer>
+  </article>
+
+  <style>
+    .blog-post {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 2rem 0 3rem;
+    }
+
+    .breadcrumb {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      margin-bottom: 0.75rem;
+    }
+
+    .breadcrumb span {
+      margin: 0 0.25rem;
+      opacity: 0.5;
+    }
+
+    .post-header {
+      margin-bottom: 2rem;
+      padding-bottom: 1.5rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .post-header h1 {
+      font-size: 1.6rem;
+      font-weight: 700;
+      line-height: 1.3;
+      margin-bottom: 0.75rem;
+    }
+
+    .post-meta {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      flex-wrap: wrap;
+      margin-bottom: 1rem;
+    }
+
+    .sep {
+      opacity: 0.4;
+    }
+
+    .lede {
+      font-size: 1rem;
+      line-height: 1.7;
+      color: var(--text);
+      opacity: 0.9;
+    }
+
+    .toc {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 1rem 1.25rem;
+      margin-bottom: 2.5rem;
+      font-size: 0.82rem;
+    }
+
+    .toc strong {
+      display: block;
+      margin-bottom: 0.6rem;
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+    }
+
+    .toc ol {
+      margin: 0;
+      padding-left: 1.2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+    }
+
+    .toc a {
+      color: var(--text-muted);
+    }
+
+    .toc a:hover {
+      color: var(--accent);
+    }
+
+    section {
+      margin-bottom: 3rem;
+    }
+
+    section h2 {
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin-bottom: 0.75rem;
+      padding-bottom: 0.4rem;
+      border-bottom: 2px solid var(--accent);
+      display: inline-block;
+    }
+
+    section h3 {
+      font-size: 0.95rem;
+      font-weight: 700;
+      margin: 1.5rem 0 0.5rem;
+      color: var(--text);
+    }
+
+    section p {
+      font-size: 0.9rem;
+      line-height: 1.75;
+      color: var(--text);
+      opacity: 0.9;
+      margin-bottom: 0.9rem;
+    }
+
+    code {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      padding: 0.1rem 0.35rem;
+      font-size: 0.82rem;
+    }
+
+    .inline-link {
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.82rem;
+      margin: 1rem 0 1.25rem;
+    }
+
+    .data-table th {
+      text-align: left;
+      font-weight: 600;
+      color: var(--text-muted);
+      border-bottom: 1px solid var(--border);
+      padding: 0.4rem 0.75rem 0.4rem 0;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+
+    .data-table td {
+      padding: 0.45rem 0.75rem 0.45rem 0;
+      border-bottom: 1px solid var(--border);
+      color: var(--text);
+      vertical-align: top;
+    }
+
+    .data-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .num {
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .rank-num {
+      color: var(--text-muted);
+      font-weight: 700;
+    }
+
+    .top-table .tool-cell {
+      display: flex;
+      flex-direction: column;
+      gap: 0.2rem;
+    }
+
+    .tool-link {
+      font-weight: 600;
+      color: var(--accent);
+      font-size: 0.82rem;
+    }
+
+    .tool-desc {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      font-weight: 400;
+    }
+
+    .score-cell {
+      color: var(--accent);
+      font-weight: 700;
+    }
+
+    .platform-badge {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      white-space: nowrap;
+    }
+
+    .lang-badge {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      white-space: nowrap;
+    }
+
+    .cta-box {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      border-radius: 4px;
+      padding: 1rem 1.25rem;
+      margin-top: 1.5rem;
+    }
+
+    .cta-box p {
+      margin-bottom: 0.5rem;
+    }
+
+    .cta-box p:last-child {
+      margin-bottom: 0;
+    }
+
+    .post-footer {
+      margin-top: 3rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--border);
+    }
+
+    .methodology {
+      font-size: 0.75rem !important;
+      color: var(--text-muted) !important;
+      opacity: 1 !important;
+    }
+
+    .share-line {
+      font-size: 0.82rem !important;
+      margin-top: 0.75rem;
+    }
+
+    @media (max-width: 640px) {
+      .post-header h1 {
+        font-size: 1.3rem;
+      }
+
+      .data-table {
+        font-size: 0.75rem;
+      }
+
+      .platform-badge, .lang-badge {
+        display: none;
+      }
+    }
+  </style>
+</Base>
