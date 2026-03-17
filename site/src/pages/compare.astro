@@ -1,0 +1,880 @@
+---
+export const prerender = true;
+import Base from '../layouts/Base.astro';
+---
+
+<Base
+  title="Compare MCP Tools — AgentRank"
+  description="Compare 2–3 MCP servers and agent tools side by side. Score breakdown, stars, freshness, issue health, contributors, and more."
+  keywords="compare MCP servers, MCP server comparison, agent tool comparison, MCP side by side"
+  canonicalUrl="https://agentrank-ai.com/compare/"
+>
+  <div id="compare-app">
+    <div class="page-header">
+      <h2>Compare Tools</h2>
+      <p class="page-sub">Select 2–3 MCP servers or agent tools to compare side by side.</p>
+    </div>
+
+    <div class="slots-row" id="slots-row">
+      <!-- slots injected by JS -->
+    </div>
+
+    <div id="comparison-out" style="display:none">
+      <div class="overview-table-wrap">
+        <table class="overview-table" id="overview-table">
+          <thead id="overview-head"></thead>
+          <tbody id="overview-body"></tbody>
+        </table>
+      </div>
+
+      <h3 class="section-title">Score Breakdown</h3>
+      <div id="score-breakdown"></div>
+
+      <div class="share-section">
+        <h3 class="section-title">Share &amp; Embed</h3>
+        <div class="share-row">
+          <label>Share URL</label>
+          <div class="copy-wrap">
+            <input type="text" id="share-url" readonly />
+            <button class="copy-btn" data-target="share-url">Copy</button>
+          </div>
+        </div>
+        <div class="share-row">
+          <label>Embed Code</label>
+          <div class="copy-wrap">
+            <input type="text" id="embed-code" readonly />
+            <button class="copy-btn" data-target="embed-code">Copy</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</Base>
+
+<style>
+  .page-header {
+    margin-bottom: 1.5rem;
+  }
+  .page-header h2 {
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-bottom: 0.25rem;
+  }
+  .page-sub {
+    color: var(--text-muted);
+    font-size: 0.82rem;
+  }
+
+  /* ── Slots ── */
+  .slots-row {
+    display: flex;
+    gap: 0.75rem;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    margin-bottom: 1.5rem;
+  }
+
+  .slot {
+    position: relative;
+    flex: 1 1 220px;
+    max-width: 320px;
+  }
+
+  .slot-label {
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-muted);
+    margin-bottom: 0.3rem;
+  }
+
+  .slot-input-wrap {
+    display: flex;
+    align-items: center;
+    gap: 0;
+  }
+
+  .slot-search {
+    flex: 1;
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 0.45rem 0.65rem;
+    border-radius: 4px 0 0 4px;
+    font-family: inherit;
+    font-size: 0.82rem;
+    width: 100%;
+    min-width: 0;
+  }
+
+  .slot-search:focus {
+    outline: none;
+    border-color: var(--accent);
+  }
+
+  .slot-clear {
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-left: none;
+    color: var(--text-muted);
+    padding: 0.45rem 0.6rem;
+    cursor: pointer;
+    font-size: 1rem;
+    border-radius: 0 4px 4px 0;
+    line-height: 1;
+  }
+
+  .slot-clear:hover {
+    color: var(--text);
+    border-color: var(--border);
+  }
+
+  .slot-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-top: none;
+    border-radius: 0 0 4px 4px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    z-index: 10;
+    max-height: 220px;
+    overflow-y: auto;
+  }
+
+  .slot-dropdown li {
+    padding: 0.45rem 0.65rem;
+    cursor: pointer;
+    font-size: 0.82rem;
+  }
+
+  .slot-dropdown li:hover,
+  .slot-dropdown li.active {
+    background: var(--bg-hover);
+    color: var(--accent);
+  }
+
+  .slot-dropdown li .drop-score {
+    float: right;
+    font-size: 0.72rem;
+    color: var(--text-muted);
+  }
+
+  .slot-selected-name {
+    font-size: 0.82rem;
+    color: var(--accent);
+    font-weight: 600;
+    margin-top: 0.25rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .add-slot-btn {
+    align-self: flex-end;
+    background: transparent;
+    border: 1px dashed var(--border);
+    color: var(--text-muted);
+    padding: 0.45rem 0.75rem;
+    border-radius: 4px;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 0.82rem;
+    margin-bottom: 0;
+    white-space: nowrap;
+  }
+
+  .add-slot-btn:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  .slot-loading {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    margin-top: 0.25rem;
+  }
+
+  /* ── Overview Table ── */
+  .overview-table-wrap {
+    overflow-x: auto;
+    margin-bottom: 2rem;
+  }
+
+  .overview-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.82rem;
+  }
+
+  .overview-table th {
+    background: var(--bg-surface);
+    border-bottom: 2px solid var(--border);
+    padding: 0.5rem 0.75rem;
+    text-align: left;
+    font-weight: 600;
+    white-space: nowrap;
+    color: var(--text-muted);
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .overview-table th.tool-header {
+    color: var(--text);
+    font-size: 0.82rem;
+    text-transform: none;
+    letter-spacing: 0;
+  }
+
+  .overview-table th.tool-header a {
+    color: var(--text);
+    font-weight: 700;
+  }
+
+  .overview-table td {
+    padding: 0.4rem 0.75rem;
+    border-bottom: 1px solid var(--border);
+    vertical-align: middle;
+  }
+
+  .overview-table td.metric-label {
+    color: var(--text-muted);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+    font-weight: 500;
+  }
+
+  .overview-table tr:hover td {
+    background: var(--bg-hover);
+  }
+
+  .score-pill {
+    display: inline-block;
+    padding: 0.1rem 0.5rem;
+    border-radius: 3px;
+    font-weight: 700;
+    font-size: 0.9rem;
+    background: var(--bg-hover);
+  }
+
+  .winner-cell {
+    font-weight: 700;
+    color: var(--accent);
+  }
+
+  /* ── Score Breakdown ── */
+  .section-title {
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-muted);
+    margin-bottom: 1rem;
+  }
+
+  .breakdown-grid {
+    display: grid;
+    gap: 0.6rem;
+    margin-bottom: 2rem;
+  }
+
+  .breakdown-row {
+    display: grid;
+    gap: 0.5rem;
+    align-items: center;
+  }
+
+  .breakdown-signal-name {
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--text-muted);
+    font-weight: 500;
+    white-space: nowrap;
+  }
+
+  .breakdown-bar-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  .breakdown-bar-row {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .breakdown-tool-name {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    width: 120px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .bar-track {
+    flex: 1;
+    height: 10px;
+    background: var(--bg-surface);
+    border-radius: 2px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+  }
+
+  .bar-fill {
+    height: 100%;
+    border-radius: 2px;
+    transition: width 0.3s ease;
+  }
+
+  .bar-val {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    width: 2.5rem;
+    text-align: right;
+    flex-shrink: 0;
+  }
+
+  /* ── Share Section ── */
+  .share-section {
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border);
+  }
+
+  .share-row {
+    margin-bottom: 0.75rem;
+  }
+
+  .share-row label {
+    display: block;
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--text-muted);
+    margin-bottom: 0.25rem;
+  }
+
+  .copy-wrap {
+    display: flex;
+    gap: 0;
+    max-width: 600px;
+  }
+
+  .copy-wrap input {
+    flex: 1;
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+    padding: 0.4rem 0.6rem;
+    border-radius: 4px 0 0 4px;
+    font-family: inherit;
+    font-size: 0.75rem;
+    min-width: 0;
+  }
+
+  .copy-btn {
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-left: none;
+    color: var(--text-muted);
+    padding: 0.4rem 0.75rem;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 0.75rem;
+    border-radius: 0 4px 4px 0;
+    white-space: nowrap;
+    transition: color 0.15s, border-color 0.15s;
+  }
+
+  .copy-btn:hover {
+    color: var(--accent);
+    border-color: var(--accent);
+  }
+
+  .copy-btn.copied {
+    color: var(--accent);
+  }
+
+  /* ── Mobile ── */
+  @media (max-width: 600px) {
+    .slots-row {
+      flex-direction: column;
+    }
+    .slot {
+      max-width: 100%;
+    }
+    .breakdown-tool-name {
+      width: 80px;
+    }
+  }
+</style>
+
+<script>
+  // ── Constants ──────────────────────────────────────────────────────────────
+  const MAX_SLOTS = 3;
+
+  // Tool colors per slot index
+  const COLORS = ['#22c55e', '#3b82f6', '#f59e0b'];
+
+  // Signals and their display labels
+  const SIGNAL_META: { key: string; label: string; format: (v: number, raw: any) => string }[] = [
+    { key: 'stars',           label: 'Stars',       format: (_, r) => r?.stars != null ? Number(r.stars).toLocaleString('en-US') : '—' },
+    { key: 'freshness',       label: 'Freshness',   format: (v) => `${(v * 100).toFixed(0)}%` },
+    { key: 'issueHealth',     label: 'Issue Health',format: (v) => `${(v * 100).toFixed(0)}%` },
+    { key: 'contributors',    label: 'Contributors',format: (_, r) => r?.contributors != null ? Number(r.contributors).toLocaleString('en-US') : '—' },
+    { key: 'dependents',      label: 'Dependents',  format: (_, r) => r?.dependents != null && r.dependents > 0 ? Number(r.dependents).toLocaleString('en-US') : '0' },
+    { key: 'descriptionQuality', label: 'Description', format: (v) => v === 0 ? 'None' : v < 0.5 ? 'Brief' : v < 0.9 ? 'Good' : 'Detailed' },
+    { key: 'licenseHealth',   label: 'License',     format: (_, r) => r?.license || 'None' },
+  ];
+
+  // ── State ─────────────────────────────────────────────────────────────────
+  interface ToolData {
+    slug: string;
+    name: string;
+    description: string | null;
+    score: number;
+    rank: number;
+    githubUrl: string | null;
+    signals: Record<string, number> | null;
+    raw: Record<string, any> | null;
+  }
+
+  interface Slot {
+    id: number;
+    selectedSlug: string | null;
+    toolData: ToolData | null;
+    loading: boolean;
+  }
+
+  let slots: Slot[] = [
+    { id: 0, selectedSlug: null, toolData: null, loading: false },
+    { id: 1, selectedSlug: null, toolData: null, loading: false },
+  ];
+
+  let debounceTimers: Record<number, ReturnType<typeof setTimeout>> = {};
+
+  // ── DOM helpers ──────────────────────────────────────────────────────────
+  const slotsRow = document.getElementById('slots-row')!;
+  const comparisonOut = document.getElementById('comparison-out')!;
+
+  // ── Render slots ─────────────────────────────────────────────────────────
+  function renderSlots() {
+    slotsRow.innerHTML = '';
+
+    slots.forEach((slot) => {
+      const div = document.createElement('div');
+      div.className = 'slot';
+      div.id = `slot-${slot.id}`;
+
+      div.innerHTML = `
+        <div class="slot-label" style="color:${COLORS[slot.id]}">Tool ${slot.id + 1}</div>
+        <div class="slot-input-wrap">
+          <input class="slot-search" type="text" placeholder="Search MCP tools…" autocomplete="off"
+            value="${slot.toolData ? escHtml(slot.toolData.name) : ''}" data-slot="${slot.id}" />
+          <button class="slot-clear" data-slot="${slot.id}" style="display:${slot.toolData ? 'block' : 'none'}">×</button>
+        </div>
+        <ul class="slot-dropdown" id="dropdown-${slot.id}" style="display:none"></ul>
+        ${slot.loading ? '<div class="slot-loading">Loading…</div>' : ''}
+        ${slot.toolData ? `<div class="slot-selected-name">${escHtml(slot.toolData.name)} · Score: ${slot.toolData.score}</div>` : ''}
+      `;
+
+      slotsRow.appendChild(div);
+    });
+
+    // Add slot button
+    if (slots.length < MAX_SLOTS) {
+      const btn = document.createElement('button');
+      btn.className = 'add-slot-btn';
+      btn.textContent = '+ Add tool';
+      btn.style.alignSelf = 'flex-end';
+      btn.style.marginBottom = '0';
+      btn.addEventListener('click', addSlot);
+      slotsRow.appendChild(btn);
+    }
+
+    // Bind events
+    slotsRow.querySelectorAll<HTMLInputElement>('.slot-search').forEach((input) => {
+      const slotId = parseInt(input.dataset.slot!);
+      input.addEventListener('input', () => onSearch(slotId, input.value));
+      input.addEventListener('keydown', (e) => onKeydown(e, slotId));
+      input.addEventListener('blur', () => setTimeout(() => hideDropdown(slotId), 150));
+      input.addEventListener('focus', () => {
+        if (!slots[slotId].toolData) onSearch(slotId, input.value);
+      });
+    });
+
+    slotsRow.querySelectorAll<HTMLButtonElement>('.slot-clear').forEach((btn) => {
+      const slotId = parseInt(btn.dataset.slot!);
+      btn.addEventListener('click', () => clearSlot(slotId));
+    });
+  }
+
+  function addSlot() {
+    const newId = slots.length;
+    slots.push({ id: newId, selectedSlug: null, toolData: null, loading: false });
+    renderSlots();
+  }
+
+  function clearSlot(slotId: number) {
+    slots[slotId] = { id: slotId, selectedSlug: null, toolData: null, loading: false };
+    renderSlots();
+    updateComparison();
+    updateUrl();
+  }
+
+  // ── Search / dropdown ─────────────────────────────────────────────────────
+  async function onSearch(slotId: number, q: string) {
+    clearTimeout(debounceTimers[slotId]);
+    const dd = document.getElementById(`dropdown-${slotId}`)!;
+
+    if (!q.trim()) {
+      dd.style.display = 'none';
+      return;
+    }
+
+    debounceTimers[slotId] = setTimeout(async () => {
+      try {
+        const res = await fetch(`/api/search?q=${encodeURIComponent(q)}&limit=8`);
+        const data = await res.json() as { results: any[] };
+        renderDropdown(slotId, data.results || []);
+      } catch {
+        dd.style.display = 'none';
+      }
+    }, 250);
+  }
+
+  function renderDropdown(slotId: number, results: any[]) {
+    const dd = document.getElementById(`dropdown-${slotId}`)!;
+    dd.innerHTML = '';
+
+    if (!results.length) {
+      dd.style.display = 'none';
+      return;
+    }
+
+    results.forEach((r, i) => {
+      const li = document.createElement('li');
+      li.innerHTML = `${escHtml(r.name)}<span class="drop-score">${r.score?.toFixed(1) ?? ''}</span>`;
+      li.dataset.idx = String(i);
+      li.addEventListener('mousedown', () => selectTool(slotId, r.slug, r.type));
+      dd.appendChild(li);
+    });
+
+    dd.style.display = 'block';
+  }
+
+  function hideDropdown(slotId: number) {
+    const dd = document.getElementById(`dropdown-${slotId}`);
+    if (dd) dd.style.display = 'none';
+  }
+
+  function onKeydown(e: KeyboardEvent, slotId: number) {
+    const dd = document.getElementById(`dropdown-${slotId}`)!;
+    if (dd.style.display === 'none') return;
+    const items = Array.from(dd.querySelectorAll('li'));
+    const active = dd.querySelector('li.active');
+    let idx = active ? items.indexOf(active as HTMLLIElement) : -1;
+
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      idx = Math.min(idx + 1, items.length - 1);
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      idx = Math.max(idx - 1, 0);
+    } else if (e.key === 'Enter') {
+      e.preventDefault();
+      if (active) (active as HTMLElement).dispatchEvent(new MouseEvent('mousedown'));
+      return;
+    } else if (e.key === 'Escape') {
+      hideDropdown(slotId);
+      return;
+    } else {
+      return;
+    }
+
+    items.forEach((li, i) => li.classList.toggle('active', i === idx));
+  }
+
+  // ── Select & fetch tool ───────────────────────────────────────────────────
+  async function selectTool(slotId: number, slug: string, _type?: string) {
+    hideDropdown(slotId);
+    slots[slotId].selectedSlug = slug;
+    slots[slotId].loading = true;
+    slots[slotId].toolData = null;
+    renderSlots();
+
+    try {
+      // ID format for v1 API: replace / with --
+      const apiId = slug.replace('/', '--');
+      const res = await fetch(`/api/v1/tool/${apiId}`);
+      const data = await res.json() as ToolData;
+      slots[slotId].toolData = data;
+    } catch {
+      slots[slotId].toolData = null;
+    }
+
+    slots[slotId].loading = false;
+    renderSlots();
+    updateComparison();
+    updateUrl();
+  }
+
+  // ── URL sync ──────────────────────────────────────────────────────────────
+  function updateUrl() {
+    const selected = slots.filter(s => s.selectedSlug).map(s => encodeURIComponent(s.selectedSlug!));
+    const params = selected.length ? `?tools=${selected.join(',')}` : '';
+    history.replaceState({}, '', `/compare/${params}`);
+    updateShareSection();
+  }
+
+  function loadFromUrl() {
+    const params = new URLSearchParams(location.search);
+    const toolsParam = params.get('tools');
+    if (!toolsParam) return;
+
+    const slugs = toolsParam.split(',').map(s => decodeURIComponent(s)).filter(Boolean).slice(0, MAX_SLOTS);
+    if (!slugs.length) return;
+
+    // Ensure we have enough slots
+    while (slots.length < slugs.length) {
+      slots.push({ id: slots.length, selectedSlug: null, toolData: null, loading: false });
+    }
+
+    slugs.forEach((slug, i) => {
+      selectTool(i, slug);
+    });
+  }
+
+  // ── Comparison rendering ───────────────────────────────────────────────────
+  function updateComparison() {
+    const ready = slots.filter(s => s.toolData);
+    if (ready.length < 1) {
+      comparisonOut.style.display = 'none';
+      return;
+    }
+
+    comparisonOut.style.display = 'block';
+    renderOverviewTable(ready);
+    renderScoreBreakdown(ready);
+    updateShareSection();
+  }
+
+  function renderOverviewTable(ready: Slot[]) {
+    const head = document.getElementById('overview-head')!;
+    const body = document.getElementById('overview-body')!;
+
+    // Header row: "Metric" + tool names
+    head.innerHTML = `<tr>
+      <th>Metric</th>
+      ${ready.map(s => `<th class="tool-header" style="border-bottom-color:${COLORS[s.id]}">
+        <a href="${s.toolData!.githubUrl || '#'}" target="_blank" rel="noopener noreferrer">
+          ${escHtml(s.toolData!.name)}
+        </a>
+      </th>`).join('')}
+    </tr>`;
+
+    // Determine winner for each metric
+    const rows: { label: string; values: string[]; winnerIdx: number | null }[] = [];
+
+    // Score
+    const scores = ready.map(s => s.toolData!.score);
+    const maxScore = Math.max(...scores);
+    rows.push({
+      label: 'AgentRank Score',
+      values: ready.map(s => {
+        const c = scoreColor(s.toolData!.score);
+        return `<span class="score-pill" style="color:${c}">${s.toolData!.score.toFixed(1)}</span>`;
+      }),
+      winnerIdx: scores.indexOf(maxScore),
+    });
+
+    // Rank
+    const ranks = ready.map(s => s.toolData!.rank);
+    const minRank = Math.min(...ranks.filter(r => r > 0));
+    rows.push({
+      label: 'Rank',
+      values: ready.map(s => s.toolData!.rank ? `#${s.toolData!.rank.toLocaleString('en-US')}` : '—'),
+      winnerIdx: ranks.indexOf(minRank),
+    });
+
+    // Stars
+    const stars = ready.map(s => s.toolData!.raw?.stars ?? 0);
+    const maxStars = Math.max(...stars);
+    rows.push({
+      label: 'Stars',
+      values: ready.map(s => (s.toolData!.raw?.stars ?? 0).toLocaleString('en-US')),
+      winnerIdx: stars.indexOf(maxStars),
+    });
+
+    // Last Commit
+    rows.push({
+      label: 'Last Commit',
+      values: ready.map(s => s.toolData!.raw?.lastCommitAt ? relativeTime(s.toolData!.raw.lastCommitAt) : '—'),
+      winnerIdx: null,
+    });
+
+    // Issue Health
+    const health = ready.map(s => {
+      const open = s.toolData!.raw?.openIssues ?? 0;
+      const closed = s.toolData!.raw?.closedIssues ?? 0;
+      const total = open + closed;
+      return total === 0 ? 50 : Math.round(closed / total * 100);
+    });
+    const maxHealth = Math.max(...health);
+    rows.push({
+      label: 'Issue Health',
+      values: health.map(h => `${h}%`),
+      winnerIdx: health.indexOf(maxHealth),
+    });
+
+    // Contributors
+    const contrib = ready.map(s => s.toolData!.raw?.contributors ?? 0);
+    const maxContrib = Math.max(...contrib);
+    rows.push({
+      label: 'Contributors',
+      values: contrib.map(c => c.toLocaleString('en-US')),
+      winnerIdx: contrib.indexOf(maxContrib),
+    });
+
+    // Dependents
+    const deps = ready.map(s => s.toolData!.raw?.dependents ?? 0);
+    const maxDeps = Math.max(...deps);
+    rows.push({
+      label: 'Dependents',
+      values: deps.map(d => d > 0 ? d.toLocaleString('en-US') : '0'),
+      winnerIdx: deps.indexOf(maxDeps),
+    });
+
+    // Language
+    rows.push({
+      label: 'Language',
+      values: ready.map(s => s.toolData!.raw?.language || '—'),
+      winnerIdx: null,
+    });
+
+    // License
+    rows.push({
+      label: 'License',
+      values: ready.map(s => s.toolData!.raw?.license || '—'),
+      winnerIdx: null,
+    });
+
+    body.innerHTML = rows.map(row => `
+      <tr>
+        <td class="metric-label">${row.label}</td>
+        ${ready.map((s, i) => `<td class="${row.winnerIdx === i && ready.length > 1 ? 'winner-cell' : ''}">${row.values[i]}</td>`).join('')}
+      </tr>
+    `).join('');
+  }
+
+  function renderScoreBreakdown(ready: Slot[]) {
+    const container = document.getElementById('score-breakdown')!;
+    const toolsWithSignals = ready.filter(s => s.toolData?.signals);
+
+    if (!toolsWithSignals.length) {
+      container.innerHTML = '<p style="color:var(--text-muted);font-size:0.82rem">Signal breakdown not available for these tools.</p>';
+      return;
+    }
+
+    // Only show signals present in at least one tool
+    const rows = SIGNAL_META.map(sig => {
+      const bars = toolsWithSignals.map(s => {
+        const val = s.toolData!.signals![sig.key] ?? 0;
+        const rawVal = sig.format(val, s.toolData!.raw);
+        return { slot: s, val, rawVal };
+      });
+      return { sig, bars };
+    });
+
+    container.innerHTML = `
+      <div class="breakdown-grid" style="grid-template-columns: 1fr;">
+        ${rows.map(({ sig, bars }) => `
+          <div>
+            <div class="breakdown-signal-name">${sig.label}</div>
+            ${bars.map(({ slot, val, rawVal }) => `
+              <div class="breakdown-bar-row">
+                <div class="breakdown-tool-name" title="${escHtml(slot.toolData!.name)}">${escHtml(shortName(slot.toolData!.name))}</div>
+                <div class="bar-track">
+                  <div class="bar-fill" style="width:${(val * 100).toFixed(1)}%;background:${COLORS[slot.id]}"></div>
+                </div>
+                <div class="bar-val">${rawVal}</div>
+              </div>
+            `).join('')}
+          </div>
+        `).join('')}
+      </div>
+    `;
+  }
+
+  function updateShareSection() {
+    const selected = slots.filter(s => s.selectedSlug).map(s => encodeURIComponent(s.selectedSlug!));
+    if (!selected.length) return;
+
+    const shareUrl = `${location.origin}/compare/?tools=${selected.join(',')}`;
+    const embedCode = `<iframe src="${shareUrl}&embed=1" width="100%" height="500" frameborder="0" style="border:1px solid #27272a;border-radius:4px"></iframe>`;
+
+    (document.getElementById('share-url') as HTMLInputElement).value = shareUrl;
+    (document.getElementById('embed-code') as HTMLInputElement).value = embedCode;
+  }
+
+  // ── Copy buttons ──────────────────────────────────────────────────────────
+  document.querySelectorAll<HTMLButtonElement>('.copy-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const target = document.getElementById(btn.dataset.target!) as HTMLInputElement;
+      if (!target) return;
+      navigator.clipboard.writeText(target.value).then(() => {
+        btn.textContent = 'Copied!';
+        btn.classList.add('copied');
+        setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 1500);
+      });
+    });
+  });
+
+  // ── Utilities ─────────────────────────────────────────────────────────────
+  function escHtml(s: string): string {
+    return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+
+  function shortName(name: string): string {
+    const parts = name.split('/');
+    return parts[parts.length - 1] || name;
+  }
+
+  function relativeTime(iso: string | null): string {
+    if (!iso) return '—';
+    const days = Math.floor((Date.now() - new Date(iso).getTime()) / 86_400_000);
+    if (days === 0) return 'today';
+    if (days === 1) return '1d ago';
+    if (days < 30) return `${days}d ago`;
+    if (days < 365) return `${Math.floor(days / 30)}mo ago`;
+    return `${Math.floor(days / 365)}y ago`;
+  }
+
+  function scoreColor(score: number): string {
+    if (score >= 70) return '#22c55e';
+    if (score >= 40) return '#f59e0b';
+    return '#ef4444';
+  }
+
+  // ── Embed mode ────────────────────────────────────────────────────────────
+  if (new URLSearchParams(location.search).get('embed') === '1') {
+    document.querySelector('header')?.setAttribute('style', 'display:none');
+    document.querySelector('footer')?.setAttribute('style', 'display:none');
+    document.querySelector('.page-header')?.setAttribute('style', 'display:none');
+  }
+
+  // ── Init ──────────────────────────────────────────────────────────────────
+  renderSlots();
+  loadFromUrl();
+</script>
