@@ -113,8 +113,8 @@
     "score": 67.6,
     "handle": "@Bytebase",
     "tweet": "Congrats @Bytebase — your dbhub is ranked #23 on AgentRank with a score of 67.6.\n\nSee your full breakdown: agentrank-ai.com/tool/bytebase--dbhub",
-    "status": "pending",
-    "posted_at": null
+    "status": "done",
+    "posted_at": "2026-03-17T01:35:15.986Z"
   },
   {
     "repo": "microsoft/playwright-mcp",
@@ -122,8 +122,8 @@
     "score": 66.8,
     "handle": "@microsoft",
     "tweet": "Congrats @microsoft — your playwright-mcp is ranked #25 on AgentRank with a score of 66.8.\n\nSee your full breakdown: agentrank-ai.com/tool/microsoft--playwright-mcp",
-    "status": "pending",
-    "posted_at": null
+    "status": "done",
+    "posted_at": "2026-03-17T01:36:06.746Z"
   },
   {
     "repo": "Flux159/mcp-server-kubernetes",
@@ -131,8 +131,8 @@
     "score": 66.1,
     "handle": "@flux159",
     "tweet": "Congrats @flux159 — your mcp-server-kubernetes is ranked #27 on AgentRank with a score of 66.1.\n\nSee your full breakdown: agentrank-ai.com/tool/Flux159--mcp-server-kubernetes",
-    "status": "pending",
-    "posted_at": null
+    "status": "done",
+    "posted_at": "2026-03-17T01:36:28.864Z"
   },
   {
     "repo": "tavily-ai/tavily-mcp",
@@ -140,7 +140,7 @@
     "score": 65.5,
     "handle": "@tavilyai",
     "tweet": "Congrats @tavilyai — your tavily-mcp is ranked #30 on AgentRank with a score of 65.5.\n\nSee your full breakdown: agentrank-ai.com/tool/tavily-ai--tavily-mcp",
-    "status": "pending",
-    "posted_at": null
+    "status": "done",
+    "posted_at": "2026-03-17T01:36:57.245Z"
   }
 ]
