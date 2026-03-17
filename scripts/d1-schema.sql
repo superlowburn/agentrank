@@ -149,15 +149,16 @@ CREATE INDEX IF NOT EXISTS idx_rh_tool ON rank_history(tool_full_name, tool_type
 CREATE TABLE IF NOT EXISTS email_subscribers (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   email TEXT NOT NULL,
-  source TEXT NOT NULL DEFAULT 'homepage',  -- 'homepage', 'tool', 'skill'
-  subscribed_at TEXT NOT NULL DEFAULT (datetime('now'))
+  source TEXT NOT NULL DEFAULT 'homepage',  -- 'homepage', 'blog', 'embed'
+  subscribed_at TEXT NOT NULL DEFAULT (datetime('now')),
+  confirmed INTEGER NOT NULL DEFAULT 0,     -- 0 = unconfirmed, 1 = confirmed
+  ip_hash TEXT                              -- SHA-256 of subscriber IP (not raw)
 );
 CREATE UNIQUE INDEX IF NOT EXISTS idx_email_subscribers_email ON email_subscribers(email);
 CREATE INDEX IF NOT EXISTS idx_email_subscribers_source ON email_subscribers(source);
 -- Migration (run once on existing D1):
--- CREATE TABLE IF NOT EXISTS email_subscribers (id INTEGER PRIMARY KEY AUTOINCREMENT, email TEXT NOT NULL, source TEXT NOT NULL DEFAULT 'homepage', subscribed_at TEXT NOT NULL DEFAULT (datetime('now')));
--- CREATE UNIQUE INDEX IF NOT EXISTS idx_email_subscribers_email ON email_subscribers(email);
--- CREATE INDEX IF NOT EXISTS idx_email_subscribers_source ON email_subscribers(source);
+-- ALTER TABLE email_subscribers ADD COLUMN confirmed INTEGER NOT NULL DEFAULT 0;
+-- ALTER TABLE email_subscribers ADD COLUMN ip_hash TEXT;
 
 -- Install checkpoints — tracks our own skill install counts over time (from skills.sh)
 -- survives pipeline DROP/CREATE cycles
