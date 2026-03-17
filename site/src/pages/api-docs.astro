@@ -3,7 +3,7 @@ import Base from '../layouts/Base.astro';
 export const prerender = true;
 ---
 
-<Base title="API — AgentRank" description="Query the AgentRank index programmatically. Search, lookup, and badge endpoints." activeTab="api" canonicalUrl="https://agentrank-ai.com/api-docs/">
+<Base title="API — AgentRank" description="Query the AgentRank index programmatically. Search, lookup, badge, rankings, movers, and new tools endpoints." activeTab="api" canonicalUrl="https://agentrank-ai.com/api-docs/">
   <div class="docs-intro">
     <p class="value-prop">Your agent's recommendations are only as good as its data. Don't let it guess from stale training data — give it the live index.</p>
     <p>Query the AgentRank index programmatically. All endpoints are free, unauthenticated, and CORS-enabled.</p>
@@ -11,15 +11,203 @@ export const prerender = true;
   </div>
 
   <nav class="quick-nav">
-    <a href="#search">Search</a>
-    <a href="#lookup">Lookup</a>
-    <a href="#badges">Badges</a>
+    <a href="#mcp">MCP Server</a>
+    <a href="#v1-search">v1/search</a>
+    <a href="#v1-tool">v1/tool</a>
+    <a href="#v1-movers">v1/movers</a>
+    <a href="#v1-new-tools">v1/new-tools</a>
+    <a href="#search">search (legacy)</a>
+    <a href="#lookup">lookup (legacy)</a>
+    <a href="#badges">badges</a>
     <a href="#usage-notes">Usage Notes</a>
   </nav>
 
+  <section class="mcp-callout" id="mcp">
+    <h2>Use AgentRank from your AI agent</h2>
+    <p>The AgentRank MCP server gives Claude and other AI agents direct access to the live ranked index. No API key needed.</p>
+
+    <h3>Install</h3>
+    <pre class="code-block">claude mcp add agentrank -- npx -y agentrank-mcp-server</pre>
+
+    <h3>Or run directly</h3>
+    <pre class="code-block">npx agentrank-mcp-server</pre>
+
+    <p class="cache-note">The MCP server wraps the same endpoints documented below. Once installed, your agent can search, lookup, and get rankings without writing any API calls.</p>
+  </section>
+
+  <h2 class="section-header">V1 Endpoints</h2>
+  <p class="section-desc">Full-featured endpoints with rate limiting (100 req/min per IP), rich signal data, and pagination.</p>
+
+  <section class="endpoint" id="v1-search">
+    <h2><span class="method-badge">GET</span> /api/v1/search</h2>
+    <p class="endpoint-desc">Search tools, skills, and agents. Supports filtering by category, sorting, and pagination.</p>
+
+    <h3>Parameters</h3>
+    <table class="params-table">
+      <thead>
+        <tr><th>Param</th><th>Type</th><th>Required</th><th>Description</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><code>q</code></td><td>string</td><td>No</td><td>Search query. Omit for full index.</td></tr>
+        <tr><td><code>category</code></td><td>string</td><td>No</td><td><code>tool</code>, <code>skill</code>, or <code>agent</code>. Omit for all.</td></tr>
+        <tr><td><code>sort</code></td><td>string</td><td>No</td><td><code>score</code> (default), <code>rank</code>, <code>stars</code>, <code>freshness</code></td></tr>
+        <tr><td><code>limit</code></td><td>number</td><td>No</td><td>1&ndash;100, default 20</td></tr>
+        <tr><td><code>offset</code></td><td>number</td><td>No</td><td>Pagination offset, default 0</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Example</h3>
+    <pre class="code-block">curl "https://agentrank-ai.com/api/v1/search?q=playwright&category=tool&limit=3"</pre>
+
+    <h3>Response</h3>
+    <pre class="code-block">{`{
+  "query": "playwright",
+  "category": "tool",
+  "sort": "score",
+  "results": [
+    {
+      "type": "tool",
+      "id": "microsoft--playwright-mcp",
+      "name": "microsoft/playwright-mcp",
+      "description": "Playwright Tools for MCP",
+      "score": 78.1,
+      "rank": 34,
+      "url": "https://agentrank-ai.com/tool/microsoft--playwright-mcp/",
+      "raw": {
+        "stars": 4200,
+        "lastCommitAt": "2026-03-10T00:00:00.000Z",
+        "language": "TypeScript",
+        "license": "Apache-2.0"
+      }
+    }
+  ],
+  "meta": { "total": 1, "limit": 3, "offset": 0 }
+}`}</pre>
+    <p class="cache-note">Cache: 1min CDN / 30s browser &bull; Rate limit: 100 req/min</p>
+  </section>
+
+  <section class="endpoint" id="v1-tool">
+    <h2><span class="method-badge">GET</span> /api/v1/tool/{`{id}`}</h2>
+    <p class="endpoint-desc">Detailed signal breakdown for a single tool or skill. Use <code>owner--repo</code> format for GitHub tools (replace <code>/</code> with <code>--</code>).</p>
+
+    <h3>Examples</h3>
+    <pre class="code-block">curl "https://agentrank-ai.com/api/v1/tool/microsoft--playwright-mcp"
+curl "https://agentrank-ai.com/api/v1/tool/glama-playwright-mcp-server"  # skill by slug</pre>
+
+    <h3>Response</h3>
+    <pre class="code-block">{`{
+  "type": "tool",
+  "id": "microsoft--playwright-mcp",
+  "name": "microsoft/playwright-mcp",
+  "description": "Playwright Tools for MCP",
+  "score": 78.1,
+  "rank": 34,
+  "githubUrl": "https://github.com/microsoft/playwright-mcp",
+  "signals": {
+    "stars": 0.862,
+    "freshness": 0.943,
+    "issueHealth": 0.712,
+    "contributors": 0.634,
+    "dependents": 0.218,
+    "descriptionQuality": 0.7,
+    "licenseHealth": 1.0
+  },
+  "weights": {
+    "stars": 0.12, "freshness": 0.23, "issueHealth": 0.24,
+    "contributors": 0.09, "dependents": 0.24,
+    "descriptionQuality": 0.05, "licenseHealth": 0.03
+  },
+  "raw": {
+    "stars": 4200, "forks": 312, "contributors": 28,
+    "openIssues": 14, "closedIssues": 89, "dependents": 7,
+    "lastCommitAt": "2026-03-10T00:00:00.000Z",
+    "language": "TypeScript", "license": "Apache-2.0",
+    "isArchived": false, "topics": ["mcp", "playwright", "browser-automation"]
+  }
+}`}</pre>
+    <p class="cache-note">Cache: 5min CDN / 1min browser &bull; Rate limit: 100 req/min</p>
+  </section>
+
+  <section class="endpoint" id="v1-movers">
+    <h2><span class="method-badge">GET</span> /api/v1/movers</h2>
+    <p class="endpoint-desc">Tools and skills with the largest rank changes over a given period. Good for "biggest movers" content.</p>
+
+    <h3>Parameters</h3>
+    <table class="params-table">
+      <thead>
+        <tr><th>Param</th><th>Type</th><th>Required</th><th>Description</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><code>days</code></td><td>number</td><td>No</td><td>Lookback window in days (1&ndash;30, default 7)</td></tr>
+        <tr><td><code>limit</code></td><td>number</td><td>No</td><td>1&ndash;50, default 10</td></tr>
+        <tr><td><code>type</code></td><td>string</td><td>No</td><td><code>tool</code> (default), <code>skill</code>, or omit for both</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Example</h3>
+    <pre class="code-block">curl "https://agentrank-ai.com/api/v1/movers?days=7&limit=5&type=tool"</pre>
+
+    <h3>Response</h3>
+    <pre class="code-block">{`{
+  "movers": [
+    {
+      "full_name": "microsoft/playwright-mcp",
+      "tool_type": "tool",
+      "current_rank": 34,
+      "prev_rank": 51,
+      "rank_delta": 17,
+      "current_score": 78.1,
+      "stars": 4200,
+      "url": "https://agentrank-ai.com/tool/microsoft--playwright-mcp/"
+    }
+  ],
+  "meta": { "today": "2026-03-16", "prev_date": "2026-03-09", "days": 7, "count": 1 }
+}`}</pre>
+    <p class="cache-note">Requires daily snapshots to be populated. Returns empty array if rank history not yet available.</p>
+  </section>
+
+  <section class="endpoint" id="v1-new-tools">
+    <h2><span class="method-badge">GET</span> /api/v1/new-tools</h2>
+    <p class="endpoint-desc">Tools that entered the index for the first time within the last N days.</p>
+
+    <h3>Parameters</h3>
+    <table class="params-table">
+      <thead>
+        <tr><th>Param</th><th>Type</th><th>Required</th><th>Description</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><code>days</code></td><td>number</td><td>No</td><td>Lookback window in days (1&ndash;30, default 7)</td></tr>
+        <tr><td><code>limit</code></td><td>number</td><td>No</td><td>1&ndash;100, default 20</td></tr>
+        <tr><td><code>type</code></td><td>string</td><td>No</td><td><code>tool</code> (default), <code>skill</code>, or omit for both</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Example</h3>
+    <pre class="code-block">curl "https://agentrank-ai.com/api/v1/new-tools?days=7&limit=5"</pre>
+
+    <h3>Response</h3>
+    <pre class="code-block">{`{
+  "tools": [
+    {
+      "full_name": "acme/new-mcp-tool",
+      "tool_type": "tool",
+      "rank": 142,
+      "score": 41.2,
+      "stars": 89,
+      "first_seen": "2026-03-14",
+      "url": "https://agentrank-ai.com/tool/acme--new-mcp-tool/"
+    }
+  ],
+  "meta": { "today": "2026-03-16", "cutoff": "2026-03-09", "days": 7, "count": 1 }
+}`}</pre>
+  </section>
+
+  <h2 class="section-header">Legacy Endpoints</h2>
+  <p class="section-desc">Simpler endpoints without rate limiting. Good for quick lookups and badge embeds.</p>
+
   <section class="endpoint" id="search">
     <h2><span class="method-badge">GET</span> /api/search</h2>
-    <p class="endpoint-desc">Search the index for skills and tools by keyword.</p>
+    <p class="endpoint-desc">Search the index by keyword. Returns both tools and skills.</p>
 
     <h3>Parameters</h3>
     <table class="params-table">
@@ -48,15 +236,6 @@ export const prerender = true;
       "score": 82.4,
       "rank": 12,
       "url": "https://agentrank-ai.com/skill/glama-playwright-mcp-server/"
-    },
-    {
-      "type": "tool",
-      "slug": "microsoft/playwright-mcp",
-      "name": "microsoft/playwright-mcp",
-      "description": "Playwright Tools for MCP",
-      "score": 78.1,
-      "rank": 34,
-      "url": "https://agentrank-ai.com/tool/microsoft/playwright-mcp/"
     }
   ]
 }`}</pre>
@@ -86,20 +265,17 @@ export const prerender = true;
   "type": "skill",
   "slug": "glama:playwright-mcp-server",
   "name": "Playwright MCP Server",
-  "description": "Browser automation and testing via Playwright",
   "score": 82.4,
   "rank": 12
 }`}</pre>
 
     <h3>Response (not found)</h3>
-    <pre class="code-block">{`{
-  "found": false
-}`}</pre>
+    <pre class="code-block">{`{ "found": false }`}</pre>
   </section>
 
   <section class="endpoint" id="badges">
     <h2><span class="method-badge">GET</span> /api/badge/skill/{`{slug}`} &nbsp; /api/badge/tool/{`{slug}`}</h2>
-    <p class="endpoint-desc">Returns an SVG badge showing the AgentRank score. Embed in READMEs, docs, or websites.</p>
+    <p class="endpoint-desc">SVG badge showing the AgentRank score. Embed in READMEs, docs, or websites.</p>
 
     <h3>Preview</h3>
     <div class="badge-preview">
@@ -120,11 +296,12 @@ export const prerender = true;
   <section class="endpoint" id="usage-notes">
     <h2>Usage Notes</h2>
     <ul class="usage-list">
-      <li>No authentication required.</li>
+      <li>No authentication required for any endpoint.</li>
       <li>All JSON endpoints return <code>Access-Control-Allow-Origin: *</code> for browser use.</li>
+      <li>V1 endpoints enforce a rate limit of 100 requests per minute per IP.</li>
       <li>Data updates daily. Scores reflect the latest crawl.</li>
-      <li>Be reasonable with request volume. No formal rate limit, but excessive traffic may be throttled.</li>
-      <li>Badge SVGs are lightweight and CDN-cached -- safe to embed anywhere.</li>
+      <li>Tool IDs use <code>owner--repo</code> format (replace <code>/</code> with <code>--</code>).</li>
+      <li>Badge SVGs are CDN-cached — safe to embed anywhere.</li>
     </ul>
   </section>
 </Base>
@@ -177,6 +354,52 @@ export const prerender = true;
   .quick-nav a:hover {
     color: var(--accent);
     text-decoration: none;
+  }
+
+  .mcp-callout {
+    background: var(--bg-surface);
+    border: 1px solid var(--accent);
+    border-radius: 8px;
+    padding: 1.25rem 1.5rem;
+    margin-bottom: 2.5rem;
+  }
+
+  .mcp-callout h2 {
+    font-size: 1rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+  }
+
+  .mcp-callout p {
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .mcp-callout h3 {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-muted);
+    margin-top: 1rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .section-header {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-muted);
+    margin-top: 2rem;
+    margin-bottom: 0.25rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .section-desc {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    margin-bottom: 1.5rem;
   }
 
   .endpoint {
