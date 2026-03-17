@@ -1,0 +1,729 @@
+---
+export const prerender = true;
+
+import Base from '../../layouts/Base.astro';
+
+const publishDate = '2026-03-17';
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: 'How to Choose an MCP Server in 2026',
+  description: 'A decision framework for evaluating and selecting MCP servers. Five signals that separate reliable tools from abandoned experiments — using real data from the AgentRank index.',
+  datePublished: publishDate,
+  dateModified: publishDate,
+  author: {
+    '@type': 'Organization',
+    name: 'AgentRank',
+    url: 'https://agentrank-ai.com',
+  },
+  publisher: {
+    '@type': 'Organization',
+    name: 'AgentRank',
+    url: 'https://agentrank-ai.com',
+    logo: {
+      '@type': 'ImageObject',
+      url: 'https://agentrank-ai.com/og-image.png',
+    },
+  },
+  mainEntityOfPage: {
+    '@type': 'WebPage',
+    '@id': 'https://agentrank-ai.com/blog/how-to-choose-an-mcp-server/',
+  },
+  image: 'https://agentrank-ai.com/og-image.png',
+  keywords: 'how to choose MCP server, best MCP server 2026, MCP server evaluation, MCP server comparison, picking MCP server, MCP server quality signals',
+};
+
+const signals = [
+  {
+    name: 'Freshness',
+    weight: '25%',
+    why: 'The MCP spec moves fast. A server with its last commit 6+ months ago may be broken against current clients. Freshness is the single strongest proxy for "will this work tomorrow."',
+    redFlag: 'Last commit over 90 days ago — score starts decaying hard.',
+    greenFlag: 'Commits within the last 30 days.',
+  },
+  {
+    name: 'Issue health',
+    weight: '25%',
+    why: 'Closed issues ÷ total issues. A high ratio means the maintainer responds and ships fixes. A low ratio means bug reports pile up with no resolution.',
+    redFlag: 'Less than 30% issue close rate with more than 20 open issues.',
+    greenFlag: 'Close rate above 70%, maintainer responds within days.',
+  },
+  {
+    name: 'Inbound dependents',
+    weight: '25%',
+    why: 'How many other repos depend on this? Real production use is the ultimate signal. If developers are importing this in their own agents, it works.',
+    redFlag: 'Zero dependents after 6+ months in the ecosystem.',
+    greenFlag: 'Dozens of downstream repos using it.',
+  },
+  {
+    name: 'Stars',
+    weight: '15%',
+    why: 'Raw attention signal. Useful for filtering out abandoned experiments with zero traction. Not useful for differentiating between two active tools.',
+    redFlag: 'Under 10 stars on a tool that claims production-readiness.',
+    greenFlag: 'Hundreds or thousands — but treat as noise above ~500.',
+  },
+  {
+    name: 'Contributors',
+    weight: '10%',
+    why: 'One contributor = bus factor 1. Two or more means the project survives the original author moving on.',
+    redFlag: 'Solo maintainer with infrequent commits.',
+    greenFlag: 'Five or more active contributors.',
+  },
+];
+
+const questions = [
+  {
+    q: 'Is there an official server from the vendor?',
+    answer: 'Always prefer official servers when they exist. Redis has redis/mcp-redis. MongoDB has mongodb-js/mongodb-mcp-server. Neon has neondatabase/mcp-server-neon. Official servers track breaking API changes and have organizational backing. Community servers can be excellent, but you\'re betting on an individual.',
+  },
+  {
+    q: 'Does it have TypeScript or Python type definitions?',
+    answer: 'Typed servers are almost always better maintained. The act of maintaining types forces documentation and catches regressions. A JavaScript server with no types is harder to trust in production.',
+  },
+  {
+    q: 'Does the README show working examples?',
+    answer: 'Copy the example. Run it. If the README example doesn\'t work out of the box, the server is broken or poorly maintained. This single test eliminates a huge percentage of the index immediately.',
+  },
+  {
+    q: 'What is the issue response time?',
+    answer: 'Open a random bug from the last 30 days. Was it responded to? In how many days? Slow or no response means you\'re on your own when something breaks. Fast response is a strong signal of an actively maintained project.',
+  },
+  {
+    q: 'Does it have a changelog or release notes?',
+    answer: 'Changelogs indicate a maintainer who ships intentionally. If there\'s no CHANGELOG.md and no GitHub releases, the project treats its users as an afterthought.',
+  },
+];
+
+const tiers = [
+  {
+    tier: 'Production-ready',
+    scoreRange: '80–100',
+    description: 'High freshness, strong issue health, real dependents. These are the tools you can build on.',
+    example: 'mongodb-js/mongodb-mcp-server (88.44), redis/mcp-redis (86.59)',
+  },
+  {
+    tier: 'Active and viable',
+    scoreRange: '65–79',
+    description: 'Good signals overall but missing one or two. Still worth using — monitor freshness quarterly.',
+    example: 'bytebase/dbhub (78.46), neondatabase/mcp-server-neon (78.85)',
+  },
+  {
+    tier: 'Experimental',
+    scoreRange: '40–64',
+    description: 'Interesting but unproven. May work well, may be abandoned. Validate manually before depending on it.',
+    example: 'Most community servers fall here.',
+  },
+  {
+    tier: 'Avoid',
+    scoreRange: '0–39',
+    description: 'Low freshness, poor issue health, no dependents. May be broken, may be unmaintained.',
+    example: '74% of the AgentRank index — the long tail of abandoned experiments.',
+  },
+];
+---
+
+<Base
+  title="How to Choose an MCP Server in 2026 — AgentRank"
+  description="A decision framework for evaluating MCP servers using real quality signals: freshness, issue health, dependents, stars, and contributors. Stop guessing, start scoring."
+  activeTab="blog"
+  keywords="how to choose MCP server, MCP server evaluation, best MCP server 2026, MCP server quality, picking MCP server, MCP server comparison guide"
+  canonicalUrl="https://agentrank-ai.com/blog/how-to-choose-an-mcp-server/"
+  jsonLd={jsonLd}
+>
+  <article class="blog-post">
+    <header class="post-header">
+      <div class="breadcrumb"><a href="/blog/">Blog</a> <span>/</span></div>
+      <h1>How to Choose an MCP Server in 2026</h1>
+      <div class="post-meta">
+        <time datetime={publishDate}>March 17, 2026</time>
+        <span class="sep">&middot;</span>
+        <span>7 min read</span>
+        <span class="sep">&middot;</span>
+        <span>AgentRank Index</span>
+      </div>
+      <p class="lede">
+        The AgentRank index contains <strong>25,632 MCP servers and agent tools</strong>. About 74% of them are
+        abandoned, broken, or not worth your time. This guide gives you a framework to identify the
+        26% that are — using the same five signals we use to compute every AgentRank score.
+      </p>
+    </header>
+
+    <nav class="toc">
+      <strong>Contents</strong>
+      <ol>
+        <li><a href="#five-signals">The five signals</a></li>
+        <li><a href="#questions">Five questions to ask before committing</a></li>
+        <li><a href="#tiers">Score tiers and what they mean</a></li>
+        <li><a href="#official-vs-community">Official vs community servers</a></li>
+        <li><a href="#checklist">Quick evaluation checklist</a></li>
+      </ol>
+    </nav>
+
+    <section id="five-signals">
+      <h2>The five signals that matter</h2>
+      <p>
+        Most people pick MCP servers by stars. Stars are a popularity signal from months ago.
+        They tell you a tool was interesting when it was new, not whether it works today.
+        Here are the five signals that actually predict quality — and how much each one matters.
+      </p>
+
+      <div class="signal-list">
+        {signals.map((signal) => (
+          <div class="signal-card">
+            <div class="signal-header">
+              <span class="signal-name">{signal.name}</span>
+              <span class="signal-weight">{signal.weight} of score</span>
+            </div>
+            <p class="signal-why">{signal.why}</p>
+            <div class="signal-flags">
+              <div class="flag red-flag">
+                <span class="flag-label">Red flag:</span> {signal.redFlag}
+              </div>
+              <div class="flag green-flag">
+                <span class="flag-label">Green flag:</span> {signal.greenFlag}
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <p class="note">
+        These weights are deliberate. Freshness and issue health each outweigh stars because
+        a stale tool with 5,000 stars is less useful than an active tool with 200 stars.
+        Dependents carry 25% because real production use is the only signal you can't fake.
+      </p>
+    </section>
+
+    <section id="questions">
+      <h2>Five questions to ask before committing</h2>
+      <p>
+        Before you add a server to your agent stack, run through these questions.
+        Each one is a fast filter that catches different failure modes.
+      </p>
+
+      <div class="question-list">
+        {questions.map((item, i) => (
+          <div class="question-item">
+            <div class="question-header">
+              <span class="q-num">{i + 1}</span>
+              <span class="q-text">{item.q}</span>
+            </div>
+            <p class="q-answer">{item.answer}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <section id="tiers">
+      <h2>Score tiers and what they mean</h2>
+      <p>
+        Every tool in the AgentRank index has a score from 0–100.
+        Here's how to interpret where a tool falls.
+      </p>
+
+      <table class="data-table tier-table">
+        <thead>
+          <tr>
+            <th>Tier</th>
+            <th class="num">Score</th>
+            <th>What it means</th>
+            <th>Example</th>
+          </tr>
+        </thead>
+        <tbody>
+          {tiers.map((tier) => (
+            <tr>
+              <td class="tier-name">{tier.tier}</td>
+              <td class="num score-cell">{tier.scoreRange}</td>
+              <td class="tier-desc">{tier.description}</td>
+              <td class="tier-example">{tier.example}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+
+      <p>
+        The average score across the full index is <strong>41.2</strong>. Anything above 65 is
+        in the top quartile. Anything above 80 is in the top 5%.
+      </p>
+    </section>
+
+    <section id="official-vs-community">
+      <h2>Official vs community servers</h2>
+
+      <h3>When to prefer official</h3>
+      <p>
+        For any major vendor — databases, cloud providers, SaaS tools — the official server is almost
+        always the right choice. Official maintainers track breaking API changes. They have organizational
+        backing that survives individual contributors leaving. They respond to issues because their reputation
+        is attached to the server.
+      </p>
+      <p>
+        Examples of official servers worth trusting: <a href="/tool/redis--mcp-redis/" class="inline-link">redis/mcp-redis</a>,
+        <a href="/tool/mongodb-js--mongodb-mcp-server/" class="inline-link">mongodb-js/mongodb-mcp-server</a>,
+        <a href="/tool/neondatabase--mcp-server-neon/" class="inline-link">neondatabase/mcp-server-neon</a>,
+        <a href="/tool/dbt-labs--dbt-mcp/" class="inline-link">dbt-labs/dbt-mcp</a>.
+      </p>
+
+      <h3>When community servers are fine</h3>
+      <p>
+        Community servers are the right choice when no official alternative exists, or when the community
+        server substantially outperforms the official one on the five signals. A community server with
+        27 contributors and an 85% issue close rate is more trustworthy than an official server with
+        2 contributors and stale commits.
+      </p>
+      <p>
+        Check the contributor count. A community server with five or more active contributors has enough
+        bus factor to absorb one person leaving. A solo project is a liability in production.
+      </p>
+
+      <h3>The "it works for me" trap</h3>
+      <p>
+        The most dangerous servers are the ones that work in your test environment and fail six months
+        later when the upstream API changes and the maintainer has moved on. The AgentRank signals are
+        designed to catch this category before you depend on it.
+      </p>
+    </section>
+
+    <section id="checklist">
+      <h2>Quick evaluation checklist</h2>
+      <p>Run through this before adding any MCP server to a production agent stack.</p>
+
+      <div class="checklist">
+        <div class="check-item">
+          <span class="check">&#x25A1;</span>
+          <span>AgentRank score above 65 (top quartile)</span>
+        </div>
+        <div class="check-item">
+          <span class="check">&#x25A1;</span>
+          <span>Last commit within 60 days</span>
+        </div>
+        <div class="check-item">
+          <span class="check">&#x25A1;</span>
+          <span>Issue close rate above 50%</span>
+        </div>
+        <div class="check-item">
+          <span class="check">&#x25A1;</span>
+          <span>Two or more contributors</span>
+        </div>
+        <div class="check-item">
+          <span class="check">&#x25A1;</span>
+          <span>README example works out of the box</span>
+        </div>
+        <div class="check-item">
+          <span class="check">&#x25A1;</span>
+          <span>TypeScript or typed Python</span>
+        </div>
+        <div class="check-item">
+          <span class="check">&#x25A1;</span>
+          <span>Official server OR community server with 5+ contributors</span>
+        </div>
+        <div class="check-item">
+          <span class="check">&#x25A1;</span>
+          <span>At least one other repo depending on it</span>
+        </div>
+      </div>
+
+      <div class="cta-box">
+        <p>
+          <strong>Find pre-scored servers:</strong> Browse the <a href="/">AgentRank index</a> —
+          25,000+ tools ranked by all five signals, updated daily. Filter by category, sort by score.
+        </p>
+        <p>
+          <strong>Looking for a specific category?</strong> See
+          <a href="/blog/best-mcp-servers-database/">Best MCP Servers for Database</a>,
+          <a href="/blog/best-mcp-servers-devops/">Best for DevOps</a>, or
+          <a href="/blog/best-mcp-servers-ai-ml/">Best for AI/ML</a>.
+        </p>
+      </div>
+    </section>
+
+    <footer class="post-footer">
+      <p class="methodology">
+        <strong>Methodology:</strong> Data from the AgentRank index crawled March 2026.
+        Scores computed using: stars 15%, freshness 25%, issue health 25%, contributors 10%, inbound dependents 25%.
+        25,632 repositories indexed. Only non-archived repositories included.
+      </p>
+      <p class="share-line">
+        Found this useful? <a href="https://x.com/AgentRank_ai" target="_blank" rel="noopener noreferrer">Follow @AgentRank_ai</a> for
+        weekly ecosystem updates, biggest movers, and new tool spotlights.
+      </p>
+    </footer>
+  </article>
+
+  <style>
+    .blog-post {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 2rem 0 3rem;
+    }
+
+    .breadcrumb {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      margin-bottom: 0.75rem;
+    }
+
+    .breadcrumb span {
+      margin: 0 0.25rem;
+      opacity: 0.5;
+    }
+
+    .post-header {
+      margin-bottom: 2rem;
+      padding-bottom: 1.5rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .post-header h1 {
+      font-size: 1.6rem;
+      font-weight: 700;
+      line-height: 1.3;
+      margin-bottom: 0.75rem;
+    }
+
+    .post-meta {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      flex-wrap: wrap;
+      margin-bottom: 1rem;
+    }
+
+    .sep {
+      opacity: 0.4;
+    }
+
+    .lede {
+      font-size: 1rem;
+      line-height: 1.7;
+      color: var(--text);
+      opacity: 0.9;
+    }
+
+    .toc {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 1rem 1.25rem;
+      margin-bottom: 2.5rem;
+      font-size: 0.82rem;
+    }
+
+    .toc strong {
+      display: block;
+      margin-bottom: 0.6rem;
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+    }
+
+    .toc ol {
+      margin: 0;
+      padding-left: 1.2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+    }
+
+    .toc a {
+      color: var(--text-muted);
+    }
+
+    .toc a:hover {
+      color: var(--accent);
+    }
+
+    section {
+      margin-bottom: 3rem;
+    }
+
+    section h2 {
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin-bottom: 0.75rem;
+      padding-bottom: 0.4rem;
+      border-bottom: 2px solid var(--accent);
+      display: inline-block;
+    }
+
+    section h3 {
+      font-size: 0.95rem;
+      font-weight: 700;
+      margin: 1.5rem 0 0.5rem;
+      color: var(--text);
+    }
+
+    section p {
+      font-size: 0.9rem;
+      line-height: 1.75;
+      color: var(--text);
+      opacity: 0.9;
+      margin-bottom: 0.9rem;
+    }
+
+    .inline-link {
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    .note {
+      font-size: 0.82rem !important;
+      color: var(--text-muted) !important;
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 0.75rem 1rem;
+      margin-top: 1rem;
+    }
+
+    /* Signal cards */
+    .signal-list {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      margin: 1.25rem 0;
+    }
+
+    .signal-card {
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 1rem 1.25rem;
+    }
+
+    .signal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 0.5rem;
+    }
+
+    .signal-name {
+      font-weight: 700;
+      font-size: 0.9rem;
+    }
+
+    .signal-weight {
+      font-size: 0.75rem;
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    .signal-why {
+      font-size: 0.85rem !important;
+      line-height: 1.6 !important;
+      margin-bottom: 0.75rem !important;
+    }
+
+    .signal-flags {
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+    }
+
+    .flag {
+      font-size: 0.78rem;
+      padding: 0.35rem 0.6rem;
+      border-radius: 3px;
+    }
+
+    .flag-label {
+      font-weight: 700;
+      margin-right: 0.25rem;
+    }
+
+    .red-flag {
+      background: rgba(239, 68, 68, 0.08);
+      border-left: 2px solid #ef4444;
+      color: var(--text-muted);
+    }
+
+    .green-flag {
+      background: rgba(34, 197, 94, 0.08);
+      border-left: 2px solid #22c55e;
+      color: var(--text-muted);
+    }
+
+    /* Questions */
+    .question-list {
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+      margin: 1rem 0;
+    }
+
+    .question-item {
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 1.25rem;
+    }
+
+    .question-item:last-child {
+      border-bottom: none;
+    }
+
+    .question-header {
+      display: flex;
+      gap: 0.75rem;
+      align-items: flex-start;
+      margin-bottom: 0.5rem;
+    }
+
+    .q-num {
+      background: var(--accent);
+      color: var(--bg);
+      width: 1.4rem;
+      height: 1.4rem;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.72rem;
+      font-weight: 700;
+      flex-shrink: 0;
+      margin-top: 0.1rem;
+    }
+
+    .q-text {
+      font-weight: 700;
+      font-size: 0.9rem;
+    }
+
+    .q-answer {
+      padding-left: 2.15rem;
+      font-size: 0.85rem !important;
+      line-height: 1.7 !important;
+      color: var(--text-muted) !important;
+      margin-bottom: 0 !important;
+    }
+
+    /* Tiers table */
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.82rem;
+      margin: 1rem 0 1.25rem;
+    }
+
+    .data-table th {
+      text-align: left;
+      font-weight: 600;
+      color: var(--text-muted);
+      border-bottom: 1px solid var(--border);
+      padding: 0.4rem 0.75rem 0.4rem 0;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+
+    .data-table td {
+      padding: 0.6rem 0.75rem 0.6rem 0;
+      border-bottom: 1px solid var(--border);
+      color: var(--text);
+      vertical-align: top;
+    }
+
+    .data-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .num {
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .tier-name {
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .score-cell {
+      color: var(--accent);
+      font-weight: 700;
+    }
+
+    .tier-desc {
+      font-size: 0.8rem;
+    }
+
+    .tier-example {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    /* Checklist */
+    .checklist {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      margin: 1rem 0 1.5rem;
+    }
+
+    .check-item {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-size: 0.88rem;
+      padding: 0.4rem 0;
+    }
+
+    .check {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      flex-shrink: 0;
+    }
+
+    .cta-box {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      border-radius: 4px;
+      padding: 1rem 1.25rem;
+      margin-top: 1.5rem;
+    }
+
+    .cta-box p {
+      margin-bottom: 0.5rem;
+      font-size: 0.88rem !important;
+    }
+
+    .cta-box p:last-child {
+      margin-bottom: 0;
+    }
+
+    .post-footer {
+      margin-top: 3rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--border);
+    }
+
+    .methodology {
+      font-size: 0.75rem !important;
+      color: var(--text-muted) !important;
+      opacity: 1 !important;
+    }
+
+    .share-line {
+      font-size: 0.82rem !important;
+      margin-top: 0.75rem;
+    }
+
+    @media (max-width: 640px) {
+      .post-header h1 {
+        font-size: 1.3rem;
+      }
+
+      .signal-header {
+        flex-direction: column;
+        gap: 0.25rem;
+      }
+
+      .tier-example {
+        display: none;
+      }
+    }
+  </style>
+</Base>

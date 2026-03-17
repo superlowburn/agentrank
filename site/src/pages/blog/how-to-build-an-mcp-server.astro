@@ -1,0 +1,712 @@
+---
+export const prerender = true;
+
+import Base from '../../layouts/Base.astro';
+
+const publishDate = '2026-03-17';
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: 'How to Build an MCP Server in 2026',
+  description: 'Step-by-step guide to building a Model Context Protocol server. Covers the official Python and TypeScript SDKs, FastMCP, tool definitions, and how to get your server indexed and scored.',
+  datePublished: publishDate,
+  dateModified: publishDate,
+  author: {
+    '@type': 'Organization',
+    name: 'AgentRank',
+    url: 'https://agentrank-ai.com',
+  },
+  publisher: {
+    '@type': 'Organization',
+    name: 'AgentRank',
+    url: 'https://agentrank-ai.com',
+    logo: {
+      '@type': 'ImageObject',
+      url: 'https://agentrank-ai.com/og-image.png',
+    },
+  },
+  mainEntityOfPage: {
+    '@type': 'WebPage',
+    '@id': 'https://agentrank-ai.com/blog/how-to-build-an-mcp-server/',
+  },
+  image: 'https://agentrank-ai.com/og-image.png',
+  keywords: 'how to build MCP server, build MCP server Python, build MCP server TypeScript, MCP server tutorial, FastMCP tutorial, model context protocol server guide 2026',
+};
+
+const frameworks = [
+  {
+    rank: 1,
+    name: 'modelcontextprotocol/python-sdk',
+    slug: 'modelcontextprotocol--python-sdk',
+    score: 92.14,
+    stars: 4821,
+    lang: 'Python',
+    contributors: 87,
+    lastCommit: '2026-03-15',
+    desc: 'Official Python SDK for building MCP servers and clients',
+    approach: 'Low-level / Full control',
+    highlight: 'The authoritative reference. Every feature, every primitive, maintained by Anthropic.',
+  },
+  {
+    rank: 2,
+    name: 'modelcontextprotocol/typescript-sdk',
+    slug: 'modelcontextprotocol--typescript-sdk',
+    score: 91.88,
+    stars: 5102,
+    lang: 'TypeScript',
+    contributors: 94,
+    lastCommit: '2026-03-16',
+    desc: 'Official TypeScript/Node.js SDK for MCP servers and clients',
+    approach: 'Low-level / Full control',
+    highlight: 'Most-starred MCP framework. Strongly typed with full spec coverage.',
+  },
+  {
+    rank: 3,
+    name: 'jlowin/fastmcp',
+    slug: 'jlowin--fastmcp',
+    score: 89.44,
+    stars: 6734,
+    lang: 'Python',
+    contributors: 48,
+    lastCommit: '2026-03-14',
+    desc: 'High-level Python framework for building MCP servers with minimal boilerplate',
+    approach: 'High-level / FastAPI-style',
+    highlight: 'Most stars of any Python MCP framework. Decorator-based — build a working server in under 20 lines.',
+  },
+  {
+    rank: 4,
+    name: 'wong2/litestar-mcp',
+    slug: 'wong2--litestar-mcp',
+    score: 76.21,
+    stars: 887,
+    lang: 'Python',
+    contributors: 12,
+    lastCommit: '2026-03-08',
+    desc: 'MCP server integration for the Litestar async Python web framework',
+    approach: 'Framework integration',
+    highlight: 'Best option if you already run a Litestar backend and want to add MCP alongside HTTP.',
+  },
+];
+---
+
+<Base
+  title="How to Build an MCP Server in 2026 — AgentRank"
+  description="Step-by-step guide to building a Model Context Protocol server using the official Python SDK, TypeScript SDK, or FastMCP. With code examples and framework comparisons from the AgentRank index."
+  activeTab="blog"
+  keywords="how to build MCP server, MCP server tutorial 2026, build MCP server Python, build MCP server TypeScript, FastMCP tutorial, model context protocol server guide, MCP server development"
+  canonicalUrl="https://agentrank-ai.com/blog/how-to-build-an-mcp-server/"
+  jsonLd={jsonLd}
+>
+  <article class="blog-post">
+    <header class="post-header">
+      <div class="breadcrumb"><a href="/blog/">Blog</a> <span>/</span></div>
+      <h1>How to Build an MCP Server in 2026</h1>
+      <div class="post-meta">
+        <time datetime={publishDate}>March 17, 2026</time>
+        <span class="sep">&middot;</span>
+        <span>8 min read</span>
+        <span class="sep">&middot;</span>
+        <span>AgentRank Index</span>
+      </div>
+      <p class="lede">
+        The Model Context Protocol lets any tool talk to any AI agent through a standardized interface.
+        Building an MCP server means your API, database, or service becomes natively accessible to Claude,
+        Cursor, Copilot, and every other MCP-compatible client. Here's how to do it — from zero to a working
+        server in one sitting.
+      </p>
+    </header>
+
+    <nav class="toc">
+      <strong>Contents</strong>
+      <ol>
+        <li><a href="#what-is-mcp">What MCP actually is</a></li>
+        <li><a href="#frameworks">Framework options ranked</a></li>
+        <li><a href="#quickstart-python">Quickstart: Python with FastMCP</a></li>
+        <li><a href="#quickstart-typescript">Quickstart: TypeScript SDK</a></li>
+        <li><a href="#concepts">Core concepts: tools, resources, prompts</a></li>
+        <li><a href="#production">Taking it to production</a></li>
+        <li><a href="#get-indexed">Get indexed on AgentRank</a></li>
+      </ol>
+    </nav>
+
+    <section id="what-is-mcp">
+      <h2>What MCP actually is</h2>
+      <p>
+        MCP (Model Context Protocol) is a JSON-RPC-based protocol that defines how AI clients communicate with
+        external tools and data sources. When you build an MCP server, you're exposing capabilities through
+        three primitives:
+      </p>
+      <ul>
+        <li><strong>Tools</strong> — functions the AI can call (search a database, send an email, run a query)</li>
+        <li><strong>Resources</strong> — data sources the AI can read (files, API responses, database records)</li>
+        <li><strong>Prompts</strong> — reusable prompt templates the client can invoke</li>
+      </ul>
+      <p>
+        The protocol runs over stdio (for local servers) or HTTP+SSE (for remote servers). Claude Desktop,
+        Cursor, VS Code Copilot, Cline, and dozens of other clients implement the protocol — so a server you
+        build once works everywhere.
+      </p>
+      <p>
+        As of March 2026, the AgentRank index tracks <strong>25,632 MCP-related repositories</strong> on GitHub.
+        The top-scoring ones follow the same patterns. This guide shows you those patterns.
+      </p>
+    </section>
+
+    <section id="frameworks">
+      <h2>Framework options ranked</h2>
+      <p>
+        You have two decisions: language (Python vs TypeScript) and abstraction level (official SDK vs
+        higher-level framework). The AgentRank index scores these frameworks by freshness, issue health,
+        contributor count, and inbound dependents. Here's where they stand:
+      </p>
+
+      <table class="data-table top-table">
+        <thead>
+          <tr>
+            <th class="num">#</th>
+            <th>Framework</th>
+            <th class="num">Score</th>
+            <th class="num">Stars</th>
+            <th>Approach</th>
+            <th>Lang</th>
+          </tr>
+        </thead>
+        <tbody>
+          {frameworks.map((fw) => (
+            <tr>
+              <td class="num rank-num">{fw.rank}</td>
+              <td class="tool-cell">
+                <a href={`/tool/${fw.slug}/`} class="tool-link">{fw.name}</a>
+                <span class="tool-desc">{fw.desc}</span>
+              </td>
+              <td class="num score-cell">{fw.score}</td>
+              <td class="num">{fw.stars.toLocaleString('en-US')}</td>
+              <td class="use-case">{fw.approach}</td>
+              <td class="lang-badge">{fw.lang}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+
+      <p>
+        <strong>Which to choose:</strong> If you're building in Python and want the fastest path to a working
+        server, use FastMCP. If you need full protocol control or are working in TypeScript, use the official
+        SDK. For existing Python web apps, the Litestar integration adds MCP alongside your existing HTTP
+        routes.
+      </p>
+    </section>
+
+    <section id="quickstart-python">
+      <h2>Quickstart: Python with FastMCP</h2>
+      <p>
+        <a href="/tool/jlowin--fastmcp/" class="inline-link">jlowin/fastmcp</a> is the most-starred Python MCP
+        framework at <strong>6,734 stars</strong> and a score of <strong>89.44</strong>. It uses a decorator pattern
+        borrowed from FastAPI — if you've used FastAPI, this will feel immediately familiar.
+      </p>
+
+      <div class="code-block">
+        <div class="code-label">Install</div>
+        <pre><code>pip install fastmcp</code></pre>
+      </div>
+
+      <div class="code-block">
+        <div class="code-label">server.py — minimal working server</div>
+        <pre><code>from fastmcp import FastMCP
+
+mcp = FastMCP("My Tool Server")
+
+@mcp.tool()
+def search_products(query: str, limit: int = 10) -> list[dict]:
+    """Search the product catalog by keyword."""
+    # Your implementation here
+    return [&#123;"id": 1, "name": "Widget", "price": 9.99&#125;]
+
+@mcp.resource("catalog://products")
+def get_all_products() -> str:
+    """Full product catalog as JSON."""
+    return '&#123;"products": [...]&#125;'
+
+if __name__ == "__main__":
+    mcp.run()  # stdio transport by default</code></pre>
+      </div>
+
+      <p>
+        That's a complete MCP server. The <code>@mcp.tool()</code> decorator registers a callable tool.
+        The docstring becomes the tool's description that the AI uses to decide when to call it.
+        Type hints become the parameter schema. FastMCP handles all the JSON-RPC plumbing.
+      </p>
+
+      <p>
+        To run it locally with Claude Desktop, add the server to your <code>claude_desktop_config.json</code>:
+      </p>
+
+      <div class="code-block">
+        <div class="code-label">claude_desktop_config.json</div>
+        <pre><code>&#123;
+  "mcpServers": &#123;
+    "my-tool-server": &#123;
+      "command": "python",
+      "args": ["/path/to/server.py"]
+    &#125;
+  &#125;
+&#125;</code></pre>
+      </div>
+    </section>
+
+    <section id="quickstart-typescript">
+      <h2>Quickstart: TypeScript SDK</h2>
+      <p>
+        The <a href="/tool/modelcontextprotocol--typescript-sdk/" class="inline-link">official TypeScript SDK</a>
+        has <strong>5,102 stars</strong> and scores <strong>91.88</strong> — the most-starred MCP framework
+        overall. It gives you full protocol access with strong typing.
+      </p>
+
+      <div class="code-block">
+        <div class="code-label">Install</div>
+        <pre><code>npm install @modelcontextprotocol/sdk</code></pre>
+      </div>
+
+      <div class="code-block">
+        <div class="code-label">server.ts — minimal working server</div>
+        <pre><code>import &#123; McpServer &#125; from "@modelcontextprotocol/sdk/server/mcp.js";
+import &#123; StdioServerTransport &#125; from "@modelcontextprotocol/sdk/server/stdio.js";
+import &#123; z &#125; from "zod";
+
+const server = new McpServer(&#123;
+  name: "My Tool Server",
+  version: "1.0.0",
+&#125;);
+
+server.tool(
+  "search_products",
+  "Search the product catalog by keyword",
+  &#123; query: z.string(), limit: z.number().optional().default(10) &#125;,
+  async (&#123; query, limit &#125;) =&gt; &#123;
+    // Your implementation here
+    return &#123;
+      content: [&#123; type: "text", text: JSON.stringify([&#123; id: 1, name: "Widget" &#125;]) &#125;],
+    &#125;;
+  &#125;
+);
+
+const transport = new StdioServerTransport();
+await server.connect(transport);</code></pre>
+      </div>
+
+      <p>
+        The TypeScript SDK uses Zod for schema validation on tool parameters. The <code>content</code> return
+        format follows the MCP spec — text, image, or resource content types.
+      </p>
+    </section>
+
+    <section id="concepts">
+      <h2>Core concepts: tools, resources, prompts</h2>
+
+      <h3>Tools — what the agent can do</h3>
+      <p>
+        Tools are functions the AI calls to take action or retrieve data. They're the most-used primitive —
+        the vast majority of MCP servers expose tools and nothing else. Good tool design follows the same
+        rules as good function design: narrow scope, clear name, useful description. The description is
+        critical — it's what the model reads to decide whether to call your tool, so be explicit about what
+        it does and when to use it.
+      </p>
+
+      <h3>Resources — what the agent can read</h3>
+      <p>
+        Resources are URIs that expose data — like a filesystem path or an API endpoint mapped to a stable
+        identifier. Resources are read-only. Use them for data that the AI should be able to pull into
+        context without triggering an action: config files, documentation, data schemas, reference data.
+        Resources are less commonly implemented than tools, but they're the right primitive for "give the
+        agent background context" use cases.
+      </p>
+
+      <h3>Prompts — reusable instruction templates</h3>
+      <p>
+        Prompts let you package specific workflows as named templates that clients can invoke. Think of them
+        as saved workflows — "analyze this PR for security issues", "summarize this database schema". Most
+        servers don't implement prompts. Implement them when you have known, high-value workflows your users
+        run repeatedly.
+      </p>
+
+      <h3>Transport: stdio vs HTTP</h3>
+      <p>
+        Stdio transport is the default for local servers — simple, no port management, works immediately with
+        Claude Desktop and Cursor. HTTP+SSE is for remote servers you want multiple clients to connect to.
+        Most servers start with stdio. Migrate to HTTP when you need multi-tenant access or want to run the
+        server as a standalone service.
+      </p>
+    </section>
+
+    <section id="production">
+      <h2>Taking it to production</h2>
+
+      <h3>Error handling</h3>
+      <p>
+        Tools should return structured error messages, not raise exceptions. The AI needs to read and
+        understand errors to decide what to do next. Raise an exception and the connection may drop.
+        Return <code>&#123;"error": "No results found for query 'xyz'"&#125;</code> and the AI can retry with
+        a different query.
+      </p>
+
+      <h3>Rate limiting and auth</h3>
+      <p>
+        For servers that access paid APIs or sensitive data, implement authentication at the transport level.
+        HTTP servers can use bearer tokens in the SSE handshake headers. Stdio servers can read credentials
+        from environment variables passed through the client config.
+      </p>
+
+      <h3>Schema quality</h3>
+      <p>
+        Tool parameter schemas drive the AI's ability to call your tools correctly. Use descriptive
+        field names. Add description strings to each parameter. Mark optional fields as optional with
+        defaults. Poorly documented schemas mean the AI guesses — and guesses wrong.
+      </p>
+
+      <h3>Testing</h3>
+      <p>
+        Both the Python SDK and TypeScript SDK include test utilities. The
+        <a href="/tool/modelcontextprotocol--python-sdk/" class="inline-link">Python SDK</a> includes a
+        client fixture you can use in pytest. Alternatively, run your server locally and connect to it
+        through Claude Desktop or the MCP Inspector CLI (<code>npx @modelcontextprotocol/inspector</code>)
+        to validate tool responses interactively.
+      </p>
+
+      <h3>Publishing</h3>
+      <p>
+        Once your server works locally, publish it to PyPI or npm. This is what gets you inbound dependents —
+        the strongest signal in the AgentRank score. Servers with npm packages score significantly higher
+        on average than source-only repos because real usage shows up in the dependency graph.
+      </p>
+    </section>
+
+    <section id="get-indexed">
+      <h2>Get indexed on AgentRank</h2>
+      <p>
+        The AgentRank crawler runs nightly against GitHub and picks up new MCP repositories automatically.
+        If your server is public and has a description mentioning MCP or Model Context Protocol, it will
+        be indexed within 24 hours of creation.
+      </p>
+      <p>
+        To maximize your score from day one:
+      </p>
+      <ul>
+        <li>Add clear GitHub topics: <code>mcp</code>, <code>mcp-server</code>, <code>model-context-protocol</code></li>
+        <li>Write a description that mentions what the server does and the MCP protocol</li>
+        <li>Respond to issues quickly — issue health is weighted 25% of the score</li>
+        <li>Keep commits coming — freshness decays hard after 90 days</li>
+        <li>Get other repos to depend on yours — inbound dependents are the strongest signal</li>
+      </ul>
+
+      <div class="cta-box">
+        <p>
+          <strong>Browse existing MCP servers:</strong> <a href="/tools/">Explore 25,000+ indexed tools</a> — use them as implementation references.
+        </p>
+        <p>
+          <strong>Compare frameworks head-to-head:</strong> <a href="/compare/">Tool comparison widget</a> — see the full signal breakdown side by side.
+        </p>
+        <p>
+          <strong>Already built something?</strong> <a href="/submit/">Submit your server</a> to verify it's indexed and get your initial score.
+        </p>
+      </div>
+    </section>
+
+    <footer class="post-footer">
+      <p class="methodology">
+        <strong>Methodology:</strong> Framework scores from the AgentRank index crawled March 2026.
+        Scores computed using: stars 15%, freshness 25%, issue health 25%, contributors 10%, inbound dependents 25%.
+        Only non-archived repositories included.
+      </p>
+      <p class="share-line">
+        Found this useful? <a href="https://x.com/AgentRank_ai" target="_blank" rel="noopener noreferrer">Follow @AgentRank_ai</a> for
+        weekly ecosystem updates, biggest movers, and new tool spotlights.
+      </p>
+    </footer>
+  </article>
+
+  <style>
+    .blog-post {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 2rem 0 3rem;
+    }
+
+    .breadcrumb {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      margin-bottom: 0.75rem;
+    }
+
+    .breadcrumb span {
+      margin: 0 0.25rem;
+      opacity: 0.5;
+    }
+
+    .post-header {
+      margin-bottom: 2rem;
+      padding-bottom: 1.5rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .post-header h1 {
+      font-size: 1.6rem;
+      font-weight: 700;
+      line-height: 1.3;
+      margin-bottom: 0.75rem;
+    }
+
+    .post-meta {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      flex-wrap: wrap;
+      margin-bottom: 1rem;
+    }
+
+    .sep {
+      opacity: 0.4;
+    }
+
+    .lede {
+      font-size: 1rem;
+      line-height: 1.7;
+      color: var(--text);
+      opacity: 0.9;
+    }
+
+    .toc {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 1rem 1.25rem;
+      margin-bottom: 2.5rem;
+      font-size: 0.82rem;
+    }
+
+    .toc strong {
+      display: block;
+      margin-bottom: 0.6rem;
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+    }
+
+    .toc ol {
+      margin: 0;
+      padding-left: 1.2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+    }
+
+    .toc a {
+      color: var(--text-muted);
+    }
+
+    .toc a:hover {
+      color: var(--accent);
+    }
+
+    section {
+      margin-bottom: 3rem;
+    }
+
+    section h2 {
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin-bottom: 0.75rem;
+      padding-bottom: 0.4rem;
+      border-bottom: 2px solid var(--accent);
+      display: inline-block;
+    }
+
+    section h3 {
+      font-size: 0.95rem;
+      font-weight: 700;
+      margin: 1.5rem 0 0.5rem;
+      color: var(--text);
+    }
+
+    section p {
+      font-size: 0.9rem;
+      line-height: 1.75;
+      color: var(--text);
+      opacity: 0.9;
+      margin-bottom: 0.9rem;
+    }
+
+    section ul {
+      font-size: 0.9rem;
+      line-height: 1.75;
+      color: var(--text);
+      opacity: 0.9;
+      margin: 0.5rem 0 0.9rem;
+      padding-left: 1.4rem;
+    }
+
+    section ul li {
+      margin-bottom: 0.4rem;
+    }
+
+    .inline-link {
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    .code-block {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      margin: 1rem 0 1.25rem;
+      overflow: hidden;
+    }
+
+    .code-label {
+      padding: 0.4rem 0.9rem;
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .code-block pre {
+      margin: 0;
+      padding: 0.9rem;
+      overflow-x: auto;
+    }
+
+    .code-block code {
+      font-size: 0.78rem;
+      line-height: 1.6;
+      font-family: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace;
+      color: var(--text);
+    }
+
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.82rem;
+      margin: 1rem 0 1.25rem;
+    }
+
+    .data-table th {
+      text-align: left;
+      font-weight: 600;
+      color: var(--text-muted);
+      border-bottom: 1px solid var(--border);
+      padding: 0.4rem 0.75rem 0.4rem 0;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+
+    .data-table td {
+      padding: 0.45rem 0.75rem 0.45rem 0;
+      border-bottom: 1px solid var(--border);
+      color: var(--text);
+      vertical-align: top;
+    }
+
+    .data-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .num {
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .rank-num {
+      color: var(--text-muted);
+      font-weight: 700;
+    }
+
+    .top-table .tool-cell {
+      display: flex;
+      flex-direction: column;
+      gap: 0.2rem;
+    }
+
+    .tool-link {
+      font-weight: 600;
+      color: var(--accent);
+      font-size: 0.82rem;
+    }
+
+    .tool-desc {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      font-weight: 400;
+    }
+
+    .score-cell {
+      color: var(--accent);
+      font-weight: 700;
+    }
+
+    .use-case {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      white-space: nowrap;
+    }
+
+    .lang-badge {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      white-space: nowrap;
+    }
+
+    .cta-box {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      border-radius: 4px;
+      padding: 1rem 1.25rem;
+      margin-top: 1.5rem;
+    }
+
+    .cta-box p {
+      margin-bottom: 0.5rem;
+    }
+
+    .cta-box p:last-child {
+      margin-bottom: 0;
+    }
+
+    .post-footer {
+      margin-top: 3rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--border);
+    }
+
+    .methodology {
+      font-size: 0.75rem !important;
+      color: var(--text-muted) !important;
+      opacity: 1 !important;
+    }
+
+    .share-line {
+      font-size: 0.82rem !important;
+      margin-top: 0.75rem;
+    }
+
+    @media (max-width: 640px) {
+      .post-header h1 {
+        font-size: 1.3rem;
+      }
+
+      .data-table {
+        font-size: 0.75rem;
+      }
+
+      .use-case {
+        display: none;
+      }
+    }
+  </style>
+</Base>

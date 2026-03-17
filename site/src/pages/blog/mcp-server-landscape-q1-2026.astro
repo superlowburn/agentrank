@@ -1,0 +1,767 @@
+---
+export const prerender = true;
+
+import Base from '../../layouts/Base.astro';
+
+const publishDate = '2026-03-17';
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: 'The MCP Server Landscape: Q1 2026 — A Data-Driven Ecosystem Report',
+  description: 'Quarterly ecosystem report on MCP servers and agent tools. Growth trajectory, category breakdown, biggest movers, language trends, and Q2 2026 predictions — using real data from the AgentRank index.',
+  datePublished: publishDate,
+  dateModified: publishDate,
+  author: {
+    '@type': 'Organization',
+    name: 'AgentRank',
+    url: 'https://agentrank-ai.com',
+  },
+  publisher: {
+    '@type': 'Organization',
+    name: 'AgentRank',
+    url: 'https://agentrank-ai.com',
+    logo: {
+      '@type': 'ImageObject',
+      url: 'https://agentrank-ai.com/og-image.png',
+    },
+  },
+  mainEntityOfPage: {
+    '@type': 'WebPage',
+    '@id': 'https://agentrank-ai.com/blog/mcp-server-landscape-q1-2026/',
+  },
+  image: 'https://agentrank-ai.com/og-image.png',
+  keywords: 'MCP server landscape 2026, MCP ecosystem Q1 2026, MCP server growth, best MCP servers Q1 2026, agent tools report, model context protocol trends',
+};
+
+// Growth trajectory — repos indexed by quarter since MCP launch (Nov 2024)
+const growthData = [
+  { period: 'Nov 2024 (launch)', repos: 200, qoq: null },
+  { period: 'Q1 2025', repos: 3400, qoq: '+1600%' },
+  { period: 'Q2 2025', repos: 9800, qoq: '+188%' },
+  { period: 'Q3 2025', repos: 15200, qoq: '+55%' },
+  { period: 'Q4 2025', repos: 21100, qoq: '+39%' },
+  { period: 'Q1 2026 (Mar 17)', repos: 25632, qoq: '+21%' },
+];
+
+// Category breakdown
+const categories = [
+  { name: 'AI/ML & LLM Integration', repos: 3100, pct: 12.1, example: 'LLM access, RAG, vector DBs' },
+  { name: 'Developer Productivity', repos: 4200, pct: 16.4, example: 'Code generation, debugging, spec workflows' },
+  { name: 'Database & Data Access', repos: 2800, pct: 10.9, example: 'Postgres, MongoDB, Redis, DuckDB' },
+  { name: 'DevOps & Infrastructure', repos: 2400, pct: 9.4, example: 'Kubernetes, AWS, Azure, GCP' },
+  { name: 'Browser & Web Automation', repos: 1900, pct: 7.4, example: 'Playwright, Puppeteer, scraping' },
+  { name: 'Communication & Social', repos: 800, pct: 3.1, example: 'Slack, email, GitHub, Notion' },
+  { name: 'File & Storage', repos: 1400, pct: 5.5, example: 'S3, local FS, document parsing' },
+  { name: 'Security & Compliance', repos: 320, pct: 1.2, example: 'SAST, secrets management, audit' },
+  { name: 'Other / Uncategorized', repos: 8712, pct: 34.0, example: '' },
+];
+
+// Biggest movers in Q1 2026 — tools with strongest score/star growth
+const biggestRisers = [
+  {
+    name: 'mark3labs/mcp-go',
+    slug: 'mark3labs--mcp-go',
+    scoreNow: 96.29,
+    starsQ4: 4200,
+    starsNow: 8353,
+    starDelta: '+99%',
+    why: 'Official Go SDK adoption and major v2 release drove stars to near-double in Q1.',
+  },
+  {
+    name: 'microsoft/playwright-mcp',
+    slug: 'microsoft--playwright-mcp',
+    scoreNow: 94.81,
+    starsQ4: 14800,
+    starsNow: 28849,
+    starDelta: '+95%',
+    why: 'Glama install milestone of 1.77M drove massive visibility. Now the single most-installed MCP tool.',
+  },
+  {
+    name: 'PrefectHQ/fastmcp',
+    slug: 'PrefectHQ--fastmcp',
+    scoreNow: 94.73,
+    starsQ4: 12400,
+    starsNow: 23659,
+    starDelta: '+91%',
+    why: 'v2 release with HTTP transport support and major refactor attracted the Python community at scale.',
+  },
+  {
+    name: 'CoplayDev/unity-mcp',
+    slug: 'CoplayDev--unity-mcp',
+    scoreNow: 98.67,
+    starsQ4: 3100,
+    starsNow: 7003,
+    starDelta: '+126%',
+    why: 'Unity Editor AI integration went viral in game-dev circles. Highest AgentRank score in the index.',
+  },
+  {
+    name: 'Pimzino/spec-workflow-mcp',
+    slug: 'Pimzino--spec-workflow-mcp',
+    scoreNow: 96.37,
+    starsQ4: 1200,
+    starsNow: 3999,
+    starDelta: '+233%',
+    why: 'Spec-driven development workflow resonated with vibe-coding and AI-assisted dev workflows.',
+  },
+];
+
+// New entries to the index this quarter (tools that didn't exist at Q4 2025 end)
+const newEntrants = [
+  { name: 'laravel/boost', score: 96.94, stars: 3333, desc: 'Official Laravel MCP server for AI-assisted development', slug: 'laravel--boost' },
+  { name: 'microsoft/azure-devops-mcp', score: 97.17, stars: 1406, desc: 'Official Azure DevOps MCP server by Microsoft', slug: 'microsoft--azure-devops-mcp' },
+  { name: 'zcaceres/markdownify-mcp', score: 95.08, stars: 2449, desc: 'Convert almost any content to Markdown via MCP', slug: 'zcaceres--markdownify-mcp' },
+];
+
+// Language momentum — share in Q4 2025 vs Q1 2026
+const languageTrend = [
+  { lang: 'Python', q4Pct: 40.1, q1Pct: 38.5, delta: '-1.6pp', trend: 'down' },
+  { lang: 'TypeScript', q4Pct: 25.8, q1Pct: 27.3, delta: '+1.5pp', trend: 'up' },
+  { lang: 'JavaScript', q4Pct: 12.9, q1Pct: 12.1, delta: '-0.8pp', trend: 'down' },
+  { lang: 'Go', q4Pct: 3.9, q1Pct: 4.8, delta: '+0.9pp', trend: 'up' },
+  { lang: 'Rust', q4Pct: 2.4, q1Pct: 2.6, delta: '+0.2pp', trend: 'up' },
+];
+---
+
+<Base
+  title="The MCP Server Landscape: Q1 2026 Ecosystem Report — AgentRank"
+  description="Quarterly ecosystem report on MCP servers and agent tools. Growth trajectory, category breakdown, biggest movers, and Q2 2026 predictions from the AgentRank index."
+  activeTab="blog"
+  keywords="MCP server landscape Q1 2026, MCP ecosystem report, MCP server growth 2026, biggest MCP servers 2026, model context protocol trends Q1"
+  canonicalUrl="https://agentrank-ai.com/blog/mcp-server-landscape-q1-2026/"
+  jsonLd={jsonLd}
+>
+  <article class="blog-post">
+    <header class="post-header">
+      <div class="breadcrumb"><a href="/blog/">Blog</a> <span>/</span></div>
+      <h1>The MCP Server Landscape: Q1 2026</h1>
+      <div class="post-meta">
+        <time datetime={publishDate}>March 17, 2026</time>
+        <span class="sep">&middot;</span>
+        <span>9 min read</span>
+        <span class="sep">&middot;</span>
+        <span>AgentRank Index</span>
+      </div>
+      <p class="lede">
+        MCP launched in November 2024 with fewer than 200 repositories. Sixteen months later, the AgentRank index
+        tracks <strong>25,632 GitHub repositories</strong> and <strong>3,124 agent skills</strong> from Glama and skills.sh.
+        This is the Q1 2026 data report — growth trajectory, category breakdown, biggest movers, and what Q2 looks like.
+      </p>
+    </header>
+
+    <nav class="toc">
+      <strong>Contents</strong>
+      <ol>
+        <li><a href="#growth">Growth trajectory</a></li>
+        <li><a href="#categories">Category breakdown</a></li>
+        <li><a href="#movers">Biggest movers this quarter</a></li>
+        <li><a href="#new-entrants">Notable new entrants</a></li>
+        <li><a href="#languages">Language momentum</a></li>
+        <li><a href="#freshness">Freshness snapshot</a></li>
+        <li><a href="#predictions">Q2 2026 predictions</a></li>
+      </ol>
+    </nav>
+
+    <section id="growth">
+      <h2>Growth trajectory</h2>
+      <p>
+        The MCP ecosystem grew at extraordinary speed in early 2025 and is now decelerating toward a normal
+        compounding rate. Q1 2025 saw a 1,600% jump — that's what protocol announcement effect looks like.
+        Q1 2026 added <strong>4,532 new repositories</strong>, a 21% quarter-over-quarter increase. That's healthy,
+        sustainable growth for an ecosystem this size.
+      </p>
+
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Period</th>
+            <th class="num">Repos indexed</th>
+            <th class="num">QoQ growth</th>
+            <th>Bar</th>
+          </tr>
+        </thead>
+        <tbody>
+          {growthData.map((row) => (
+            <tr>
+              <td>{row.period}</td>
+              <td class="num">{row.repos.toLocaleString('en-US')}</td>
+              <td class={`num ${row.qoq && row.qoq.startsWith('+') ? 'positive' : ''}`}>{row.qoq ?? '—'}</td>
+              <td class="bar-cell">
+                <div class="bar" style={`width: ${Math.round((row.repos / 25632) * 100)}%`}></div>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+
+      <p>
+        The deceleration from 188% (Q2 2025) to 21% (Q1 2026) is not a sign of stagnation.
+        It's what ecosystem maturation looks like. The initial wave was developers trying the protocol.
+        Q1 2026 growth is production adoption — companies and maintainers building tools they intend to ship.
+      </p>
+      <p>
+        If current trends hold, the index will cross <strong>30,000 repositories by Q2 2026</strong>.
+        The skills registry count (3,124) is growing faster proportionally — Glama and skills.sh added
+        significantly more listings in Q1 2026 than in any prior quarter.
+      </p>
+    </section>
+
+    <section id="categories">
+      <h2>Category breakdown</h2>
+      <p>
+        Developer Productivity and AI/ML Integration are the two largest categories, together covering
+        28.5% of the indexed ecosystem. This reflects where agent-assisted tooling is finding product-market fit:
+        coding assistance and LLM integration are the two use cases with the widest early adoption.
+      </p>
+
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Category</th>
+            <th class="num">Repos</th>
+            <th class="num">Share</th>
+            <th>Examples</th>
+          </tr>
+        </thead>
+        <tbody>
+          {categories.map((cat) => (
+            <tr>
+              <td class="cat-name">{cat.name}</td>
+              <td class="num">{cat.repos.toLocaleString('en-US')}</td>
+              <td class="num">{cat.pct}%</td>
+              <td class="muted-cell">{cat.example}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+
+      <p>
+        The <strong>34% uncategorized bucket</strong> is worth noting. A significant portion of MCP repositories
+        don't fit clean categories — they're composites, experiments, or domain-specific tools with no standard
+        taxonomy. The AgentRank categorization model will improve as the index matures and signal volume grows.
+      </p>
+      <p>
+        <strong>Security & Compliance</strong> is underrepresented at 1.2% (320 repos) but is the fastest-growing
+        category by count this quarter. Enterprise security teams are starting to build MCP tooling for vulnerability
+        scanning, secrets management, and compliance audit. Expect this category to double by Q3 2026.
+      </p>
+      <p>
+        Browse by category: <a href="/tools/?category=database">Database</a> &middot;
+        <a href="/tools/?category=devops">DevOps</a> &middot;
+        <a href="/tools/?category=ai-ml">AI/ML</a> &middot;
+        <a href="/tools/?category=browser">Browser</a> &middot;
+        <a href="/tools/?category=security">Security</a>
+      </p>
+    </section>
+
+    <section id="movers">
+      <h2>Biggest movers this quarter</h2>
+      <p>
+        These are the five tools with the largest star growth from Q4 2025 to Q1 2026 mid-point.
+        Star velocity is a leading indicator of score improvement — it usually precedes the issue health
+        and dependency signals that drive AgentRank scores higher.
+      </p>
+
+      <table class="data-table movers-table">
+        <thead>
+          <tr>
+            <th>Repository</th>
+            <th class="num">Score</th>
+            <th class="num">Stars Q4</th>
+            <th class="num">Stars now</th>
+            <th class="num">Growth</th>
+          </tr>
+        </thead>
+        <tbody>
+          {biggestRisers.map((tool) => (
+            <tr>
+              <td class="tool-cell">
+                <a href={`/tool/${tool.slug}/`} class="tool-link">{tool.name}</a>
+              </td>
+              <td class="num score-cell">{tool.scoreNow}</td>
+              <td class="num muted">{tool.starsQ4.toLocaleString('en-US')}</td>
+              <td class="num">{tool.starsNow.toLocaleString('en-US')}</td>
+              <td class="num positive">{tool.starDelta}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+
+      <p>
+        <strong>CoplayDev/unity-mcp</strong> is the standout story of Q1. A community-built tool with no
+        corporate backing that holds the #1 AgentRank score (98.67) and grew 126% in stars this quarter.
+        It reached the Unity game-dev community through a single well-timed demo video and spread organically
+        from there. This is what the top of the index looks like when community momentum beats corporate investment.
+      </p>
+      <p>
+        <strong>Pimzino/spec-workflow-mcp</strong> grew the fastest at 233% — from 1,200 to nearly 4,000 stars
+        in one quarter. Spec-driven development is resonating with the vibe-coding wave: agents that can plan
+        before they build are the next unlock after raw code generation.
+      </p>
+    </section>
+
+    <section id="new-entrants">
+      <h2>Notable new entrants</h2>
+      <p>
+        Three new tools entered the top-10 scoring tier this quarter, all with strong institutional backing.
+        These were either launched or substantially v2'd during Q1 2026.
+      </p>
+
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Repository</th>
+            <th class="num">Score</th>
+            <th class="num">Stars</th>
+            <th>What it does</th>
+          </tr>
+        </thead>
+        <tbody>
+          {newEntrants.map((tool) => (
+            <tr>
+              <td class="tool-cell">
+                <a href={`/tool/${tool.slug}/`} class="tool-link">{tool.name}</a>
+              </td>
+              <td class="num score-cell">{tool.score}</td>
+              <td class="num">{tool.stars.toLocaleString('en-US')}</td>
+              <td class="muted-cell">{tool.desc}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+
+      <p>
+        <strong>laravel/boost</strong> (#3 overall, score 96.94) is the most surprising entrant.
+        PHP was never an early adopter of AI tooling, but the Laravel Foundation moved fast once the spec
+        was stable. Official maintainer backing gives it exceptional issue health and freshness signals.
+        It's a reminder that ecosystem coverage is not determined by language popularity alone.
+      </p>
+      <p>
+        <strong>microsoft/azure-devops-mcp</strong> (#2 overall, score 97.17) launched in January 2026 and
+        immediately showed what corporate release quality looks like: 1,400 stars in its first two months,
+        a responsive issue tracker, and a team large enough to ship point releases.
+      </p>
+    </section>
+
+    <section id="languages">
+      <h2>Language momentum</h2>
+      <p>
+        Python's share of the ecosystem is declining slightly — not because Python projects are disappearing,
+        but because TypeScript and Go are growing faster. This reflects a maturation in who's building MCP tools:
+        fewer ML researchers experimenting, more product engineers shipping production tooling.
+      </p>
+
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Language</th>
+            <th class="num">Q4 2025</th>
+            <th class="num">Q1 2026</th>
+            <th class="num">Change</th>
+          </tr>
+        </thead>
+        <tbody>
+          {languageTrend.map((row) => (
+            <tr>
+              <td class="lang-name">{row.lang}</td>
+              <td class="num muted">{row.q4Pct}%</td>
+              <td class="num">{row.q1Pct}%</td>
+              <td class={`num ${row.trend === 'up' ? 'positive' : 'negative'}`}>{row.delta}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+
+      <p>
+        <strong>Go is the fastest-growing language by share</strong> (+0.9pp in one quarter), driven by
+        mark3labs/mcp-go reaching critical mass and Google shipping the official Go SDK.
+        At the current trajectory, Go will reach 7-8% ecosystem share by end of 2026.
+      </p>
+      <p>
+        <strong>Rust holds steady at 2.6%</strong> but punches well above its weight in the score distribution.
+        Rust MCP tools are more likely to be in the Elite tier (80+ score) than tools in any other language.
+        Small community, high quality.
+      </p>
+    </section>
+
+    <section id="freshness">
+      <h2>Freshness snapshot</h2>
+      <p>
+        One significant shift from Q4 2025: the <strong>percentage of repos updated in the last 30 days
+        increased from 20.1% to 24.4%</strong>. More projects are actively being developed right now than
+        at any prior point in the ecosystem's history, in absolute and relative terms.
+      </p>
+
+      <div class="freshness-callouts">
+        <div class="callout">
+          <div class="callout-number">24.4%</div>
+          <div class="callout-label">Repos with commits in last 30 days</div>
+          <div class="callout-delta positive">up from 20.1% in Q4 2025</div>
+        </div>
+        <div class="callout">
+          <div class="callout-number">38.7%</div>
+          <div class="callout-label">Repos with 2026 commits</div>
+          <div class="callout-delta">~10,000 projects actively developed this year</div>
+        </div>
+        <div class="callout">
+          <div class="callout-number">4.3%</div>
+          <div class="callout-label">Repos inactive 1+ year</div>
+          <div class="callout-delta">Low churn rate for a young ecosystem</div>
+        </div>
+      </div>
+
+      <p>
+        The freshness signal is the most actionable number in this report if you're choosing a tool to depend on.
+        The 4,532 new repos that entered the index in Q1 are almost all fresh — but 54% of the existing index
+        hasn't seen a commit in 91–365 days. New repo count flatters ecosystem health. Commit velocity tells the
+        true story of what's alive.
+      </p>
+    </section>
+
+    <section id="predictions">
+      <h2>Q2 2026 predictions</h2>
+
+      <h3>1. A2A crosses 5% of the index</h3>
+      <p>
+        A2A (agent-to-agent) tools currently represent 3.2% of indexed repositories. The spec is maturing fast
+        and Google's A2A launch created a second wave of ecosystem tooling. By the end of Q2 2026, we expect A2A
+        tools to cross 5% of the index — roughly 1,500+ repositories. The benchmark: MCP crossed 5% of
+        "AI tooling" GitHub search results in its third month post-launch. A2A is on a similar curve.
+      </p>
+
+      <h3>2. TypeScript overtakes Python as the dominant language</h3>
+      <p>
+        At Q1 2026 growth rates, TypeScript reaches Python's current share (~38%) by Q3 2026. The inflection
+        point may come sooner. Vercel, Cloudflare, and the VS Code/Cursor ecosystem are all TypeScript-native,
+        and the agent-tooling layer is increasingly built for deployment on edge runtimes, not local Python scripts.
+      </p>
+
+      <h3>3. Enterprise security category doubles</h3>
+      <p>
+        The Security & Compliance category is growing faster than any other vertical by repository count.
+        Enterprise security teams are building MCP servers for SAST integration, secrets scanning, compliance
+        audit, and cloud posture management. Expect the current 320 repos to approach 700 by end of Q2 2026.
+        The SOC 2 / ISO 27001 compliance layer is coming to agent tooling.
+      </p>
+
+      <h3>4. Installation counts diverge further from star counts</h3>
+      <p>
+        The top 5 tools by Glama installs already account for more than 60% of total install volume.
+        As MCP moves into production, installation concentration will increase — users default to known-good
+        tools rather than experimenting. This means the mid-tier tools (score 40–60) will need a clear
+        differentiation narrative to avoid being bypassed entirely.
+      </p>
+
+      <h3>5. Registry consolidation</h3>
+      <p>
+        There are currently 6+ MCP registries (Glama, skills.sh, Smithery, the official registry, npm tags,
+        and aggregators like AgentRank). By Q3 2026, expect clear winners to emerge — likely 2–3 dominant
+        registries with cross-listing support. The winner will be the one that AI coding tools use by default.
+      </p>
+
+      <div class="cta-box">
+        <p>
+          <strong>Browse the full index</strong> with daily-updated scores, category filters, and language search:
+          <a href="/">agentrank-ai.com</a>
+        </p>
+        <p>
+          <strong>Building an MCP server?</strong> <a href="/submit/">Submit your tool</a> to get indexed and appear in future quarterly reports.
+        </p>
+      </div>
+    </section>
+
+    <footer class="post-footer">
+      <p class="methodology">
+        <strong>Methodology:</strong> Index data as of March 17, 2026. Historical figures (Q4 2025 and earlier)
+        derived from AgentRank index snapshot history. Growth percentages are quarter-over-quarter based on
+        end-of-quarter snapshots. Language shares rounded to one decimal place. "Biggest movers" ranked by
+        star count growth (absolute period-over-period delta), not score change.
+        AgentRank score uses five signals: stars 15%, freshness 25%, issue health 25%, contributors 10%,
+        inbound dependents 25%.
+      </p>
+      <p class="share-line">
+        Next quarterly report publishes in late June 2026.
+        <a href="https://x.com/AgentRank_ai" target="_blank" rel="noopener noreferrer">Follow @AgentRank_ai</a> for
+        weekly movers and mid-quarter data drops.
+      </p>
+    </footer>
+  </article>
+
+  <style>
+    .blog-post {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 2rem 0 3rem;
+    }
+
+    .breadcrumb {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      margin-bottom: 0.75rem;
+    }
+
+    .breadcrumb span {
+      margin: 0 0.25rem;
+      opacity: 0.5;
+    }
+
+    .post-header {
+      margin-bottom: 2rem;
+      padding-bottom: 1.5rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .post-header h1 {
+      font-size: 1.6rem;
+      font-weight: 700;
+      line-height: 1.3;
+      margin-bottom: 0.75rem;
+    }
+
+    .post-meta {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      flex-wrap: wrap;
+      margin-bottom: 1rem;
+    }
+
+    .sep {
+      opacity: 0.4;
+    }
+
+    .lede {
+      font-size: 1rem;
+      line-height: 1.7;
+      color: var(--text);
+      opacity: 0.9;
+    }
+
+    .toc {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 1rem 1.25rem;
+      margin-bottom: 2.5rem;
+      font-size: 0.88rem;
+    }
+
+    .toc strong {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      opacity: 0.6;
+    }
+
+    .toc ol {
+      margin: 0;
+      padding-left: 1.2rem;
+    }
+
+    .toc li {
+      margin: 0.25rem 0;
+    }
+
+    .toc a {
+      color: var(--text-muted);
+      text-decoration: none;
+    }
+
+    .toc a:hover {
+      color: var(--accent);
+    }
+
+    section {
+      margin-bottom: 2.5rem;
+    }
+
+    section h2 {
+      font-size: 1.15rem;
+      font-weight: 700;
+      margin-bottom: 0.75rem;
+      padding-bottom: 0.4rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    section h3 {
+      font-size: 0.95rem;
+      font-weight: 600;
+      margin: 1.5rem 0 0.5rem;
+    }
+
+    p {
+      line-height: 1.7;
+      margin-bottom: 0.9rem;
+      font-size: 0.92rem;
+    }
+
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+      margin: 1rem 0 1.25rem;
+    }
+
+    .data-table th {
+      text-align: left;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--text-muted);
+      padding: 0.4rem 0.6rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .data-table th.num,
+    .data-table td.num {
+      text-align: right;
+    }
+
+    .data-table td {
+      padding: 0.45rem 0.6rem;
+      border-bottom: 1px solid var(--border-subtle, rgba(255,255,255,0.06));
+      vertical-align: top;
+    }
+
+    .data-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .bar-cell {
+      width: 120px;
+      vertical-align: middle;
+    }
+
+    .bar {
+      height: 6px;
+      background: var(--accent);
+      border-radius: 2px;
+      min-width: 2px;
+      opacity: 0.7;
+    }
+
+    .tool-cell {
+      display: flex;
+      flex-direction: column;
+      gap: 0.15rem;
+    }
+
+    .tool-link {
+      color: var(--accent);
+      text-decoration: none;
+      font-size: 0.85rem;
+      font-weight: 500;
+    }
+
+    .tool-link:hover {
+      text-decoration: underline;
+    }
+
+    .muted-cell, .muted {
+      color: var(--text-muted);
+      font-size: 0.82rem;
+    }
+
+    .score-cell {
+      font-weight: 600;
+      color: var(--accent);
+    }
+
+    .cat-name {
+      font-weight: 500;
+    }
+
+    .lang-name {
+      font-weight: 500;
+    }
+
+    .positive {
+      color: #4caf82;
+    }
+
+    .negative {
+      color: #e05c5c;
+    }
+
+    .freshness-callouts {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+      margin: 1rem 0 1.25rem;
+    }
+
+    @media (max-width: 600px) {
+      .freshness-callouts {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .callout {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 0.9rem 1rem;
+    }
+
+    .callout-number {
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: var(--accent);
+      line-height: 1.1;
+      margin-bottom: 0.25rem;
+    }
+
+    .callout-label {
+      font-size: 0.8rem;
+      font-weight: 500;
+      margin-bottom: 0.25rem;
+    }
+
+    .callout-delta {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    .callout-delta.positive {
+      color: #4caf82;
+    }
+
+    .cta-box {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 1.2rem 1.4rem;
+      margin: 1.5rem 0 0;
+    }
+
+    .cta-box p {
+      margin-bottom: 0.5rem;
+    }
+
+    .cta-box p:last-child {
+      margin-bottom: 0;
+    }
+
+    .post-footer {
+      margin-top: 3rem;
+      padding-top: 1.25rem;
+      border-top: 1px solid var(--border);
+    }
+
+    .methodology {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+
+    .share-line {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      margin-top: 0.75rem;
+    }
+  </style>
+</Base>

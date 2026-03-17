@@ -52,19 +52,19 @@ const PERMISSIVE = ['MIT', 'Apache-2.0', 'BSD-2-Clause', 'BSD-3-Clause', 'ISC', 
 const licHealth = !tool.license || tool.license === 'NOASSERTION' ? 0.2 : PERMISSIVE.includes(tool.license) ? 1.0 : 0.6;
 
 const signals = [
-  { name: 'Stars', value: tool.stars.toLocaleString('en-US'), bar: Math.min(100, Math.log(1 + tool.stars) / Math.log(1 + 200000) * 100) },
+  { name: 'Stars', value: tool.stars.toLocaleString('en-US'), bar: Math.min(100, Math.log(1 + tool.stars) / Math.log(1 + 200000) * 100), weight: 15 },
   { name: 'Freshness', value: relativeTime(tool.last_commit_at), bar: (() => {
     const days = Math.floor((Date.now() - new Date(tool.last_commit_at).getTime()) / (1000 * 60 * 60 * 24));
     if (days <= 7) return 100;
     if (days <= 90) return 100 - ((days - 7) / 83) * 60;
     return Math.max(0, 40 * Math.exp(-(days - 90) / 180));
-  })() },
-  { name: 'Issue Health', value: `${(issueHealth * 100).toFixed(0)}%`, bar: issueHealth * 100 },
-  { name: 'Contributors', value: tool.contributors, bar: Math.min(100, Math.log(1 + tool.contributors) / Math.log(1 + 500) * 100) },
-  { name: 'Dependents', value: tool.dependents > 0 ? tool.dependents.toLocaleString('en-US') : '0', bar: Math.min(100, tool.dependents > 0 ? Math.log(1 + tool.dependents) / Math.log(1 + 100000) * 100 : 0) },
-  { name: 'Forks', value: tool.forks.toLocaleString('en-US'), bar: Math.min(100, Math.log(1 + tool.forks) / Math.log(1 + 50000) * 100) },
-  { name: 'Description', value: descQuality === 0 ? 'None' : descQuality === 0.3 ? 'Brief' : descQuality === 0.7 ? 'Good' : 'Detailed', bar: descQuality * 100 },
-  { name: 'License', value: tool.license || 'None', bar: licHealth * 100 },
+  })(), weight: 25 },
+  { name: 'Issue Health', value: `${(issueHealth * 100).toFixed(0)}%`, bar: issueHealth * 100, weight: 25 },
+  { name: 'Contributors', value: tool.contributors, bar: Math.min(100, Math.log(1 + tool.contributors) / Math.log(1 + 500) * 100), weight: 10 },
+  { name: 'Dependents', value: tool.dependents > 0 ? tool.dependents.toLocaleString('en-US') : '0', bar: Math.min(100, tool.dependents > 0 ? Math.log(1 + tool.dependents) / Math.log(1 + 100000) * 100 : 0), weight: 25 },
+  { name: 'Forks', value: tool.forks.toLocaleString('en-US'), bar: Math.min(100, Math.log(1 + tool.forks) / Math.log(1 + 50000) * 100), weight: 0 },
+  { name: 'Description', value: descQuality === 0 ? 'None' : descQuality === 0.3 ? 'Brief' : descQuality === 0.7 ? 'Good' : 'Detailed', bar: descQuality * 100, weight: 0 },
+  { name: 'License', value: tool.license || 'None', bar: licHealth * 100, weight: 0 },
 ];
 
 const advice = tool.score <= 85 ? getAdvice(tool) : [];
@@ -89,12 +89,25 @@ const htmlSnippet = `<a href="${pageUrl}"><img src="${badgeUrl}" alt="AgentRank"
 const jsonLd = generateToolJsonLd({ ...tool, github_topics: githubTopics }, pageUrl);
 const keywordsStr = [...new Set([...tool.matched_queries, ...githubTopics])].join(', ');
 
-const relatedRows = await env.DB.prepare(
-  `SELECT full_name, score, rank, description FROM tools
-   WHERE full_name != ? AND score IS NOT NULL
-   ORDER BY score DESC LIMIT 5`
-).bind(tool.full_name).all();
-const relatedTools = relatedRows.results || [];
+// Try to find related tools by category (matched queries), fall back to top-scored
+const primaryQuery = tool.matched_queries[0] || null;
+let relatedTools: Record<string, unknown>[] = [];
+if (primaryQuery) {
+  const categoryRows = await env.DB.prepare(
+    `SELECT full_name, score, rank, description FROM tools
+     WHERE full_name != ? AND score IS NOT NULL AND matched_queries LIKE ?
+     ORDER BY score DESC LIMIT 5`
+  ).bind(tool.full_name, `%${primaryQuery}%`).all();
+  relatedTools = (categoryRows.results || []) as Record<string, unknown>[];
+}
+if (relatedTools.length < 3) {
+  const topRows = await env.DB.prepare(
+    `SELECT full_name, score, rank, description FROM tools
+     WHERE full_name != ? AND score IS NOT NULL
+     ORDER BY score DESC LIMIT 5`
+  ).bind(tool.full_name).all();
+  relatedTools = (topRows.results || []) as Record<string, unknown>[];
+}
 ---
 
 <Base title={`${tool.full_name} — AgentRank`} description={summary} activeTab="tools" jsonLd={jsonLd} keywords={keywordsStr} canonicalUrl={pageUrl}>
@@ -154,12 +167,15 @@ const relatedTools = relatedRows.results || [];
   </section>
 
   <section class="signals">
-    <h3>Signal Breakdown</h3>
+    <h3>Score Breakdown</h3>
     <div class="signal-list">
       {signals.map((s) => (
         <div class="signal">
           <div class="signal-label">
-            <span>{s.name}</span>
+            <span class="signal-name">
+              {s.name}
+              {s.weight > 0 && <span class="signal-weight">{s.weight}%</span>}
+            </span>
             <span class={`signal-value${s.bar === -1 ? ' coming-soon' : ''}`}>{s.value}</span>
           </div>
           {s.bar >= 0 && (
@@ -170,6 +186,7 @@ const relatedTools = relatedRows.results || [];
         </div>
       ))}
     </div>
+    <p class="signal-note">Score weights: Freshness 25% · Issue Health 25% · Dependents 25% · Stars 15% · Contributors 10%</p>
   </section>
 
   {advice.length > 0 && (
@@ -247,11 +264,16 @@ const relatedTools = relatedRows.results || [];
 
   {relatedTools.length > 0 && (
     <section class="related">
-      <h3>Top Ranked Tools</h3>
+      <h3>{primaryQuery ? `Related: ${primaryQuery}` : 'Top Ranked Tools'}</h3>
       <div class="related-list">
         {relatedTools.map((r) => (
           <a href={`/tool/${(r.full_name as string).replace('/', '--')}/`} class="related-item">
-            <span class="related-name">{r.full_name as string}</span>
+            <div class="related-left">
+              <span class="related-name">{r.full_name as string}</span>
+              {(r.description as string | null) && (
+                <span class="related-desc">{(r.description as string).slice(0, 80)}{(r.description as string).length > 80 ? '…' : ''}</span>
+              )}
+            </div>
             <span class="related-score" style={`color: ${scoreColor(r.score as number)}`}>
               {(r.score as number).toFixed(1)}
             </span>
@@ -278,9 +300,17 @@ const relatedTools = relatedRows.results || [];
     </div>
   </div>
 
-  <div class="claim-cta">
-    Are you the maintainer? <a href={`/claim/${slug}/`}>Claim this listing</a>
-  </div>
+  {!claim && (
+    <section class="claim-cta-section">
+      <div class="claim-cta-box">
+        <div class="claim-cta-text">
+          <strong>Are you the maintainer of {tool.full_name}?</strong>
+          <p>Claim this listing to add a tagline, mark deprecation status, and get a verified maintainer badge.</p>
+        </div>
+        <a href={`/claim/${slug}/`} class="claim-cta-btn">Claim this tool &rarr;</a>
+      </div>
+    </section>
+  )}
 
   <script>
     document.querySelectorAll('.copy-btn').forEach(btn => {
@@ -382,8 +412,33 @@ const relatedTools = relatedRows.results || [];
   .signal-label {
     display: flex;
     justify-content: space-between;
+    align-items: center;
     font-size: 0.8rem;
     margin-bottom: 0.25rem;
+  }
+
+  .signal-name {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  .signal-weight {
+    font-size: 0.65rem;
+    color: var(--accent);
+    background: color-mix(in srgb, var(--accent) 12%, transparent);
+    border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent);
+    padding: 0.05rem 0.3rem;
+    border-radius: 3px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+  }
+
+  .signal-note {
+    margin-top: 0.75rem;
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    opacity: 0.7;
   }
 
   .signal-value {
@@ -584,11 +639,62 @@ const relatedTools = relatedRows.results || [];
     text-decoration: none;
   }
 
-  .claim-cta {
-    margin-top: 1.5rem;
-    padding-top: 1rem;
-    font-size: 0.8rem;
+  .claim-cta-section {
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+  }
+
+  .claim-cta-box {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+    background: var(--bg-surface);
+    border: 1px solid var(--accent);
+    border-radius: 6px;
+    padding: 1rem 1.25rem;
+  }
+
+  .claim-cta-text {
+    flex: 1;
+  }
+
+  .claim-cta-text strong {
+    font-size: 0.85rem;
+    color: var(--text);
+    display: block;
+    margin-bottom: 0.2rem;
+  }
+
+  .claim-cta-text p {
+    font-size: 0.75rem;
     color: var(--text-muted);
+    margin: 0;
+    line-height: 1.4;
+  }
+
+  .claim-cta-btn {
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 0.4rem 0.85rem;
+    border-radius: 4px;
+    background: var(--accent);
+    color: #000;
+    text-decoration: none;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .claim-cta-btn:hover {
+    opacity: 0.85;
+    text-decoration: none;
+  }
+
+  @media (max-width: 480px) {
+    .claim-cta-box {
+      flex-direction: column;
+      align-items: flex-start;
+    }
   }
 
   .claimed-badge {
@@ -726,10 +832,11 @@ const relatedTools = relatedRows.results || [];
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0.4rem 0.6rem;
+    gap: 1rem;
+    padding: 0.5rem 0.75rem;
     background: var(--bg-surface);
     border: 1px solid var(--border);
-    border-radius: 3px;
+    border-radius: 4px;
     text-decoration: none;
     font-size: 0.8rem;
   }
@@ -739,13 +846,30 @@ const relatedTools = relatedRows.results || [];
     text-decoration: none;
   }
 
+  .related-left {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    min-width: 0;
+  }
+
   .related-name {
     color: var(--text);
+    font-weight: 500;
+  }
+
+  .related-desc {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   .related-score {
-    font-weight: 600;
-    font-size: 0.75rem;
+    font-weight: 700;
+    font-size: 0.8rem;
+    flex-shrink: 0;
   }
 
   @media (prefers-color-scheme: light) {

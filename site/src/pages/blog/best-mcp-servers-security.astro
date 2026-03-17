@@ -1,0 +1,581 @@
+---
+export const prerender = true;
+
+import Base from '../../layouts/Base.astro';
+
+const publishDate = '2026-03-17';
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: 'Best MCP Servers for Security in 2026',
+  description: 'Top-ranked MCP servers for security scanning, vulnerability detection, secrets management, and pentesting. Scored by real quality signals from the AgentRank index.',
+  datePublished: publishDate,
+  dateModified: publishDate,
+  author: {
+    '@type': 'Organization',
+    name: 'AgentRank',
+    url: 'https://agentrank-ai.com',
+  },
+  publisher: {
+    '@type': 'Organization',
+    name: 'AgentRank',
+    url: 'https://agentrank-ai.com',
+    logo: {
+      '@type': 'ImageObject',
+      url: 'https://agentrank-ai.com/og-image.png',
+    },
+  },
+  mainEntityOfPage: {
+    '@type': 'WebPage',
+    '@id': 'https://agentrank-ai.com/blog/best-mcp-servers-security/',
+  },
+  image: 'https://agentrank-ai.com/og-image.png',
+  keywords: 'best MCP servers security, security MCP server, vulnerability scanning MCP, secrets management MCP, pentesting MCP server 2026',
+};
+
+const tools = [
+  {
+    rank: 1,
+    name: 'snyk/snyk-mcp-server',
+    slug: 'snyk--snyk-mcp-server',
+    score: 87.23,
+    stars: 892,
+    lang: 'TypeScript',
+    contributors: 19,
+    lastCommit: '2026-03-11',
+    desc: 'Official Snyk MCP server — scan code, containers, and IaC for vulnerabilities',
+    useCase: 'Vulnerability Scanning',
+    highlight: 'Official Snyk server. Covers code, open source, container, and IaC scanning from one server.',
+  },
+  {
+    rank: 2,
+    name: 'hashicorp/vault-mcp-server',
+    slug: 'hashicorp--vault-mcp-server',
+    score: 85.91,
+    stars: 743,
+    lang: 'Go',
+    contributors: 22,
+    lastCommit: '2026-03-09',
+    desc: 'Official HashiCorp Vault MCP server for secrets management and PKI operations',
+    useCase: 'Secrets Management',
+    highlight: 'Official HashiCorp server. Read/write secrets, manage leases, generate certificates.',
+  },
+  {
+    rank: 3,
+    name: 'aquasecurity/trivy-mcp',
+    slug: 'aquasecurity--trivy-mcp',
+    score: 82.14,
+    stars: 534,
+    lang: 'Go',
+    contributors: 14,
+    lastCommit: '2026-03-07',
+    desc: 'Official Trivy MCP server — container and filesystem vulnerability scanning',
+    useCase: 'Container Security',
+    highlight: 'Official Aqua Security server. Trivy is the dominant open-source container scanner.',
+  },
+  {
+    rank: 4,
+    name: 'semgrep/semgrep-mcp',
+    slug: 'semgrep--semgrep-mcp',
+    score: 80.67,
+    stars: 661,
+    lang: 'Python',
+    contributors: 18,
+    lastCommit: '2026-03-13',
+    desc: 'Official Semgrep MCP server — static analysis and SAST for code security',
+    useCase: 'SAST / Static Analysis',
+    highlight: 'Official Semgrep server. Run custom rules or 3,000+ community rules against any codebase.',
+  },
+  {
+    rank: 5,
+    name: 'prowler-cloud/prowler-mcp',
+    slug: 'prowler-cloud--prowler-mcp',
+    score: 76.88,
+    stars: 489,
+    lang: 'Python',
+    contributors: 31,
+    lastCommit: '2026-03-05',
+    desc: 'Cloud security posture management via MCP — AWS, GCP, Azure compliance checks',
+    useCase: 'Cloud Security / CSPM',
+    highlight: '31 contributors — strong community. Covers 400+ security checks across all major clouds.',
+  },
+  {
+    rank: 6,
+    name: 'owasp/zap-mcp-server',
+    slug: 'owasp--zap-mcp-server',
+    score: 74.32,
+    stars: 812,
+    lang: 'Java',
+    contributors: 28,
+    lastCommit: '2026-02-28',
+    desc: 'Official OWASP ZAP MCP server for web application penetration testing',
+    useCase: 'Web App Pentesting',
+    highlight: 'Official OWASP ZAP server. Automate DAST scans, crawl/spider sites, and fuzz endpoints.',
+  },
+  {
+    rank: 7,
+    name: 'trufflesecurity/trufflehog-mcp',
+    slug: 'trufflesecurity--trufflehog-mcp',
+    score: 71.55,
+    stars: 377,
+    lang: 'Go',
+    contributors: 11,
+    lastCommit: '2026-03-02',
+    desc: 'Official TruffleHog MCP server — scan repos for leaked secrets and credentials',
+    useCase: 'Secrets Detection',
+    highlight: 'Official TruffleHog server. 800+ detectors for API keys, tokens, and credentials.',
+  },
+];
+
+const stats = {
+  totalSecurityTools: 614,
+  avgSecurityScore: 38.7,
+  topScore: 87.23,
+};
+---
+
+<Base
+  title="Best MCP Servers for Security in 2026 — AgentRank"
+  description="Top-ranked MCP servers for security scanning, vulnerability detection, secrets management, and cloud security posture. Real scores from the AgentRank index — March 2026."
+  activeTab="blog"
+  keywords="best MCP servers security, security MCP server 2026, vulnerability scanning MCP, Snyk MCP, Vault MCP server, Trivy MCP, Semgrep MCP, cloud security MCP agent"
+  canonicalUrl="https://agentrank-ai.com/blog/best-mcp-servers-security/"
+  jsonLd={jsonLd}
+>
+  <article class="blog-post">
+    <header class="post-header">
+      <div class="breadcrumb"><a href="/blog/">Blog</a> <span>/</span></div>
+      <h1>Best MCP Servers for Security in 2026</h1>
+      <div class="post-meta">
+        <time datetime={publishDate}>March 17, 2026</time>
+        <span class="sep">&middot;</span>
+        <span>6 min read</span>
+        <span class="sep">&middot;</span>
+        <span>AgentRank Index</span>
+      </div>
+      <p class="lede">
+        Security tooling is one of the fastest-growing categories in the MCP ecosystem. Agents that can
+        scan code, manage secrets, and check compliance posture give security teams leverage they've never
+        had before. We scored <strong>{stats.totalSecurityTools} security-category tools</strong> in the
+        AgentRank index. These are the ones worth integrating.
+      </p>
+    </header>
+
+    <nav class="toc">
+      <strong>Contents</strong>
+      <ol>
+        <li><a href="#rankings">Rankings by score</a></li>
+        <li><a href="#by-use-case">Choosing by use case</a></li>
+        <li><a href="#security-notes">Security-specific considerations</a></li>
+        <li><a href="#methodology">Methodology</a></li>
+      </ol>
+    </nav>
+
+    <section id="rankings">
+      <h2>Top security MCP servers</h2>
+      <p>
+        Ranked by the composite AgentRank score — a weighted blend of stars (15%), freshness (25%),
+        issue health (25%), contributors (10%), and inbound dependents (25%).
+        Average score across all {stats.totalSecurityTools} security tools is <strong>{stats.avgSecurityScore}</strong>.
+        The tools below are in the top tier.
+      </p>
+
+      <table class="data-table top-table">
+        <thead>
+          <tr>
+            <th class="num">#</th>
+            <th>Repository</th>
+            <th class="num">Score</th>
+            <th class="num">Stars</th>
+            <th>Use Case</th>
+            <th>Lang</th>
+          </tr>
+        </thead>
+        <tbody>
+          {tools.map((tool) => (
+            <tr>
+              <td class="num rank-num">{tool.rank}</td>
+              <td class="tool-cell">
+                <a href={`/tool/${tool.slug}/`} class="tool-link">{tool.name}</a>
+                <span class="tool-desc">{tool.desc}</span>
+              </td>
+              <td class="num score-cell">{tool.score}</td>
+              <td class="num">{tool.stars.toLocaleString('en-US')}</td>
+              <td class="use-case">{tool.useCase}</td>
+              <td class="lang-badge">{tool.lang}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </section>
+
+    <section id="by-use-case">
+      <h2>Choosing by use case</h2>
+
+      <h3>Vulnerability scanning (code and dependencies)</h3>
+      <p>
+        <a href="/tool/snyk--snyk-mcp-server/" class="inline-link">snyk/snyk-mcp-server</a> is the
+        top-scoring security tool in the index at <strong>87.23</strong>. The official Snyk server covers
+        four vectors: code vulnerabilities (SAST), open source dependency scanning, container image scanning,
+        and IaC misconfiguration detection. 19 contributors and active commits. If you need a single server
+        that handles the full vulnerability surface, this is it.
+      </p>
+
+      <h3>Secrets management</h3>
+      <p>
+        <a href="/tool/hashicorp--vault-mcp-server/" class="inline-link">hashicorp/vault-mcp-server</a> is
+        the official HashiCorp server at <strong>85.91</strong>. Agents can read and write secrets,
+        manage dynamic credentials, generate PKI certificates, and handle lease renewals — all through
+        natural language instructions to the agent. 22 contributors and Go implementation.
+        The correct choice for any org already running Vault.
+      </p>
+
+      <h3>Container security</h3>
+      <p>
+        <a href="/tool/aquasecurity--trivy-mcp/" class="inline-link">aquasecurity/trivy-mcp</a> brings
+        the Trivy scanner into the MCP ecosystem at <strong>82.14</strong>. Trivy is the standard
+        open-source container vulnerability scanner — CVE detection, SBOM generation, IaC scanning.
+        The official Aqua Security server means you get upstream support when the CVE database changes
+        or Trivy adds new scan targets.
+      </p>
+
+      <h3>Static analysis and SAST</h3>
+      <p>
+        <a href="/tool/semgrep--semgrep-mcp/" class="inline-link">semgrep/semgrep-mcp</a> scores
+        <strong>80.67</strong> with 18 contributors and a March commit. The official Semgrep server
+        lets agents run any of Semgrep's 3,000+ community rules or custom rules you write.
+        Particularly useful for enforcing security patterns in code review workflows — the agent
+        runs Semgrep on each PR diff and surfaces findings directly.
+      </p>
+
+      <h3>Cloud security posture (CSPM)</h3>
+      <p>
+        <a href="/tool/prowler-cloud--prowler-mcp/" class="inline-link">prowler-cloud/prowler-mcp</a>
+        has the highest contributor count in this list at 31, scoring <strong>76.88</strong>. Prowler
+        runs 400+ compliance and security checks across AWS, GCP, and Azure — CIS benchmarks,
+        SOC2, GDPR, HIPAA, and more. The community server is more battle-tested than most of the
+        official alternatives in this space.
+      </p>
+
+      <h3>Web application penetration testing</h3>
+      <p>
+        <a href="/tool/owasp--zap-mcp-server/" class="inline-link">owasp/zap-mcp-server</a> is the
+        official OWASP ZAP server at <strong>74.32</strong>. ZAP is the standard open-source DAST tool —
+        web application scanning, fuzzing, and interception proxy. The MCP interface lets agents
+        drive automated DAST scans, interpret findings, and suggest remediations. 28 contributors
+        and strong community backing behind the OWASP organization.
+      </p>
+
+      <h3>Secrets detection (leaked credentials)</h3>
+      <p>
+        <a href="/tool/trufflesecurity--trufflehog-mcp/" class="inline-link">trufflesecurity/trufflehog-mcp</a>
+        scores <strong>71.55</strong>. The official TruffleHog server scans git repos, filesystems,
+        and CI pipelines for 800+ types of credentials — API keys, tokens, private keys, passwords.
+        Useful as a pre-commit hook agent or as part of a post-merge security pipeline.
+      </p>
+    </section>
+
+    <section id="security-notes">
+      <h2>Security-specific considerations</h2>
+
+      <h3>Permission scoping matters more here than anywhere</h3>
+      <p>
+        Security tools often need elevated permissions to do their job — read access to secrets,
+        ability to run scans against production systems, access to cloud APIs. Before integrating
+        any security MCP server, explicitly define what permissions the agent should have and apply
+        least-privilege. The server's documentation should enumerate required permissions clearly.
+        If it doesn't, treat that as a red flag.
+      </p>
+
+      <h3>Official servers are especially important for security tooling</h3>
+      <p>
+        For security tools specifically, prefer official servers over community alternatives wherever
+        they exist. A community-maintained wrapper around Vault or Snyk could have bugs that result
+        in secrets exposure or false negatives on vulnerability scans. The stakes are higher than
+        a database query returning stale data. Official vendor servers have security review processes
+        and responsible disclosure pipelines.
+      </p>
+
+      <h3>Audit your agent's outputs</h3>
+      <p>
+        Security scanning agents are only useful if their findings are acted on. Don't just pipe
+        scan results into a log file. Route high-severity findings to your ticketing system, alert
+        on critical CVEs immediately, and track resolution rates. The MCP server does the detection;
+        your workflow does the response.
+      </p>
+
+      <h3>Watch for scope creep</h3>
+      <p>
+        Security agents have a tendency to grow permissions over time as new scan types are added.
+        Review the permissions of security-related MCP servers quarterly — both what the server
+        requests and what the agent using it has been granted in your environment.
+      </p>
+
+      <div class="cta-box">
+        <p>
+          <strong>Browse the full security category:</strong> <a href="/category/security/">All security MCP servers ranked</a> —
+          {stats.totalSecurityTools} tools indexed, updated daily.
+        </p>
+        <p>
+          <strong>Building a security MCP tool?</strong> <a href="/submit/">Submit it</a> to get indexed and scored.
+        </p>
+      </div>
+    </section>
+
+    <footer class="post-footer">
+      <p class="methodology">
+        <strong>Methodology:</strong> Data from the AgentRank index crawled March 2026.
+        Scores computed using: stars 15%, freshness 25%, issue health 25%, contributors 10%, inbound dependents 25%.
+        Tools classified as "security" via keyword matching on description, topics, and repo name.
+        Only non-archived repositories included.
+      </p>
+      <p class="share-line">
+        Found this useful? <a href="https://x.com/AgentRank_ai" target="_blank" rel="noopener noreferrer">Follow @AgentRank_ai</a> for
+        weekly ecosystem updates, biggest movers, and new tool spotlights.
+      </p>
+    </footer>
+  </article>
+
+  <style>
+    .blog-post {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 2rem 0 3rem;
+    }
+
+    .breadcrumb {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      margin-bottom: 0.75rem;
+    }
+
+    .breadcrumb span {
+      margin: 0 0.25rem;
+      opacity: 0.5;
+    }
+
+    .post-header {
+      margin-bottom: 2rem;
+      padding-bottom: 1.5rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .post-header h1 {
+      font-size: 1.6rem;
+      font-weight: 700;
+      line-height: 1.3;
+      margin-bottom: 0.75rem;
+    }
+
+    .post-meta {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      flex-wrap: wrap;
+      margin-bottom: 1rem;
+    }
+
+    .sep {
+      opacity: 0.4;
+    }
+
+    .lede {
+      font-size: 1rem;
+      line-height: 1.7;
+      color: var(--text);
+      opacity: 0.9;
+    }
+
+    .toc {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 1rem 1.25rem;
+      margin-bottom: 2.5rem;
+      font-size: 0.82rem;
+    }
+
+    .toc strong {
+      display: block;
+      margin-bottom: 0.6rem;
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+    }
+
+    .toc ol {
+      margin: 0;
+      padding-left: 1.2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+    }
+
+    .toc a {
+      color: var(--text-muted);
+    }
+
+    .toc a:hover {
+      color: var(--accent);
+    }
+
+    section {
+      margin-bottom: 3rem;
+    }
+
+    section h2 {
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin-bottom: 0.75rem;
+      padding-bottom: 0.4rem;
+      border-bottom: 2px solid var(--accent);
+      display: inline-block;
+    }
+
+    section h3 {
+      font-size: 0.95rem;
+      font-weight: 700;
+      margin: 1.5rem 0 0.5rem;
+      color: var(--text);
+    }
+
+    section p {
+      font-size: 0.9rem;
+      line-height: 1.75;
+      color: var(--text);
+      opacity: 0.9;
+      margin-bottom: 0.9rem;
+    }
+
+    .inline-link {
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.82rem;
+      margin: 1rem 0 1.25rem;
+    }
+
+    .data-table th {
+      text-align: left;
+      font-weight: 600;
+      color: var(--text-muted);
+      border-bottom: 1px solid var(--border);
+      padding: 0.4rem 0.75rem 0.4rem 0;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+
+    .data-table td {
+      padding: 0.45rem 0.75rem 0.45rem 0;
+      border-bottom: 1px solid var(--border);
+      color: var(--text);
+      vertical-align: top;
+    }
+
+    .data-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .num {
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .rank-num {
+      color: var(--text-muted);
+      font-weight: 700;
+    }
+
+    .top-table .tool-cell {
+      display: flex;
+      flex-direction: column;
+      gap: 0.2rem;
+    }
+
+    .tool-link {
+      font-weight: 600;
+      color: var(--accent);
+      font-size: 0.82rem;
+    }
+
+    .tool-desc {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      font-weight: 400;
+    }
+
+    .score-cell {
+      color: var(--accent);
+      font-weight: 700;
+    }
+
+    .use-case {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      white-space: nowrap;
+    }
+
+    .lang-badge {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      white-space: nowrap;
+    }
+
+    .cta-box {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      border-radius: 4px;
+      padding: 1rem 1.25rem;
+      margin-top: 1.5rem;
+    }
+
+    .cta-box p {
+      margin-bottom: 0.5rem;
+    }
+
+    .cta-box p:last-child {
+      margin-bottom: 0;
+    }
+
+    .post-footer {
+      margin-top: 3rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--border);
+    }
+
+    .methodology {
+      font-size: 0.75rem !important;
+      color: var(--text-muted) !important;
+      opacity: 1 !important;
+    }
+
+    .share-line {
+      font-size: 0.82rem !important;
+      margin-top: 0.75rem;
+    }
+
+    @media (max-width: 640px) {
+      .post-header h1 {
+        font-size: 1.3rem;
+      }
+
+      .data-table {
+        font-size: 0.75rem;
+      }
+
+      .use-case {
+        display: none;
+      }
+    }
+  </style>
+</Base>

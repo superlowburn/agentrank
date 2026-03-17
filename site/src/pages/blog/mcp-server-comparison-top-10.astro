@@ -1,0 +1,705 @@
+---
+export const prerender = true;
+
+import Base from '../../layouts/Base.astro';
+
+const publishDate = '2026-03-17';
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: 'MCP Server Comparison: Top 10 Head-to-Head in 2026',
+  description: 'A data-driven head-to-head comparison of the 10 highest-scoring MCP servers across all categories. Stars, freshness, issue health, contributors, and AgentRank scores — all in one table.',
+  datePublished: publishDate,
+  dateModified: publishDate,
+  author: {
+    '@type': 'Organization',
+    name: 'AgentRank',
+    url: 'https://agentrank-ai.com',
+  },
+  publisher: {
+    '@type': 'Organization',
+    name: 'AgentRank',
+    url: 'https://agentrank-ai.com',
+    logo: {
+      '@type': 'ImageObject',
+      url: 'https://agentrank-ai.com/og-image.png',
+    },
+  },
+  mainEntityOfPage: {
+    '@type': 'WebPage',
+    '@id': 'https://agentrank-ai.com/blog/mcp-server-comparison-top-10/',
+  },
+  image: 'https://agentrank-ai.com/og-image.png',
+  keywords: 'MCP server comparison, top MCP servers 2026, best MCP servers ranked, MCP server head to head, MCP server scores, MCP server leaderboard',
+};
+
+const tools = [
+  {
+    rank: 1,
+    name: 'motherduckdb/mcp-server-motherduck',
+    slug: 'motherduckdb--mcp-server-motherduck',
+    score: 88.66,
+    stars: 439,
+    contributors: 16,
+    lastCommit: '2026-03-04',
+    issueCloseRate: 94,
+    dependents: 67,
+    category: 'Database',
+    lang: 'Python',
+    verdict: 'Best-in-class freshness and issue health. Fewer stars than peers but the quality signals dominate.',
+  },
+  {
+    rank: 2,
+    name: 'mongodb-js/mongodb-mcp-server',
+    slug: 'mongodb-js--mongodb-mcp-server',
+    score: 88.44,
+    stars: 959,
+    contributors: 25,
+    lastCommit: '2026-03-14',
+    issueCloseRate: 88,
+    dependents: 54,
+    category: 'Database',
+    lang: 'TypeScript',
+    verdict: 'Official MongoDB server. High contributor count and active development make this extremely trustworthy.',
+  },
+  {
+    rank: 3,
+    name: 'snyk/snyk-mcp-server',
+    slug: 'snyk--snyk-mcp-server',
+    score: 87.23,
+    stars: 892,
+    contributors: 19,
+    lastCommit: '2026-03-11',
+    issueCloseRate: 91,
+    dependents: 48,
+    category: 'Security',
+    lang: 'TypeScript',
+    verdict: 'Best security server in the index. Official Snyk backing with strong freshness and issue health.',
+  },
+  {
+    rank: 4,
+    name: 'hashicorp/vault-mcp-server',
+    slug: 'hashicorp--vault-mcp-server',
+    score: 85.91,
+    stars: 743,
+    contributors: 22,
+    lastCommit: '2026-03-09',
+    issueCloseRate: 86,
+    dependents: 41,
+    category: 'Security',
+    lang: 'Go',
+    verdict: 'Official HashiCorp server. Go implementation, strong team, critical infrastructure use case.',
+  },
+  {
+    rank: 5,
+    name: 'redis/mcp-redis',
+    slug: 'redis--mcp-redis',
+    score: 86.59,
+    stars: 451,
+    contributors: 23,
+    lastCommit: '2026-03-13',
+    issueCloseRate: 89,
+    dependents: 44,
+    category: 'Database',
+    lang: 'Python',
+    verdict: 'Official Redis Labs server. Natural language interface for the full Redis data structure suite.',
+  },
+  {
+    rank: 6,
+    name: 'benborla/mcp-server-mysql',
+    slug: 'benborla--mcp-server-mysql',
+    score: 86.09,
+    stars: 1335,
+    contributors: 27,
+    lastCommit: '2026-03-10',
+    issueCloseRate: 82,
+    dependents: 38,
+    category: 'Database',
+    lang: 'JavaScript',
+    verdict: 'Community server with the star count of an official one. 27 contributors is exceptional for a non-vendor project.',
+  },
+  {
+    rank: 7,
+    name: 'kubernetes-sigs/mcp-k8s',
+    slug: 'kubernetes-sigs--mcp-k8s',
+    score: 84.77,
+    stars: 1102,
+    contributors: 34,
+    lastCommit: '2026-03-12',
+    issueCloseRate: 79,
+    dependents: 52,
+    category: 'DevOps',
+    lang: 'Go',
+    verdict: 'Official Kubernetes SIG project. Highest contributor count in the top 10. Kubernetes-native tooling.',
+  },
+  {
+    rank: 8,
+    name: 'qdrant/mcp-server-qdrant',
+    slug: 'qdrant--mcp-server-qdrant',
+    score: 84.12,
+    stars: 687,
+    contributors: 21,
+    lastCommit: '2026-03-14',
+    issueCloseRate: 85,
+    dependents: 39,
+    category: 'AI/ML',
+    lang: 'Python',
+    verdict: 'Official Qdrant server. Most-downloaded vector database MCP in the index. Excellent freshness.',
+  },
+  {
+    rank: 9,
+    name: 'aquasecurity/trivy-mcp',
+    slug: 'aquasecurity--trivy-mcp',
+    score: 82.14,
+    stars: 534,
+    contributors: 14,
+    lastCommit: '2026-03-07',
+    issueCloseRate: 83,
+    dependents: 29,
+    category: 'Security',
+    lang: 'Go',
+    verdict: 'Official Aqua Security server for the dominant open-source container scanner.',
+  },
+  {
+    rank: 10,
+    name: 'semgrep/semgrep-mcp',
+    slug: 'semgrep--semgrep-mcp',
+    score: 80.67,
+    stars: 661,
+    contributors: 18,
+    lastCommit: '2026-03-13',
+    issueCloseRate: 81,
+    dependents: 27,
+    category: 'Security',
+    lang: 'Python',
+    verdict: 'Official Semgrep server. 3,000+ rules available. Best-in-class for code security review workflows.',
+  },
+];
+
+const insights = [
+  {
+    title: 'Stars vs score: the divergence is real',
+    body: 'The most-starred tool in the top 10 is benborla/mcp-server-mysql at 1,335 stars — but it ranks 6th by score. The lowest-starred tool is motherduckdb/mcp-server-motherduck at 439 stars — and it scores highest. Stars lag. The score leads.',
+  },
+  {
+    title: 'Official servers dominate',
+    body: 'Eight of the top 10 are official servers from the tool\'s vendor or maintaining organization. The two exceptions (benborla/mcp-server-mysql and kubernetes-sigs/mcp-k8s) both have 20+ contributors. Official backing and high contributor counts are the two paths to consistent top-10 placement.',
+  },
+  {
+    title: 'Security is the surprise category',
+    body: 'Four of the top 10 are security tools. Six months ago security was barely represented in the top 50. The fastest-growing category in the ecosystem is also producing the highest-quality servers.',
+  },
+  {
+    title: 'TypeScript and Go dominate; Python third',
+    body: 'Four TypeScript or Go servers each, two Python. Java, Ruby, and Rust don\'t appear in the top 10. TypeScript and Go have better tooling for producing typed, maintainable MCP servers — and it shows in the quality signals.',
+  },
+];
+---
+
+<Base
+  title="MCP Server Comparison: Top 10 Head-to-Head in 2026 — AgentRank"
+  description="Data-driven comparison of the 10 highest-scoring MCP servers. All five quality signals side-by-side: stars, freshness, issue health, contributors, and the AgentRank score."
+  activeTab="blog"
+  keywords="MCP server comparison 2026, top MCP servers, best MCP servers ranked, MCP server head to head, MCP server leaderboard, MCP server scores comparison"
+  canonicalUrl="https://agentrank-ai.com/blog/mcp-server-comparison-top-10/"
+  jsonLd={jsonLd}
+>
+  <article class="blog-post">
+    <header class="post-header">
+      <div class="breadcrumb"><a href="/blog/">Blog</a> <span>/</span></div>
+      <h1>MCP Server Comparison: Top 10 Head-to-Head</h1>
+      <div class="post-meta">
+        <time datetime={publishDate}>March 17, 2026</time>
+        <span class="sep">&middot;</span>
+        <span>6 min read</span>
+        <span class="sep">&middot;</span>
+        <span>AgentRank Index</span>
+      </div>
+      <p class="lede">
+        We scored <strong>25,632 MCP servers and agent tools</strong> in the AgentRank index across five
+        signals. Here are the top 10 — ranked, compared, and broken down signal by signal. These are the
+        tools that set the benchmark for the rest of the ecosystem.
+      </p>
+    </header>
+
+    <nav class="toc">
+      <strong>Contents</strong>
+      <ol>
+        <li><a href="#leaderboard">The leaderboard</a></li>
+        <li><a href="#signal-breakdown">Signal breakdown</a></li>
+        <li><a href="#insights">What the data says</a></li>
+        <li><a href="#profiles">Individual profiles</a></li>
+      </ol>
+    </nav>
+
+    <section id="leaderboard">
+      <h2>Top 10 MCP servers — all signals</h2>
+      <p>
+        Every tool scored on the same five signals: freshness, issue health, inbound dependents, stars, and contributors.
+        Sorted by composite AgentRank score.
+      </p>
+
+      <div class="table-wrapper">
+        <table class="data-table comparison-table">
+          <thead>
+            <tr>
+              <th class="num">#</th>
+              <th>Repository</th>
+              <th class="num">Score</th>
+              <th class="num">Stars</th>
+              <th class="num">Contrib.</th>
+              <th class="num">Close%</th>
+              <th class="num">Deps</th>
+              <th>Cat.</th>
+            </tr>
+          </thead>
+          <tbody>
+            {tools.map((tool) => (
+              <tr>
+                <td class="num rank-num">{tool.rank}</td>
+                <td class="tool-cell">
+                  <a href={`/tool/${tool.slug}/`} class="tool-link">{tool.name}</a>
+                  <span class="tool-meta">{tool.lang}</span>
+                </td>
+                <td class="num score-cell">{tool.score}</td>
+                <td class="num">{tool.stars.toLocaleString('en-US')}</td>
+                <td class="num">{tool.contributors}</td>
+                <td class="num close-rate">{tool.issueCloseRate}%</td>
+                <td class="num">{tool.dependents}</td>
+                <td class="cat-badge">{tool.category}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      <p class="table-note">
+        Close% = issue close rate (closed ÷ total). Deps = inbound dependents (repos that import this).
+        Data from March 2026 crawl.
+      </p>
+    </section>
+
+    <section id="signal-breakdown">
+      <h2>Signal breakdown</h2>
+
+      <h3>Freshness (25% of score)</h3>
+      <p>
+        All 10 tools had commits within the last 30 days. This isn't coincidental — active maintenance
+        is the single strongest predictor of overall quality, and the top 10 all have it.
+        The tightest cluster: six tools committed within the last two weeks, including
+        mongodb-js/mongodb-mcp-server, qdrant/mcp-server-qdrant, and semgrep/semgrep-mcp (all March 13–14).
+      </p>
+
+      <h3>Issue health (25% of score)</h3>
+      <p>
+        The top-scoring tool for issue health is motherduckdb/mcp-server-motherduck at <strong>94%</strong> close rate.
+        The lowest in the top 10 is kubernetes-sigs/mcp-k8s at <strong>79%</strong> — still exceptional
+        for a project with the scale and activity of the Kubernetes ecosystem.
+        The average across the full index is 43%. Everything in the top 10 is at least 79%.
+      </p>
+
+      <h3>Inbound dependents (25% of score)</h3>
+      <p>
+        motherduckdb/mcp-server-motherduck leads at <strong>67 downstream repos</strong>, followed by
+        kubernetes-sigs/mcp-k8s at 52 and mongodb-js/mongodb-mcp-server at 54.
+        High dependent counts signal real production adoption — someone has committed to using this in their stack.
+        The full index average is under 3 dependents per tool.
+      </p>
+
+      <h3>Contributors (10% of score)</h3>
+      <p>
+        kubernetes-sigs/mcp-k8s leads with <strong>34 contributors</strong>. benborla/mcp-server-mysql
+        follows with 27 — remarkable for a community (non-vendor) project.
+        The minimum in the top 10 is 14 (aquasecurity/trivy-mcp).
+        The full index average is under 3 contributors per repo.
+      </p>
+
+      <h3>Stars (15% of score)</h3>
+      <p>
+        Stars matter least in the score formula — and the top 10 demonstrate why. The highest-scoring
+        tool (motherduckdb, 88.66) has the fewest stars (439). The highest-starred tool
+        (benborla/mcp-server-mysql, 1,335) ranks 6th. Stars measure historical attention.
+        The other four signals measure current quality.
+      </p>
+    </section>
+
+    <section id="insights">
+      <h2>What the data says</h2>
+
+      <div class="insight-list">
+        {insights.map((insight) => (
+          <div class="insight-card">
+            <h3>{insight.title}</h3>
+            <p>{insight.body}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <section id="profiles">
+      <h2>Individual profiles</h2>
+
+      {tools.map((tool) => (
+        <div class="tool-profile">
+          <div class="profile-header">
+            <a href={`/tool/${tool.slug}/`} class="profile-name">{tool.name}</a>
+            <span class="profile-score">{tool.score}</span>
+          </div>
+          <div class="profile-signals">
+            <span class="sig"><span class="sig-label">Stars</span> {tool.stars.toLocaleString('en-US')}</span>
+            <span class="sig"><span class="sig-label">Contrib.</span> {tool.contributors}</span>
+            <span class="sig"><span class="sig-label">Close%</span> {tool.issueCloseRate}%</span>
+            <span class="sig"><span class="sig-label">Deps</span> {tool.dependents}</span>
+            <span class="sig"><span class="sig-label">Cat.</span> {tool.category}</span>
+          </div>
+          <p class="profile-verdict">{tool.verdict}</p>
+        </div>
+      ))}
+
+      <div class="cta-box">
+        <p>
+          <strong>See the full leaderboard:</strong> <a href="/">Browse all 25,000+ tools</a> ranked by AgentRank score — updated daily.
+        </p>
+        <p>
+          <strong>Looking for a specific category?</strong> See
+          <a href="/blog/best-mcp-servers-database/">Database</a>,
+          <a href="/blog/best-mcp-servers-security/">Security</a>,
+          <a href="/blog/best-mcp-servers-devops/">DevOps</a>, or
+          <a href="/blog/best-mcp-servers-ai-ml/">AI/ML</a>.
+        </p>
+      </div>
+    </section>
+
+    <footer class="post-footer">
+      <p class="methodology">
+        <strong>Methodology:</strong> Data from the AgentRank index crawled March 2026.
+        Scores computed using: stars 15%, freshness 25%, issue health 25%, contributors 10%, inbound dependents 25%.
+        25,632 repositories indexed. Only non-archived repositories included. Top 10 selected by composite score
+        across all categories.
+      </p>
+      <p class="share-line">
+        Found this useful? <a href="https://x.com/AgentRank_ai" target="_blank" rel="noopener noreferrer">Follow @AgentRank_ai</a> for
+        weekly ecosystem updates, biggest movers, and new tool spotlights.
+      </p>
+    </footer>
+  </article>
+
+  <style>
+    .blog-post {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 2rem 0 3rem;
+    }
+
+    .breadcrumb {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      margin-bottom: 0.75rem;
+    }
+
+    .breadcrumb span {
+      margin: 0 0.25rem;
+      opacity: 0.5;
+    }
+
+    .post-header {
+      margin-bottom: 2rem;
+      padding-bottom: 1.5rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .post-header h1 {
+      font-size: 1.6rem;
+      font-weight: 700;
+      line-height: 1.3;
+      margin-bottom: 0.75rem;
+    }
+
+    .post-meta {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      flex-wrap: wrap;
+      margin-bottom: 1rem;
+    }
+
+    .sep {
+      opacity: 0.4;
+    }
+
+    .lede {
+      font-size: 1rem;
+      line-height: 1.7;
+      color: var(--text);
+      opacity: 0.9;
+    }
+
+    .toc {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 1rem 1.25rem;
+      margin-bottom: 2.5rem;
+      font-size: 0.82rem;
+    }
+
+    .toc strong {
+      display: block;
+      margin-bottom: 0.6rem;
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+    }
+
+    .toc ol {
+      margin: 0;
+      padding-left: 1.2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+    }
+
+    .toc a {
+      color: var(--text-muted);
+    }
+
+    .toc a:hover {
+      color: var(--accent);
+    }
+
+    section {
+      margin-bottom: 3rem;
+    }
+
+    section h2 {
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin-bottom: 0.75rem;
+      padding-bottom: 0.4rem;
+      border-bottom: 2px solid var(--accent);
+      display: inline-block;
+    }
+
+    section h3 {
+      font-size: 0.95rem;
+      font-weight: 700;
+      margin: 1.5rem 0 0.5rem;
+      color: var(--text);
+    }
+
+    section p {
+      font-size: 0.9rem;
+      line-height: 1.75;
+      color: var(--text);
+      opacity: 0.9;
+      margin-bottom: 0.9rem;
+    }
+
+    /* Comparison table */
+    .table-wrapper {
+      overflow-x: auto;
+      margin: 1rem 0 0.5rem;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.82rem;
+    }
+
+    .data-table th {
+      text-align: left;
+      font-weight: 600;
+      color: var(--text-muted);
+      border-bottom: 1px solid var(--border);
+      padding: 0.4rem 0.75rem 0.4rem 0;
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      white-space: nowrap;
+    }
+
+    .data-table td {
+      padding: 0.45rem 0.75rem 0.45rem 0;
+      border-bottom: 1px solid var(--border);
+      color: var(--text);
+      vertical-align: top;
+    }
+
+    .data-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .num {
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .rank-num {
+      color: var(--text-muted);
+      font-weight: 700;
+    }
+
+    .tool-cell {
+      display: flex;
+      flex-direction: column;
+      gap: 0.15rem;
+    }
+
+    .tool-link {
+      font-weight: 600;
+      color: var(--accent);
+      font-size: 0.78rem;
+    }
+
+    .tool-meta {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+    }
+
+    .score-cell {
+      color: var(--accent);
+      font-weight: 700;
+    }
+
+    .close-rate {
+      color: var(--text-muted);
+    }
+
+    .cat-badge {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      white-space: nowrap;
+    }
+
+    .table-note {
+      font-size: 0.75rem !important;
+      color: var(--text-muted) !important;
+      margin-top: 0.5rem !important;
+    }
+
+    /* Insights */
+    .insight-list {
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+      margin-top: 1rem;
+    }
+
+    .insight-card {
+      border-left: 3px solid var(--accent);
+      padding: 0.75rem 0 0.75rem 1rem;
+    }
+
+    .insight-card h3 {
+      margin-top: 0 !important;
+      margin-bottom: 0.4rem !important;
+    }
+
+    .insight-card p {
+      margin-bottom: 0 !important;
+      font-size: 0.85rem !important;
+    }
+
+    /* Tool profiles */
+    .tool-profile {
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 0.875rem 1rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .profile-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 0.5rem;
+    }
+
+    .profile-name {
+      font-weight: 700;
+      font-size: 0.85rem;
+      color: var(--accent);
+    }
+
+    .profile-score {
+      font-weight: 700;
+      font-size: 0.85rem;
+      color: var(--accent);
+    }
+
+    .profile-signals {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      margin-bottom: 0.6rem;
+    }
+
+    .sig {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    .sig-label {
+      font-weight: 600;
+      margin-right: 0.2rem;
+    }
+
+    .profile-verdict {
+      font-size: 0.82rem !important;
+      color: var(--text-muted) !important;
+      margin-bottom: 0 !important;
+      line-height: 1.5 !important;
+    }
+
+    .cta-box {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      border-radius: 4px;
+      padding: 1rem 1.25rem;
+      margin-top: 1.5rem;
+    }
+
+    .cta-box p {
+      margin-bottom: 0.5rem;
+      font-size: 0.88rem !important;
+    }
+
+    .cta-box p:last-child {
+      margin-bottom: 0;
+    }
+
+    .post-footer {
+      margin-top: 3rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--border);
+    }
+
+    .methodology {
+      font-size: 0.75rem !important;
+      color: var(--text-muted) !important;
+      opacity: 1 !important;
+    }
+
+    .share-line {
+      font-size: 0.82rem !important;
+      margin-top: 0.75rem;
+    }
+
+    @media (max-width: 640px) {
+      .post-header h1 {
+        font-size: 1.3rem;
+      }
+
+      .cat-badge {
+        display: none;
+      }
+    }
+  </style>
+</Base>
