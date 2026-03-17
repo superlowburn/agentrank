@@ -1,0 +1,10 @@
+{
+  "inputs": [],
+  "servers": {
+    "agentrank": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "agentrank-mcp-server"]
+    }
+  }
+}

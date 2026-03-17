@@ -1,0 +1,450 @@
+---
+export const prerender = true;
+import Base from '../layouts/Base.astro';
+---
+
+<Base
+  title="Integrations — AgentRank"
+  description="Connect AgentRank to Cursor, VS Code, Cline, Claude Code, and Windsurf. One install and your AI coding assistant queries live ranked tool data instead of guessing."
+  keywords="AgentRank integrations, Cursor MCP, VS Code MCP, Cline MCP, Claude Code MCP, agentrank-mcp-server, AI coding assistant tool lookup"
+  canonicalUrl="https://agentrank-ai.com/integrations/"
+>
+  <div class="page-header">
+    <h1>Integrations</h1>
+    <p class="subtitle">Connect AgentRank to your AI coding assistant. One install — your agent queries 25,000+ live ranked tools instead of guessing from stale training data.</p>
+  </div>
+
+  <nav class="quick-nav">
+    <a href="#cursor">Cursor</a>
+    <a href="#vscode">VS Code</a>
+    <a href="#cline">Cline</a>
+    <a href="#claude-code">Claude Code</a>
+    <a href="#windsurf">Windsurf</a>
+    <a href="#claude-desktop">Claude Desktop</a>
+  </nav>
+
+  <section class="how-it-works">
+    <h2 class="section-header">How it works</h2>
+    <p>AgentRank publishes an MCP server (<code>agentrank-mcp-server</code> on npm) that gives any MCP-capable agent direct access to the live ranked index. Platforms that don't support MCP natively get an instruction file that teaches the AI to query the REST API instead. Either way, your agent stops guessing and starts looking things up.</p>
+  </section>
+
+  <!-- CURSOR -->
+  <section class="platform" id="cursor">
+    <div class="platform-header">
+      <h2>Cursor</h2>
+      <span class="badge badge-mcp">MCP native</span>
+    </div>
+    <p class="platform-desc">Cursor supports MCP servers natively. Install once and Cursor will use AgentRank automatically when you ask for tool recommendations.</p>
+
+    <h3 class="method-label">Option 1 — MCP server (recommended)</h3>
+    <p class="method-desc">Add to <code>~/.cursor/mcp.json</code> for global use, or <code>.cursor/mcp.json</code> in your project for project-scoped access.</p>
+    <pre class="code-block">mkdir -p .cursor && curl -o .cursor/mcp.json https://raw.githubusercontent.com/superlowburn/agentrank/main/skill/agentrank/cursor/mcp.json</pre>
+
+    <details class="show-config">
+      <summary>Show config</summary>
+      <pre class="code-block">{`{
+  "mcpServers": {
+    "agentrank": {
+      "command": "npx",
+      "args": ["-y", "agentrank-mcp-server"]
+    }
+  }
+}`}</pre>
+    </details>
+
+    <h3 class="method-label">Option 2 — Rules file</h3>
+    <p class="method-desc">If you prefer cursor rules over MCP, copy <code>.cursorrules</code> to your project root or <code>~/.cursorrules</code> for global use.</p>
+    <pre class="code-block">curl -o .cursorrules https://raw.githubusercontent.com/superlowburn/agentrank/main/skill/agentrank/cursor/.cursorrules</pre>
+
+    <p class="method-desc">For the new <code>.cursor/rules/</code> format (Cursor 0.43+):</p>
+    <pre class="code-block">mkdir -p .cursor/rules && curl -o .cursor/rules/agentrank.mdc https://raw.githubusercontent.com/superlowburn/agentrank/main/skill/agentrank/cursor/rules/agentrank.mdc</pre>
+  </section>
+
+  <!-- VS CODE -->
+  <section class="platform" id="vscode">
+    <div class="platform-header">
+      <h2>VS Code + Copilot</h2>
+      <span class="badge badge-mcp">MCP native</span>
+    </div>
+    <p class="platform-desc">VS Code 1.99+ supports MCP servers in agent mode. Add AgentRank to your workspace and Copilot will query it automatically.</p>
+
+    <h3 class="method-label">Option 1 — MCP server (recommended)</h3>
+    <p class="method-desc">Add to <code>.vscode/mcp.json</code> in your project. VS Code picks this up automatically in agent mode.</p>
+    <pre class="code-block">mkdir -p .vscode && curl -o .vscode/mcp.json https://raw.githubusercontent.com/superlowburn/agentrank/main/skill/agentrank/vscode/mcp.json</pre>
+
+    <details class="show-config">
+      <summary>Show config</summary>
+      <pre class="code-block">{`{
+  "inputs": [],
+  "servers": {
+    "agentrank": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "agentrank-mcp-server"]
+    }
+  }
+}`}</pre>
+    </details>
+
+    <h3 class="method-label">Option 2 — Copilot instructions</h3>
+    <p class="method-desc">Copy <code>copilot-instructions.md</code> to <code>.github/</code> — Copilot reads this automatically for workspace-level context.</p>
+    <pre class="code-block">mkdir -p .github && curl -o .github/copilot-instructions.md https://raw.githubusercontent.com/superlowburn/agentrank/main/skill/agentrank/vscode/copilot-instructions.md</pre>
+  </section>
+
+  <!-- CLINE -->
+  <section class="platform" id="cline">
+    <div class="platform-header">
+      <h2>Cline</h2>
+      <span class="badge badge-mcp">MCP native</span>
+    </div>
+    <p class="platform-desc">Cline supports MCP servers. Add AgentRank via the Cline MCP settings in VS Code, or drop a rules file for instruction-based access.</p>
+
+    <h3 class="method-label">Option 1 — MCP server (recommended)</h3>
+    <p class="method-desc">Open Cline in VS Code, go to <strong>MCP Servers</strong>, click <strong>Configure MCP Servers</strong>, and add the following to <code>cline_mcp_settings.json</code>:</p>
+    <pre class="code-block">{`{
+  "mcpServers": {
+    "agentrank": {
+      "command": "npx",
+      "args": ["-y", "agentrank-mcp-server"],
+      "disabled": false,
+      "autoApprove": ["search", "lookup", "get_badge_url"]
+    }
+  }
+}`}</pre>
+
+    <h3 class="method-label">Option 2 — Rules file</h3>
+    <p class="method-desc">Copy <code>.clinerules</code> to your project root or <code>~/.clinerules</code> for global use.</p>
+    <pre class="code-block">curl -o .clinerules https://raw.githubusercontent.com/superlowburn/agentrank/main/skill/agentrank/cline/.clinerules</pre>
+  </section>
+
+  <!-- CLAUDE CODE -->
+  <section class="platform" id="claude-code">
+    <div class="platform-header">
+      <h2>Claude Code</h2>
+      <span class="badge badge-mcp">MCP native</span>
+    </div>
+    <p class="platform-desc">Claude Code has native MCP support. One command installs the server globally.</p>
+
+    <h3 class="method-label">MCP server</h3>
+    <pre class="code-block">claude mcp add agentrank -- npx -y agentrank-mcp-server</pre>
+
+    <p class="method-desc">Or install the skill (includes both MCP and instructions):</p>
+    <pre class="code-block">npx skills add superlowburn/agentrank --skill skill/agentrank</pre>
+  </section>
+
+  <!-- WINDSURF -->
+  <section class="platform" id="windsurf">
+    <div class="platform-header">
+      <h2>Windsurf</h2>
+      <span class="badge badge-rules">Rules file</span>
+    </div>
+    <p class="platform-desc">Windsurf uses <code>.windsurfrules</code> for AI instructions. Copy to your project root or global rules location.</p>
+
+    <h3 class="method-label">Rules file</h3>
+    <pre class="code-block">curl -o .windsurfrules https://raw.githubusercontent.com/superlowburn/agentrank/main/skill/agentrank/windsurf/.windsurfrules</pre>
+    <p class="method-desc">For global use, add to <code>~/.codeium/windsurf/memories/global_rules.md</code>.</p>
+  </section>
+
+  <!-- CLAUDE DESKTOP -->
+  <section class="platform" id="claude-desktop">
+    <div class="platform-header">
+      <h2>Claude Desktop</h2>
+      <span class="badge badge-mcp">MCP native</span>
+    </div>
+    <p class="platform-desc">Add to your Claude Desktop config to use AgentRank in any Claude Desktop conversation.</p>
+
+    <h3 class="method-label">MCP server</h3>
+    <p class="method-desc">Add to <code>~/Library/Application Support/Claude/claude_desktop_config.json</code> (macOS) or <code>%APPDATA%\Claude\claude_desktop_config.json</code> (Windows):</p>
+    <pre class="code-block">{`{
+  "mcpServers": {
+    "agentrank": {
+      "command": "npx",
+      "args": ["-y", "agentrank-mcp-server"]
+    }
+  }
+}`}</pre>
+    <p class="method-desc">Restart Claude Desktop after saving.</p>
+  </section>
+
+  <section class="tools-section">
+    <h2 class="section-header">Available tools</h2>
+    <p>Once installed, your agent has access to three tools:</p>
+    <div class="tools-grid">
+      <div class="tool-card">
+        <code class="tool-name">search</code>
+        <p class="tool-desc">Search 25,000+ MCP servers, agent tools, and skills by keyword. Returns scored results ranked by real GitHub signals.</p>
+        <p class="tool-example">e.g. "browser automation", "database", "slack"</p>
+      </div>
+      <div class="tool-card">
+        <code class="tool-name">lookup</code>
+        <p class="tool-desc">Check if a specific GitHub repository is in the index. Returns score, rank, and signal breakdown.</p>
+        <p class="tool-example">e.g. github.com/microsoft/playwright-mcp</p>
+      </div>
+      <div class="tool-card">
+        <code class="tool-name">get_badge_url</code>
+        <p class="tool-desc">Get an embeddable SVG badge showing a tool's AgentRank score. Paste into your README.</p>
+        <p class="tool-example">e.g. slug: "glama-playwright-mcp-server"</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="footer-links">
+    <a href="/api-docs/">API docs</a>
+    <span class="sep">&bull;</span>
+    <a href="https://github.com/superlowburn/agentrank/tree/main/skill/agentrank" target="_blank" rel="noopener">All configs on GitHub</a>
+    <span class="sep">&bull;</span>
+    <a href="https://www.npmjs.com/package/agentrank-mcp-server" target="_blank" rel="noopener">npm package</a>
+  </section>
+</Base>
+
+<style>
+  .page-header {
+    margin-bottom: 1.5rem;
+  }
+
+  .page-header h1 {
+    font-size: 1.6rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+  }
+
+  .subtitle {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    max-width: 600px;
+  }
+
+  .quick-nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 2rem;
+    padding: 0.75rem;
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+  }
+
+  .quick-nav a {
+    font-size: 0.8rem;
+    padding: 0.25rem 0.6rem;
+    border-radius: 3px;
+    color: var(--text-muted);
+    text-decoration: none;
+  }
+
+  .quick-nav a:hover {
+    color: var(--accent);
+    text-decoration: none;
+  }
+
+  .how-it-works {
+    margin-bottom: 2rem;
+  }
+
+  .how-it-works p {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    line-height: 1.6;
+  }
+
+  .how-it-works code {
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    padding: 0.1rem 0.3rem;
+    border-radius: 2px;
+    font-size: 0.8rem;
+  }
+
+  .section-header {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-muted);
+    margin-top: 0;
+    margin-bottom: 0.75rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .platform {
+    margin-bottom: 3rem;
+    padding-left: 1rem;
+    border-left: 3px solid var(--accent);
+  }
+
+  .platform-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.4rem;
+  }
+
+  .platform-header h2 {
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin: 0;
+  }
+
+  .badge {
+    font-size: 0.65rem;
+    font-weight: 700;
+    padding: 0.15rem 0.5rem;
+    border-radius: 3px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  .badge-mcp {
+    background: var(--accent);
+    color: var(--bg);
+  }
+
+  .badge-rules {
+    background: var(--bg-surface);
+    color: var(--text-muted);
+    border: 1px solid var(--border);
+  }
+
+  .platform-desc {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    margin-bottom: 1.25rem;
+    line-height: 1.5;
+  }
+
+  .method-label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-muted);
+    margin-top: 1.25rem;
+    margin-bottom: 0.4rem;
+  }
+
+  .method-desc {
+    font-size: 0.82rem;
+    color: var(--text-muted);
+    margin-bottom: 0.4rem;
+    line-height: 1.5;
+  }
+
+  .method-desc code, .platform-desc code {
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    padding: 0.1rem 0.3rem;
+    border-radius: 2px;
+    font-size: 0.75rem;
+  }
+
+  .code-block {
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 0.75rem 1rem;
+    font-size: 0.75rem;
+    overflow-x: auto;
+    white-space: pre;
+    line-height: 1.5;
+    margin-bottom: 0.5rem;
+    font-family: 'Cascadia Code', 'Source Code Pro', Menlo, monospace;
+  }
+
+  .show-config {
+    margin-bottom: 0.75rem;
+  }
+
+  .show-config summary {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    cursor: pointer;
+    user-select: none;
+    margin-bottom: 0.4rem;
+  }
+
+  .show-config summary:hover {
+    color: var(--accent);
+  }
+
+  .tools-section {
+    margin-bottom: 2.5rem;
+  }
+
+  .tools-section > p {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    margin-bottom: 1rem;
+  }
+
+  .tools-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1rem;
+  }
+
+  .tool-card {
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 1rem 1.25rem;
+  }
+
+  .tool-name {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--accent);
+    margin-bottom: 0.5rem;
+  }
+
+  .tool-desc {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    margin-bottom: 0.4rem;
+    line-height: 1.5;
+  }
+
+  .tool-example {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    font-style: italic;
+    margin: 0;
+  }
+
+  .footer-links {
+    font-size: 0.82rem;
+    color: var(--text-muted);
+    margin-bottom: 2rem;
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  .footer-links a {
+    color: var(--accent);
+    text-decoration: none;
+  }
+
+  .footer-links a:hover {
+    text-decoration: underline;
+  }
+
+  .sep {
+    color: var(--border);
+  }
+
+  @media (max-width: 480px) {
+    .platform {
+      padding-left: 0.75rem;
+    }
+
+    .platform-header {
+      flex-wrap: wrap;
+    }
+
+    .tools-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

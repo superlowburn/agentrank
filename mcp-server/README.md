@@ -8,6 +8,73 @@ Your AI's training data is months old. It can't tell you if a tool was abandoned
 
 ## Quick Start
 
+### Claude Code
+
+```bash
+claude mcp add agentrank -- npx -y agentrank-mcp-server
+```
+
+### Cursor
+
+Add to `~/.cursor/mcp.json` (global) or `.cursor/mcp.json` (project):
+
+```json
+{
+  "mcpServers": {
+    "agentrank": {
+      "command": "npx",
+      "args": ["-y", "agentrank-mcp-server"]
+    }
+  }
+}
+```
+
+Or copy with curl:
+
+```bash
+mkdir -p .cursor && curl -o .cursor/mcp.json https://raw.githubusercontent.com/superlowburn/agentrank/main/skill/agentrank/cursor/mcp.json
+```
+
+### VS Code (1.99+)
+
+Add to `.vscode/mcp.json` in your project:
+
+```json
+{
+  "inputs": [],
+  "servers": {
+    "agentrank": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "agentrank-mcp-server"]
+    }
+  }
+}
+```
+
+Or copy with curl:
+
+```bash
+mkdir -p .vscode && curl -o .vscode/mcp.json https://raw.githubusercontent.com/superlowburn/agentrank/main/skill/agentrank/vscode/mcp.json
+```
+
+### Cline
+
+Open Cline in VS Code → **MCP Servers** → **Configure MCP Servers** and add:
+
+```json
+{
+  "mcpServers": {
+    "agentrank": {
+      "command": "npx",
+      "args": ["-y", "agentrank-mcp-server"],
+      "disabled": false,
+      "autoApprove": ["search", "lookup", "get_badge_url"]
+    }
+  }
+}
+```
+
 ### Claude Desktop
 
 Add to your Claude Desktop config (`~/Library/Application Support/Claude/claude_desktop_config.json`):
@@ -23,15 +90,7 @@ Add to your Claude Desktop config (`~/Library/Application Support/Claude/claude_
 }
 ```
 
-### Claude Code
-
-```bash
-claude mcp add agentrank -- npx -y agentrank-mcp-server
-```
-
-### Cursor / Windsurf
-
-Add to your MCP configuration:
+### Windsurf / other MCP clients
 
 ```json
 {
@@ -41,6 +100,8 @@ Add to your MCP configuration:
   }
 }
 ```
+
+See [agentrank-ai.com/integrations](https://agentrank-ai.com/integrations/) for full platform guides including rules files for non-MCP editors.
 
 ## Tools
 
