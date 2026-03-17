@@ -1,0 +1,391 @@
+---
+export const prerender = true;
+
+import Base from '../layouts/Base.astro';
+import { getTopTools } from '../data/ranked';
+import { getTopSkills } from '../data/ranked-skills';
+import { toSlug, scoreColor } from '../data/tools';
+import { toSkillSlug } from '../data/skills';
+
+const SITE_URL = 'https://agentrank-ai.com';
+const TOP_N = 100;
+
+const tools = getTopTools(TOP_N);
+const skills = getTopSkills(TOP_N);
+
+type BadgeItem = {
+  type: 'tool' | 'skill';
+  name: string;
+  slug: string;
+  score: number;
+  rank: number;
+  badgeUrl: string;
+  pageUrl: string;
+};
+
+const toolItems: BadgeItem[] = tools.map((t) => {
+  const slug = toSlug(t.full_name);
+  return {
+    type: 'tool',
+    name: t.full_name,
+    slug,
+    score: t.score,
+    rank: t.rank,
+    badgeUrl: `${SITE_URL}/api/badge/tool/${slug}`,
+    pageUrl: `${SITE_URL}/tool/${slug}/`,
+  };
+});
+
+const skillItems: BadgeItem[] = skills.map((s) => {
+  const slug = toSkillSlug(s.slug);
+  return {
+    type: 'skill',
+    name: s.name || s.slug,
+    slug,
+    score: s.score,
+    rank: s.rank,
+    badgeUrl: `${SITE_URL}/api/badge/skill/${slug}`,
+    pageUrl: `${SITE_URL}/skill/${slug}/`,
+  };
+});
+---
+
+<Base
+  title="Embed AgentRank Badge — Add to Your README"
+  description="Add an AgentRank score badge to your README or website. Copy the Markdown or HTML snippet and paste it into your repo. Badges update daily."
+  keywords="AgentRank badge, MCP server badge, agent tool badge, README badge, shields.io alternative"
+  canonicalUrl={`${SITE_URL}/embed/`}
+>
+  <div class="embed-header">
+    <h1>Badge Embed</h1>
+    <p class="subtitle">Add an AgentRank score badge to your README or docs. Badges update daily.</p>
+    <div class="example-badge">
+      <img src="/api/badge/tool/microsoft--playwright-mcp" alt="AgentRank badge example" height="20" />
+    </div>
+  </div>
+
+  <div class="tabs" id="tabs">
+    <button class="tab active" data-tab="tools">Tools</button>
+    <button class="tab" data-tab="skills">Skills</button>
+  </div>
+
+  <div class="controls">
+    <input type="text" id="search" placeholder="Search by name..." autocomplete="off" />
+    <span class="count" id="count-label"></span>
+  </div>
+
+  <div id="tab-tools" class="tab-panel">
+    <div class="item-list" id="tools-list">
+      {toolItems.map((item) => (
+        <div class="item" data-name={item.name.toLowerCase()} data-score={item.score}>
+          <div class="item-top">
+            <div class="item-info">
+              <span class="rank">#{item.rank}</span>
+              <a href={item.pageUrl} class="item-name">{item.name}</a>
+              <span class="score" style={`color: ${scoreColor(item.score)}`}>{item.score.toFixed(0)}</span>
+            </div>
+            <div class="badge-preview">
+              <img src={item.badgeUrl} alt={`AgentRank score for ${item.name}`} height="20" loading="lazy" />
+            </div>
+          </div>
+          <div class="snippets">
+            <div class="snippet-row">
+              <span class="snippet-label">MD</span>
+              <code class="snippet-code" data-copy={`[![AgentRank](${item.badgeUrl})](${item.pageUrl})`}>[![AgentRank]({item.badgeUrl})]({item.pageUrl})</code>
+              <button class="copy-btn" data-copy={`[![AgentRank](${item.badgeUrl})](${item.pageUrl})`}>Copy</button>
+            </div>
+            <div class="snippet-row">
+              <span class="snippet-label">HTML</span>
+              <code class="snippet-code" data-copy={`<a href="${item.pageUrl}"><img src="${item.badgeUrl}" alt="AgentRank"></a>`}>&lt;a href="{item.pageUrl}"&gt;&lt;img src="{item.badgeUrl}" alt="AgentRank"&gt;&lt;/a&gt;</code>
+              <button class="copy-btn" data-copy={`<a href="${item.pageUrl}"><img src="${item.badgeUrl}" alt="AgentRank"></a>`}>Copy</button>
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+
+  <div id="tab-skills" class="tab-panel hidden">
+    <div class="item-list" id="skills-list">
+      {skillItems.map((item) => (
+        <div class="item" data-name={item.name.toLowerCase()} data-score={item.score}>
+          <div class="item-top">
+            <div class="item-info">
+              <span class="rank">#{item.rank}</span>
+              <a href={item.pageUrl} class="item-name">{item.name}</a>
+              <span class="score" style={`color: ${scoreColor(item.score)}`}>{item.score.toFixed(0)}</span>
+            </div>
+            <div class="badge-preview">
+              <img src={item.badgeUrl} alt={`AgentRank score for ${item.name}`} height="20" loading="lazy" />
+            </div>
+          </div>
+          <div class="snippets">
+            <div class="snippet-row">
+              <span class="snippet-label">MD</span>
+              <code class="snippet-code" data-copy={`[![AgentRank](${item.badgeUrl})](${item.pageUrl})`}>[![AgentRank]({item.badgeUrl})]({item.pageUrl})</code>
+              <button class="copy-btn" data-copy={`[![AgentRank](${item.badgeUrl})](${item.pageUrl})`}>Copy</button>
+            </div>
+            <div class="snippet-row">
+              <span class="snippet-label">HTML</span>
+              <code class="snippet-code" data-copy={`<a href="${item.pageUrl}"><img src="${item.badgeUrl}" alt="AgentRank"></a>`}>&lt;a href="{item.pageUrl}"&gt;&lt;img src="{item.badgeUrl}" alt="AgentRank"&gt;&lt;/a&gt;</code>
+              <button class="copy-btn" data-copy={`<a href="${item.pageUrl}"><img src="${item.badgeUrl}" alt="AgentRank"></a>`}>Copy</button>
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+
+  <script>
+    // Tabs
+    const tabs = document.querySelectorAll<HTMLButtonElement>('.tab');
+    const panels = document.querySelectorAll<HTMLElement>('.tab-panel');
+    let activeTab = 'tools';
+
+    function updateCount() {
+      const panel = document.getElementById(`tab-${activeTab}`);
+      if (!panel) return;
+      const visible = panel.querySelectorAll('.item:not([hidden])').length;
+      const total = panel.querySelectorAll('.item').length;
+      const label = document.getElementById('count-label');
+      if (label) label.textContent = `${visible} of ${total}`;
+    }
+
+    tabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        const target = tab.dataset.tab!;
+        activeTab = target;
+        tabs.forEach(t => t.classList.toggle('active', t.dataset.tab === target));
+        panels.forEach(p => p.classList.toggle('hidden', p.id !== `tab-${target}`));
+        const searchInput = document.getElementById('search') as HTMLInputElement;
+        if (searchInput) filterItems(searchInput.value);
+        updateCount();
+      });
+    });
+
+    // Search
+    function filterItems(query: string) {
+      const q = query.toLowerCase().trim();
+      const panel = document.getElementById(`tab-${activeTab}`);
+      if (!panel) return;
+      panel.querySelectorAll<HTMLElement>('.item').forEach(item => {
+        const name = item.dataset.name || '';
+        item.hidden = q.length > 0 && !name.includes(q);
+      });
+      updateCount();
+    }
+
+    const searchInput = document.getElementById('search') as HTMLInputElement;
+    if (searchInput) {
+      searchInput.addEventListener('input', () => filterItems(searchInput.value));
+    }
+
+    // Copy buttons
+    document.querySelectorAll<HTMLButtonElement>('.copy-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const text = btn.dataset.copy || '';
+        navigator.clipboard.writeText(text).then(() => {
+          const orig = btn.textContent;
+          btn.textContent = 'Copied!';
+          setTimeout(() => { btn.textContent = orig; }, 2000);
+        });
+      });
+    });
+
+    updateCount();
+  </script>
+</Base>
+
+<style>
+  .embed-header {
+    margin-bottom: 2rem;
+  }
+
+  h1 {
+    font-size: 1.4rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+  }
+
+  .subtitle {
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .example-badge img {
+    display: block;
+  }
+
+  .tabs {
+    display: flex;
+    gap: 0.25rem;
+    margin-bottom: 1rem;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 0;
+  }
+
+  .tab {
+    background: none;
+    border: none;
+    border-bottom: 2px solid transparent;
+    padding: 0.35rem 0.75rem;
+    font-size: 0.8rem;
+    font-family: inherit;
+    cursor: pointer;
+    color: var(--text-muted);
+    margin-bottom: -1px;
+  }
+
+  .tab.active {
+    color: var(--accent);
+    border-bottom-color: var(--accent);
+  }
+
+  .tab:hover:not(.active) {
+    color: var(--text);
+  }
+
+  .controls {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  #search {
+    flex: 1;
+    max-width: 320px;
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    padding: 0.35rem 0.6rem;
+    font-size: 0.8rem;
+    font-family: inherit;
+    color: var(--text);
+    outline: none;
+  }
+
+  #search:focus {
+    border-color: var(--accent);
+  }
+
+  .count {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+  }
+
+  .tab-panel.hidden {
+    display: none;
+  }
+
+  .item-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .item {
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 0.75rem;
+  }
+
+  .item-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+    gap: 1rem;
+  }
+
+  .item-info {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-width: 0;
+  }
+
+  .rank {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    flex-shrink: 0;
+  }
+
+  .item-name {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--text);
+    text-decoration: none;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .item-name:hover {
+    color: var(--accent);
+  }
+
+  .score {
+    font-size: 0.75rem;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+
+  .badge-preview {
+    flex-shrink: 0;
+  }
+
+  .snippets {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+  }
+
+  .snippet-row {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  .snippet-label {
+    font-size: 0.65rem;
+    color: var(--text-muted);
+    width: 2rem;
+    flex-shrink: 0;
+    text-align: right;
+  }
+
+  .snippet-code {
+    flex: 1;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    padding: 0.25rem 0.4rem;
+    font-size: 0.65rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: var(--text-muted);
+    cursor: default;
+  }
+
+  .copy-btn {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    padding: 0.25rem 0.5rem;
+    font-size: 0.65rem;
+    cursor: pointer;
+    color: var(--text-muted);
+    font-family: inherit;
+    flex-shrink: 0;
+    white-space: nowrap;
+  }
+
+  .copy-btn:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+</style>
