@@ -28,7 +28,14 @@ const itemListJsonLd = {
 };
 ---
 
-<Base title="AgentRank — Every MCP server & agent tool, ranked" activeTab="tools" canonicalUrl="https://agentrank-ai.com/tools/" jsonLd={itemListJsonLd}>
+<Base
+  title="AgentRank — Every MCP server & agent tool, ranked"
+  description={`Top ${totalCount.toLocaleString('en-US')} MCP servers and agent tools ranked by stars, freshness, issue health, contributors, and dependents. Find the best MCP servers for Claude, Cursor, and Windsurf.`}
+  keywords="best MCP servers, MCP server rankings, top MCP servers, agent tool rankings, Claude MCP servers, Cursor MCP, model context protocol"
+  activeTab="tools"
+  canonicalUrl="https://agentrank-ai.com/tools/"
+  jsonLd={itemListJsonLd}
+>
   <div class="controls">
     <input type="text" id="search" placeholder="Search tools..." autocomplete="off" />
     <select id="category-filter">

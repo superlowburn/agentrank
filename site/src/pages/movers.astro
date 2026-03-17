@@ -9,7 +9,13 @@ import { toSlug } from '../data/tools';
 const movers = getMovers();
 ---
 
-<Base title="AgentRank — Weekly Movers" activeTab="movers" canonicalUrl="https://agentrank-ai.com/movers/">
+<Base
+  title="AgentRank — Weekly Movers"
+  description="See which MCP servers and AI agent tools are rising and falling in the AgentRank index this week. Track momentum in the agent tool ecosystem."
+  keywords="MCP server trends, agent tool rankings, rising MCP servers, weekly movers, AI tools ranking changes"
+  activeTab="movers"
+  canonicalUrl="https://agentrank-ai.com/movers/"
+>
   {!movers.has_data ? (
     <div class="empty-state">
       <h2>Weekly Movers</h2>

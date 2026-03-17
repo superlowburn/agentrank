@@ -28,9 +28,15 @@ const {
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonicalUrl || 'https://agentrank-ai.com'} />
     <meta property="og:type" content="website" />
-    <meta name="twitter:card" content="summary" />
+    <meta property="og:site_name" content="AgentRank" />
+    <meta property="og:image" content="https://agentrank-ai.com/og-image.png" />
+    <meta property="og:image:width" content="1500" />
+    <meta property="og:image:height" content="500" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@AgentRank_ai" />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content="https://agentrank-ai.com/og-image.png" />
     <title>{title}</title>
     <link rel="alternate" type="application/atom+xml" title="AgentRank Rankings" href="/feed.xml" />
     {keywords && <meta name="keywords" content={keywords} />}

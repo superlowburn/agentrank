@@ -44,7 +44,14 @@ const itemListJsonLd = {
 };
 ---
 
-<Base title="AgentRank — Google for AI agents" activeTab="skills" canonicalUrl="https://agentrank-ai.com/" jsonLd={[websiteJsonLd, itemListJsonLd]}>
+<Base
+  title="AgentRank — Google for AI agents"
+  description={`Discover and rank ${totalCount.toLocaleString('en-US')}+ AI skills, MCP servers, and agent tools. Scored daily from real signals. Install once and your AI automatically finds the best tool.`}
+  keywords="AI skills, MCP servers, agent tools, Claude skills, AI agent tools, best AI skills, skills.sh, Glama MCP, model context protocol skills"
+  activeTab="skills"
+  canonicalUrl="https://agentrank-ai.com/"
+  jsonLd={[websiteJsonLd, itemListJsonLd]}
+>
   <div class="install-banner">
     <div class="install-pitch">
       <strong>Your AI just got Google for tools.</strong>

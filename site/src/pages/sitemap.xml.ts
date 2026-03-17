@@ -7,7 +7,8 @@ const SITE = 'https://agentrank-ai.com';
 const STATIC_PAGES = [
   { path: '/', changefreq: 'daily' },
   { path: '/tools/', changefreq: 'daily' },
-  { path: '/agents/', changefreq: 'daily' },
+  { path: '/movers/', changefreq: 'daily' },
+  { path: '/agents/', changefreq: 'weekly' },
   { path: '/submit/', changefreq: 'weekly' },
   { path: '/api-docs/', changefreq: 'weekly' },
 ];
@@ -20,9 +21,10 @@ export const GET: APIRoute = async ({ locals }) => {
   const { env } = (locals as any).runtime;
   const db = env.DB;
 
-  const [toolRows, skillRows] = await Promise.all([
+  const [toolRows, skillRows, categoryRows] = await Promise.all([
     db.prepare('SELECT full_name FROM tools WHERE score IS NOT NULL').all(),
     db.prepare('SELECT slug FROM skills WHERE score IS NOT NULL').all(),
+    db.prepare('SELECT DISTINCT category FROM tools WHERE category IS NOT NULL AND score IS NOT NULL UNION SELECT DISTINCT category FROM skills WHERE category IS NOT NULL AND score IS NOT NULL').all(),
   ]);
 
   const today = new Date().toISOString().slice(0, 10);
@@ -49,6 +51,13 @@ export const GET: APIRoute = async ({ locals }) => {
     const slug = row.slug.replace(/\//g, '--').replace(/:/g, '-');
     urls += `  <url>
     <loc>${SITE}/skill/${escapeXml(slug)}/</loc>
+    <changefreq>weekly</changefreq>
+  </url>\n`;
+  }
+
+  for (const row of categoryRows.results as { category: string }[]) {
+    urls += `  <url>
+    <loc>${SITE}/category/${escapeXml(row.category)}/</loc>
     <changefreq>weekly</changefreq>
   </url>\n`;
   }
