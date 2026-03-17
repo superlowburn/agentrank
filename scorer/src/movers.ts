@@ -65,18 +65,14 @@ export function generateMovers(): void {
 
   const today = new Date().toISOString().slice(0, 10);
 
-  // Find the closest snapshot to 7 days ago
-  const targetDate = new Date();
-  targetDate.setDate(targetDate.getDate() - 7);
-  const targetStr = targetDate.toISOString().slice(0, 10);
-
+  // Find the most recent snapshot older than today (best available comparison baseline)
   const comparisonRow = db.prepare(`
     SELECT DISTINCT snapshot_date
     FROM score_snapshots
-    WHERE snapshot_date <= ? AND snapshot_date != ?
-    ORDER BY ABS(julianday(snapshot_date) - julianday(?))
+    WHERE snapshot_date < ?
+    ORDER BY snapshot_date DESC
     LIMIT 1
-  `).get(targetStr, today, targetStr) as { snapshot_date: string } | undefined;
+  `).get(today) as { snapshot_date: string } | undefined;
 
   if (!comparisonRow) {
     console.log("No comparison snapshot found. Writing empty movers data.");

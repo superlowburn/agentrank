@@ -1,0 +1,193 @@
+{
+  "date": "2026-03-17",
+  "generated_at": "2026-03-17T21:12:23.726Z",
+  "stats": {
+    "total_tools": 25632,
+    "total_skills": 3124,
+    "new_tools_this_week": 0,
+    "avg_score": 29.6
+  },
+  "top10": [
+    {
+      "rank": 1,
+      "full_name": "CoplayDev/unity-mcp",
+      "score": 98.67,
+      "stars": 7003,
+      "language": "C#"
+    },
+    {
+      "rank": 2,
+      "full_name": "microsoft/azure-devops-mcp",
+      "score": 97.17,
+      "stars": 1406,
+      "language": "TypeScript"
+    },
+    {
+      "rank": 3,
+      "full_name": "laravel/boost",
+      "score": 96.94,
+      "stars": 3333,
+      "language": "PHP"
+    },
+    {
+      "rank": 4,
+      "full_name": "CoderGamester/mcp-unity",
+      "score": 96.37,
+      "stars": 1412,
+      "language": "C#"
+    },
+    {
+      "rank": 5,
+      "full_name": "mark3labs/mcp-go",
+      "score": 96.29,
+      "stars": 8353,
+      "language": "Go"
+    },
+    {
+      "rank": 6,
+      "full_name": "Pimzino/spec-workflow-mcp",
+      "score": 96.02,
+      "stars": 3999,
+      "language": "TypeScript"
+    },
+    {
+      "rank": 7,
+      "full_name": "PrefectHQ/fastmcp",
+      "score": 94.73,
+      "stars": 23659,
+      "language": "Python"
+    },
+    {
+      "rank": 8,
+      "full_name": "zcaceres/markdownify-mcp",
+      "score": 94.73,
+      "stars": 2449,
+      "language": "TypeScript"
+    },
+    {
+      "rank": 9,
+      "full_name": "samanhappy/mcphub",
+      "score": 94.47,
+      "stars": 1876,
+      "language": "TypeScript"
+    },
+    {
+      "rank": 10,
+      "full_name": "perplexityai/modelcontextprotocol",
+      "score": 94.27,
+      "stars": 2016,
+      "language": "TypeScript"
+    }
+  ],
+  "gainers": [
+    {
+      "identifier": "CoderGamester/mcp-unity",
+      "name": "CoderGamester/mcp-unity",
+      "current_score": 96.37,
+      "previous_score": 63.58,
+      "score_change": 32.79,
+      "current_rank": 4,
+      "previous_rank": 43,
+      "rank_change": 39
+    },
+    {
+      "identifier": "homeassistant-ai/ha-mcp",
+      "name": "homeassistant-ai/ha-mcp",
+      "current_score": 93.13,
+      "previous_score": 61.06,
+      "score_change": 32.07,
+      "current_rank": 16,
+      "previous_rank": 72,
+      "rank_change": 56
+    },
+    {
+      "identifier": "microsoft/azure-devops-mcp",
+      "name": "microsoft/azure-devops-mcp",
+      "current_score": 97.17,
+      "previous_score": 65.17,
+      "score_change": 32,
+      "current_rank": 2,
+      "previous_rank": 32,
+      "rank_change": 30
+    },
+    {
+      "identifier": "samanhappy/mcphub",
+      "name": "samanhappy/mcphub",
+      "current_score": 94.47,
+      "previous_score": 62.56,
+      "score_change": 31.91,
+      "current_rank": 9,
+      "previous_rank": 50,
+      "rank_change": 41
+    },
+    {
+      "identifier": "jgravelle/jcodemunch-mcp",
+      "name": "jgravelle/jcodemunch-mcp",
+      "current_score": 93.09,
+      "previous_score": 61.28,
+      "score_change": 31.81,
+      "current_rank": 18,
+      "previous_rank": 68,
+      "rank_change": 50
+    }
+  ],
+  "losers": [],
+  "new_entries": [],
+  "most_active": [
+    {
+      "full_name": "CoplayDev/unity-mcp",
+      "stars": 7003,
+      "score": 98.67,
+      "last_commit_at": "2026-03-12T05:55:17Z"
+    },
+    {
+      "full_name": "microsoft/azure-devops-mcp",
+      "stars": 1406,
+      "score": 97.17,
+      "last_commit_at": "2026-03-12T19:03:03Z"
+    },
+    {
+      "full_name": "laravel/boost",
+      "stars": 3333,
+      "score": 96.94,
+      "last_commit_at": "2026-03-13T09:56:18Z"
+    },
+    {
+      "full_name": "CoderGamester/mcp-unity",
+      "stars": 1412,
+      "score": 96.37,
+      "last_commit_at": "2026-03-10T22:38:08Z"
+    },
+    {
+      "full_name": "mark3labs/mcp-go",
+      "stars": 8353,
+      "score": 96.29,
+      "last_commit_at": "2026-03-11T01:48:38Z"
+    }
+  ],
+  "languages": [
+    {
+      "language": "Python",
+      "count": 9874
+    },
+    {
+      "language": "TypeScript",
+      "count": 7003
+    },
+    {
+      "language": "JavaScript",
+      "count": 3100
+    },
+    {
+      "language": "Go",
+      "count": 1227
+    },
+    {
+      "language": "Rust",
+      "count": 669
+    }
+  ],
+  "tweet": "This week in MCP: 5 tools gained score.\n\nBiggest riser: CoderGamester/mcp-unity (+32.79 pts, now #4)\n\nFull report: agentrank-ai.com/blog/this-week-in-mcp-2026-03-17/",
+  "has_movers_data": true,
+  "movers_comparison_date": "2026-03-16"
+}

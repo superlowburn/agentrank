@@ -10,7 +10,7 @@
 AgentRank
 
 ### Tagline (60 chars max)
-`Google for AI agents. 25,000+ tools ranked daily.`
+`Google PageRank for AI agents. 25,000+ tools ranked daily.`
 (50 chars)
 
 **Alternates:**
@@ -145,7 +145,7 @@ Happy to answer any questions. Thanks for checking it out.
 ```
 Just launched on Product Hunt.
 
-AgentRank: Google for AI agents.
+AgentRank: Google PageRank for AI agents.
 
 Install one skill → your AI automatically searches 25,000+ live-ranked MCP servers whenever it needs one.
 

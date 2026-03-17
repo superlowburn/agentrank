@@ -6,7 +6,7 @@ import { getAllTools } from '../../data/ranked';
 import { getAllSkills } from '../../data/ranked-skills';
 import { toSlug, formatStars, relativeTime, scoreColor } from '../../data/tools';
 import { toSkillSlug, formatInstalls, sourceLabel } from '../../data/skills';
-import { CATEGORIES } from '../../data/content-gen';
+import { CATEGORIES, CATEGORY_CONTENT } from '../../data/content-gen';
 
 // Language-based virtual categories
 const LANGUAGE_CATEGORIES: Record<string, string> = {
@@ -51,6 +51,7 @@ export function getStaticPaths() {
 const { slug } = Astro.params;
 const isLanguageSlug = slug! in LANGUAGE_CATEGORIES;
 const label = ALL_CATEGORY_LABELS[slug!] || slug!;
+const content = !isLanguageSlug ? CATEGORY_CONTENT[slug!] : undefined;
 
 const allTools = isLanguageSlug
   ? getAllTools().filter((t) => t.language?.toLowerCase() === slug)
@@ -62,6 +63,19 @@ const allSkills = isLanguageSlug
 
 const pageUrl = `https://agentrank-ai.com/category/${slug}/`;
 const totalCount = allTools.length + allSkills.length;
+
+// Related categories: resolve labels for display
+const relatedCategoryEntries = (content?.relatedCategories || [])
+  .map((cat) => ({ slug: cat, label: ALL_CATEGORY_LABELS[cat] || cat }))
+  .filter((c) => c.label);
+
+// Meta title/description: use content override if available, otherwise generate
+const metaTitle = content?.metaTitle
+  ?? `Best ${label} MCP Servers & Agent Tools — AgentRank`;
+const metaDescription = content?.metaDescription
+  ?? `Top ${label} MCP servers, agent tools, and AI skills ranked by stars, freshness, and real usage signals. ${totalCount} ${label} tools and skills indexed.`;
+const metaKeywords = content?.keywords
+  ?? `${label} MCP servers, best ${label} agent tools, ${label} AI skills, top ${label} tools`;
 
 const breadcrumbJsonLd = {
   '@context': 'https://schema.org',
@@ -82,7 +96,7 @@ const breadcrumbJsonLd = {
     {
       '@type': 'ListItem',
       position: 3,
-      name: label,
+      name: content?.heading ?? label,
       item: pageUrl,
     },
   ],
@@ -91,7 +105,8 @@ const breadcrumbJsonLd = {
 const categoryItemListJsonLd = totalCount > 0 ? {
   '@context': 'https://schema.org',
   '@type': 'ItemList',
-  name: `Top ${label} MCP Servers & Agent Tools`,
+  name: content?.heading ?? `Top ${label} MCP Servers & Agent Tools`,
+  description: content?.metaDescription,
   itemListOrder: 'https://schema.org/ItemListOrderDescending',
   numberOfItems: Math.min(totalCount, 10),
   itemListElement: [
@@ -116,21 +131,29 @@ const jsonLd = categoryItemListJsonLd
 ---
 
 <Base
-  title={`Best ${label} MCP Servers & Agent Tools — AgentRank`}
-  description={`Top ${label} MCP servers, agent tools, and AI skills ranked by stars, freshness, and real usage signals. ${totalCount} ${label} tools and skills indexed.`}
-  keywords={`${label} MCP servers, best ${label} agent tools, ${label} AI skills, top ${label} tools`}
+  title={metaTitle}
+  description={metaDescription}
+  keywords={metaKeywords}
   canonicalUrl={pageUrl}
   jsonLd={jsonLd}
 >
   <div class="breadcrumb">
-    <a href="/">AgentRank</a> / <a href="/category/">Categories</a> / <span>{label}</span>
+    <a href="/">AgentRank</a> / <a href="/category/">Categories</a> / <span>{content?.heading ?? label}</span>
   </div>
 
-  <h2 class="category-heading">{label}</h2>
+  <h2 class="category-heading">{content?.heading ?? label}</h2>
   <p class="category-sub">
     {allTools.length} tool{allTools.length !== 1 ? 's' : ''}
     {allSkills.length > 0 && <> &middot; {allSkills.length} skill{allSkills.length !== 1 ? 's' : ''}</>}
   </p>
+
+  {content?.intro && content.intro.length > 0 && (
+    <section class="intro-section">
+      {content.intro.map((para) => (
+        <p class="intro-para">{para}</p>
+      ))}
+    </section>
+  )}
 
   {allTools.length > 0 && (
     <section>
@@ -206,6 +229,20 @@ const jsonLd = categoryItemListJsonLd
       </div>
     </section>
   )}
+
+  {relatedCategoryEntries.length > 0 && (
+    <section class="related-section">
+      <h3 class="section-heading">Related Categories</h3>
+      <div class="related-grid">
+        {relatedCategoryEntries.map((cat) => (
+          <a href={`/category/${cat.slug}/`} class="related-card">
+            <span class="related-label">{cat.label}</span>
+            <span class="related-arrow">→</span>
+          </a>
+        ))}
+      </div>
+    </section>
+  )}
 </Base>
 
 <style>
@@ -232,7 +269,23 @@ const jsonLd = categoryItemListJsonLd
   .category-sub {
     color: var(--text-muted);
     font-size: 0.85rem;
-    margin-bottom: 2rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .intro-section {
+    margin-bottom: 2.5rem;
+    max-width: 72ch;
+  }
+
+  .intro-para {
+    font-size: 0.9rem;
+    line-height: 1.7;
+    color: var(--text);
+    margin-bottom: 1rem;
+  }
+
+  .intro-para:last-child {
+    margin-bottom: 0;
   }
 
   section {
@@ -322,10 +375,54 @@ const jsonLd = categoryItemListJsonLd
     color: var(--text-muted);
   }
 
+  .related-section {
+    margin-top: 1rem;
+  }
+
+  .related-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .related-card {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.4rem 0.75rem;
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    font-size: 0.82rem;
+    color: var(--text);
+    text-decoration: none;
+    transition: border-color 0.15s, color 0.15s;
+  }
+
+  .related-card:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  .related-arrow {
+    color: var(--text-muted);
+    font-size: 0.75rem;
+  }
+
+  .related-card:hover .related-arrow {
+    color: var(--accent);
+  }
+
   @media (prefers-color-scheme: light) {
     .badge {
       background: #fef3c7;
       color: #92400e;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .related-grid {
+      flex-direction: column;
     }
   }
 </style>

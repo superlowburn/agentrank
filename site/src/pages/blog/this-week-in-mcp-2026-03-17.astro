@@ -1,0 +1,350 @@
+---
+export const prerender = true;
+
+import Base from '../../layouts/Base.astro';
+import BlogSubscribeCTA from '../../components/BlogSubscribeCTA.astro';
+
+const publishDate = '2026-03-17';
+---
+
+<Base
+  title="This Week in MCP — March 17, 2026 | AgentRank"
+  description="Weekly ecosystem report: 25,632 MCP tools indexed, biggest movers, and ecosystem stats for the week of March 17, 2026."
+  activeTab="blog"
+  keywords="this week in MCP 2026-03-17, MCP weekly report, MCP server updates March 17, 2026, AgentRank weekly"
+  canonicalUrl="https://agentrank-ai.com/blog/this-week-in-mcp-2026-03-17/"
+>
+  <article class="blog-post">
+    <header class="post-header">
+      <div class="breadcrumb"><a href="/blog/">Blog</a> <span>/</span></div>
+      <h1>This Week in MCP</h1>
+      <div class="post-meta">
+        <time datetime={publishDate}>March 17, 2026</time>
+        <span class="sep">&middot;</span>
+        <span>5 min read</span>
+        <span class="sep">&middot;</span>
+        <span>AgentRank Index</span>
+      </div>
+      <p class="lede">
+        Weekly data from the AgentRank index. Auto-generated from real GitHub signals every Monday.
+        
+        <strong>25,632 tools</strong> total,
+        and <strong>3,124 agent skills</strong> indexed.
+      </p>
+    </header>
+
+    <nav class="toc">
+      <strong>Contents</strong>
+      <ol>
+        <li><a href="#stats">Ecosystem stats</a></li>
+        <li><a href="#new-tools">New tools this week</a></li>
+        <li><a href="#gainers">Biggest gainers</a></li>
+        <li><a href="#drops">Biggest drops</a></li>
+        <li><a href="#top10">Current top 10</a></li>
+        <li><a href="#languages">Language breakdown</a></li>
+        <li><a href="#tweet">Tweet this week</a></li>
+      </ol>
+    </nav>
+
+    <section id="stats">
+      <h2>Ecosystem stats</h2>
+      <div class="stats-grid">
+        <div class="stat-box">
+          <div class="stat-value">25,632</div>
+          <div class="stat-label">Tools indexed</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-value">—</div>
+          <div class="stat-label">New this week</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-value">3,124</div>
+          <div class="stat-label">Skills indexed</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-value">29.6</div>
+          <div class="stat-label">Avg score (0&ndash;100)</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="new-tools">
+      <h2>New tools this week</h2>
+      <p>0 new repositories entered the index this week.</p>
+    </section>
+
+    <section id="gainers">
+      <h2>Biggest gainers</h2>
+      <p>Tools with the largest score increase compared to the previous week's snapshot.</p>
+
+      <table class="data-table movers-table">
+        <thead>
+          <tr>
+            <th>Repository</th>
+            <th class="num">Score change</th>
+            <th class="num">Prev rank</th>
+            <th class="num">Now</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="tool-cell"><a href="/tool/CoderGamester--mcp-unity/" class="tool-link">CoderGamester/mcp-unity</a></td>
+            <td class="num positive">+32.79</td>
+            <td class="num muted">#43</td>
+            <td class="num">#4</td>
+          </tr>
+          <tr>
+            <td class="tool-cell"><a href="/tool/homeassistant-ai--ha-mcp/" class="tool-link">homeassistant-ai/ha-mcp</a></td>
+            <td class="num positive">+32.07</td>
+            <td class="num muted">#72</td>
+            <td class="num">#16</td>
+          </tr>
+          <tr>
+            <td class="tool-cell"><a href="/tool/microsoft--azure-devops-mcp/" class="tool-link">microsoft/azure-devops-mcp</a></td>
+            <td class="num positive">+32</td>
+            <td class="num muted">#32</td>
+            <td class="num">#2</td>
+          </tr>
+          <tr>
+            <td class="tool-cell"><a href="/tool/samanhappy--mcphub/" class="tool-link">samanhappy/mcphub</a></td>
+            <td class="num positive">+31.91</td>
+            <td class="num muted">#50</td>
+            <td class="num">#9</td>
+          </tr>
+          <tr>
+            <td class="tool-cell"><a href="/tool/jgravelle--jcodemunch-mcp/" class="tool-link">jgravelle/jcodemunch-mcp</a></td>
+            <td class="num positive">+31.81</td>
+            <td class="num muted">#68</td>
+            <td class="num">#18</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="drops">
+      <h2>Biggest drops</h2>
+      <p>Tools with the largest score decrease compared to the previous week's snapshot.</p>
+      <p class="muted-note">No significant drops this week.</p>
+    </section>
+
+    <section id="top10">
+      <h2>Current top 10</h2>
+      <p>
+        The highest-scoring tools in the index right now, scored by stars, freshness,
+        issue health, contributors, and dependents.
+      </p>
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th class="num">#</th>
+            <th>Repository</th>
+            <th class="num">Score</th>
+            <th class="num">Stars</th>
+            <th>Language</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="num rank-cell">#1</td>
+            <td class="tool-cell"><a href="/tool/CoplayDev--unity-mcp/" class="tool-link">CoplayDev/unity-mcp</a></td>
+            <td class="num score-cell">98.67</td>
+            <td class="num">7,003</td>
+            <td class="lang-cell">C#</td>
+          </tr>
+          <tr>
+            <td class="num rank-cell">#2</td>
+            <td class="tool-cell"><a href="/tool/microsoft--azure-devops-mcp/" class="tool-link">microsoft/azure-devops-mcp</a></td>
+            <td class="num score-cell">97.17</td>
+            <td class="num">1,406</td>
+            <td class="lang-cell">TypeScript</td>
+          </tr>
+          <tr>
+            <td class="num rank-cell">#3</td>
+            <td class="tool-cell"><a href="/tool/laravel--boost/" class="tool-link">laravel/boost</a></td>
+            <td class="num score-cell">96.94</td>
+            <td class="num">3,333</td>
+            <td class="lang-cell">PHP</td>
+          </tr>
+          <tr>
+            <td class="num rank-cell">#4</td>
+            <td class="tool-cell"><a href="/tool/CoderGamester--mcp-unity/" class="tool-link">CoderGamester/mcp-unity</a></td>
+            <td class="num score-cell">96.37</td>
+            <td class="num">1,412</td>
+            <td class="lang-cell">C#</td>
+          </tr>
+          <tr>
+            <td class="num rank-cell">#5</td>
+            <td class="tool-cell"><a href="/tool/mark3labs--mcp-go/" class="tool-link">mark3labs/mcp-go</a></td>
+            <td class="num score-cell">96.29</td>
+            <td class="num">8,353</td>
+            <td class="lang-cell">Go</td>
+          </tr>
+          <tr>
+            <td class="num rank-cell">#6</td>
+            <td class="tool-cell"><a href="/tool/Pimzino--spec-workflow-mcp/" class="tool-link">Pimzino/spec-workflow-mcp</a></td>
+            <td class="num score-cell">96.02</td>
+            <td class="num">3,999</td>
+            <td class="lang-cell">TypeScript</td>
+          </tr>
+          <tr>
+            <td class="num rank-cell">#7</td>
+            <td class="tool-cell"><a href="/tool/PrefectHQ--fastmcp/" class="tool-link">PrefectHQ/fastmcp</a></td>
+            <td class="num score-cell">94.73</td>
+            <td class="num">23,659</td>
+            <td class="lang-cell">Python</td>
+          </tr>
+          <tr>
+            <td class="num rank-cell">#8</td>
+            <td class="tool-cell"><a href="/tool/zcaceres--markdownify-mcp/" class="tool-link">zcaceres/markdownify-mcp</a></td>
+            <td class="num score-cell">94.73</td>
+            <td class="num">2,449</td>
+            <td class="lang-cell">TypeScript</td>
+          </tr>
+          <tr>
+            <td class="num rank-cell">#9</td>
+            <td class="tool-cell"><a href="/tool/samanhappy--mcphub/" class="tool-link">samanhappy/mcphub</a></td>
+            <td class="num score-cell">94.47</td>
+            <td class="num">1,876</td>
+            <td class="lang-cell">TypeScript</td>
+          </tr>
+          <tr>
+            <td class="num rank-cell">#10</td>
+            <td class="tool-cell"><a href="/tool/perplexityai--modelcontextprotocol/" class="tool-link">perplexityai/modelcontextprotocol</a></td>
+            <td class="num score-cell">94.27</td>
+            <td class="num">2,016</td>
+            <td class="lang-cell">TypeScript</td>
+          </tr>
+        </tbody>
+      </table>
+      <p>
+        <a href="/tools/" class="inline-link">Browse all 25,632 tools &rarr;</a>
+      </p>
+    </section>
+
+    <section id="languages">
+      <h2>Language breakdown (top 5)</h2>
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Language</th>
+            <th class="num">Tools</th>
+            <th class="num">Share</th>
+            <th>Bar</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Python</td>
+            <td class="num">9,874</td>
+            <td class="num">45.1%</td>
+            <td class="bar-cell"><div class="bar" style="width: 45.1%"></div></td>
+          </tr>
+          <tr>
+            <td>TypeScript</td>
+            <td class="num">7,003</td>
+            <td class="num">32.0%</td>
+            <td class="bar-cell"><div class="bar" style="width: 32.0%"></div></td>
+          </tr>
+          <tr>
+            <td>JavaScript</td>
+            <td class="num">3,100</td>
+            <td class="num">14.2%</td>
+            <td class="bar-cell"><div class="bar" style="width: 14.2%"></div></td>
+          </tr>
+          <tr>
+            <td>Go</td>
+            <td class="num">1,227</td>
+            <td class="num">5.6%</td>
+            <td class="bar-cell"><div class="bar" style="width: 5.6%"></div></td>
+          </tr>
+          <tr>
+            <td>Rust</td>
+            <td class="num">669</td>
+            <td class="num">3.1%</td>
+            <td class="bar-cell"><div class="bar" style="width: 3.1%"></div></td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="tweet">
+      <h2>Tweet this week</h2>
+      <p>Auto-generated tweet from this week's top insight:</p>
+      <div class="tweet-box">
+        <pre class="tweet-text">This week in MCP: 5 tools gained score.
+
+Biggest riser: CoderGamester/mcp-unity (+32.79 pts, now #4)
+
+Full report: agentrank-ai.com/blog/this-week-in-mcp-2026-03-17/</pre>
+      </div>
+    </section>
+
+    <BlogSubscribeCTA />
+  </article>
+
+  <style>
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 1rem;
+      margin: 1.5rem 0;
+    }
+
+    .stat-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1rem;
+      text-align: center;
+    }
+
+    .stat-value {
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: var(--accent);
+      line-height: 1;
+      margin-bottom: 0.4rem;
+    }
+
+    .stat-label {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .tweet-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1.25rem;
+      margin: 1rem 0;
+    }
+
+    .tweet-text {
+      font-family: inherit;
+      white-space: pre-wrap;
+      word-break: break-word;
+      margin: 0;
+      font-size: 0.9rem;
+      line-height: 1.6;
+      color: var(--text);
+    }
+
+    .muted-note {
+      color: var(--text-muted);
+      font-size: 0.875rem;
+      font-style: italic;
+    }
+
+    .no-data-note {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 0.75rem 1rem;
+      margin: 1rem 0;
+      font-size: 0.875rem;
+      color: var(--text-muted);
+    }
+  </style>
+</Base>

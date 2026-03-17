@@ -6,7 +6,7 @@
     "type": "git",
     "url": "git+https://github.com/superlowburn/agentrank.git"
   },
-  "description": "Google for AI agents. Gives your AI live search across 25,000+ scored MCP servers and tools.",
+  "description": "Google PageRank for AI agents. Gives your AI live search across 25,000+ scored MCP servers and tools.",
   "license": "MIT",
   "type": "module",
   "bin": {

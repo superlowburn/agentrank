@@ -1,6 +1,6 @@
 # agentrank-mcp-server
 
-**Google for AI agents.**
+**Google PageRank for AI agents.**
 
 Install once and your AI automatically searches 25,000+ MCP servers and agent tools whenever it needs one. Scored daily from real GitHub signals. No configuration, no prompting — it just works.
 

@@ -1,7 +1,7 @@
 {
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
   "name": "io.github.superlowburn/agentrank",
-  "description": "Google for AI agents. Gives your AI live search across 25,000+ scored MCP servers and tools.",
+  "description": "Google PageRank for AI agents. Gives your AI live search across 25,000+ scored MCP servers and tools.",
   "repository": {
     "url": "https://github.com/superlowburn/agentrank",
     "source": "github",

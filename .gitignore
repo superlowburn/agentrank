@@ -17,3 +17,8 @@ site/.wrangler/
 .claude/
 .tweet-bot-cookies.json
 .tweet-bot-history.json
+mcp-server/.mcpregistry_*
+.agents/
+agents/*/.moltbook-state.json
+skills-lock.json
+skills/

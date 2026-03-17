@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>AgentRank #1 — 25,000+ tools ranked. Here's who's winning.</title>
+  <style>
+    /* Reset */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background-color: #f5f5f0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif; color: #1a1a1a; }
+    img { border: 0; display: block; max-width: 100%; }
+    a { color: #2563eb; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    /* Layout */
+    .wrapper { max-width: 600px; margin: 0 auto; padding: 24px 16px; }
+    .card { background: #ffffff; border: 1px solid #e5e5e5; border-radius: 8px; overflow: hidden; }
+
+    /* Header */
+    .header { background: #0f172a; padding: 28px 32px; }
+    .header-brand { color: #ffffff; font-size: 13px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 4px; }
+    .header-issue { color: #94a3b8; font-size: 12px; }
+
+    /* Body sections */
+    .section { padding: 28px 32px; border-bottom: 1px solid #f0f0f0; }
+    .section:last-child { border-bottom: none; }
+
+    /* Typography */
+    h1 { font-size: 22px; font-weight: 700; line-height: 1.3; color: #0f172a; margin-bottom: 12px; }
+    h2 { font-size: 14px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: #64748b; margin-bottom: 16px; }
+    p { font-size: 15px; line-height: 1.65; color: #374151; margin-bottom: 12px; }
+    p:last-child { margin-bottom: 0; }
+
+    /* Stats row */
+    .stats-row { display: table; width: 100%; margin: 20px 0; }
+    .stat { display: table-cell; text-align: center; padding: 0 8px; border-right: 1px solid #e5e5e5; }
+    .stat:last-child { border-right: none; }
+    .stat-number { font-size: 28px; font-weight: 800; color: #0f172a; line-height: 1; }
+    .stat-label { font-size: 11px; color: #6b7280; margin-top: 4px; letter-spacing: 0.04em; text-transform: uppercase; }
+
+    /* Leaderboard table */
+    .leaderboard { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 4px; }
+    .leaderboard th { text-align: left; padding: 8px 10px; border-bottom: 2px solid #e5e5e5; font-size: 11px; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; color: #6b7280; }
+    .leaderboard td { padding: 10px 10px; border-bottom: 1px solid #f5f5f0; vertical-align: top; }
+    .leaderboard tr:last-child td { border-bottom: none; }
+    .leaderboard tr:hover td { background: #f9fafb; }
+
+    .rank-num { font-size: 12px; font-weight: 700; color: #9ca3af; width: 32px; }
+    .rank-1 .rank-num { color: #f59e0b; }
+    .rank-2 .rank-num { color: #94a3b8; }
+    .rank-3 .rank-num { color: #b45309; }
+
+    .tool-name { font-weight: 600; color: #0f172a; }
+    .tool-desc { font-size: 11px; color: #6b7280; margin-top: 2px; max-width: 240px; }
+
+    .score-badge { display: inline-block; background: #0f172a; color: #ffffff; font-size: 11px; font-weight: 700; padding: 2px 6px; border-radius: 3px; }
+
+    .stars { font-size: 12px; color: #6b7280; white-space: nowrap; }
+    .stars-count { font-weight: 600; color: #374151; }
+
+    .lang-tag { display: inline-block; font-size: 10px; padding: 1px 6px; border-radius: 9999px; font-weight: 500; background: #f0f9ff; color: #0369a1; border: 1px solid #bae6fd; }
+    .lang-python { background: #fefce8; color: #854d0e; border-color: #fde68a; }
+    .lang-go { background: #f0fdf4; color: #166534; border-color: #bbf7d0; }
+    .lang-php { background: #fdf4ff; color: #7e22ce; border-color: #e9d5ff; }
+    .lang-csharp { background: #fff1f2; color: #9f1239; border-color: #fecdd3; }
+
+    /* Insight blocks */
+    .insight { background: #f8fafc; border-left: 3px solid #2563eb; padding: 12px 16px; margin-bottom: 12px; border-radius: 0 4px 4px 0; }
+    .insight strong { color: #0f172a; }
+
+    /* CTA */
+    .cta-section { background: #0f172a; padding: 28px 32px; text-align: center; }
+    .cta-label { font-size: 11px; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 8px; }
+    .cta-text { color: #ffffff; font-size: 15px; margin-bottom: 20px; line-height: 1.5; }
+    .cta-code { background: #1e293b; border: 1px solid #334155; border-radius: 6px; padding: 12px 16px; font-family: 'Courier New', Courier, monospace; font-size: 13px; color: #7dd3fc; text-align: left; margin-bottom: 20px; word-break: break-all; }
+    .btn { display: inline-block; background: #2563eb; color: #ffffff !important; font-size: 14px; font-weight: 600; padding: 12px 28px; border-radius: 6px; text-decoration: none !important; }
+    .btn:hover { background: #1d4ed8; }
+
+    /* Footer */
+    .footer { padding: 20px 32px; text-align: center; }
+    .footer p { font-size: 11px; color: #9ca3af; line-height: 1.6; }
+    .footer a { color: #6b7280; }
+
+    /* Mobile */
+    @media (max-width: 480px) {
+      .section, .header, .cta-section, .footer { padding: 20px 20px; }
+      h1 { font-size: 19px; }
+      .stat-number { font-size: 22px; }
+      .leaderboard { font-size: 12px; }
+      .tool-desc { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrapper">
+    <div class="card">
+
+      <!-- Header -->
+      <div class="header">
+        <div class="header-brand">AgentRank</div>
+        <div class="header-issue">Issue #1 &nbsp;|&nbsp; March 17, 2026</div>
+      </div>
+
+      <!-- Intro -->
+      <div class="section">
+        <h1>25,000+ MCP tools ranked.<br>Here's who's winning.</h1>
+        <p>AgentRank indexes every MCP server and agent tool on GitHub and scores them daily on five signals: freshness, issue health, contributors, dependents, and stars. This is the first newsletter — a snapshot of the ecosystem as it stands in March 2026.</p>
+        <p>A few numbers that surprised me when I started looking at the data:</p>
+
+        <div class="stats-row">
+          <div class="stat">
+            <div class="stat-number">97%</div>
+            <div class="stat-label">solo-contributor repos</div>
+          </div>
+          <div class="stat">
+            <div class="stat-number">54%</div>
+            <div class="stat-label">haven't committed in 90+ days</div>
+          </div>
+          <div class="stat">
+            <div class="stat-number">25,632</div>
+            <div class="stat-label">total tools indexed</div>
+          </div>
+        </div>
+
+        <p>This is why the ranking exists. Not to celebrate the repos that already have 10,000 stars — they're already visible. To surface the maintained tools that don't have the star count yet.</p>
+      </div>
+
+      <!-- Top 10 -->
+      <div class="section">
+        <h2>Top 10 this week</h2>
+        <p style="font-size: 13px; color: #6b7280; margin-bottom: 16px;">Scores 0–100 &nbsp;|&nbsp; Updated daily &nbsp;|&nbsp; <a href="https://agentrank-ai.com">See full rankings</a></p>
+
+        <table class="leaderboard">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Tool</th>
+              <th>Score</th>
+              <th>Stars</th>
+              <th>Lang</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="rank-1">
+              <td class="rank-num">1</td>
+              <td>
+                <a href="https://agentrank-ai.com/tool/CoplayDev/unity-mcp" class="tool-name">unity-mcp</a>
+                <div class="tool-desc">AI assistants interact directly with Unity Editor</div>
+              </td>
+              <td><span class="score-badge">98.7</span></td>
+              <td class="stars"><span class="stars-count">7.0k</span></td>
+              <td><span class="lang-tag lang-csharp">C#</span></td>
+            </tr>
+            <tr class="rank-2">
+              <td class="rank-num">2</td>
+              <td>
+                <a href="https://agentrank-ai.com/tool/microsoft/azure-devops-mcp" class="tool-name">azure-devops-mcp</a>
+                <div class="tool-desc">Azure DevOps power for your agents</div>
+              </td>
+              <td><span class="score-badge">97.2</span></td>
+              <td class="stars"><span class="stars-count">1.4k</span></td>
+              <td><span class="lang-tag">TS</span></td>
+            </tr>
+            <tr class="rank-3">
+              <td class="rank-num">3</td>
+              <td>
+                <a href="https://agentrank-ai.com/tool/laravel/boost" class="tool-name">laravel/boost</a>
+                <div class="tool-desc">Laravel MCP server for AI-powered local dev</div>
+              </td>
+              <td><span class="score-badge">96.9</span></td>
+              <td class="stars"><span class="stars-count">3.3k</span></td>
+              <td><span class="lang-tag lang-php">PHP</span></td>
+            </tr>
+            <tr>
+              <td class="rank-num">4</td>
+              <td>
+                <a href="https://agentrank-ai.com/tool/CoderGamester/mcp-unity" class="tool-name">mcp-unity</a>
+                <div class="tool-desc">Unity Editor via Cursor, Claude Code, Codex</div>
+              </td>
+              <td><span class="score-badge">96.4</span></td>
+              <td class="stars"><span class="stars-count">1.4k</span></td>
+              <td><span class="lang-tag lang-csharp">C#</span></td>
+            </tr>
+            <tr>
+              <td class="rank-num">5</td>
+              <td>
+                <a href="https://agentrank-ai.com/tool/Pimzino/spec-workflow-mcp" class="tool-name">spec-workflow-mcp</a>
+                <div class="tool-desc">Spec-driven dev workflow with real-time dashboard</div>
+              </td>
+              <td><span class="score-badge">96.4</span></td>
+              <td class="stars"><span class="stars-count">4.0k</span></td>
+              <td><span class="lang-tag">TS</span></td>
+            </tr>
+            <tr>
+              <td class="rank-num">6</td>
+              <td>
+                <a href="https://agentrank-ai.com/tool/mark3labs/mcp-go" class="tool-name">mcp-go</a>
+                <div class="tool-desc">Go implementation of MCP — the dependency network backbone</div>
+              </td>
+              <td><span class="score-badge">96.3</span></td>
+              <td class="stars"><span class="stars-count">8.4k</span></td>
+              <td><span class="lang-tag lang-go">Go</span></td>
+            </tr>
+            <tr>
+              <td class="rank-num">7</td>
+              <td>
+                <a href="https://agentrank-ai.com/tool/zcaceres/markdownify-mcp" class="tool-name">markdownify-mcp</a>
+                <div class="tool-desc">Convert almost anything to Markdown</div>
+              </td>
+              <td><span class="score-badge">95.1</span></td>
+              <td class="stars"><span class="stars-count">2.4k</span></td>
+              <td><span class="lang-tag">TS</span></td>
+            </tr>
+            <tr>
+              <td class="rank-num">8</td>
+              <td>
+                <a href="https://agentrank-ai.com/tool/microsoft/playwright-mcp" class="tool-name">playwright-mcp</a>
+                <div class="tool-desc">Browser automation — highest install count in the ecosystem</div>
+              </td>
+              <td><span class="score-badge">94.8</span></td>
+              <td class="stars"><span class="stars-count">29k</span></td>
+              <td><span class="lang-tag">TS</span></td>
+            </tr>
+            <tr>
+              <td class="rank-num">9</td>
+              <td>
+                <a href="https://agentrank-ai.com/tool/PrefectHQ/fastmcp" class="tool-name">fastmcp</a>
+                <div class="tool-desc">The fast, Pythonic way to build MCP servers</div>
+              </td>
+              <td><span class="score-badge">94.7</span></td>
+              <td class="stars"><span class="stars-count">24k</span></td>
+              <td><span class="lang-tag lang-python">Python</span></td>
+            </tr>
+            <tr>
+              <td class="rank-num">10</td>
+              <td>
+                <a href="https://agentrank-ai.com/tool/perplexityai/modelcontextprotocol" class="tool-name">perplexity MCP</a>
+                <div class="tool-desc">Official MCP server for the Perplexity API</div>
+              </td>
+              <td><span class="score-badge">94.6</span></td>
+              <td class="stars"><span class="stars-count">2.0k</span></td>
+              <td><span class="lang-tag">TS</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Insights -->
+      <div class="section">
+        <h2>What the data is telling you</h2>
+
+        <div class="insight">
+          <strong>Unity is dominating the top 5.</strong> Three of the top 15 are Unity MCP integrations. Game developers are adopting MCP faster than any other category right now, and the maintainers are keeping up. If you're building Unity-adjacent tooling, the ecosystem is further along than you'd guess.
+        </div>
+
+        <div class="insight">
+          <strong>The Go SDK is quietly essential.</strong> mcp-go (#6) has 8,400 stars but what pushed it there is dependents — a large number of other repos build on it. Stars follow attention; dependents follow actual usage. mcp-go has both.
+        </div>
+
+        <div class="insight">
+          <strong>fastmcp is the Python SDK that won.</strong> 24,000 stars and one of the freshest commit histories in the top 10. If you're writing Python MCP tools, this is the framework the ecosystem chose.
+        </div>
+
+        <div class="insight">
+          <strong>playwright-mcp is the most-installed tool in the ecosystem.</strong> 29,000 stars, actively maintained by Microsoft. It scores on both dimensions — star count and real-world adoption signals.
+        </div>
+      </div>
+
+      <!-- Ecosystem snapshot -->
+      <div class="section">
+        <h2>Ecosystem snapshot</h2>
+
+        <p>Language distribution across all 25,632 indexed tools:</p>
+
+        <table style="width: 100%; font-size: 13px; margin: 12px 0;">
+          <tr>
+            <td style="padding: 4px 0; color: #374151;"><strong>Python</strong></td>
+            <td style="padding: 4px 0; color: #6b7280; text-align: right;">9,874 repos (39%)</td>
+          </tr>
+          <tr>
+            <td style="padding: 4px 0; color: #374151;"><strong>TypeScript</strong></td>
+            <td style="padding: 4px 0; color: #6b7280; text-align: right;">7,003 repos (27%)</td>
+          </tr>
+          <tr>
+            <td style="padding: 4px 0; color: #374151;"><strong>JavaScript</strong></td>
+            <td style="padding: 4px 0; color: #6b7280; text-align: right;">3,100 repos (12%)</td>
+          </tr>
+          <tr>
+            <td style="padding: 4px 0; color: #374151;"><strong>Go</strong></td>
+            <td style="padding: 4px 0; color: #6b7280; text-align: right;">1,227 repos (5%)</td>
+          </tr>
+          <tr>
+            <td style="padding: 4px 0; color: #374151;"><strong>Rust / Java / C#</strong></td>
+            <td style="padding: 4px 0; color: #6b7280; text-align: right;">~1,700 combined</td>
+          </tr>
+        </table>
+
+        <p>Python leads the index by volume, but TypeScript leads in the top 100. The tools that rise to the top tend to be TypeScript — it seems to correlate with more active maintenance cycles.</p>
+      </div>
+
+      <!-- MCP Server CTA -->
+      <div class="cta-section">
+        <div class="cta-label">Give your AI live rankings</div>
+        <p class="cta-text">Install the AgentRank MCP server once. Your AI can query the live index whenever it needs a tool recommendation — instead of guessing from training data.</p>
+        <div class="cta-code">claude mcp add agentrank -- npx -y agentrank-mcp-server</div>
+        <a href="https://agentrank-ai.com" class="btn">View Full Rankings</a>
+      </div>
+
+      <!-- Share ask -->
+      <div class="section" style="text-align: center;">
+        <h2>Know someone building with MCP?</h2>
+        <p>Forward this to them. The index is only useful if the people building agent tools know it exists.</p>
+        <p style="margin-top: 12px;"><a href="https://agentrank-ai.com">agentrank-ai.com</a></p>
+      </div>
+
+      <!-- Whats next -->
+      <div class="section">
+        <h2>Coming soon</h2>
+        <p>A few things in progress:</p>
+        <ul style="font-size: 14px; line-height: 1.8; color: #374151; padding-left: 20px; margin-top: 8px;">
+          <li><strong>Category leaderboards</strong> — ranked lists per category (Browser Automation, Dev Tools, Game Dev, etc.)</li>
+          <li><strong>Mover alerts</strong> — subscribe to a tool, get notified when its score changes significantly</li>
+          <li><strong>Badge embeds</strong> — maintainers can add a live AgentRank score badge to their README</li>
+        </ul>
+        <p style="margin-top: 12px;">Reply to this email if you want early access.</p>
+      </div>
+
+      <!-- Footer -->
+      <div class="footer">
+        <p>
+          <a href="https://agentrank-ai.com">AgentRank</a> &nbsp;|&nbsp;
+          <a href="https://agentrank-ai.com/methodology">How scores work</a><br><br>
+          You're receiving this because you subscribed at agentrank-ai.com.<br>
+          <a href="#">Unsubscribe</a>
+        </p>
+      </div>
+
+    </div>
+  </div>
+</body>
+</html>

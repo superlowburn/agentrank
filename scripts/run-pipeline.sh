@@ -17,6 +17,16 @@ cd "$ROOT_DIR/scorer"
 npx tsx src/index.ts
 echo ""
 
+echo "Step 2b: Weekly report (Mondays only)"
+cd "$ROOT_DIR"
+if [ "$(date +%u)" = "1" ]; then
+  npx tsx scripts/weekly-report.ts
+  echo "Weekly report generated."
+else
+  echo "Not Monday, skipping weekly report."
+fi
+echo ""
+
 echo "Step 3: Seed D1"
 cd "$ROOT_DIR"
 npx tsx scripts/seed-d1.ts

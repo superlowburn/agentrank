@@ -2,7 +2,7 @@
 
 ## Launch Tweet (@comforteagle)
 
-I built Google for AI agents.
+I built Google PageRank for AI agents.
 
 Install one skill and your AI automatically searches 25,000+ MCP servers and agent tools whenever it needs one. Scored daily from real GitHub signals. No configuration, no prompting — it just works.
 
@@ -62,10 +62,10 @@ Install it once, benefit forever: npx agentrank-mcp-server
 ## Reddit Posts
 
 ### r/ClaudeAI / r/ClaudeCode
-**Title:** AgentRank: Google for AI agents — install once and your AI automatically searches 25,000+ scored MCP servers
+**Title:** AgentRank: Google PageRank for AI agents — install once and your AI automatically searches 25,000+ scored MCP servers
 
 **Body:**
-I built Google for AI agents.
+I built Google PageRank for AI agents.
 
 Install one skill and your AI automatically searches 25,000+ MCP servers and agent tools whenever it needs one. Scored daily from real GitHub signals (stars, freshness, issue health, contributors, dependents). No configuration, no prompting — it just works.
 

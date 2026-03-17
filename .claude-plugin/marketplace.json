@@ -2,7 +2,7 @@
   "plugins": [
     {
       "name": "agentrank",
-      "description": "Google for AI agents. Install once and your AI automatically searches 25,000+ scored MCP servers and agent tools — no prompting, no configuration.",
+      "description": "Google PageRank for AI agents. Install once and your AI automatically searches 25,000+ scored MCP servers and agent tools — no prompting, no configuration.",
       "version": "1.2.0",
       "homepage": "https://agentrank-ai.com",
       "source": "https://github.com/superlowburn/agentrank",
