@@ -273,6 +273,7 @@ if (!env.DASH_TOKEN || token !== env.DASH_TOKEN) {
         makeCard('Requests (24h)', fmt(r24.total), reqSub(r24.byType)),
         makeCard('Requests (7d)', fmt(r7d.total), reqSub(r7d.byType)),
         makeCard('Agent Clients (7d)', fmt(d.unique_agents_7d), 'distinct API/MCP user-agents'),
+        makeCard('Email Subscribers', fmt(d.email_subscribers)),
       ].join('');
       // Auto-load level 1 & 2
       loadLevel(1);
@@ -321,6 +322,14 @@ if (!env.DASH_TOKEN || token !== env.DASH_TOKEN) {
                 ]) : '<p class="loading">No lookups logged yet</p>'}
               </div>
             </div>
+            <h2>Channel Attribution (utm_source, 30d)</h2>
+            ${(d.utm_sources || []).length
+              ? makeTable(d.utm_sources, [
+                  { key: 'utm_source', label: 'Channel' },
+                  { key: 'visits', label: 'Visits', num: true },
+                  { key: 'countries', label: 'Countries', num: true },
+                ])
+              : '<p class="loading">No UTM-tagged visits yet — add ?utm_source=... to launch links</p>'}
             <h2>Top Referrers (7d)</h2>
             ${(d.top_referrers || []).length ? makeBars(d.top_referrers, 'referrer', 'count') : '<p class="loading">No external referrers yet</p>'}
             <h2>Hourly Traffic (24h)</h2>

@@ -13,7 +13,7 @@ function json(data: any, status = 200) {
 }
 
 async function level0(db: any) {
-  const [tools, skills, agents, pending, archived, reqs24h, reqs7d, uniqueAgents7d] = await Promise.all([
+  const [tools, skills, agents, pending, archived, reqs24h, reqs7d, uniqueAgents7d, emailSubscribers] = await Promise.all([
     db.prepare(`SELECT COUNT(*) AS total, ROUND(AVG(score), 1) AS avg_score, ROUND(MAX(score), 1) AS top_score, MAX(last_commit_at) AS latest_commit FROM tools`).first(),
     db.prepare(`SELECT COUNT(*) AS total, ROUND(AVG(score), 1) AS avg_score, ROUND(MAX(score), 1) AS top_score FROM skills`).first(),
     db.prepare(`SELECT COUNT(*) AS total FROM agents`).first(),
@@ -22,12 +22,13 @@ async function level0(db: any) {
     db.prepare(`SELECT type, COUNT(*) AS count FROM request_log WHERE ts > datetime('now', '-1 day') GROUP BY type`).all(),
     db.prepare(`SELECT type, COUNT(*) AS count FROM request_log WHERE ts > datetime('now', '-7 days') GROUP BY type`).all(),
     db.prepare(`SELECT COUNT(DISTINCT ua) AS total FROM request_log WHERE ts > datetime('now', '-7 days') AND type IN ('api', 'mcp') AND ua IS NOT NULL AND ua != ''`).first(),
+    db.prepare(`SELECT COUNT(*) AS total FROM email_subscribers`).first(),
   ]);
-  return { tools, skills, agents, pending, archived, reqs_24h: reqs24h.results, reqs_7d: reqs7d.results, unique_agents_7d: uniqueAgents7d?.total ?? 0 };
+  return { tools, skills, agents, pending, archived, reqs_24h: reqs24h.results, reqs_7d: reqs7d.results, unique_agents_7d: uniqueAgents7d?.total ?? 0, email_subscribers: emailSubscribers?.total ?? 0 };
 }
 
 async function level1(db: any) {
-  const [scoreDist, languages, freshness, licenses, topTools, topSkills, hourlyTraffic, topPaths, topCountries, agentClients, topSearches, topLookups, topReferrers] = await Promise.all([
+  const [scoreDist, languages, freshness, licenses, topTools, topSkills, hourlyTraffic, topPaths, topCountries, agentClients, topSearches, topLookups, topReferrers, utmSources] = await Promise.all([
     db.prepare(`SELECT
       CASE
         WHEN score < 10 THEN '0-9'
@@ -70,6 +71,8 @@ async function level1(db: any) {
     db.prepare(`SELECT query, COUNT(*) AS count FROM request_log WHERE ts > datetime('now', '-7 days') AND path = '/api/lookup' AND query IS NOT NULL AND query != '' GROUP BY query ORDER BY count DESC LIMIT 20`).all(),
     // Top referrers (7d) — page visits with a non-self referrer
     db.prepare(`SELECT referrer, COUNT(*) AS count FROM request_log WHERE ts > datetime('now', '-7 days') AND type = 'page' AND referrer IS NOT NULL AND referrer != '' AND referrer NOT LIKE '%agentrank-ai.com%' GROUP BY referrer ORDER BY count DESC LIMIT 20`).all(),
+    // UTM source attribution (30d) — shows which distribution channels are driving traffic
+    db.prepare(`SELECT utm_source, COUNT(*) AS visits, COUNT(DISTINCT country) AS countries FROM request_log WHERE ts > datetime('now', '-30 days') AND utm_source IS NOT NULL AND utm_source != '' GROUP BY utm_source ORDER BY visits DESC LIMIT 20`).all(),
   ]);
   return {
     score_distribution: scoreDist.results,
@@ -85,6 +88,7 @@ async function level1(db: any) {
     top_searches: topSearches.results,
     top_lookups: topLookups.results,
     top_referrers: topReferrers.results,
+    utm_sources: utmSources.results,
   };
 }
 

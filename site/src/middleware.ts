@@ -14,6 +14,10 @@ function extractQuery(path: string, url: URL): string | null {
   return null;
 }
 
+function extractUtmSource(url: URL): string | null {
+  return url.searchParams.get('utm_source');
+}
+
 export const onRequest = defineMiddleware(async (ctx, next) => {
   const path = ctx.url.pathname;
 
@@ -33,13 +37,15 @@ export const onRequest = defineMiddleware(async (ctx, next) => {
   const rawReferrer = ctx.request.headers.get('referer') ?? null;
   // Strip query strings and fragments from referrer; store origin+path only
   const referrer = rawReferrer ? (() => { try { const u = new URL(rawReferrer); return (u.origin + u.pathname).slice(0, 500); } catch { return rawReferrer.slice(0, 500); } })() : null;
+  // Capture utm_source for distribution channel attribution (only on page requests)
+  const utmSource = type === 'page' ? extractUtmSource(ctx.url) : null;
 
   try {
     const { env } = (ctx.locals as any).runtime;
     if (env.DB) {
       const stmt = env.DB.prepare(
-        `INSERT INTO request_log (path, method, type, status, ua, country, duration_ms, query, referrer)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`
+        `INSERT INTO request_log (path, method, type, status, ua, country, duration_ms, query, referrer, utm_source)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
       ).bind(
         path,
         ctx.request.method,
@@ -50,6 +56,7 @@ export const onRequest = defineMiddleware(async (ctx, next) => {
         duration,
         query?.slice(0, 500) ?? null,
         referrer,
+        utmSource?.slice(0, 100) ?? null,
       );
 
       // Fire-and-forget via waitUntil if available (Cloudflare)

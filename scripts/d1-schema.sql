@@ -83,14 +83,19 @@ CREATE TABLE IF NOT EXISTS request_log (
   ua TEXT,
   country TEXT,
   duration_ms INTEGER,
-  query TEXT  -- search term (q=) or lookup URL (url=) for API requests
+  query TEXT,       -- search term (q=) or lookup URL (url=) for API requests
+  referrer TEXT,    -- origin+path of HTTP Referer header (no query/fragment)
+  utm_source TEXT   -- utm_source param from page request URL (distribution channel)
 );
 CREATE INDEX IF NOT EXISTS idx_reqlog_ts ON request_log(ts);
 CREATE INDEX IF NOT EXISTS idx_reqlog_type ON request_log(type);
 CREATE INDEX IF NOT EXISTS idx_reqlog_path ON request_log(path);
+CREATE INDEX IF NOT EXISTS idx_reqlog_utm ON request_log(utm_source) WHERE utm_source IS NOT NULL;
 -- Migration (run once on existing D1):
 -- ALTER TABLE request_log ADD COLUMN query TEXT;
 -- ALTER TABLE request_log ADD COLUMN referrer TEXT;
+-- ALTER TABLE request_log ADD COLUMN utm_source TEXT;
+-- CREATE INDEX IF NOT EXISTS idx_reqlog_utm ON request_log(utm_source) WHERE utm_source IS NOT NULL;
 
 -- Rate limits table — survives pipeline DROP/CREATE cycles
 CREATE TABLE IF NOT EXISTS rate_limits (
