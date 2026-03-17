@@ -5,7 +5,13 @@ Install AgentRank into your AI coding assistant to get live, scored tool recomme
 ## Claude Code (Skill)
 
 ```bash
-# Install via skills.sh or paste SKILL.md into your skills folder
+npx skills add https://agentrank-ai.com
+```
+
+Or from GitHub:
+
+```bash
+npx skills add superlowburn/agentrank --skill skill/agentrank
 ```
 
 See [SKILL.md](SKILL.md) for the full Claude Code skill.
@@ -34,6 +40,14 @@ Copy `.clinerules` to your project root (or `~/.clinerules` for global):
 
 ```bash
 curl -o .clinerules https://raw.githubusercontent.com/superlowburn/agentrank/main/skill/agentrank/cline/.clinerules
+```
+
+## Windsurf
+
+Copy `.windsurfrules` to your project root (or `~/.codeium/windsurf/memories/global_rules.md` for global):
+
+```bash
+curl -o .windsurfrules https://raw.githubusercontent.com/superlowburn/agentrank/main/skill/agentrank/windsurf/.windsurfrules
 ```
 
 ---
