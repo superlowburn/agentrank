@@ -1,0 +1,977 @@
+---
+export const prerender = true;
+import Base from '../layouts/Base.astro';
+---
+
+<Base
+  title="Scoring Methodology — AgentRank"
+  description="How AgentRank scores 25,000+ MCP servers and agent tools. Eight real signals, transparent weights, updated nightly. No black boxes."
+  keywords="AgentRank methodology, MCP server ranking, how to evaluate MCP servers, agent tool scoring, MCP quality score"
+  canonicalUrl="https://agentrank-ai.com/methodology/"
+>
+  <div class="page-header">
+    <h1>Scoring Methodology</h1>
+    <p class="subtitle">Every score on AgentRank is computed from eight verifiable GitHub signals. No black boxes. No pay-to-play. Updated nightly.</p>
+  </div>
+
+  <section class="intro">
+    <h2 class="section-header">Why a score?</h2>
+    <p>
+      GitHub search sorted by stars shows you the most popular tools — not the most trustworthy ones. A tool with 10,000 stars and its last commit in 2023 is not a better choice than one with 500 stars that shipped yesterday. AgentRank separates <strong>popularity</strong> from <strong>health</strong>.
+    </p>
+    <p>
+      The score is a single number — 0 to 100 — that answers the question an agent or developer actually cares about: <em>is this tool actively maintained and likely to work?</em>
+    </p>
+  </section>
+
+  <section class="signals-section">
+    <h2 class="section-header">The Eight Signals</h2>
+    <p class="signals-intro">Each signal is normalized to a 0–1 value, then weighted and summed to produce the final 0–100 score. When a signal has no data (e.g., no registry package to measure downloads), its weight is redistributed proportionally across the remaining signals.</p>
+
+    <div class="signals-grid">
+
+      <div class="signal">
+        <div class="signal-header">
+          <span class="signal-name">Freshness</span>
+          <span class="signal-weight">20%</span>
+        </div>
+        <p class="signal-desc">How recently was the repository updated?</p>
+        <div class="signal-detail">
+          <div class="detail-row">
+            <span class="detail-label">Score 1.0</span>
+            <span class="detail-value">Committed within the last 7 days</span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-label">Linear decay</span>
+            <span class="detail-value">Days 7–90: score scales from 1.0 → 0.0</span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-label">Exponential decay</span>
+            <span class="detail-value">Beyond 90 days: rapid drop toward 0</span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-label">Floor for established tools</span>
+            <span class="detail-value">Repos with 200+ stars or 5+ dependents never drop below 0.3 — stable, adopted projects shouldn't be penalized for not needing daily updates</span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-label">Archived repos</span>
+            <span class="detail-value">Score 0.0 — maintenance has explicitly ended</span>
+          </div>
+        </div>
+        <p class="signal-why">Freshness is the #1 predictor of reliability. Stale repos accumulate unpatched bugs and bitrotting dependencies. The MCP protocol itself is evolving fast — a tool that hasn't been touched in six months may not work with current clients.</p>
+      </div>
+
+      <div class="signal">
+        <div class="signal-header">
+          <span class="signal-name">Issue Health</span>
+          <span class="signal-weight">20%</span>
+        </div>
+        <p class="signal-desc">Does the maintainer respond to bug reports?</p>
+        <div class="signal-detail">
+          <div class="detail-row">
+            <span class="detail-label">Formula</span>
+            <span class="detail-value">closed_issues / (open_issues + closed_issues)</span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-label">No issues at all</span>
+            <span class="detail-value">Score 0.3 — new or unused projects haven't had a chance to demonstrate responsiveness</span>
+          </div>
+        </div>
+        <p class="signal-why">A high closed-to-total ratio means the maintainer actively triages reports. A repo with 200 open issues and 10 closed is a red flag — problems are piling up, not getting resolved.</p>
+      </div>
+
+      <div class="signal">
+        <div class="signal-header">
+          <span class="signal-name">Dependents</span>
+          <span class="signal-weight">22%</span>
+        </div>
+        <p class="signal-desc">How many other repos depend on this one?</p>
+        <div class="signal-detail">
+          <div class="detail-row">
+            <span class="detail-label">Source</span>
+            <span class="detail-value">GitHub dependency graph</span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-label">Normalization ceiling</span>
+            <span class="detail-value">100 dependents = max score (1.0)</span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-label">Not available</span>
+            <span class="detail-value">Weight redistributed to other signals — a missing signal isn't a penalty</span>
+          </div>
+        </div>
+        <p class="signal-why">When other real projects import your package, that's real-world validation. It's hard to fake and hard to buy. High dependent counts are the strongest signal that a tool actually works in production.</p>
+      </div>
+
+      <div class="signal">
+        <div class="signal-header">
+          <span class="signal-name">Downloads</span>
+          <span class="signal-weight">13%</span>
+        </div>
+        <p class="signal-desc">Weekly installs from npm or PyPI.</p>
+        <div class="signal-detail">
+          <div class="detail-row">
+            <span class="detail-label">Source</span>
+            <span class="detail-value">npm weekly download count or PyPI weekly download count (whichever is higher)</span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-label">Normalization ceiling</span>
+            <span class="detail-value">10,000 weekly downloads = max score (1.0)</span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-label">Not available</span>
+            <span class="detail-value">Weight redistributed — only applies when a registered package exists</span>
+          </div>
+        </div>
+        <p class="signal-why">Download counts reflect actual usage, not just curiosity. A tool being installed 50,000 times a week is being used in real workflows.</p>
+      </div>
+
+      <div class="signal">
+        <div class="signal-header">
+          <span class="signal-name">Stars</span>
+          <span class="signal-weight">10%</span>
+        </div>
+        <p class="signal-desc">Raw GitHub star count.</p>
+        <div class="signal-detail">
+          <div class="detail-row">
+            <span class="detail-label">Normalization ceiling</span>
+            <span class="detail-value">1,000 stars = max score (1.0)</span>
+          </div>
+        </div>
+        <p class="signal-why">Stars are the weakest signal — easy to inflate, often reflecting hype rather than utility. We include them because broad recognition does correlate weakly with quality, but we deliberately weight them lowest among the popularity signals. A tool shouldn't rank #1 just because it went viral on Twitter.</p>
+      </div>
+
+      <div class="signal">
+        <div class="signal-header">
+          <span class="signal-name">Contributors</span>
+          <span class="signal-weight">8%</span>
+        </div>
+        <p class="signal-desc">How many distinct contributors has the repo had?</p>
+        <div class="signal-detail">
+          <div class="detail-row">
+            <span class="detail-label">Floor</span>
+            <span class="detail-value">Minimum 1 (every repo has at least its creator)</span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-label">Normalization ceiling</span>
+            <span class="detail-value">20 contributors = max score (1.0)</span>
+          </div>
+        </div>
+        <p class="signal-why">A single-contributor repo has single-maintainer risk. If that person disappears, the project dies. Two or more contributors means bus-factor risk is reduced. We cap the benefit at 20 — beyond that, additional contributors don't meaningfully increase reliability for a tool of this type.</p>
+      </div>
+
+      <div class="signal">
+        <div class="signal-header">
+          <span class="signal-name">Description Quality</span>
+          <span class="signal-weight">4%</span>
+        </div>
+        <p class="signal-desc">Does the repo have a meaningful description?</p>
+        <div class="signal-detail">
+          <div class="detail-row">
+            <span class="detail-label">Score 0.0</span>
+            <span class="detail-value">No description at all</span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-label">Score 0.3</span>
+            <span class="detail-value">Description under 50 characters</span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-label">Score 0.7</span>
+            <span class="detail-value">Description 50–150 characters</span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-label">Score 1.0</span>
+            <span class="detail-value">Description over 150 characters</span>
+          </div>
+        </div>
+        <p class="signal-why">A maintainer who can't write three sentences about what their tool does is either in stealth mode or not thinking about users. It's a weak proxy for maintainer investment, but it's measurable and consistent.</p>
+      </div>
+
+      <div class="signal">
+        <div class="signal-header">
+          <span class="signal-name">License Health</span>
+          <span class="signal-weight">3%</span>
+        </div>
+        <p class="signal-desc">Is the tool usable by others?</p>
+        <div class="signal-detail">
+          <div class="detail-row">
+            <span class="detail-label">Score 1.0</span>
+            <span class="detail-value">MIT, Apache-2.0, BSD-2-Clause, BSD-3-Clause, ISC, Unlicense</span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-label">Score 0.6</span>
+            <span class="detail-value">Other recognized licenses (GPL, LGPL, etc.)</span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-label">Score 0.2</span>
+            <span class="detail-value">No license or unrecognized license — legal ambiguity, safer to avoid</span>
+          </div>
+        </div>
+        <p class="signal-why">Permissive licenses maximize the likelihood that the tool can be integrated into any project without legal friction.</p>
+      </div>
+
+    </div>
+  </section>
+
+  <section class="formula-section">
+    <h2 class="section-header">The Formula</h2>
+    <div class="formula-block">
+      <p class="formula-label">Base weights (when all signals have data):</p>
+      <div class="weight-table">
+        <div class="weight-row">
+          <span class="weight-signal">Dependents</span>
+          <div class="weight-bar-wrap"><div class="weight-bar" style="width: 22%"></div></div>
+          <span class="weight-pct">22%</span>
+        </div>
+        <div class="weight-row">
+          <span class="weight-signal">Freshness</span>
+          <div class="weight-bar-wrap"><div class="weight-bar" style="width: 20%"></div></div>
+          <span class="weight-pct">20%</span>
+        </div>
+        <div class="weight-row">
+          <span class="weight-signal">Issue Health</span>
+          <div class="weight-bar-wrap"><div class="weight-bar" style="width: 20%"></div></div>
+          <span class="weight-pct">20%</span>
+        </div>
+        <div class="weight-row">
+          <span class="weight-signal">Downloads</span>
+          <div class="weight-bar-wrap"><div class="weight-bar" style="width: 13%"></div></div>
+          <span class="weight-pct">13%</span>
+        </div>
+        <div class="weight-row">
+          <span class="weight-signal">Stars</span>
+          <div class="weight-bar-wrap"><div class="weight-bar" style="width: 10%"></div></div>
+          <span class="weight-pct">10%</span>
+        </div>
+        <div class="weight-row">
+          <span class="weight-signal">Contributors</span>
+          <div class="weight-bar-wrap"><div class="weight-bar" style="width: 8%"></div></div>
+          <span class="weight-pct">8%</span>
+        </div>
+        <div class="weight-row">
+          <span class="weight-signal">Description Quality</span>
+          <div class="weight-bar-wrap"><div class="weight-bar" style="width: 4%"></div></div>
+          <span class="weight-pct">4%</span>
+        </div>
+        <div class="weight-row">
+          <span class="weight-signal">License Health</span>
+          <div class="weight-bar-wrap"><div class="weight-bar" style="width: 3%"></div></div>
+          <span class="weight-pct">3%</span>
+        </div>
+      </div>
+      <p class="formula-note">When Dependents or Downloads data isn't available for a tool, those weights are redistributed proportionally across the remaining signals. A missing signal is not a penalty — it's just fewer data points.</p>
+    </div>
+  </section>
+
+  <section class="examples-section">
+    <h2 class="section-header">Live Examples</h2>
+    <p class="examples-intro">Here's how the scoring works in practice, using real tools from the index as of March 2026.</p>
+
+    <div class="examples-grid">
+
+      <div class="example">
+        <div class="example-header">
+          <div class="example-title-group">
+            <a href="/tool/microsoft-playwright-mcp/" class="example-name">microsoft/playwright-mcp</a>
+            <span class="example-tag">Browser automation</span>
+          </div>
+          <div class="score-badge score-high">94.81</div>
+        </div>
+        <div class="example-signals">
+          <div class="ex-signal">
+            <span class="ex-label">Stars</span>
+            <span class="ex-value">28,849</span>
+            <span class="ex-note">capped at 1,000 → max signal</span>
+          </div>
+          <div class="ex-signal">
+            <span class="ex-label">Freshness</span>
+            <span class="ex-value">Updated 3 days ago</span>
+            <span class="ex-note">1.0 — active development</span>
+          </div>
+          <div class="ex-signal">
+            <span class="ex-label">Issue Health</span>
+            <span class="ex-value">743 closed / 765 total</span>
+            <span class="ex-note">97% — Microsoft triages aggressively</span>
+          </div>
+          <div class="ex-signal">
+            <span class="ex-label">Contributors</span>
+            <span class="ex-value">62</span>
+            <span class="ex-note">capped at 20 → max signal</span>
+          </div>
+        </div>
+        <p class="example-summary">Scores high on every health signal. The 97% issue resolution rate is exceptional — most tools sit at 40–60%.</p>
+      </div>
+
+      <div class="example">
+        <div class="example-header">
+          <div class="example-title-group">
+            <a href="/tool/mark3labs-mcp-go/" class="example-name">mark3labs/mcp-go</a>
+            <span class="example-tag">Go SDK</span>
+          </div>
+          <div class="score-badge score-high">96.29</div>
+        </div>
+        <div class="example-signals">
+          <div class="ex-signal">
+            <span class="ex-label">Stars</span>
+            <span class="ex-value">8,353</span>
+            <span class="ex-note">capped at 1,000 → max signal</span>
+          </div>
+          <div class="ex-signal">
+            <span class="ex-label">Freshness</span>
+            <span class="ex-value">Updated 6 days ago</span>
+            <span class="ex-note">1.0 — consistently active</span>
+          </div>
+          <div class="ex-signal">
+            <span class="ex-label">Issue Health</span>
+            <span class="ex-value">239 closed / 266 total</span>
+            <span class="ex-note">90% — issues don't pile up</span>
+          </div>
+          <div class="ex-signal">
+            <span class="ex-label">Dependents</span>
+            <span class="ex-value">2,938</span>
+            <span class="ex-note">far exceeds 100 ceiling → max signal</span>
+          </div>
+        </div>
+        <p class="example-summary">The dependents signal is the key driver here. Nearly 3,000 other repos build on top of mcp-go — real adoption by real developers.</p>
+      </div>
+
+      <div class="example">
+        <div class="example-header">
+          <div class="example-title-group">
+            <a href="/tool/PrefectHQ-fastmcp/" class="example-name">PrefectHQ/fastmcp</a>
+            <span class="example-tag">Python framework</span>
+          </div>
+          <div class="score-badge score-high">94.73</div>
+        </div>
+        <div class="example-signals">
+          <div class="ex-signal">
+            <span class="ex-label">Stars</span>
+            <span class="ex-value">23,659</span>
+            <span class="ex-note">capped at 1,000 → max signal</span>
+          </div>
+          <div class="ex-signal">
+            <span class="ex-label">Freshness</span>
+            <span class="ex-value">Updated yesterday</span>
+            <span class="ex-note">1.0 — daily commits</span>
+          </div>
+          <div class="ex-signal">
+            <span class="ex-label">Issue Health</span>
+            <span class="ex-value">1,153 closed / 1,388 total</span>
+            <span class="ex-note">83% — large volume, well managed</span>
+          </div>
+          <div class="ex-signal">
+            <span class="ex-label">Dependents</span>
+            <span class="ex-value">7,718</span>
+            <span class="ex-note">far exceeds 100 ceiling → max signal</span>
+          </div>
+        </div>
+        <p class="example-summary">The most widely adopted Python MCP framework. 7,718 dependents across the ecosystem is a strong signal that this has become infrastructure.</p>
+      </div>
+
+      <div class="example example-low">
+        <div class="example-header">
+          <div class="example-title-group">
+            <a href="/tool/NapthaAI-automcp/" class="example-name">NapthaAI/automcp</a>
+            <span class="example-tag">Auto-conversion tool</span>
+          </div>
+          <div class="score-badge score-low">39.96</div>
+        </div>
+        <div class="example-signals">
+          <div class="ex-signal">
+            <span class="ex-label">Stars</span>
+            <span class="ex-value">301</span>
+            <span class="ex-note">solid star count — but that's not the problem</span>
+          </div>
+          <div class="ex-signal ex-signal-warn">
+            <span class="ex-label">Freshness</span>
+            <span class="ex-value">Last commit: April 2025</span>
+            <span class="ex-note">~11 months stale — heavy penalty</span>
+          </div>
+          <div class="ex-signal ex-signal-warn">
+            <span class="ex-label">Issue Health</span>
+            <span class="ex-value">0 closed / 6 open</span>
+            <span class="ex-note">0% — no issues have ever been resolved</span>
+          </div>
+          <div class="ex-signal">
+            <span class="ex-label">Contributors</span>
+            <span class="ex-value">1</span>
+            <span class="ex-note">single-maintainer bus factor risk</span>
+          </div>
+        </div>
+        <p class="example-summary">301 stars but a score of 39. This is exactly what AgentRank is designed to surface: a project that got initial traction but shows no signs of ongoing maintenance. Stars don't tell you this. The scores do.</p>
+      </div>
+
+    </div>
+  </section>
+
+  <section class="update-section">
+    <h2 class="section-header">Update Frequency</h2>
+    <div class="update-card">
+      <p>The crawler runs nightly. Every morning, all 25,000+ tools are re-scored from fresh GitHub data. Score and rank changes from the previous day are tracked and surfaced in the <a href="/movers/">Movers</a> feed.</p>
+      <p>Scores reflect reality as of the previous night's crawl. A tool that ships a critical fix today will see its scores improve within 24 hours.</p>
+    </div>
+  </section>
+
+  <section class="vs-section">
+    <h2 class="section-header">How AgentRank differs from alternatives</h2>
+    <div class="table-wrap">
+      <table class="vs-table">
+        <thead>
+          <tr>
+            <th>Source</th>
+            <th>Approach</th>
+            <th>What's missing</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>GitHub search (stars)</td>
+            <td>Sort by raw star count</td>
+            <td>No health signals. Stale viral repos rank above active maintained ones.</td>
+          </tr>
+          <tr>
+            <td>MCPMarket</td>
+            <td>Engagement-based ranking (clicks, installs)</td>
+            <td>No composite score. New tools with no traffic are invisible regardless of quality.</td>
+          </tr>
+          <tr>
+            <td>PulseMCP</td>
+            <td>Popularity-only (GitHub stars + social)</td>
+            <td>No maintenance signals. No issue health. Popularity ≠ reliability.</td>
+          </tr>
+          <tr>
+            <td>Glama</td>
+            <td>Security scans per tool</td>
+            <td>No public composite score. Security-only lens misses freshness, adoption, maintainer responsiveness.</td>
+          </tr>
+          <tr>
+            <td>Awesome-MCP-Servers</td>
+            <td>Curated flat list</td>
+            <td>No scoring. Human-curated means latency. New tools take weeks to appear.</td>
+          </tr>
+          <tr class="row-highlight">
+            <td><strong>AgentRank</strong></td>
+            <td>8-signal composite score, updated nightly</td>
+            <td>No competitors publish a transparent 0-100 composite score. This is the differentiator.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="open-section">
+    <h2 class="section-header">Open source</h2>
+    <div class="open-card">
+      <p>The scoring engine is open source. You can read the exact implementation, propose weight changes, or run your own scoring pass against the dataset.</p>
+      <div class="open-links">
+        <a href="https://github.com/superlowburn/agentrank/tree/main/scorer/src/weights.ts" target="_blank" rel="noopener noreferrer" class="open-link">weights.ts</a>
+        <a href="https://github.com/superlowburn/agentrank/tree/main/scorer/src/signals.ts" target="_blank" rel="noopener noreferrer" class="open-link">signals.ts</a>
+        <a href="https://github.com/superlowburn/agentrank/tree/main/scorer/src/normalize.ts" target="_blank" rel="noopener noreferrer" class="open-link">normalize.ts</a>
+      </div>
+    </div>
+  </section>
+
+</Base>
+
+<style>
+  .page-header {
+    margin-bottom: 2.5rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .page-header h1 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+  }
+
+  .subtitle {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    max-width: 600px;
+    line-height: 1.6;
+  }
+
+  section {
+    margin-bottom: 3rem;
+  }
+
+  .section-header {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-muted);
+    margin-bottom: 1.25rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .intro p {
+    font-size: 0.88rem;
+    color: var(--text-muted);
+    line-height: 1.7;
+    max-width: 700px;
+    margin-bottom: 0.75rem;
+  }
+
+  .intro strong {
+    color: var(--text);
+  }
+
+  .intro em {
+    color: var(--text);
+    font-style: normal;
+    font-weight: 600;
+  }
+
+  /* Signals */
+  .signals-intro {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+    max-width: 680px;
+  }
+
+  .signals-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+
+  .signal {
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 1.25rem;
+  }
+
+  .signal-header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-bottom: 0.4rem;
+    gap: 0.5rem;
+  }
+
+  .signal-name {
+    font-weight: 700;
+    font-size: 0.95rem;
+  }
+
+  .signal-weight {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--accent);
+    white-space: nowrap;
+    background: color-mix(in srgb, var(--accent) 10%, transparent);
+    padding: 0.15rem 0.4rem;
+    border-radius: 3px;
+  }
+
+  .signal-desc {
+    font-size: 0.82rem;
+    color: var(--text-muted);
+    margin-bottom: 0.75rem;
+    line-height: 1.4;
+  }
+
+  .signal-detail {
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 0.75rem;
+  }
+
+  .detail-row {
+    display: grid;
+    grid-template-columns: 160px 1fr;
+    gap: 0.5rem;
+    font-size: 0.78rem;
+    padding: 0.35rem 0.6rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .detail-row:last-child {
+    border-bottom: none;
+  }
+
+  .detail-label {
+    color: var(--text-muted);
+    font-size: 0.75rem;
+    padding-top: 0.05rem;
+  }
+
+  .detail-value {
+    color: var(--text);
+    line-height: 1.4;
+  }
+
+  .signal-why {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    line-height: 1.5;
+    border-left: 2px solid var(--border);
+    padding-left: 0.75rem;
+    font-style: italic;
+  }
+
+  /* Formula */
+  .formula-block {
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 1.5rem;
+    max-width: 600px;
+  }
+
+  .formula-label {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 1rem;
+  }
+
+  .weight-table {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .weight-row {
+    display: grid;
+    grid-template-columns: 160px 1fr 40px;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 0.82rem;
+  }
+
+  .weight-signal {
+    color: var(--text);
+  }
+
+  .weight-bar-wrap {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    height: 8px;
+    overflow: hidden;
+  }
+
+  .weight-bar {
+    height: 100%;
+    background: var(--accent);
+    border-radius: 2px;
+    transition: width 0.3s ease;
+  }
+
+  .weight-pct {
+    color: var(--accent);
+    font-size: 0.78rem;
+    text-align: right;
+    font-weight: 600;
+  }
+
+  .formula-note {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    line-height: 1.5;
+    border-top: 1px solid var(--border);
+    padding-top: 0.75rem;
+  }
+
+  /* Examples */
+  .examples-intro {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    margin-bottom: 1.5rem;
+  }
+
+  .examples-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+
+  .example {
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 1.25rem;
+  }
+
+  .example-low {
+    border-color: color-mix(in srgb, #ef4444 30%, var(--border));
+  }
+
+  .example-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+    gap: 0.75rem;
+  }
+
+  .example-title-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  .example-name {
+    font-weight: 700;
+    font-size: 0.88rem;
+    color: var(--accent);
+    text-decoration: none;
+    word-break: break-all;
+  }
+
+  .example-name:hover {
+    text-decoration: underline;
+  }
+
+  .example-tag {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .score-badge {
+    font-size: 1.25rem;
+    font-weight: 700;
+    padding: 0.3rem 0.6rem;
+    border-radius: 4px;
+    white-space: nowrap;
+    line-height: 1;
+  }
+
+  .score-high {
+    color: var(--accent);
+    background: color-mix(in srgb, var(--accent) 10%, transparent);
+    border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent);
+  }
+
+  .score-low {
+    color: #ef4444;
+    background: color-mix(in srgb, #ef4444 10%, transparent);
+    border: 1px solid color-mix(in srgb, #ef4444 30%, transparent);
+  }
+
+  .example-signals {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .ex-signal {
+    display: grid;
+    grid-template-columns: 100px 1fr;
+    gap: 0.5rem;
+    font-size: 0.78rem;
+    padding: 0.3rem 0.5rem;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    align-items: start;
+  }
+
+  .ex-signal-warn {
+    border-color: color-mix(in srgb, #ef4444 30%, var(--border));
+    background: color-mix(in srgb, #ef4444 5%, var(--bg));
+  }
+
+  .ex-label {
+    color: var(--text-muted);
+    font-size: 0.72rem;
+    padding-top: 0.1rem;
+  }
+
+  .ex-value {
+    color: var(--text);
+    font-weight: 600;
+    grid-column: 2;
+    grid-row: 1;
+  }
+
+  .ex-note {
+    color: var(--text-muted);
+    font-size: 0.7rem;
+    grid-column: 2;
+    line-height: 1.3;
+  }
+
+  /* Ugh, grid layouts for ex-signal need fixing */
+  .ex-signal {
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
+  }
+
+  .ex-label {
+    font-size: 0.68rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--text-muted);
+  }
+
+  .ex-value {
+    font-weight: 600;
+    font-size: 0.82rem;
+  }
+
+  .ex-note {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    line-height: 1.3;
+  }
+
+  .example-summary {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    line-height: 1.5;
+    border-left: 2px solid var(--border);
+    padding-left: 0.75rem;
+    font-style: italic;
+  }
+
+  /* Update */
+  .update-card {
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    border-radius: 6px;
+    padding: 1.25rem 1.5rem;
+    max-width: 680px;
+  }
+
+  .update-card p {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    line-height: 1.6;
+    margin-bottom: 0.6rem;
+  }
+
+  .update-card p:last-child {
+    margin-bottom: 0;
+  }
+
+  /* VS table */
+  .table-wrap {
+    overflow-x: auto;
+  }
+
+  .vs-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.82rem;
+  }
+
+  .vs-table th {
+    text-align: left;
+    padding: 0.5rem 0.75rem;
+    border-bottom: 2px solid var(--border);
+    color: var(--text-muted);
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    white-space: nowrap;
+  }
+
+  .vs-table td {
+    padding: 0.5rem 0.75rem;
+    border-bottom: 1px solid var(--border);
+    color: var(--text-muted);
+    vertical-align: top;
+    line-height: 1.4;
+  }
+
+  .vs-table td:first-child {
+    color: var(--text);
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  .row-highlight td {
+    background: color-mix(in srgb, var(--accent) 5%, transparent);
+  }
+
+  .row-highlight td:first-child {
+    color: var(--accent);
+  }
+
+  /* Open source */
+  .open-card {
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 1.25rem 1.5rem;
+    max-width: 600px;
+  }
+
+  .open-card p {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    line-height: 1.6;
+    margin-bottom: 1rem;
+  }
+
+  .open-links {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+  }
+
+  .open-link {
+    font-size: 0.78rem;
+    padding: 0.25rem 0.6rem;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    color: var(--accent);
+    text-decoration: none;
+    font-family: ui-monospace, monospace;
+  }
+
+  .open-link:hover {
+    border-color: var(--accent);
+    text-decoration: none;
+  }
+
+  @media (max-width: 768px) {
+    .signals-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .examples-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .detail-row {
+      grid-template-columns: 130px 1fr;
+    }
+
+    .weight-row {
+      grid-template-columns: 140px 1fr 40px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .page-header h1 {
+      font-size: 1.2rem;
+    }
+
+    .detail-row {
+      grid-template-columns: 1fr;
+    }
+
+    .weight-row {
+      grid-template-columns: 120px 1fr 36px;
+      gap: 0.5rem;
+    }
+  }
+</style>
