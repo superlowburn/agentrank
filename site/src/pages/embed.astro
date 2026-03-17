@@ -57,8 +57,41 @@ const skillItems: BadgeItem[] = skills.map((s) => {
   canonicalUrl={`${SITE_URL}/embed/`}
 >
   <div class="embed-header">
-    <h1>Badge Embed</h1>
-    <p class="subtitle">Add an AgentRank score badge to your README or docs. Badges update daily.</p>
+    <h1>Embed AgentRank</h1>
+    <p class="subtitle">Add scores and signal breakdowns to your README, blog, or docs. All embeds update daily.</p>
+  </div>
+
+  <!-- Widget section -->
+  <div class="widget-section">
+    <h2 class="section-title">Score Widget</h2>
+    <p class="section-desc">A rich widget with score and signal breakdown. SVG for GitHub READMEs, iframe for blogs and newsletters.</p>
+    <div class="widget-preview">
+      <img src="/api/embed/microsoft--playwright-mcp.svg" alt="AgentRank widget example" height="148" />
+    </div>
+    <div class="widget-snippets">
+      <div class="snippet-group">
+        <div class="snippet-group-label">SVG — GitHub README (replace the slug with your tool)</div>
+        <div class="snippet-row">
+          <code class="snippet-code long" id="svg-md-code">[![AgentRank](https://agentrank-ai.com/api/embed/YOUR-TOOL-SLUG.svg)](https://agentrank-ai.com/tool/YOUR-TOOL-SLUG/)</code>
+          <button class="copy-btn" data-copy="[![AgentRank](https://agentrank-ai.com/api/embed/YOUR-TOOL-SLUG.svg)](https://agentrank-ai.com/tool/YOUR-TOOL-SLUG/)">Copy</button>
+        </div>
+      </div>
+      <div class="snippet-group">
+        <div class="snippet-group-label">HTML iframe — blogs, newsletters, external sites</div>
+        <div class="snippet-row">
+          <code class="snippet-code long" id="iframe-code">&lt;iframe src="https://agentrank-ai.com/api/embed/YOUR-TOOL-SLUG.html" width="340" height="170" frameborder="0" style="border-radius:6px;overflow:hidden;"&gt;&lt;/iframe&gt;</code>
+          <button class="copy-btn" data-copy='<iframe src="https://agentrank-ai.com/api/embed/YOUR-TOOL-SLUG.html" width="340" height="170" frameborder="0" style="border-radius:6px;overflow:hidden;"></iframe>'>Copy</button>
+        </div>
+      </div>
+      <p class="slug-hint">Replace <code>YOUR-TOOL-SLUG</code> with the slug from any tool page (e.g. <code>microsoft--playwright-mcp</code>). Use <code>--</code> in place of <code>/</code>.</p>
+    </div>
+  </div>
+
+  <div class="section-divider"></div>
+
+  <div class="section-title-row">
+    <h2 class="section-title">Score Badge</h2>
+    <p class="section-desc">Minimal badge, like shields.io. Best for inline use in README tables.</p>
     <div class="example-badge">
       <img src="/api/badge/tool/microsoft--playwright-mcp" alt="AgentRank badge example" height="20" />
     </div>
@@ -387,5 +420,77 @@ const skillItems: BadgeItem[] = skills.map((s) => {
   .copy-btn:hover {
     border-color: var(--accent);
     color: var(--accent);
+  }
+
+  /* Widget section */
+  .widget-section {
+    margin-bottom: 2rem;
+  }
+
+  .section-title {
+    font-size: 1rem;
+    font-weight: 700;
+    margin-bottom: 0.3rem;
+  }
+
+  .section-title-row {
+    margin-bottom: 1rem;
+  }
+
+  .section-desc {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    margin-bottom: 0.75rem;
+  }
+
+  .widget-preview {
+    margin-bottom: 1rem;
+  }
+
+  .widget-preview img {
+    display: block;
+    max-width: 100%;
+    border-radius: 6px;
+  }
+
+  .widget-snippets {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .snippet-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+  }
+
+  .snippet-group-label {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    font-weight: 600;
+  }
+
+  .snippet-code.long {
+    max-width: none;
+    min-width: 0;
+  }
+
+  .slug-hint {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    margin-top: 0.25rem;
+  }
+
+  .slug-hint code {
+    background: var(--bg-surface);
+    padding: 0.1rem 0.3rem;
+    border-radius: 2px;
+    font-size: 0.68rem;
+  }
+
+  .section-divider {
+    border-top: 1px solid var(--border);
+    margin: 1.5rem 0;
   }
 </style>
