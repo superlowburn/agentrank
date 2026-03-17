@@ -139,6 +139,20 @@ CREATE TABLE IF NOT EXISTS rank_history (
 CREATE INDEX IF NOT EXISTS idx_rh_date ON rank_history(snapshot_date);
 CREATE INDEX IF NOT EXISTS idx_rh_tool ON rank_history(tool_full_name, tool_type);
 
+-- Email subscribers — survives pipeline DROP/CREATE cycles
+CREATE TABLE IF NOT EXISTS email_subscribers (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  email TEXT NOT NULL,
+  source TEXT NOT NULL DEFAULT 'homepage',  -- 'homepage', 'tool', 'skill'
+  subscribed_at TEXT NOT NULL DEFAULT (datetime('now'))
+);
+CREATE UNIQUE INDEX IF NOT EXISTS idx_email_subscribers_email ON email_subscribers(email);
+CREATE INDEX IF NOT EXISTS idx_email_subscribers_source ON email_subscribers(source);
+-- Migration (run once on existing D1):
+-- CREATE TABLE IF NOT EXISTS email_subscribers (id INTEGER PRIMARY KEY AUTOINCREMENT, email TEXT NOT NULL, source TEXT NOT NULL DEFAULT 'homepage', subscribed_at TEXT NOT NULL DEFAULT (datetime('now')));
+-- CREATE UNIQUE INDEX IF NOT EXISTS idx_email_subscribers_email ON email_subscribers(email);
+-- CREATE INDEX IF NOT EXISTS idx_email_subscribers_source ON email_subscribers(source);
+
 -- Submissions table — survives pipeline DROP/CREATE cycles
 CREATE TABLE IF NOT EXISTS submissions (
   id INTEGER PRIMARY KEY AUTOINCREMENT,

@@ -69,6 +69,24 @@ const itemListJsonLd = {
     </div>
   </div>
 
+  <div class="subscribe-banner">
+    <form id="subscribe-form" class="subscribe-form" novalidate>
+      <span class="subscribe-label">Get weekly MCP ecosystem updates</span>
+      <div class="subscribe-input-row">
+        <input
+          type="email"
+          id="subscribe-email"
+          name="email"
+          placeholder="you@example.com"
+          autocomplete="email"
+          required
+        />
+        <button type="submit" id="subscribe-btn">Subscribe</button>
+      </div>
+      <span id="subscribe-msg" class="subscribe-msg" aria-live="polite"></span>
+    </form>
+  </div>
+
   <div class="controls">
     <input type="text" id="search" placeholder="Search skills..." autocomplete="off" />
     <select id="category-filter">
@@ -147,6 +165,104 @@ const itemListJsonLd = {
     color: var(--accent);
     border-color: var(--accent);
     text-decoration: none;
+  }
+
+  .subscribe-banner {
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 0.85rem 1.25rem;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+  }
+
+  .subscribe-form {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    width: 100%;
+  }
+
+  .subscribe-label {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .subscribe-input-row {
+    display: flex;
+    gap: 0.5rem;
+    flex: 1;
+    min-width: 0;
+  }
+
+  #subscribe-email {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 0.4rem 0.75rem;
+    border-radius: 4px;
+    font-family: inherit;
+    font-size: 0.85rem;
+    flex: 1;
+    min-width: 0;
+  }
+
+  #subscribe-email:focus {
+    outline: 1px solid var(--accent);
+    border-color: var(--accent);
+  }
+
+  #subscribe-btn {
+    background: var(--accent);
+    color: #000;
+    border: none;
+    border-radius: 4px;
+    padding: 0.4rem 0.9rem;
+    font-family: inherit;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: opacity 0.15s;
+  }
+
+  #subscribe-btn:hover {
+    opacity: 0.85;
+  }
+
+  #subscribe-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .subscribe-msg {
+    font-size: 0.78rem;
+    min-height: 1em;
+    width: 100%;
+  }
+
+  .subscribe-msg.success {
+    color: var(--accent);
+  }
+
+  .subscribe-msg.error {
+    color: #ef4444;
+  }
+
+  @media (max-width: 600px) {
+    .subscribe-form {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.5rem;
+    }
+
+    .subscribe-input-row {
+      width: 100%;
+    }
   }
 
   .install-banner {
@@ -465,6 +581,45 @@ const itemListJsonLd = {
 
       rows.forEach((row) => tbody.appendChild(row));
     });
+  });
+
+  const subscribeForm = document.getElementById('subscribe-form') as HTMLFormElement;
+  const subscribeEmail = document.getElementById('subscribe-email') as HTMLInputElement;
+  const subscribeBtn = document.getElementById('subscribe-btn') as HTMLButtonElement;
+  const subscribeMsg = document.getElementById('subscribe-msg') as HTMLSpanElement;
+
+  subscribeForm?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const email = subscribeEmail.value.trim();
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      subscribeMsg.textContent = 'Please enter a valid email address.';
+      subscribeMsg.className = 'subscribe-msg error';
+      return;
+    }
+    subscribeBtn.disabled = true;
+    subscribeMsg.textContent = '';
+    subscribeMsg.className = 'subscribe-msg';
+    try {
+      const res = await fetch('/api/subscribe', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, source: 'homepage' }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        subscribeMsg.textContent = data.already ? "You're already subscribed." : "You're in. Updates coming your way.";
+        subscribeMsg.className = 'subscribe-msg success';
+        subscribeEmail.value = '';
+      } else {
+        subscribeMsg.textContent = data.error || 'Something went wrong.';
+        subscribeMsg.className = 'subscribe-msg error';
+        subscribeBtn.disabled = false;
+      }
+    } catch {
+      subscribeMsg.textContent = 'Network error. Please try again.';
+      subscribeMsg.className = 'subscribe-msg error';
+      subscribeBtn.disabled = false;
+    }
   });
 
   document.querySelectorAll('.install-cmd').forEach((el) => {
