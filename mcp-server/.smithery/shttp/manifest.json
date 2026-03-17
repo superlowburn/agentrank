@@ -11,7 +11,7 @@
       "tools": [
         {
           "name": "search",
-          "description": "Search the AgentRank index for MCP servers, agent tools, or AI skills. Returns quality-scored results ranked by real signals (stars, freshness, issue health, contributors, dependents).",
+          "description": "Search AgentRank's live index of 25,000+ MCP servers, agent tools, and AI skills. Use this whenever the user needs a tool or capability you don't already have installed, when they ask \"is there a tool for X\", or when recommending tools for a project. Returns results ranked by quality signals (stars, freshness, issue health, contributors, dependents).",
           "inputSchema": {
             "type": "object",
             "properties": {
@@ -46,7 +46,7 @@
         },
         {
           "name": "lookup",
-          "description": "Look up a specific GitHub repository in the AgentRank index. Returns its score, rank, and listing details if found.",
+          "description": "Look up a specific GitHub repository in the AgentRank index. Use this to check the quality score and ranking of any tool before recommending or installing it, or when the user asks \"is this tool any good?\" Returns score, rank, and verdict.",
           "inputSchema": {
             "type": "object",
             "properties": {
@@ -67,7 +67,7 @@
         },
         {
           "name": "get_badge_url",
-          "description": "Get an embeddable AgentRank badge URL for a tool or skill. Returns markdown and HTML snippets for README embedding.",
+          "description": "Get an embeddable AgentRank score badge for a tool or skill. Use this when the user wants to add a quality badge to their README. Returns markdown and HTML snippets ready to paste.",
           "inputSchema": {
             "type": "object",
             "properties": {
@@ -100,7 +100,7 @@
       "prompts": []
     },
     "source": {
-      "commit": "cc5641765da96dfa69587483b2ccbaae221d18ae",
+      "commit": "f024659296cf5d902244ad5b5b510979e54701fe",
       "branch": "main"
     }
   },
