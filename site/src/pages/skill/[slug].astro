@@ -155,9 +155,13 @@ const relatedSkills = relatedRows.results || [];
 ---
 
 <Base title={`${skill.name} — AgentRank`} description={summary} activeTab="skills" jsonLd={jsonLd} keywords={keywordsStr} canonicalUrl={pageUrl}>
-  <div class="back">
-    <a href="/">&larr; Back to leaderboard</a>
-  </div>
+  <nav class="breadcrumb" aria-label="breadcrumb">
+    <a href="/">Home</a>
+    <span class="breadcrumb-sep" aria-hidden="true">&rsaquo;</span>
+    <a href="/">Skills</a>
+    <span class="breadcrumb-sep" aria-hidden="true">&rsaquo;</span>
+    <span class="breadcrumb-current" aria-current="page">{skill.name}</span>
+  </nav>
 
   <div class="tool-header">
     <div class="tool-header-left">
@@ -418,17 +422,37 @@ const relatedSkills = relatedRows.results || [];
 </Base>
 
 <style>
-  .back {
+  .breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
     margin-bottom: 1.5rem;
-  }
-
-  .back a {
-    color: var(--text-muted);
     font-size: 0.8rem;
+    color: var(--text-muted);
+    flex-wrap: wrap;
   }
 
-  .back a:hover {
+  .breadcrumb a {
+    color: var(--text-muted);
+    text-decoration: none;
+  }
+
+  .breadcrumb a:hover {
     color: var(--accent);
+    text-decoration: none;
+  }
+
+  .breadcrumb-sep {
+    color: var(--border);
+    font-size: 0.9rem;
+  }
+
+  .breadcrumb-current {
+    color: var(--text);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 40ch;
   }
 
   .tool-header {

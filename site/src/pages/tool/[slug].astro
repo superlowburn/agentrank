@@ -111,9 +111,13 @@ if (relatedTools.length < 3) {
 ---
 
 <Base title={`${tool.full_name} — AgentRank`} description={summary} activeTab="tools" jsonLd={jsonLd} keywords={keywordsStr} canonicalUrl={pageUrl}>
-  <div class="back">
-    <a href="/tools/">&larr; Back to tools leaderboard</a>
-  </div>
+  <nav class="breadcrumb" aria-label="breadcrumb">
+    <a href="/">Home</a>
+    <span class="breadcrumb-sep" aria-hidden="true">&rsaquo;</span>
+    <a href="/tools/">Tools</a>
+    <span class="breadcrumb-sep" aria-hidden="true">&rsaquo;</span>
+    <span class="breadcrumb-current" aria-current="page">{tool.full_name}</span>
+  </nav>
 
   <div class="tool-header">
     <h2>{tool.full_name}</h2>
@@ -335,17 +339,37 @@ if (relatedTools.length < 3) {
 </Base>
 
 <style>
-  .back {
+  .breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
     margin-bottom: 1.5rem;
-  }
-
-  .back a {
-    color: var(--text-muted);
     font-size: 0.8rem;
+    color: var(--text-muted);
+    flex-wrap: wrap;
   }
 
-  .back a:hover {
+  .breadcrumb a {
+    color: var(--text-muted);
+    text-decoration: none;
+  }
+
+  .breadcrumb a:hover {
     color: var(--accent);
+    text-decoration: none;
+  }
+
+  .breadcrumb-sep {
+    color: var(--border);
+    font-size: 0.9rem;
+  }
+
+  .breadcrumb-current {
+    color: var(--text);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 40ch;
   }
 
   .tool-header {
