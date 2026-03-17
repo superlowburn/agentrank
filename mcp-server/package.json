@@ -1,16 +1,16 @@
 {
   "name": "agentrank-mcp-server",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "mcpName": "io.github.superlowburn/agentrank",
   "repository": {
     "type": "git",
-    "url": "https://github.com/superlowburn/agentrank.git"
+    "url": "git+https://github.com/superlowburn/agentrank.git"
   },
   "description": "Google for AI agents. Gives your AI live search across 25,000+ scored MCP servers and tools.",
   "license": "MIT",
   "type": "module",
   "bin": {
-    "agentrank-mcp": "./dist/index.js"
+    "agentrank-mcp": "dist/index.js"
   },
   "files": [
     "dist"
