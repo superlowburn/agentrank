@@ -12,8 +12,15 @@ const STATIC_PAGES = [
   { path: '/submit/', changefreq: 'weekly' },
   { path: '/api-docs/', changefreq: 'weekly' },
   { path: '/blog/', changefreq: 'weekly' },
-  { path: '/blog/state-of-mcp-2026/', changefreq: 'monthly' },
+  { path: '/category/', changefreq: 'weekly' },
 ];
+
+// Auto-discover blog posts at build time via Vite glob
+const blogGlob = import.meta.glob('./blog/*.astro');
+const BLOG_POSTS = Object.keys(blogGlob)
+  .map((p) => p.replace('./blog/', '').replace('.astro', ''))
+  .filter((slug) => slug !== 'index')
+  .map((slug) => ({ path: `/blog/${slug}/`, changefreq: 'weekly' as const }));
 
 function escapeXml(s: string): string {
   return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&apos;');
@@ -33,7 +40,7 @@ export const GET: APIRoute = async ({ locals }) => {
 
   let urls = '';
 
-  for (const page of STATIC_PAGES) {
+  for (const page of [...STATIC_PAGES, ...BLOG_POSTS]) {
     urls += `  <url>
     <loc>${SITE}${page.path}</loc>
     <lastmod>${today}</lastmod>
