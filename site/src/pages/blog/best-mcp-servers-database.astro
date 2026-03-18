@@ -12,15 +12,15 @@ const relatedPosts = [
   { href: '/blog/best-mcp-servers-api-integration/', title: 'Best MCP Servers for API Integration in 2026' },
 ];
 
-const publishDate = '2026-03-17';
+const publishDate = '2026-03-18';
 
 const jsonLd = {
   '@context': 'https://schema.org',
   '@type': 'Article',
   headline: 'Best MCP Servers for Database Management in 2026',
   description: 'The top-ranked MCP servers for database access and management, scored by stars, freshness, issue health, and real usage signals from the AgentRank index.',
-  datePublished: publishDate,
-  dateModified: publishDate,
+  datePublished: '2026-03-17',
+  dateModified: '2026-03-18',
   author: {
     '@type': 'Organization',
     name: 'AgentRank',
@@ -46,19 +46,6 @@ const jsonLd = {
 const tools = [
   {
     rank: 1,
-    name: 'motherduckdb/mcp-server-motherduck',
-    slug: 'motherduckdb--mcp-server-motherduck',
-    score: 88.66,
-    stars: 439,
-    lang: 'Python',
-    contributors: 16,
-    lastCommit: '2026-03-04',
-    desc: 'Local MCP server for DuckDB and MotherDuck',
-    useCase: 'Analytics / OLAP',
-    highlight: 'Best for analytical queries and in-process SQL over large datasets.',
-  },
-  {
-    rank: 2,
     name: 'mongodb-js/mongodb-mcp-server',
     slug: 'mongodb-js--mongodb-mcp-server',
     score: 88.44,
@@ -68,27 +55,40 @@ const tools = [
     lastCommit: '2026-03-14',
     desc: 'Official MCP server for MongoDB and MongoDB Atlas',
     useCase: 'Document DB',
-    highlight: 'Official MongoDB server with Atlas support and 25 contributors.',
+    highlight: 'Official MongoDB server with Atlas support. Highest score in the database category.',
+  },
+  {
+    rank: 2,
+    name: 'motherduckdb/mcp-server-motherduck',
+    slug: 'motherduckdb--mcp-server-motherduck',
+    score: 86.87,
+    stars: 442,
+    lang: 'Python',
+    contributors: 16,
+    lastCommit: '2026-03-16',
+    desc: 'Local MCP server for DuckDB and MotherDuck',
+    useCase: 'Analytics / OLAP',
+    highlight: 'Best for analytical queries and in-process SQL over large datasets.',
   },
   {
     rank: 3,
     name: 'redis/mcp-redis',
     slug: 'redis--mcp-redis',
-    score: 86.59,
-    stars: 451,
+    score: 86.61,
+    stars: 454,
     lang: 'Python',
     contributors: 23,
-    lastCommit: '2026-03-13',
+    lastCommit: '2026-03-17',
     desc: 'Official Redis MCP Server — natural language interface for Redis',
     useCase: 'Cache / Real-time',
-    highlight: 'Official Redis Labs server. Handles sets, hashes, streams, and search.',
+    highlight: 'Official Redis Labs server. Handles sets, hashes, streams, and search. Committed March 17.',
   },
   {
     rank: 4,
     name: 'benborla/mcp-server-mysql',
     slug: 'benborla--mcp-server-mysql',
-    score: 86.09,
-    stars: 1335,
+    score: 85.42,
+    stars: 1361,
     lang: 'JavaScript',
     contributors: 27,
     lastCommit: '2026-03-10',
@@ -98,29 +98,29 @@ const tools = [
   },
   {
     rank: 5,
+    name: 'neondatabase/mcp-server-neon',
+    slug: 'neondatabase--mcp-server-neon',
+    score: 78.58,
+    stars: 564,
+    lang: 'TypeScript',
+    contributors: 17,
+    lastCommit: '2026-03-17',
+    desc: 'Official MCP server for Neon — serverless Postgres management and queries',
+    useCase: 'Serverless Postgres',
+    highlight: 'Official Neon server. Covers both the management API and raw SQL queries.',
+  },
+  {
+    rank: 6,
     name: 'bytebase/dbhub',
     slug: 'bytebase--dbhub',
-    score: 78.46,
-    stars: 2302,
+    score: 78.12,
+    stars: 2335,
     lang: 'TypeScript',
     contributors: 22,
     lastCommit: '2026-03-12',
     desc: 'Zero-dependency multi-DB MCP server: Postgres, MySQL, SQL Server, MariaDB, SQLite',
     useCase: 'Multi-DB',
     highlight: 'Connects to five database engines from one server. Best if you run multiple DB types.',
-  },
-  {
-    rank: 6,
-    name: 'neondatabase/mcp-server-neon',
-    slug: 'neondatabase--mcp-server-neon',
-    score: 78.85,
-    stars: 561,
-    lang: 'TypeScript',
-    contributors: 17,
-    lastCommit: '2026-03-13',
-    desc: 'Official MCP server for Neon — serverless Postgres management and queries',
-    useCase: 'Serverless Postgres',
-    highlight: 'Official Neon server. Covers both the management API and raw SQL queries.',
   },
   {
     rank: 7,
@@ -138,9 +138,9 @@ const tools = [
 ];
 
 const stats = {
-  totalDatabaseTools: 847,
-  avgDatabaseScore: 41.2,
-  topScore: 88.66,
+  totalDatabaseTools: 910,
+  avgDatabaseScore: 29.6,
+  topScore: 88.44,
 };
 const faqJsonLd = {
   '@context': 'https://schema.org',
@@ -254,27 +254,29 @@ const faqJsonLd = {
     <section id="by-use-case">
       <h2>Choosing by use case</h2>
 
+      <h3>Document databases (MongoDB)</h3>
+      <p>
+        <a href="/tool/mongodb-js--mongodb-mcp-server/" class="inline-link">mongodb-js/mongodb-mcp-server</a> is
+        the top-scoring database tool in the index at <strong>88.44</strong>, overtaking the field in the
+        March 2026 crawl. Official server from the MongoDB team with 25 contributors and Atlas cluster support.
+        Covers both local MongoDB instances and cloud-hosted Atlas. The high contributor count and official
+        backing make this the safe pick for any MongoDB-dependent agent workflow.
+      </p>
+
       <h3>Analytics and OLAP</h3>
       <p>
-        <a href="/tool/motherduckdb--mcp-server-motherduck/" class="inline-link">motherduckdb/mcp-server-motherduck</a> is
-        the top-scoring database tool in the index at <strong>88.66</strong>. DuckDB runs in-process,
+        <a href="/tool/motherduckdb--mcp-server-motherduck/" class="inline-link">motherduckdb/mcp-server-motherduck</a> scores
+        <strong>86.87</strong> with a commit as recent as March 16. DuckDB runs in-process,
         which means zero round-trips for local data and fast analytical queries. If your agent needs to
         query Parquet files, CSVs, or large in-memory datasets, this is the right tool. MotherDuck
         support gives you cloud scale when you need it.
       </p>
 
-      <h3>Document databases (MongoDB)</h3>
-      <p>
-        <a href="/tool/mongodb-js--mongodb-mcp-server/" class="inline-link">mongodb-js/mongodb-mcp-server</a> is
-        the official server from the MongoDB team, scoring <strong>88.44</strong> with 25 contributors.
-        Covers both local MongoDB instances and Atlas clusters. The high contributor count and official
-        backing make this the safe pick for any MongoDB-dependent agent workflow.
-      </p>
-
       <h3>Caching and real-time data</h3>
       <p>
         <a href="/tool/redis--mcp-redis/" class="inline-link">redis/mcp-redis</a> is the official Redis Labs
-        server at <strong>86.59</strong>. It exposes Redis data structures — strings, hashes, sets, sorted sets,
+        server at <strong>86.61</strong>, with a commit on March 17 — most recently updated of the top tier.
+        It exposes Redis data structures — strings, hashes, sets, sorted sets,
         streams — through natural language. 23 contributors and active commits. The "official" label matters:
         Redis Labs is maintaining this and will track breaking changes in the protocol.
       </p>
@@ -282,7 +284,7 @@ const faqJsonLd = {
       <h3>MySQL / MariaDB</h3>
       <p>
         <a href="/tool/benborla--mcp-server-mysql/" class="inline-link">benborla/mcp-server-mysql</a> has
-        1,335 stars and 27 contributors, scoring <strong>86.09</strong>. It's read-only by design —
+        1,361 stars and 27 contributors, scoring <strong>85.42</strong>. It's read-only by design —
         a deliberate safety choice for production use. If you need write access, fork it; if you need read-only
         inspection and query execution, it's the best MySQL option in the index.
       </p>
@@ -290,7 +292,7 @@ const faqJsonLd = {
       <h3>Multi-database environments</h3>
       <p>
         <a href="/tool/bytebase--dbhub/" class="inline-link">bytebase/dbhub</a> connects to Postgres, MySQL,
-        SQL Server, MariaDB, and SQLite from a single server. Score of <strong>78.46</strong> and 2,302 stars —
+        SQL Server, MariaDB, and SQLite from a single server. Score of <strong>78.12</strong> and 2,335 stars —
         the most-starred pure database MCP server in the index. Zero external dependencies. If your stack
         includes multiple database engines, dbhub eliminates the need to run a separate server per engine.
       </p>
@@ -298,7 +300,7 @@ const faqJsonLd = {
       <h3>Serverless Postgres (Neon)</h3>
       <p>
         <a href="/tool/neondatabase--mcp-server-neon/" class="inline-link">neondatabase/mcp-server-neon</a> is
-        the official Neon server at <strong>78.85</strong>. It wraps both the Neon management API
+        the official Neon server at <strong>78.58</strong>. It wraps both the Neon management API
         (create/delete branches, databases, endpoints) and direct SQL query execution.
         The branching model makes it particularly useful for agents that need to spin up isolated environments.
       </p>
@@ -333,9 +335,9 @@ const faqJsonLd = {
 
       <h3>Score vs stars</h3>
       <p>
-        <a href="/tool/bytebase--dbhub/" class="inline-link">bytebase/dbhub</a> has 2,302 stars but scores 78.46. <a href="/tool/motherduckdb--mcp-server-motherduck/" class="inline-link">motherduckdb/mcp-server-motherduck</a> has only
-        439 stars but scores 88.66 — better freshness and issue health signals. Stars measure historical
-        attention; the AgentRank score measures current maintenance quality. Use the score when
+        <a href="/tool/bytebase--dbhub/" class="inline-link">bytebase/dbhub</a> has 2,335 stars but scores 78.12. <a href="/tool/mongodb-js--mongodb-mcp-server/" class="inline-link">mongodb-js/mongodb-mcp-server</a> has only
+        959 stars but leads the category at <strong>88.44</strong> — driven by freshness, issue health, and
+        contributor depth. Stars measure historical attention; the AgentRank score measures current maintenance quality. Use the score when
         deciding what to depend on.
       </p>
 

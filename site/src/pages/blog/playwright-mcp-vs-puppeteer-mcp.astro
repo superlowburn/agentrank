@@ -1,0 +1,660 @@
+---
+export const prerender = true;
+
+import Base from '../../layouts/Base.astro';
+import BlogSubscribeCTA from '../../components/BlogSubscribeCTA.astro';
+import RelatedPosts from '../../components/RelatedPosts.astro';
+
+const relatedPosts = [
+  { href: '/blog/best-mcp-servers-web-browser/', title: 'Best MCP Servers for Web Scraping & Browser Automation in 2026' },
+  { href: '/blog/mcp-server-comparison-top-10/', title: 'MCP Server Comparison: Top 10 Head-to-Head in 2026' },
+  { href: '/blog/how-to-choose-an-mcp-server/', title: 'How to Choose an MCP Server in 2026' },
+  { href: '/blog/best-mcp-servers-code-generation/', title: 'Best MCP Servers for Code Generation in 2026' },
+];
+
+const publishDate = '2026-03-18';
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: 'Playwright MCP vs Puppeteer MCP: Which Browser Automation Tool?',
+  description: 'Data-driven comparison of Playwright and Puppeteer MCP servers. AgentRank scores, star counts, contributor depth, and issue health for every option in the index — March 2026.',
+  datePublished: publishDate,
+  dateModified: publishDate,
+  author: {
+    '@type': 'Organization',
+    name: 'AgentRank',
+    url: 'https://agentrank-ai.com',
+  },
+  publisher: {
+    '@type': 'Organization',
+    name: 'AgentRank',
+    url: 'https://agentrank-ai.com',
+    logo: {
+      '@type': 'ImageObject',
+      url: 'https://agentrank-ai.com/og-image.png',
+    },
+  },
+  mainEntityOfPage: {
+    '@type': 'WebPage',
+    '@id': 'https://agentrank-ai.com/blog/playwright-mcp-vs-puppeteer-mcp/',
+  },
+  image: 'https://agentrank-ai.com/og-image.png',
+  keywords: 'playwright MCP server, puppeteer MCP server, playwright vs puppeteer MCP, browser automation MCP, microsoft playwright-mcp, MCP browser tool 2026',
+};
+
+const tools = [
+  {
+    name: 'microsoft/playwright-mcp',
+    slug: 'microsoft--playwright-mcp',
+    score: 94.23,
+    stars: 29150,
+    contributors: 62,
+    lastCommit: '2026-03-16',
+    issueCloseRate: 97,
+    globalRank: 10,
+    lang: 'TypeScript',
+    vendor: 'Microsoft (official)',
+    framework: 'Playwright',
+    verdict: 'The clear winner. #10 globally with 29,150 stars and a 97% issue close rate. Official Microsoft backing means it tracks Playwright releases.',
+  },
+  {
+    name: 'executeautomation/mcp-playwright',
+    slug: 'executeautomation--mcp-playwright',
+    score: 69.94,
+    stars: 5301,
+    contributors: 34,
+    lastCommit: '2025-12-13',
+    issueCloseRate: 78,
+    globalRank: 298,
+    lang: 'TypeScript',
+    vendor: 'Community',
+    framework: 'Playwright',
+    verdict: 'Strong community alternative. 5,301 stars and 34 contributors. Last commit December 2025 — watch the freshness signal.',
+  },
+  {
+    name: 'zed-extensions/mcp-server-puppeteer',
+    slug: 'zed-extensions--mcp-server-puppeteer',
+    score: 47.02,
+    stars: 22,
+    contributors: 0,
+    lastCommit: '2026-03-13',
+    issueCloseRate: 0,
+    globalRank: 3848,
+    lang: 'Rust',
+    vendor: 'Zed (community)',
+    framework: 'Puppeteer',
+    verdict: 'Recent commits but a single contributor and zero issue history. Rust implementation — narrow use case for Zed editor users.',
+  },
+  {
+    name: 'merajmehrabi/puppeteer-mcp-server',
+    slug: 'merajmehrabi--puppeteer-mcp-server',
+    score: 45.82,
+    stars: 410,
+    contributors: 3,
+    lastCommit: '2025-03-14',
+    issueCloseRate: 0,
+    globalRank: 4401,
+    lang: 'TypeScript',
+    vendor: 'Community',
+    framework: 'Puppeteer',
+    verdict: 'The most-starred Puppeteer MCP option. Last commit March 2025 — one year stale. Zero issue close rate signals no active maintenance.',
+  },
+];
+
+const faqJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: [
+    {
+      '@type': 'Question',
+      name: 'Is there an official Playwright MCP server?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Yes. microsoft/playwright-mcp is the official Playwright MCP server, maintained by Microsoft. It scores 94.23 in the AgentRank index and ranks #10 globally across 25,000+ tools. It is the recommended choice for browser automation in any AI agent workflow.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Is there an official Puppeteer MCP server?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'No official Puppeteer MCP server exists as of March 2026. The most-starred community option (merajmehrabi/puppeteer-mcp-server) has not been updated since March 2025 and has no active maintenance signals. The AgentRank score for the best Puppeteer option is 47.02 vs 94.23 for the Playwright official server.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Should I use Playwright or Puppeteer for MCP browser automation?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Playwright. The quality gap between Playwright and Puppeteer MCP options is large: the best Playwright server scores 94.23 with 62 contributors; the best Puppeteer server scores 47.02 with 3 contributors. Unless you have a specific reason to use Puppeteer, microsoft/playwright-mcp is the right choice.',
+      },
+    },
+  ],
+};
+---
+
+<Base
+  title="Playwright MCP vs Puppeteer MCP: Which Browser Automation Tool? — AgentRank"
+  description="Data-driven comparison of Playwright and Puppeteer MCP servers. Scores, stars, issue health, and contributor depth for every option — March 2026 data from the AgentRank index."
+  activeTab="blog"
+  keywords="playwright MCP server, puppeteer MCP server, playwright vs puppeteer MCP 2026, browser automation MCP server, microsoft playwright-mcp, best browser MCP server"
+  canonicalUrl="https://agentrank-ai.com/blog/playwright-mcp-vs-puppeteer-mcp/"
+  jsonLd={[jsonLd, faqJsonLd]}
+  ogImage="/og/blog.png"
+>
+  <article class="blog-post">
+    <header class="post-header">
+      <div class="breadcrumb"><a href="/blog/">Blog</a> <span>/</span></div>
+      <h1>Playwright MCP vs Puppeteer MCP: Which Browser Automation Tool?</h1>
+      <div class="post-meta">
+        <time datetime={publishDate}>March 18, 2026</time>
+        <span class="sep">&middot;</span>
+        <span>5 min read</span>
+        <span class="sep">&middot;</span>
+        <span>AgentRank Index</span>
+      </div>
+      <p class="lede">
+        Browser automation is one of the most common AI agent use cases. Two tools dominate the space:
+        Playwright and Puppeteer. We indexed <strong>83 Playwright and Puppeteer MCP servers</strong> across
+        25,638 repositories. The data tells a clear story — here it is.
+      </p>
+    </header>
+
+    <nav class="toc">
+      <strong>Contents</strong>
+      <ol>
+        <li><a href="#comparison-table">Side-by-side comparison</a></li>
+        <li><a href="#playwright-options">Playwright MCP options</a></li>
+        <li><a href="#puppeteer-options">Puppeteer MCP options</a></li>
+        <li><a href="#verdict">Verdict</a></li>
+        <li><a href="#setup">Setup guide</a></li>
+      </ol>
+    </nav>
+
+    <section id="comparison-table">
+      <h2>Side-by-side comparison</h2>
+      <p>
+        Every Playwright and Puppeteer MCP server in the AgentRank index, sorted by score.
+        The gap between the top Playwright option and the best Puppeteer server is <strong>47 points</strong>.
+      </p>
+
+      <div class="table-wrapper">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Repository</th>
+              <th class="num">Score</th>
+              <th class="num">Stars</th>
+              <th class="num">Contrib.</th>
+              <th class="num">Close%</th>
+              <th class="num">Global rank</th>
+              <th>Framework</th>
+            </tr>
+          </thead>
+          <tbody>
+            {tools.map((tool) => (
+              <tr class={tool.framework === 'Playwright' ? 'row-playwright' : 'row-puppeteer'}>
+                <td class="tool-cell">
+                  <a href={`/tool/${tool.slug}/`} class="tool-link">{tool.name}</a>
+                  <span class="tool-meta">{tool.vendor} · {tool.lang}</span>
+                </td>
+                <td class="num score-cell">{tool.score}</td>
+                <td class="num">{tool.stars.toLocaleString('en-US')}</td>
+                <td class="num">{tool.contributors}</td>
+                <td class="num">{tool.issueCloseRate}%</td>
+                <td class="num rank-global">#{tool.globalRank}</td>
+                <td class={`fw-badge ${tool.framework === 'Playwright' ? 'fw-pw' : 'fw-pup'}`}>{tool.framework}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <p class="table-note">
+        Global rank = position among 25,638 indexed repos. Close% = issue close rate.
+        Data from March 18, 2026 crawl.
+      </p>
+    </section>
+
+    <section id="playwright-options">
+      <h2>Playwright MCP options</h2>
+
+      <h3>microsoft/playwright-mcp — score 94.23</h3>
+      <p>
+        The <a href="/tool/microsoft--playwright-mcp/" class="inline-link">official Microsoft Playwright MCP server</a>
+        is ranked <strong>#10 globally</strong> across all 25,638 indexed repositories —
+        the only browser automation tool in the top 10. It has 29,150 stars (more than any other tool in the top 10),
+        62 contributors, and a 97% issue close rate.
+      </p>
+      <p>
+        Microsoft maintains this directly alongside Playwright itself.
+        When Playwright releases a new API or breaks something, the MCP server gets updated.
+        If you are building an agent that needs browser automation, this is the one.
+      </p>
+
+      <h3>executeautomation/mcp-playwright — score 69.94</h3>
+      <p>
+        The community alternative, <a href="/tool/executeautomation--mcp-playwright/" class="inline-link">executeautomation/mcp-playwright</a>,
+        has 5,301 stars and 34 contributors — strong signals for a non-vendor project.
+        It ranks #298 globally and has an AgentRank score of <strong>69.94</strong>.
+      </p>
+      <p>
+        The one caveat: the last commit was <strong>December 2025</strong>, which drags the freshness score.
+        The 78% issue close rate is acceptable but below the 84%+ you want for a production dependency.
+        Use it if you need Playwright features not yet in the official server — otherwise default to the Microsoft server.
+      </p>
+
+      <div class="verdict-box playwright-box">
+        <strong>Best Playwright MCP:</strong> <a href="/tool/microsoft--playwright-mcp/" class="inline-link">microsoft/playwright-mcp</a>
+        — score 94.23, official backing, 97% issue close rate, active commits through March 2026.
+      </div>
+    </section>
+
+    <section id="puppeteer-options">
+      <h2>Puppeteer MCP options</h2>
+      <p>
+        No official Puppeteer MCP server exists as of March 2026. The two community options both score in the high 40s.
+      </p>
+
+      <h3>zed-extensions/mcp-server-puppeteer — score 47.02</h3>
+      <p>
+        <a href="/tool/zed-extensions--mcp-server-puppeteer/" class="inline-link">zed-extensions/mcp-server-puppeteer</a>
+        has fresh commits (March 2026) but zero contributors beyond the maintainer and zero recorded issue history.
+        It's a Rust implementation, primarily useful for Zed editor integration. Ranks #3,848 globally.
+        Not recommended as a general-purpose Puppeteer MCP server.
+      </p>
+
+      <h3>merajmehrabi/puppeteer-mcp-server — score 45.82</h3>
+      <p>
+        <a href="/tool/merajmehrabi--puppeteer-mcp-server/" class="inline-link">merajmehrabi/puppeteer-mcp-server</a>
+        is the most-starred Puppeteer MCP option at 410 stars, but the last commit was
+        <strong>March 2025 — one year ago</strong>. The AgentRank freshness signal penalizes anything
+        over 90 days stale. At 365 days, the decay is severe.
+        Zero issue close rate signals no active maintenance response.
+        Ranks #4,401 globally.
+      </p>
+
+      <div class="verdict-box puppeteer-box">
+        <strong>Puppeteer verdict:</strong> No Puppeteer MCP server meets the quality bar for a production agent workflow.
+        The best option scores 47.02 vs Playwright's 94.23. Unless your codebase is already deeply committed to
+        Puppeteer, migrate to the Playwright MCP server.
+      </div>
+    </section>
+
+    <section id="verdict">
+      <h2>Verdict</h2>
+      <p>
+        The AgentRank index covers 83 Playwright and Puppeteer MCP repositories. The verdict from the data is unambiguous:
+      </p>
+
+      <ul class="verdict-list">
+        <li><strong>For browser automation in agent workflows:</strong> use <a href="/tool/microsoft--playwright-mcp/" class="inline-link">microsoft/playwright-mcp</a>. Score 94.23, globally ranked #10, officially maintained.</li>
+        <li><strong>If you need community features not in the official server:</strong> <a href="/tool/executeautomation--mcp-playwright/" class="inline-link">executeautomation/mcp-playwright</a> at 69.94. Watch the freshness signal.</li>
+        <li><strong>Puppeteer options:</strong> both score below 48. No production-grade Puppeteer MCP server exists in the index as of March 2026.</li>
+      </ul>
+
+      <p>
+        Playwright wins on every signal: stars (29,150 vs 410), contributors (62 vs 3),
+        issue close rate (97% vs 0%), and global rank (#10 vs #3,848 and #4,401).
+        This is the clearest category verdict in the AgentRank database tier.
+      </p>
+    </section>
+
+    <section id="setup">
+      <h2>Setup guide</h2>
+
+      <h3>Install microsoft/playwright-mcp</h3>
+      <p>Add to your MCP client config. For Claude Desktop (<code>claude_desktop_config.json</code>):</p>
+
+      <pre class="code-block"><code>{`{
+  "mcpServers": {
+    "playwright": {
+      "command": "npx",
+      "args": ["@playwright/mcp@latest"]
+    }
+  }
+}`}</code></pre>
+
+      <p>For Cursor, add to <code>.cursor/mcp.json</code>:</p>
+
+      <pre class="code-block"><code>{`{
+  "mcpServers": {
+    "playwright": {
+      "command": "npx",
+      "args": ["@playwright/mcp@latest"]
+    }
+  }
+}`}</code></pre>
+
+      <p>
+        The server runs headless Chromium by default. Pass <code>--headed</code> if you need to watch the browser.
+        Full documentation is on the <a href="https://github.com/microsoft/playwright-mcp" class="inline-link" target="_blank" rel="noopener noreferrer">GitHub repo</a>.
+      </p>
+
+      <div class="cta-box">
+        <p>
+          <strong>See the full browser category:</strong> <a href="/blog/best-mcp-servers-web-browser/">Best MCP Servers for Web Scraping &amp; Browser Automation</a> —
+          all 83 Playwright and Puppeteer servers ranked.
+        </p>
+        <p>
+          <strong>Browse the full leaderboard:</strong> <a href="/">25,638 tools ranked by AgentRank score</a> — updated daily.
+        </p>
+      </div>
+    </section>
+
+    <RelatedPosts posts={relatedPosts} />
+    <BlogSubscribeCTA source="blog" />
+    <footer class="post-footer">
+      <p class="methodology">
+        <strong>Methodology:</strong> Data from the AgentRank index crawled March 18, 2026.
+        Scores computed using: stars 15%, freshness 25%, issue health 25%, contributors 10%, inbound dependents 25%.
+        25,638 repositories indexed. Only non-archived repositories included.
+        83 repositories matched queries for "playwright" or "puppeteer" in the repo name.
+      </p>
+      <p class="share-line">
+        Found this useful? <a href="https://x.com/AgentRank_ai" target="_blank" rel="noopener noreferrer">Follow @AgentRank_ai</a> for
+        weekly ecosystem updates, biggest movers, and new tool spotlights.
+      </p>
+    </footer>
+  </article>
+
+  <style>
+    .blog-post {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 2rem 0 3rem;
+    }
+
+    .inline-link {
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    .breadcrumb {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      margin-bottom: 0.75rem;
+    }
+
+    .breadcrumb span {
+      margin: 0 0.25rem;
+      opacity: 0.5;
+    }
+
+    .post-header {
+      margin-bottom: 2rem;
+      padding-bottom: 1.5rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .post-header h1 {
+      font-size: 1.6rem;
+      font-weight: 700;
+      line-height: 1.3;
+      margin-bottom: 0.75rem;
+    }
+
+    .post-meta {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      flex-wrap: wrap;
+      margin-bottom: 1rem;
+    }
+
+    .sep {
+      opacity: 0.4;
+    }
+
+    .lede {
+      font-size: 1rem;
+      line-height: 1.7;
+      color: var(--text);
+      opacity: 0.9;
+    }
+
+    .toc {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 1rem 1.25rem;
+      margin-bottom: 2.5rem;
+      font-size: 0.82rem;
+    }
+
+    .toc strong {
+      display: block;
+      margin-bottom: 0.6rem;
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+    }
+
+    .toc ol {
+      margin: 0;
+      padding-left: 1.2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+    }
+
+    .toc a {
+      color: var(--text-muted);
+    }
+
+    .toc a:hover {
+      color: var(--accent);
+    }
+
+    section {
+      margin-bottom: 3rem;
+    }
+
+    section h2 {
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin-bottom: 0.75rem;
+      padding-bottom: 0.4rem;
+      border-bottom: 2px solid var(--accent);
+      display: inline-block;
+    }
+
+    section h3 {
+      font-size: 0.95rem;
+      font-weight: 700;
+      margin: 1.5rem 0 0.5rem;
+      color: var(--text);
+    }
+
+    section p {
+      font-size: 0.9rem;
+      line-height: 1.75;
+      color: var(--text);
+      opacity: 0.9;
+      margin-bottom: 0.9rem;
+    }
+
+    .table-wrapper {
+      overflow-x: auto;
+      margin: 1rem 0 0.5rem;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.82rem;
+    }
+
+    .data-table th {
+      text-align: left;
+      font-weight: 600;
+      color: var(--text-muted);
+      border-bottom: 1px solid var(--border);
+      padding: 0.4rem 0.75rem 0.4rem 0;
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      white-space: nowrap;
+    }
+
+    .data-table td {
+      padding: 0.45rem 0.75rem 0.45rem 0;
+      border-bottom: 1px solid var(--border);
+      color: var(--text);
+      vertical-align: top;
+    }
+
+    .data-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .row-playwright td {
+      background: color-mix(in srgb, var(--accent) 4%, transparent);
+    }
+
+    .num {
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .tool-cell {
+      display: flex;
+      flex-direction: column;
+      gap: 0.15rem;
+    }
+
+    .tool-link {
+      font-weight: 600;
+      color: var(--accent);
+      font-size: 0.78rem;
+    }
+
+    .tool-meta {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+    }
+
+    .score-cell {
+      color: var(--accent);
+      font-weight: 700;
+    }
+
+    .rank-global {
+      color: var(--text-muted);
+      font-size: 0.75rem;
+    }
+
+    .fw-badge {
+      font-size: 0.72rem;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .fw-pw {
+      color: var(--accent);
+    }
+
+    .fw-pup {
+      color: var(--text-muted);
+    }
+
+    .table-note {
+      font-size: 0.75rem !important;
+      color: var(--text-muted) !important;
+      margin-top: 0.5rem !important;
+    }
+
+    .verdict-box {
+      border-radius: 4px;
+      padding: 0.875rem 1rem;
+      margin-top: 1.25rem;
+      font-size: 0.88rem;
+      line-height: 1.6;
+    }
+
+    .playwright-box {
+      background: color-mix(in srgb, var(--accent) 8%, var(--bg-surface));
+      border: 1px solid var(--accent);
+    }
+
+    .puppeteer-box {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+    }
+
+    .verdict-list {
+      margin: 0.75rem 0 1rem 1.25rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+      font-size: 0.9rem;
+      line-height: 1.65;
+    }
+
+    .code-block {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 0.875rem 1rem;
+      font-size: 0.78rem;
+      line-height: 1.6;
+      overflow-x: auto;
+      margin: 0.75rem 0 1rem;
+    }
+
+    .code-block code {
+      font-family: monospace;
+      color: var(--text);
+    }
+
+    .cta-box {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      border-radius: 4px;
+      padding: 1rem 1.25rem;
+      margin-top: 1.5rem;
+    }
+
+    .cta-box p {
+      margin-bottom: 0.5rem;
+      font-size: 0.88rem !important;
+    }
+
+    .cta-box p:last-child {
+      margin-bottom: 0;
+    }
+
+    .post-footer {
+      margin-top: 3rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--border);
+    }
+
+    .methodology {
+      font-size: 0.75rem !important;
+      color: var(--text-muted) !important;
+      opacity: 1 !important;
+    }
+
+    .share-line {
+      font-size: 0.82rem !important;
+      margin-top: 0.75rem;
+    }
+
+    @media (max-width: 640px) {
+      .post-header h1 {
+        font-size: 1.3rem;
+      }
+
+      .fw-badge,
+      .rank-global {
+        display: none;
+      }
+    }
+  </style>
+</Base>
