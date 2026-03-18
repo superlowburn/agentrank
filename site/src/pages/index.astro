@@ -103,14 +103,14 @@ const itemListJsonLd = {
         />
         <button type="submit" id="subscribe-btn">Subscribe</button>
       </div>
-      <input type="text" name="_hp" class="hp-field" tabindex="-1" autocomplete="off" />
+      <input type="text" name="_hp" class="hp-field" tabindex="-1" autocomplete="off" aria-hidden="true" />
       <span id="subscribe-msg" class="subscribe-msg" aria-live="polite"></span>
     </form>
   </div>
 
   <div class="controls">
     <input type="text" id="search" placeholder="Search skills..." autocomplete="off" />
-    <select id="category-filter">
+    <select id="category-filter" aria-label="Filter by category">
       <option value="">All categories</option>
       {usedCategories.map((cat) => (
         <option value={cat}>{CATEGORIES[cat] || cat}</option>
@@ -422,7 +422,7 @@ const itemListJsonLd = {
     font-size: 0.65rem;
     color: var(--text-muted);
     pointer-events: none;
-    opacity: 0.5;
+    opacity: 0;
     text-transform: uppercase;
     letter-spacing: 0.04em;
     transition: opacity 0.15s, color 0.15s;

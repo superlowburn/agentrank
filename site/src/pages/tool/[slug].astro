@@ -400,7 +400,7 @@ Astro.response.headers.set('Cache-Control', 'public, max-age=60, s-maxage=3600, 
   <section class="badge-embed">
     <h3>Badge</h3>
     <div class="badge-preview">
-      <img src={`/api/badge/tool/${slug}`} alt={`AgentRank score for ${tool.full_name}`} height="20" loading="lazy" />
+      <img src={`/api/badge/tool/${slug}`} alt={`AgentRank score for ${tool.full_name}`} width="95" height="20" loading="lazy" />
     </div>
     <div class="snippet">
       <label>Markdown</label>
@@ -765,7 +765,7 @@ Astro.response.headers.set('Cache-Control', 'public, max-age=60, s-maxage=3600, 
 
   .methodology-link {
     color: var(--accent);
-    text-decoration: none;
+    text-decoration: underline;
   }
 
   .methodology-link:hover {
@@ -776,7 +776,6 @@ Astro.response.headers.set('Cache-Control', 'public, max-age=60, s-maxage=3600, 
     margin-top: 0.75rem;
     font-size: 0.7rem;
     color: var(--text-muted);
-    opacity: 0.7;
   }
 
   .signal-value {
@@ -862,6 +861,8 @@ Astro.response.headers.set('Cache-Control', 'public, max-age=60, s-maxage=3600, 
 
   .github-link a {
     font-weight: 600;
+    color: var(--accent);
+    text-decoration: underline;
   }
 
   .advice-list {
@@ -985,6 +986,7 @@ Astro.response.headers.set('Cache-Control', 'public, max-age=60, s-maxage=3600, 
 
   .badge-preview img {
     height: 20px;
+    width: auto;
   }
 
   .snippet {
@@ -1239,6 +1241,8 @@ Astro.response.headers.set('Cache-Control', 'public, max-age=60, s-maxage=3600, 
 
   .readme-link {
     font-size: 0.8rem;
+    color: var(--accent);
+    text-decoration: underline;
   }
 
   .related-list {
