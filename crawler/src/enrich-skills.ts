@@ -1,5 +1,11 @@
 import type { Octokit } from "octokit";
-import { getSkillsNeedingGithubEnrichment, updateSkillGithubData } from "./db.js";
+import {
+  getSkillsNeedingGithubEnrichment,
+  getSkillsNeedingDescriptionEnrichment,
+  updateSkillGithubData,
+  updateSkillDescription,
+  updateSkillGithubRepo,
+} from "./db.js";
 
 function parseOwnerRepo(githubRepo: string): string | null {
   // Handle full URL: https://github.com/owner/repo
@@ -113,5 +119,79 @@ export async function enrichSkillsGithub(
   }
 
   console.log(`Skills GitHub enrichment complete: ${enriched} enriched, ${skipped} skipped`);
+  return enriched;
+}
+
+/**
+ * Enrich skill descriptions from GitHub repo data.
+ *
+ * For skills whose description is the generic skills.sh site-wide placeholder (or null),
+ * fetch the GitHub repo description and use it instead. Also handles skills that lack a
+ * github_repo by inferring it from the slug (source = owner/repo).
+ */
+export async function enrichSkillDescriptions(
+  octokit: Octokit,
+  maxSkills: number = 500
+): Promise<number> {
+  let enriched = 0;
+
+  // Pass 1: skills that already have github_repo but need a real description
+  const skillsWithRepo = getSkillsNeedingDescriptionEnrichment(maxSkills);
+  console.log(`\nEnriching descriptions for ${skillsWithRepo.length} skills from GitHub`);
+
+  for (const skill of skillsWithRepo) {
+    const ownerRepo = parseOwnerRepo(skill.github_repo!);
+    if (!ownerRepo) continue;
+    const [owner, repo] = ownerRepo.split("/");
+
+    try {
+      const { data: repoData } = await octokit.rest.repos.get({ owner, repo });
+      if (repoData.description && repoData.description.length > 10) {
+        updateSkillDescription(skill.slug, repoData.description);
+        enriched++;
+      }
+    } catch (err) {
+      if ((err as any)?.status !== 404) {
+        console.warn(`[enrich-desc] ${skill.slug}: ${(err as Error).message}`);
+      }
+    }
+  }
+
+  // Pass 2: skills without github_repo — infer owner/repo from the slug's source prefix
+  // slug format: "{owner}/{repo}/{skillId}", so the source is the first two path components
+  const db = (await import("./db.js")).getDb();
+  const skillsWithoutRepo = db
+    .prepare(
+      `SELECT * FROM skills
+       WHERE github_repo IS NULL
+         AND (description IS NULL OR description = 'Discover and install skills for AI agents.')
+       ORDER BY installs DESC
+       LIMIT ?`
+    )
+    .all(maxSkills) as (typeof skillsWithRepo)[number][];
+
+  console.log(`Inferring github_repo for ${skillsWithoutRepo.length} skills from slug`);
+
+  for (const skill of skillsWithoutRepo) {
+    const parts = skill.slug.split("/");
+    if (parts.length < 2) continue;
+    const inferredRepo = `${parts[0]}/${parts[1]}`;
+
+    try {
+      const { data: repoData } = await octokit.rest.repos.get({
+        owner: parts[0],
+        repo: parts[1],
+      });
+      updateSkillGithubRepo(skill.slug, inferredRepo);
+      if (repoData.description && repoData.description.length > 10) {
+        updateSkillDescription(skill.slug, repoData.description);
+        enriched++;
+      }
+    } catch {
+      // Inferred repo doesn't exist — skip silently
+    }
+  }
+
+  console.log(`Skill description enrichment complete: ${enriched} updated`);
   return enriched;
 }

@@ -242,6 +242,8 @@ export interface SkillRow {
   gh_is_archived: number;
 }
 
+export const GENERIC_SKILL_DESCRIPTION = "Discover and install skills for AI agents.";
+
 export function upsertSkill(skill: {
   slug: string;
   name: string | null;
@@ -254,12 +256,14 @@ export function upsertSkill(skill: {
   author: string | null;
 }): void {
   const db = getDb();
+  // Treat the site-wide generic description as null so enriched descriptions are preserved
+  const description = skill.description === GENERIC_SKILL_DESCRIPTION ? null : skill.description;
   db.prepare(`
     INSERT INTO skills (slug, name, description, github_repo, source, installs, trending_rank, platforms, author, last_crawled_at)
     VALUES (@slug, @name, @description, @github_repo, @source, @installs, @trending_rank, @platforms, @author, datetime('now'))
     ON CONFLICT(slug) DO UPDATE SET
       name = excluded.name,
-      description = excluded.description,
+      description = COALESCE(excluded.description, skills.description),
       github_repo = COALESCE(excluded.github_repo, skills.github_repo),
       installs = MAX(excluded.installs, skills.installs),
       trending_rank = excluded.trending_rank,
@@ -269,7 +273,7 @@ export function upsertSkill(skill: {
   `).run({
     slug: skill.slug,
     name: skill.name,
-    description: skill.description,
+    description,
     github_repo: skill.github_repo?.replace(/^https?:\/\/github\.com\//, '') ?? null,
     source: skill.source,
     installs: skill.installs,
@@ -407,6 +411,29 @@ export function updateSkillGithubData(slug: string, data: SkillGithubData): void
     data.gh_contributors, data.gh_last_commit_at, data.gh_is_archived,
     slug
   );
+}
+
+export function getSkillsNeedingDescriptionEnrichment(limit: number): SkillRow[] {
+  const db = getDb();
+  return db
+    .prepare(
+      `SELECT * FROM skills
+       WHERE github_repo IS NOT NULL
+         AND (description IS NULL OR description = ?)
+       ORDER BY installs DESC
+       LIMIT ?`
+    )
+    .all(GENERIC_SKILL_DESCRIPTION, limit) as SkillRow[];
+}
+
+export function updateSkillDescription(slug: string, description: string): void {
+  const db = getDb();
+  db.prepare(`UPDATE skills SET description = ? WHERE slug = ?`).run(description, slug);
+}
+
+export function updateSkillGithubRepo(slug: string, githubRepo: string): void {
+  const db = getDb();
+  db.prepare(`UPDATE skills SET github_repo = ? WHERE slug = ? AND github_repo IS NULL`).run(githubRepo, slug);
 }
 
 export function getReposNeedingRegistryEnrichment(language: string, limit: number): RepoRow[] {

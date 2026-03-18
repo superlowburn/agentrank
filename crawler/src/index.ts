@@ -14,7 +14,7 @@ import { enrichContent } from "./enrich-content.js";
 import { crawlSkillsSh } from "./skills.js";
 import { crawlGlama } from "./glama.js";
 import { crawlClawHub } from "./clawhub.js";
-import { enrichSkillsGithub } from "./enrich-skills.js";
+import { enrichSkillsGithub, enrichSkillDescriptions } from "./enrich-skills.js";
 import { enrichRegistryDownloads } from "./enrich-registry.js";
 import { getDependentsCount, sleep, randomDelay } from "./dependents.js";
 
@@ -125,6 +125,12 @@ async function main(): Promise<void> {
   // Skills GitHub enrichment phase
   console.log("\n=== Skills GitHub Enrichment Phase ===");
   await enrichSkillsGithub(octokit, 500);
+
+  // Skills description enrichment phase — fill generic/null descriptions from GitHub
+  console.log("\n=== Skills Description Enrichment Phase ===");
+  await enrichSkillDescriptions(octokit, 500).catch((err) => {
+    console.error("Skills description enrichment failed:", err);
+  });
 
   // Registry download enrichment (npm + PyPI)
   console.log("\n=== Registry Download Enrichment Phase (npm + PyPI) ===");
