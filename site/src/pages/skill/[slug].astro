@@ -145,6 +145,7 @@ const jsonLd = generateSkillJsonLd({
   author: skill.author,
   score: skill.score,
   platforms: skill.platforms,
+  dateModified: repoData?.last_commit_at,
 }, pageUrl);
 const keywordsStr = [skill.source, ...skill.platforms.slice(0, 5), 'AI skill', 'agent skill'].join(', ');
 

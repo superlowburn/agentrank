@@ -518,6 +518,8 @@ export function generateToolJsonLd(tool: {
 }, pageUrl: string): object {
   const topics = tool.github_topics || [];
   const keywords = [...new Set([...tool.matched_queries, ...topics])];
+  const isMcp = tool.matched_queries.some(q => q.toLowerCase().includes('mcp')) || topics.some(t => t.toLowerCase().includes('mcp'));
+  const applicationCategory = isMcp ? 'MCP Server' : 'AI Agent Tool';
 
   return {
     '@context': 'https://schema.org',
@@ -525,6 +527,7 @@ export function generateToolJsonLd(tool: {
     name: tool.full_name,
     description: tool.description || `Agent tool: ${tool.full_name}`,
     url: pageUrl,
+    applicationCategory,
     codeRepository: tool.url,
     programmingLanguage: tool.language || undefined,
     license: tool.license || undefined,
@@ -548,6 +551,7 @@ export function generateSkillJsonLd(skill: {
   author: string | null;
   score: number;
   platforms: string[];
+  dateModified?: string;
 }, pageUrl: string): object {
   return {
     '@context': 'https://schema.org',
@@ -558,6 +562,7 @@ export function generateSkillJsonLd(skill: {
     author: skill.author ? { '@type': 'Person', name: skill.author } : undefined,
     applicationCategory: 'AI Agent Skill',
     operatingSystem: skill.platforms.join(', ') || undefined,
+    dateModified: skill.dateModified || undefined,
     keywords: `${skill.source}, AI skill, agent skill`,
     aggregateRating: {
       '@type': 'AggregateRating',
