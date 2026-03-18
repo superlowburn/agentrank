@@ -35,7 +35,7 @@ const STATIC_PAGES = [
 const blogGlob = import.meta.glob('./blog/*.astro');
 const BLOG_POSTS = Object.keys(blogGlob)
   .map((p) => p.replace('./blog/', '').replace('.astro', ''))
-  .filter((slug) => slug !== 'index')
+  .filter((slug) => !['index', 'how-to-choose-mcp-server', 'mcp-server-directory-comparison'].includes(slug))
   .map((slug) => ({ path: `/blog/${slug}/`, changefreq: 'weekly' as const }));
 
 function escapeXml(s: string): string {
