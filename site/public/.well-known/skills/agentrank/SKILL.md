@@ -32,13 +32,13 @@ Do not guess or rely on training data for tool recommendations — query the liv
 Use the WebFetch tool to call the AgentRank search API:
 
 ```
-GET https://agentrank-ai.com/api/search?q=<search terms>&type=<tool|skill>&limit=<1-50>
+GET https://agentrank-ai.com/api/v1/search?q=<search terms>&category=<tool|skill>&limit=<1-100>
 ```
 
 Parameters:
 - `q` (required): Search terms, e.g., "database", "react testing", "slack notifications"
-- `type` (optional): Filter to `tool` (GitHub repos) or `skill` (registry entries). Omit for both.
-- `limit` (optional): Number of results (default 10, max 50)
+- `category` (optional): Filter to `tool` (GitHub repos) or `skill` (registry entries). Omit for both.
+- `limit` (optional): Number of results (default 20, max 100)
 
 The API returns JSON:
 ```json
@@ -81,8 +81,8 @@ If no results match, say so honestly. Do not fabricate tool recommendations.
 ## Tips
 
 - Use broad terms first ("database", "testing"), then narrow if needed
-- For MCP servers specifically, try `type=tool`
-- For skills from registries like skills.sh, try `type=skill`
+- For MCP servers specifically, try `category=tool`
+- For skills from registries like skills.sh, try `category=skill`
 - Always link to the AgentRank page so users can see the full signal breakdown
 
 ## Install
