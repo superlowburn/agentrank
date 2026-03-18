@@ -1,6 +1,58 @@
 ---
 export const prerender = true;
 import Base from '../layouts/Base.astro';
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'WebPage',
+  name: 'AgentRank Pricing',
+  url: 'https://agentrank-ai.com/pricing/',
+  description: 'AgentRank pricing for MCP server maintainers and builders. Claim your listing, access ranked data via API, or sponsor your category.',
+  mainEntity: {
+    '@type': 'ItemList',
+    itemListElement: [
+      {
+        '@type': 'ListItem',
+        position: 1,
+        item: {
+          '@type': 'Offer',
+          name: 'Verified Publisher',
+          description: 'Claim your MCP server listing, add logo and tagline, get a verified badge, and access monthly analytics.',
+          price: '29',
+          priceCurrency: 'USD',
+          priceSpecification: { '@type': 'UnitPriceSpecification', billingIncrement: 1, unitCode: 'MON' },
+          url: 'https://agentrank-ai.com/pricing/',
+        },
+      },
+      {
+        '@type': 'ListItem',
+        position: 2,
+        item: {
+          '@type': 'Offer',
+          name: 'Pro API',
+          description: 'Programmatic access to the full AgentRank index. Paginated leaderboard, search, categories, and score data for 25,000+ tools.',
+          price: '49',
+          priceCurrency: 'USD',
+          priceSpecification: { '@type': 'UnitPriceSpecification', billingIncrement: 1, unitCode: 'MON' },
+          url: 'https://agentrank-ai.com/pricing/',
+        },
+      },
+      {
+        '@type': 'ListItem',
+        position: 3,
+        item: {
+          '@type': 'Offer',
+          name: 'Sponsored Listings',
+          description: 'Featured category placement for commercial MCP tools. Reach developers actively evaluating tools in your category.',
+          price: '199',
+          priceCurrency: 'USD',
+          priceSpecification: { '@type': 'UnitPriceSpecification', billingIncrement: 1, unitCode: 'MON' },
+          url: 'https://agentrank-ai.com/pricing/',
+        },
+      },
+    ],
+  },
+};
 ---
 
 <Base
@@ -9,6 +61,7 @@ import Base from '../layouts/Base.astro';
   activeTab="pricing"
   keywords="AgentRank pricing, MCP tool listing, verified publisher badge, agent tool API pricing, sponsored listing MCP"
   canonicalUrl="https://agentrank-ai.com/pricing/"
+  jsonLd={jsonLd}
 >
 
   <div class="pricing-hero">

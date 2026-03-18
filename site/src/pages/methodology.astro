@@ -1,6 +1,27 @@
 ---
 export const prerender = true;
 import Base from '../layouts/Base.astro';
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'WebPage',
+  name: 'AgentRank Scoring Methodology',
+  description: 'How AgentRank scores 25,000+ MCP servers and agent tools using eight verifiable GitHub signals.',
+  url: 'https://agentrank-ai.com/methodology/',
+  mainEntity: {
+    '@type': 'HowTo',
+    name: 'How AgentRank Scores MCP Servers and Agent Tools',
+    description: 'AgentRank computes a composite quality score (0–100) for every MCP server and agent tool from eight GitHub signals: freshness, issue health, inbound dependents, stars, contributors, license quality, documentation, and release cadence.',
+    step: [
+      { '@type': 'HowToStep', name: 'Freshness', text: 'Days since last commit — 20% weight. Repos inactive for 90+ days decay significantly.' },
+      { '@type': 'HowToStep', name: 'Issue Health', text: 'Closed issues divided by total issues — 25% weight. Higher ratio signals a responsive maintainer.' },
+      { '@type': 'HowToStep', name: 'Inbound Dependents', text: 'How many other repos depend on this one — 25% weight. Strong adoption signal.' },
+      { '@type': 'HowToStep', name: 'Stars', text: 'Normalized GitHub star count — 15% weight. Raw popularity signal.' },
+      { '@type': 'HowToStep', name: 'Contributors', text: 'Number of unique contributors — 10% weight. Reduces bus factor risk.' },
+      { '@type': 'HowToStep', name: 'Minor Signals', text: 'License quality, documentation presence, and release cadence — 5% weight combined.' },
+    ],
+  },
+};
 ---
 
 <Base
@@ -8,6 +29,7 @@ import Base from '../layouts/Base.astro';
   description="How AgentRank scores 25,000+ MCP servers and agent tools. Eight real signals, transparent weights, updated nightly. No black boxes."
   keywords="AgentRank methodology, MCP server ranking, how to evaluate MCP servers, agent tool scoring, MCP quality score"
   canonicalUrl="https://agentrank-ai.com/methodology/"
+  jsonLd={jsonLd}
 >
   <div class="page-header">
     <h1>Scoring Methodology</h1>

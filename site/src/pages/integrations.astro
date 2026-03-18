@@ -1,6 +1,25 @@
 ---
 export const prerender = true;
 import Base from '../layouts/Base.astro';
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'WebPage',
+  name: 'AgentRank Integrations',
+  url: 'https://agentrank-ai.com/integrations/',
+  description: 'Connect AgentRank to Cursor, VS Code, Cline, Claude Code, and Windsurf for live MCP tool rankings.',
+  mainEntity: {
+    '@type': 'ItemList',
+    name: 'AgentRank MCP Server Integrations',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Cursor', url: 'https://agentrank-ai.com/integrations/#cursor' },
+      { '@type': 'ListItem', position: 2, name: 'VS Code', url: 'https://agentrank-ai.com/integrations/#vscode' },
+      { '@type': 'ListItem', position: 3, name: 'Cline', url: 'https://agentrank-ai.com/integrations/#cline' },
+      { '@type': 'ListItem', position: 4, name: 'Claude Code', url: 'https://agentrank-ai.com/integrations/#claude-code' },
+      { '@type': 'ListItem', position: 5, name: 'Windsurf', url: 'https://agentrank-ai.com/integrations/#windsurf' },
+    ],
+  },
+};
 ---
 
 <Base
@@ -8,6 +27,7 @@ import Base from '../layouts/Base.astro';
   description="Connect AgentRank to Cursor, VS Code, Cline, Claude Code, and Windsurf. One install and your AI coding assistant queries live ranked tool data instead of guessing."
   keywords="AgentRank integrations, Cursor MCP, VS Code MCP, Cline MCP, Claude Code MCP, agentrank-mcp-server, AI coding assistant tool lookup"
   canonicalUrl="https://agentrank-ai.com/integrations/"
+  jsonLd={jsonLd}
 >
   <div class="page-header">
     <h1>Integrations</h1>
