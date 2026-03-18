@@ -22,22 +22,30 @@ export const GET: APIRoute = async ({ request, locals }) => {
   const redirect = (path: string) =>
     new Response(null, { status: 302, headers: { Location: new URL(path, url.origin).toString() } });
 
-  if (errorParam || !code || !stateParam) {
-    return redirect('/claim/?error=cancelled');
+  // Decode state early so we can redirect to the right tool page on errors
+  let stateData: { tool: string; type: string; nonce: string } | null = null;
+  if (stateParam) {
+    try {
+      stateData = JSON.parse(atob(stateParam));
+    } catch {
+      // stateData stays null
+    }
   }
 
-  // Decode state
-  let stateData: { tool: string; type: string; nonce: string };
-  try {
-    stateData = JSON.parse(atob(stateParam));
-  } catch {
-    return redirect('/claim/?error=invalid_state');
+  const toolPath = stateData?.tool ? `/claim/${stateData.tool}/` : '/';
+
+  if (errorParam || !code || !stateParam) {
+    return redirect(`${toolPath}?error=cancelled`);
+  }
+
+  if (!stateData) {
+    return redirect(`${toolPath}?error=invalid_state`);
   }
 
   // CSRF check — nonce in state must match nonce cookie
   const cookies = parseCookies(request.headers.get('cookie') || '');
   if (!stateData.nonce || cookies.oauth_nonce !== stateData.nonce) {
-    return redirect('/claim/?error=csrf');
+    return redirect(`/claim/${stateData.tool}/?error=csrf`);
   }
 
   // Exchange code for access token

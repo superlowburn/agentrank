@@ -66,6 +66,7 @@ export const POST: APIRoute = async ({ request, params, locals }) => {
     category?: string;
     logo_url?: string;
     is_deprecated?: boolean;
+    email?: string;
   };
 
   if (data.tagline && data.tagline.length > 200) {
@@ -96,6 +97,20 @@ export const POST: APIRoute = async ({ request, params, locals }) => {
     fullName,
     githubUsername,
   ).run();
+
+  // Capture email if provided
+  if (data.email && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email)) {
+    const email = data.email.trim().toLowerCase();
+    try {
+      await env.DB.prepare(`
+        INSERT INTO email_subscribers (email, source)
+        VALUES (?, 'claim')
+        ON CONFLICT(email) DO NOTHING
+      `).bind(email).run();
+    } catch {
+      // Non-fatal — don't fail the claim save over an email insert error
+    }
+  }
 
   return json({ success: true });
 };
