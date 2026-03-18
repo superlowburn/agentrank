@@ -15,3 +15,13 @@ database_id = "946abec6-5f2b-4177-b1cb-b84769a20883"
 #   GITHUB_CLIENT_SECRET=your_client_secret
 # Register OAuth app at: https://github.com/settings/developers
 # Callback URL: https://agentrank-ai.com/api/auth/github/callback
+
+# Resend — weekly email digest
+# Add API key as a Cloudflare secret (not an env var, so it's never in plaintext):
+#   wrangler secret put RESEND_API_KEY
+# Get your key at: https://resend.com/api-keys
+# From address: digest@agentrank-ai.com (must be verified domain in Resend)
+
+# Unsubscribe token signing key (optional — falls back to DASH_TOKEN)
+# Recommended: set a dedicated secret so rotating DASH_TOKEN doesn't break unsub links
+#   wrangler secret put UNSUB_SECRET
