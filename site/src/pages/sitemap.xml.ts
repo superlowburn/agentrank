@@ -16,6 +16,7 @@ const STATIC_PAGES = [
   { path: '/movers/', changefreq: 'daily' },
   { path: '/agents/', changefreq: 'weekly' },
   { path: '/compare/', changefreq: 'weekly' },
+  { path: '/compare/mcp-sdks/', changefreq: 'weekly' },
   { path: '/submit/', changefreq: 'weekly' },
   { path: '/docs/', changefreq: 'weekly' },
   { path: '/blog/', changefreq: 'weekly' },
@@ -25,6 +26,8 @@ const STATIC_PAGES = [
   { path: '/integrations/', changefreq: 'weekly' },
   { path: '/embed/', changefreq: 'monthly' },
   { path: '/subscribe/', changefreq: 'monthly' },
+  { path: '/dashboard/', changefreq: 'weekly' },
+  { path: '/dashboard/publisher/', changefreq: 'weekly' },
 ];
 
 // Auto-discover blog posts at build time via Vite glob

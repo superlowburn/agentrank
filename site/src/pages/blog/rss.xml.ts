@@ -1,8 +1,4 @@
----
 export const prerender = true;
-
-import Base from '../../layouts/Base.astro';
-import BlogSubscribeCTA from '../../components/BlogSubscribeCTA.astro';
 
 const posts = [
   {
@@ -10,326 +6,176 @@ const posts = [
     title: 'FastMCP Tutorial: Build a Python MCP Server in 20 Minutes',
     description: 'Step-by-step FastMCP 3.0 tutorial: tools, resources, prompts, MCP Inspector testing, Claude Desktop setup, and Cloudflare Workers deployment. Covers composability, OpenAPI mounting, proxy mode, OAuth, and OpenTelemetry.',
     date: '2026-03-18',
-    readTime: '12 min read',
   },
   {
     slug: 'mcp-setup-guide-claude-cursor-windsurf',
     title: 'How to Set Up MCP Servers in Claude Desktop, Cursor, and Windsurf',
     description: 'Step-by-step setup guide for every major AI client. JSON config examples, common errors and fixes, and the top-rated MCP servers to install first.',
     date: '2026-03-18',
-    readTime: '10 min read',
   },
   {
     slug: 'what-is-mcp-model-context-protocol-explained',
     title: 'What is MCP? Model Context Protocol Explained for Developers',
     description: 'A beginner-friendly explainer on the Model Context Protocol — what problem it solves, how the host-client-server architecture works, what MCP servers can do, and how it compares to plugins and function calling.',
     date: '2026-03-18',
-    readTime: '10 min read',
   },
   {
     slug: 'best-python-mcp-libraries',
     title: 'Best Python Libraries for Building MCP Servers in 2026',
     description: 'FastMCP, the official Python SDK, and the leading Python MCP frameworks — scored by real signals from the AgentRank index. Code examples, pros/cons, and a decision framework.',
     date: '2026-03-18',
-    readTime: '7 min read',
   },
   {
     slug: 'top-mcp-servers-2026',
     title: 'Top 10 MCP Servers for AI Agents in 2026 (Ranked by Real Data)',
     description: 'The 10 highest-scoring MCP servers from 25,000+ in the AgentRank index. Ranked by composite signal: stars, freshness, issue health, contributors, and dependents. Updated March 2026.',
     date: '2026-03-18',
-    readTime: '10 min read',
   },
   {
     slug: 'this-week-in-mcp-2026-03-24',
     title: 'This Week in MCP — March 24, 2026',
     description: 'Weekly ecosystem report: top 10 reshuffled — PrefectHQ/fastmcp rises from #7 to #1, modelcontextprotocol SDKs surge in. Freshness beats stars.',
     date: '2026-03-24',
-    readTime: '5 min read',
   },
   {
     slug: 'this-week-in-mcp-2026-03-17',
     title: 'This Week in MCP — March 17, 2026',
     description: 'Weekly ecosystem report: 25632 new tools, biggest movers, and index stats for the week of March 17, 2026. Auto-generated from the AgentRank index.',
     date: '2026-03-17',
-    readTime: '5 min read',
   },
   {
     slug: 'mcp-server-directory-comparison',
     title: 'MCP Server Discovery Tools Compared (2026)',
     description: 'An objective comparison of every major MCP server directory: MCPMarket, PulseMCP, Glama.ai, Awesome-MCP-Servers, the Official MCP Registry, and AgentRank. Coverage, ranking methodology, freshness, and who each platform is best for.',
     date: '2026-03-17',
-    readTime: '7 min read',
   },
   {
     slug: 'how-to-build-an-mcp-server',
     title: 'How to Build an MCP Server in 2026',
     description: 'Step-by-step guide using the official Python SDK, TypeScript SDK, or FastMCP. With code examples, framework comparisons, and production best practices from the AgentRank index.',
     date: '2026-03-17',
-    readTime: '8 min read',
   },
   {
     slug: 'mcp-server-vs-rest-api',
     title: 'MCP Server vs REST API: When to Use Each',
     description: 'A practical comparison of MCP servers and REST APIs for AI integrations. When MCP wins, when REST wins, and a decision framework backed by ecosystem data from 25,000+ indexed repos.',
     date: '2026-03-17',
-    readTime: '6 min read',
   },
   {
     slug: 'best-mcp-servers-code-generation',
     title: 'Best MCP Servers for Code Generation in 2026',
     description: 'Top-ranked MCP servers for AI-assisted code generation: GitHub access, semantic code editing, execution sandboxes, and dev workflow automation. Real scores from the AgentRank index.',
     date: '2026-03-18',
-    readTime: '6 min read',
   },
   {
     slug: 'best-mcp-servers-web-browser',
     title: 'Best MCP Servers for Web Scraping & Browser Automation in 2026',
     description: 'Top-ranked MCP servers for web scraping, browser automation, Playwright, Puppeteer, and content extraction. Firecrawl, Browserbase, Apify, and more — scored by real signals.',
     date: '2026-03-18',
-    readTime: '6 min read',
   },
   {
     slug: 'best-mcp-servers-communication',
     title: 'Best MCP Servers for Communication in 2026',
     description: 'Top-ranked MCP servers for Slack, Discord, email, messaging, and notifications. Real scores from the AgentRank index — March 2026 data.',
     date: '2026-03-18',
-    readTime: '6 min read',
   },
   {
     slug: 'best-mcp-servers-productivity',
     title: 'Best MCP Servers for Productivity in 2026',
     description: 'Top-ranked MCP servers for task management, note-taking, calendar, email, and team communication. Notion, Linear, Slack, Gmail, and more — scored by real signals from the AgentRank index.',
     date: '2026-03-17',
-    readTime: '6 min read',
   },
   {
     slug: 'mcp-server-landscape-q1-2026',
     title: 'The MCP Server Landscape: Q1 2026 — Data-Driven Ecosystem Report',
     description: 'Growth trajectory, category breakdown, biggest movers, language momentum, and Q2 2026 predictions. Real data from the AgentRank index covering 25,632 GitHub repositories.',
     date: '2026-03-17',
-    readTime: '9 min read',
   },
   {
     slug: 'mcp-server-comparison-top-10',
     title: 'MCP Server Comparison: Top 10 Head-to-Head in 2026',
     description: 'A data-driven comparison of the 10 highest-scoring MCP servers across all categories. Stars, freshness, issue health, contributors, and AgentRank scores — side by side.',
     date: '2026-03-17',
-    readTime: '6 min read',
   },
   {
     slug: 'how-to-choose-an-mcp-server',
     title: 'How to Choose an MCP Server in 2026',
     description: 'A decision framework for evaluating MCP servers using five real quality signals. Stop picking by stars — start scoring by what actually predicts reliability.',
     date: '2026-03-17',
-    readTime: '7 min read',
   },
   {
     slug: 'best-mcp-servers-security',
     title: 'Best MCP Servers for Security in 2026',
     description: 'Top-ranked MCP servers for vulnerability scanning, secrets management, container security, SAST, and cloud posture. Scored by real signals from the AgentRank index.',
     date: '2026-03-17',
-    readTime: '6 min read',
   },
   {
     slug: 'best-mcp-servers-ai-ml',
     title: 'Best MCP Servers for AI & Machine Learning in 2026',
     description: 'Top MCP servers for vector databases, RAG pipelines, LLM access, and AI development workflows. Qdrant, Milvus, ChromaDB, HuggingFace, and more — ranked by real quality signals.',
     date: '2026-03-17',
-    readTime: '6 min read',
   },
   {
     slug: 'best-mcp-servers-devops',
     title: 'Best MCP Servers for DevOps & Infrastructure in 2026',
     description: 'Top-ranked MCP servers for Kubernetes, Azure, AWS, GCP, and infrastructure management. Real scores from the AgentRank index — March 2026 data.',
     date: '2026-03-17',
-    readTime: '6 min read',
   },
   {
     slug: 'best-mcp-servers-database',
     title: 'Best MCP Servers for Database Management in 2026',
     description: 'The top-ranked MCP servers for database access and management. MongoDB, Redis, MySQL, Postgres, DuckDB, and more — scored by freshness, issue health, and real usage signals.',
     date: '2026-03-17',
-    readTime: '5 min read',
   },
   {
     slug: 'state-of-mcp-2026',
     title: 'The State of MCP Servers & Agent Tools in 2026',
     description: 'We indexed 25,632 repositories. Here\'s what the data actually shows about the MCP ecosystem — language breakdown, freshness, score distribution, and the top tools by every signal.',
     date: '2026-03-16',
-    readTime: '8 min read',
   },
 ];
 
-const jsonLd = {
-  '@context': 'https://schema.org',
-  '@type': 'Blog',
-  name: 'AgentRank Blog',
-  description: 'Data-driven analysis of the MCP server and agent tools ecosystem. Real numbers from the AgentRank index.',
-  url: 'https://agentrank-ai.com/blog/',
-  publisher: {
-    '@type': 'Organization',
-    name: 'AgentRank',
-    url: 'https://agentrank-ai.com',
-    logo: {
-      '@type': 'ImageObject',
-      url: 'https://agentrank-ai.com/og-image.png',
+function escapeXml(s: string): string {
+  return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
+export function GET() {
+  // Sort newest first
+  const sorted = [...posts].sort((a, b) => b.date.localeCompare(a.date));
+
+  const entries = sorted.map((post) => {
+    const url = `https://agentrank-ai.com/blog/${post.slug}/`;
+    const pubDate = new Date(post.date + 'T00:00:00Z').toUTCString();
+    return `
+  <item>
+    <title>${escapeXml(post.title)}</title>
+    <link>${url}</link>
+    <guid isPermaLink="true">${url}</guid>
+    <description>${escapeXml(post.description)}</description>
+    <pubDate>${pubDate}</pubDate>
+    <author>noreply@agentrank-ai.com (AgentRank)</author>
+  </item>`;
+  });
+
+  const lastBuildDate = new Date(sorted[0].date + 'T00:00:00Z').toUTCString();
+
+  const feed = `<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>AgentRank Blog</title>
+    <link>https://agentrank-ai.com/blog/</link>
+    <description>Data-driven analysis of the MCP server and agent tools ecosystem. Real numbers from the AgentRank index.</description>
+    <language>en-us</language>
+    <lastBuildDate>${lastBuildDate}</lastBuildDate>
+    <atom:link href="https://agentrank-ai.com/blog/rss.xml" rel="self" type="application/rss+xml"/>
+${entries.join('\n')}
+  </channel>
+</rss>`;
+
+  return new Response(feed, {
+    headers: {
+      'Content-Type': 'application/rss+xml; charset=utf-8',
+      'Cache-Control': 'public, s-maxage=3600, max-age=1800',
     },
-  },
-  blogPost: posts.map((post) => ({
-    '@type': 'BlogPosting',
-    headline: post.title,
-    description: post.description,
-    datePublished: post.date,
-    url: `https://agentrank-ai.com/blog/${post.slug}/`,
-  })),
-};
----
-
-<Base
-  title="Blog — AgentRank"
-  description="Data-driven analysis of the MCP server and agent tools ecosystem. Real numbers from the AgentRank index."
-  activeTab="blog"
-  keywords="MCP server blog, agent tools analysis, MCP ecosystem data, best MCP servers 2026"
-  canonicalUrl="https://agentrank-ai.com/blog/"
-  jsonLd={jsonLd}
->
-  <div class="blog-index">
-    <div class="page-header">
-      <div class="page-header-row">
-        <h1>Blog</h1>
-        <a href="/blog/rss.xml" class="rss-link" title="RSS Feed" aria-label="Subscribe via RSS">
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-            <path d="M6.18 15.64a2.18 2.18 0 0 1 2.18 2.18C8.36 19.01 7.38 20 6.18 20C4.98 20 4 19.01 4 17.82a2.18 2.18 0 0 1 2.18-2.18M4 4.44A15.56 15.56 0 0 1 19.56 20h-2.83A12.73 12.73 0 0 0 4 7.27V4.44m0 5.66a9.9 9.9 0 0 1 9.9 9.9h-2.83A7.07 7.07 0 0 0 4 12.93V10.1z"/>
-          </svg>
-          RSS
-        </a>
-      </div>
-      <p class="subtitle">Data-driven analysis of the MCP ecosystem. Numbers from the index, not opinions.</p>
-    </div>
-
-    <div class="post-list">
-      {posts.map((post) => (
-        <article class="post-card">
-          <div class="post-meta">
-            <time datetime={post.date}>{new Date(post.date + 'T00:00:00Z').toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' })}</time>
-            <span class="separator">&middot;</span>
-            <span>{post.readTime}</span>
-          </div>
-          <h2><a href={`/blog/${post.slug}/`}>{post.title}</a></h2>
-          <p class="post-desc">{post.description}</p>
-          <a href={`/blog/${post.slug}/`} class="read-link">Read &rarr;</a>
-        </article>
-      ))}
-    </div>
-
-    <BlogSubscribeCTA source="blog-index" />
-  </div>
-
-  <style>
-    .blog-index {
-      max-width: 720px;
-      margin: 0 auto;
-      padding: 2rem 0;
-    }
-
-    .page-header {
-      margin-bottom: 2.5rem;
-      padding-bottom: 1.5rem;
-      border-bottom: 1px solid var(--border);
-    }
-
-    .page-header-row {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      margin-bottom: 0.5rem;
-    }
-
-    .page-header h1 {
-      font-size: 1.5rem;
-      font-weight: 700;
-    }
-
-    .rss-link {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.25rem;
-      font-size: 0.75rem;
-      color: var(--text-muted);
-      text-decoration: none;
-      border: 1px solid var(--border);
-      padding: 0.2rem 0.5rem;
-      border-radius: 3px;
-      transition: color 0.15s, border-color 0.15s;
-    }
-
-    .rss-link:hover {
-      color: #f97316;
-      border-color: #f97316;
-      text-decoration: none;
-    }
-
-    .subtitle {
-      color: var(--text-muted);
-      font-size: 0.9rem;
-    }
-
-    .post-list {
-      display: flex;
-      flex-direction: column;
-      gap: 2rem;
-    }
-
-    .post-card {
-      padding-bottom: 2rem;
-      border-bottom: 1px solid var(--border);
-    }
-
-    .post-card:last-child {
-      border-bottom: none;
-    }
-
-    .post-meta {
-      font-size: 0.78rem;
-      color: var(--text-muted);
-      margin-bottom: 0.5rem;
-      display: flex;
-      align-items: center;
-      gap: 0.4rem;
-    }
-
-    .separator {
-      opacity: 0.5;
-    }
-
-    .post-card h2 {
-      font-size: 1.1rem;
-      font-weight: 600;
-      margin-bottom: 0.6rem;
-      line-height: 1.4;
-    }
-
-    .post-card h2 a {
-      color: var(--text);
-      text-decoration: none;
-    }
-
-    .post-card h2 a:hover {
-      color: var(--accent);
-    }
-
-    .post-desc {
-      color: var(--text-muted);
-      font-size: 0.875rem;
-      line-height: 1.6;
-      margin-bottom: 0.75rem;
-    }
-
-    .read-link {
-      font-size: 0.82rem;
-      font-weight: 600;
-      color: var(--accent);
-    }
-  </style>
-</Base>
+  });
+}

@@ -399,8 +399,31 @@ const INDEXNOW_ENDPOINT = 'https://api.indexnow.org/indexnow';
 const INDEXNOW_BATCH_SIZE = 9000;
 
 const STATIC_URLS = [
-  '/', '/tools/', '/movers/', '/agents/', '/compare/', '/submit/',
+  '/', '/tools/', '/movers/', '/agents/', '/compare/', '/compare/mcp-sdks/', '/submit/',
   '/docs/', '/blog/', '/category/', '/pricing/', '/methodology/', '/integrations/', '/embed/',
+  '/dashboard/', '/dashboard/publisher/',
+  '/blog/best-python-mcp-libraries/',
+  '/blog/fastmcp-tutorial-python-mcp-server/',
+  '/blog/mcp-setup-guide-claude-cursor-windsurf/',
+  '/blog/this-week-in-mcp-2026-03-24/',
+  '/blog/top-mcp-servers-2026/',
+  '/blog/what-is-mcp-model-context-protocol-explained/',
+  '/blog/how-to-build-an-mcp-server/',
+  '/blog/how-to-choose-an-mcp-server/',
+  '/blog/mcp-server-landscape-q1-2026/',
+  '/blog/mcp-server-vs-rest-api/',
+  '/blog/state-of-mcp-2026/',
+  '/blog/this-week-in-mcp-2026-03-17/',
+  '/blog/mcp-server-comparison-top-10/',
+  '/blog/mcp-server-directory-comparison/',
+  '/blog/best-mcp-servers-code-generation/',
+  '/blog/best-mcp-servers-database/',
+  '/blog/best-mcp-servers-security/',
+  '/blog/best-mcp-servers-productivity/',
+  '/blog/best-mcp-servers-devops/',
+  '/blog/best-mcp-servers-web-browser/',
+  '/blog/best-mcp-servers-ai-ml/',
+  '/blog/best-mcp-servers-communication/',
 ];
 
 async function submitIndexNow(db: D1Database): Promise<void> {
