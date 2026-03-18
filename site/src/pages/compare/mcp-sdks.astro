@@ -1,0 +1,1292 @@
+---
+export const prerender = true;
+
+import Base from '../../layouts/Base.astro';
+
+const SITE = 'https://agentrank-ai.com';
+const canonicalUrl = `${SITE}/compare/mcp-sdks/`;
+const title = 'MCP SDK Comparison 2026: Python vs TypeScript vs Go vs Rust — AgentRank';
+const description = 'Compare every official and community MCP SDK across Python, TypeScript, Go, Rust, Java, Kotlin, C#, and Swift. Scored by real signals from the AgentRank index.';
+const keywords = 'mcp sdk comparison, mcp python vs typescript, best language for mcp server, mcp go sdk, mcp rust sdk, model context protocol sdk, build mcp server';
+
+// Language colors (GitHub-style)
+const LANG_COLORS: Record<string, string> = {
+  Python: '#3776AB',
+  TypeScript: '#3178C6',
+  Go: '#00ADD8',
+  Rust: '#DEA584',
+  Java: '#B07219',
+  Kotlin: '#A97BFF',
+  'C#': '#178600',
+  Swift: '#F05138',
+};
+
+const sdks = [
+  {
+    full_name: 'PrefectHQ/fastmcp',
+    slug: 'PrefectHQ--fastmcp',
+    name: 'fastmcp',
+    type: 'community',
+    language: 'Python',
+    score: 94.73,
+    rank: 7,
+    stars: 23659,
+    forks: 1823,
+    contributors: 208,
+    open_issues: 235,
+    closed_issues: 1153,
+    dependents: 7718,
+    last_commit_at: '2026-03-14',
+    license: 'Apache-2.0',
+    description: 'The fast, Pythonic way to build MCP servers and clients.',
+    install: 'pip install fastmcp',
+    maturity: 'stable',
+    highlights: ['7,718 dependents', 'Highest Python score', 'FastAPI-like DX'],
+  },
+  {
+    full_name: 'modelcontextprotocol/python-sdk',
+    slug: 'modelcontextprotocol--python-sdk',
+    name: 'python-sdk',
+    type: 'official',
+    language: 'Python',
+    score: 87.5,
+    rank: 61,
+    stars: 22124,
+    forks: 3178,
+    contributors: 181,
+    open_issues: 417,
+    closed_issues: 787,
+    dependents: 0,
+    last_commit_at: '2026-03-13',
+    license: 'MIT',
+    description: 'The official Python SDK for Model Context Protocol servers and clients.',
+    install: 'pip install mcp',
+    maturity: 'stable',
+    highlights: ['Official Anthropic SDK', '22K stars', 'asyncio-native'],
+  },
+  {
+    full_name: 'punkpeye/fastmcp',
+    slug: 'punkpeye--fastmcp',
+    name: 'fastmcp (TS)',
+    type: 'community',
+    language: 'TypeScript',
+    score: 88.55,
+    rank: 49,
+    stars: 2993,
+    forks: 253,
+    contributors: 56,
+    open_issues: 38,
+    closed_issues: 87,
+    dependents: 1296,
+    last_commit_at: '2026-03-06',
+    license: 'MIT',
+    description: 'A TypeScript framework for building MCP servers.',
+    install: 'npm install fastmcp',
+    maturity: 'stable',
+    highlights: ['1,296 dependents', 'Express-style API', 'Fast setup'],
+  },
+  {
+    full_name: 'modelcontextprotocol/typescript-sdk',
+    slug: 'modelcontextprotocol--typescript-sdk',
+    name: 'typescript-sdk',
+    type: 'official',
+    language: 'TypeScript',
+    score: 70.73,
+    rank: 283,
+    stars: 11842,
+    forks: 1681,
+    contributors: 152,
+    open_issues: 350,
+    closed_issues: 473,
+    dependents: 0,
+    last_commit_at: '2026-03-13',
+    license: 'NOASSERTION',
+    description: 'The official TypeScript SDK for Model Context Protocol servers and clients.',
+    install: 'npm install @modelcontextprotocol/sdk',
+    maturity: 'stable',
+    highlights: ['Official Anthropic SDK', '11.8K stars', 'Full spec coverage'],
+  },
+  {
+    full_name: 'mark3labs/mcp-go',
+    slug: 'mark3labs--mcp-go',
+    name: 'mcp-go',
+    type: 'community',
+    language: 'Go',
+    score: 96.29,
+    rank: 5,
+    stars: 8353,
+    forks: 789,
+    contributors: 170,
+    open_issues: 27,
+    closed_issues: 239,
+    dependents: 2938,
+    last_commit_at: '2026-03-11',
+    license: 'MIT',
+    description: 'A Go implementation of the Model Context Protocol, enabling seamless integration between LLM applications and external data sources and tools.',
+    install: 'go get github.com/mark3labs/mcp-go',
+    maturity: 'stable',
+    highlights: ['#5 overall on AgentRank', '2,938 dependents', '170 contributors'],
+  },
+  {
+    full_name: 'modelcontextprotocol/go-sdk',
+    slug: 'modelcontextprotocol--go-sdk',
+    name: 'go-sdk',
+    type: 'official',
+    language: 'Go',
+    score: 92.77,
+    rank: 19,
+    stars: 4120,
+    forks: 374,
+    contributors: 96,
+    open_issues: 45,
+    closed_issues: 290,
+    dependents: 1009,
+    last_commit_at: '2026-03-13',
+    license: 'NOASSERTION',
+    description: 'The official Go SDK for Model Context Protocol servers and clients. Maintained in collaboration with Google.',
+    install: 'go get github.com/modelcontextprotocol/go-sdk',
+    maturity: 'stable',
+    highlights: ['Maintained with Google', '1,009 dependents', 'Official spec impl'],
+  },
+  {
+    full_name: 'rust-mcp-stack/rust-mcp-sdk',
+    slug: 'rust-mcp-stack--rust-mcp-sdk',
+    name: 'rust-mcp-sdk',
+    type: 'community',
+    language: 'Rust',
+    score: 87.88,
+    rank: 54,
+    stars: 159,
+    forks: 25,
+    contributors: 8,
+    open_issues: 2,
+    closed_issues: 21,
+    dependents: 56,
+    last_commit_at: '2026-03-13',
+    license: 'MIT',
+    description: 'A high-performance, asynchronous toolkit for building MCP servers and clients in Rust.',
+    install: 'cargo add rust-mcp-sdk',
+    maturity: 'beta',
+    highlights: ['Async-first design', 'tokio-based', 'Near-zero issue backlog'],
+  },
+  {
+    full_name: 'modelcontextprotocol/rust-sdk',
+    slug: 'modelcontextprotocol--rust-sdk',
+    name: 'rust-sdk',
+    type: 'official',
+    language: 'Rust',
+    score: 74.79,
+    rank: 219,
+    stars: 3165,
+    forks: 477,
+    contributors: 143,
+    open_issues: 19,
+    closed_issues: 223,
+    dependents: 2,
+    last_commit_at: '2026-03-13',
+    license: 'NOASSERTION',
+    description: 'The official Rust SDK for the Model Context Protocol.',
+    install: 'cargo add modelcontextprotocol',
+    maturity: 'beta',
+    highlights: ['Official Anthropic SDK', '143 contributors', '3.1K stars'],
+  },
+  {
+    full_name: 'modelcontextprotocol/java-sdk',
+    slug: 'modelcontextprotocol--java-sdk',
+    name: 'java-sdk',
+    type: 'official',
+    language: 'Java',
+    score: 81.73,
+    rank: 133,
+    stars: 3263,
+    forks: 833,
+    contributors: 65,
+    open_issues: 260,
+    closed_issues: 227,
+    dependents: 0,
+    last_commit_at: '2026-03-13',
+    license: 'MIT',
+    description: 'The official Java SDK for Model Context Protocol servers and clients. Maintained in collaboration with Spring AI.',
+    install: 'implementation("io.modelcontextprotocol:mcp")',
+    maturity: 'stable',
+    highlights: ['Spring AI integration', 'Maven Central', '833 forks'],
+  },
+  {
+    full_name: 'modelcontextprotocol/kotlin-sdk',
+    slug: 'modelcontextprotocol--kotlin-sdk',
+    name: 'kotlin-sdk',
+    type: 'official',
+    language: 'Kotlin',
+    score: 76.5,
+    rank: 201,
+    stars: 1291,
+    forks: 201,
+    contributors: 47,
+    open_issues: 122,
+    closed_issues: 87,
+    dependents: 0,
+    last_commit_at: '2026-03-13',
+    license: 'NOASSERTION',
+    description: 'The official Kotlin SDK for Model Context Protocol servers and clients. Maintained in collaboration with JetBrains.',
+    install: 'implementation("io.modelcontextprotocol:kotlin-sdk")',
+    maturity: 'beta',
+    highlights: ['JetBrains collaboration', 'Coroutines-native', 'KMP support'],
+  },
+  {
+    full_name: 'modelcontextprotocol/csharp-sdk',
+    slug: 'modelcontextprotocol--csharp-sdk',
+    name: 'csharp-sdk',
+    type: 'official',
+    language: 'C#',
+    score: 87.72,
+    rank: 60,
+    stars: 4079,
+    forks: 658,
+    contributors: 66,
+    open_issues: 136,
+    closed_issues: 485,
+    dependents: 0,
+    last_commit_at: '2026-03-11',
+    license: 'NOASSERTION',
+    description: 'The official C# SDK for Model Context Protocol servers and clients. Maintained in collaboration with Microsoft.',
+    install: 'dotnet add package ModelContextProtocol',
+    maturity: 'stable',
+    highlights: ['Microsoft collaboration', '485 closed issues', 'ASP.NET integration'],
+  },
+  {
+    full_name: 'modelcontextprotocol/swift-sdk',
+    slug: 'modelcontextprotocol--swift-sdk',
+    name: 'swift-sdk',
+    type: 'official',
+    language: 'Swift',
+    score: 77.88,
+    rank: 182,
+    stars: 1300,
+    forks: 170,
+    contributors: 18,
+    open_issues: 51,
+    closed_issues: 46,
+    dependents: 0,
+    last_commit_at: '2026-03-13',
+    license: 'NOASSERTION',
+    description: 'The official Swift SDK for Model Context Protocol servers and clients.',
+    install: '.package(url: "https://github.com/modelcontextprotocol/swift-sdk")',
+    maturity: 'beta',
+    highlights: ['iOS/macOS native', 'Swift Package Manager', 'Apple-ecosystem ready'],
+  },
+];
+
+const codeSnippets: Record<string, { label: string; lang: string; code: string }[]> = {
+  Python: [
+    {
+      label: 'fastmcp (recommended)',
+      lang: 'python',
+      code: `from fastmcp import FastMCP
+
+mcp = FastMCP("My Server")
+
+@mcp.tool()
+def add(a: int, b: int) -> int:
+    """Add two numbers."""
+    return a + b
+
+if __name__ == "__main__":
+    mcp.run()`,
+    },
+    {
+      label: 'official python-sdk',
+      lang: 'python',
+      code: `from mcp.server.fastmcp import FastMCP
+
+mcp = FastMCP("My Server")
+
+@mcp.tool()
+async def add(a: int, b: int) -> int:
+    """Add two numbers."""
+    return a + b`,
+    },
+  ],
+  TypeScript: [
+    {
+      label: 'fastmcp (recommended)',
+      lang: 'typescript',
+      code: `import { FastMCP } from "fastmcp";
+
+const mcp = new FastMCP({ name: "My Server" });
+
+mcp.addTool({
+  name: "add",
+  description: "Add two numbers",
+  parameters: z.object({ a: z.number(), b: z.number() }),
+  execute: async ({ a, b }) => String(a + b),
+});
+
+mcp.start({ transportType: "stdio" });`,
+    },
+    {
+      label: 'official typescript-sdk',
+      lang: 'typescript',
+      code: `import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
+import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
+import { z } from "zod";
+
+const server = new McpServer({ name: "My Server", version: "1.0.0" });
+
+server.tool("add", { a: z.number(), b: z.number() },
+  async ({ a, b }) => ({ content: [{ type: "text", text: String(a + b) }] })
+);
+
+const transport = new StdioServerTransport();
+await server.connect(transport);`,
+    },
+  ],
+  Go: [
+    {
+      label: 'mcp-go (recommended)',
+      lang: 'go',
+      code: `package main
+
+import (
+    "github.com/mark3labs/mcp-go/mcp"
+    "github.com/mark3labs/mcp-go/server"
+)
+
+func main() {
+    s := server.NewMCPServer("My Server", "1.0.0")
+
+    tool := mcp.NewTool("add",
+        mcp.WithDescription("Add two numbers"),
+        mcp.WithNumber("a", mcp.Required()),
+        mcp.WithNumber("b", mcp.Required()),
+    )
+    s.AddTool(tool, func(args mcp.CallToolRequest) (*mcp.CallToolResult, error) {
+        a := args.Params.Arguments["a"].(float64)
+        b := args.Params.Arguments["b"].(float64)
+        return mcp.NewToolResultText(fmt.Sprintf("%v", a+b)), nil
+    })
+    server.ServeStdio(s)
+}`,
+    },
+    {
+      label: 'official go-sdk',
+      lang: 'go',
+      code: `package main
+
+import (
+    "github.com/modelcontextprotocol/go-sdk/mcp"
+)
+
+func main() {
+    s := mcp.NewServer("My Server", "1.0.0", nil)
+    mcp.AddTool(s, &mcp.Tool{
+        Name:        "add",
+        Description: "Add two numbers",
+    }, func(ctx context.Context, ss *mcp.ServerSession,
+        params *mcp.CallToolParamsFor[AddParams]) (*mcp.CallToolResult, error) {
+        result := params.Arguments.A + params.Arguments.B
+        return mcp.NewToolResultText(fmt.Sprint(result)), nil
+    })
+    mcp.RunStdioServer(s)
+}`,
+    },
+  ],
+  Rust: [
+    {
+      label: 'rust-mcp-sdk',
+      lang: 'rust',
+      code: `use rust_mcp_sdk::prelude::*;
+
+#[mcp_tool(description = "Add two numbers")]
+async fn add(a: f64, b: f64) -> McpResult<f64> {
+    Ok(a + b)
+}
+
+#[tokio::main]
+async fn main() {
+    McpServer::builder()
+        .name("My Server")
+        .version("1.0.0")
+        .tool(add)
+        .build()
+        .run_stdio()
+        .await
+        .unwrap();
+}`,
+    },
+  ],
+  Java: [
+    {
+      label: 'official java-sdk (Spring AI)',
+      lang: 'java',
+      code: `@SpringBootApplication
+public class MyMcpServer {
+    public static void main(String[] args) {
+        SpringApplication.run(MyMcpServer.class, args);
+    }
+
+    @Bean
+    public McpServerFeatures.SyncToolSpecification addTool() {
+        return new McpServerFeatures.SyncToolSpecification(
+            new Tool("add", "Add two numbers",
+                schema(Map.of("a", "number", "b", "number"))),
+            (exchange, args) -> {
+                double result = (Double)args.get("a") + (Double)args.get("b");
+                return new CallToolResult(result);
+            }
+        );
+    }
+}`,
+    },
+  ],
+  Kotlin: [
+    {
+      label: 'official kotlin-sdk (JetBrains)',
+      lang: 'kotlin',
+      code: `import io.modelcontextprotocol.kotlin.sdk.*
+
+fun main() {
+    val server = Server(
+        Implementation(name = "My Server", version = "1.0.0")
+    )
+
+    server.addTool(
+        name = "add",
+        description = "Add two numbers",
+        inputSchema = Tool.Input(properties = buildJsonObject {
+            put("a", buildJsonObject { put("type", "number") })
+            put("b", buildJsonObject { put("type", "number") })
+        })
+    ) { request ->
+        val a = request.arguments["a"]!!.jsonPrimitive.double
+        val b = request.arguments["b"]!!.jsonPrimitive.double
+        CallToolResult(content = listOf(TextContent("\${a + b}")))
+    }
+
+    server.connect(StdioServerTransport())
+}`,
+    },
+  ],
+};
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Table',
+  name: 'MCP SDK Comparison 2026',
+  description,
+  url: canonicalUrl,
+  about: {
+    '@type': 'SoftwareApplication',
+    name: 'Model Context Protocol',
+    applicationCategory: 'DeveloperTool',
+  },
+};
+
+const publishDate = '2026-03-18';
+const articleJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: title,
+  description,
+  datePublished: publishDate,
+  dateModified: publishDate,
+  author: { '@type': 'Organization', name: 'AgentRank', url: SITE },
+  publisher: { '@type': 'Organization', name: 'AgentRank', url: SITE },
+  mainEntityOfPage: { '@type': 'WebPage', '@id': canonicalUrl },
+  keywords,
+};
+
+const languages = ['Python', 'TypeScript', 'Go', 'Rust', 'Java', 'Kotlin', 'C#', 'Swift'];
+---
+
+<Base
+  title={title}
+  description={description}
+  canonicalUrl={canonicalUrl}
+  keywords={keywords}
+  jsonLd={[jsonLd, articleJsonLd]}
+>
+  <!-- Breadcrumb -->
+  <nav class="breadcrumb">
+    <a href="/">Home</a>
+    <span>/</span>
+    <a href="/compare/">Compare</a>
+    <span>/</span>
+    <span>MCP SDK Comparison</span>
+  </nav>
+
+  <div class="sdk-page">
+    <div class="page-header">
+      <h1 class="page-title">MCP SDK Comparison</h1>
+      <p class="page-sub">
+        Every major MCP SDK across 8 languages, ranked by real signals from the AgentRank index.
+        Updated daily. Compare official and community implementations side by side.
+      </p>
+      <div class="header-meta">
+        <span class="meta-item">{sdks.length} SDKs indexed</span>
+        <span class="meta-sep">·</span>
+        <span class="meta-item">8 languages</span>
+        <span class="meta-sep">·</span>
+        <span class="meta-item">Updated 2026-03-18</span>
+      </div>
+    </div>
+
+    <!-- Filters -->
+    <div class="filter-bar">
+      <div class="filter-group">
+        <span class="filter-label">Language</span>
+        <div class="filter-pills" id="lang-filters">
+          <button class="pill active" data-filter="lang" data-value="all">All</button>
+          {languages.map(lang => (
+            <button
+              class="pill"
+              data-filter="lang"
+              data-value={lang}
+              style={`--lang-color: ${LANG_COLORS[lang] || '#888'}`}
+            >
+              <span class="lang-dot"></span>
+              {lang}
+            </button>
+          ))}
+        </div>
+      </div>
+      <div class="filter-group">
+        <span class="filter-label">Type</span>
+        <div class="filter-pills" id="type-filters">
+          <button class="pill active" data-filter="type" data-value="all">All</button>
+          <button class="pill" data-filter="type" data-value="official">Official</button>
+          <button class="pill" data-filter="type" data-value="community">Community</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Comparison Table -->
+    <div class="table-wrap">
+      <table class="sdk-table" id="sdk-table">
+        <thead>
+          <tr>
+            <th class="col-name sortable" data-sort="name">SDK <span class="sort-icon">↕</span></th>
+            <th class="col-lang">Language</th>
+            <th class="col-type">Type</th>
+            <th class="col-score sortable active-sort" data-sort="score">Score <span class="sort-icon">↓</span></th>
+            <th class="col-stars sortable" data-sort="stars">Stars <span class="sort-icon">↕</span></th>
+            <th class="col-contrib sortable" data-sort="contributors">Contrib <span class="sort-icon">↕</span></th>
+            <th class="col-deps sortable" data-sort="dependents">Deps <span class="sort-icon">↕</span></th>
+            <th class="col-commit sortable" data-sort="commit">Last Commit <span class="sort-icon">↕</span></th>
+            <th class="col-maturity">Maturity</th>
+            <th class="col-install">Install</th>
+          </tr>
+        </thead>
+        <tbody id="sdk-tbody">
+          {sdks.sort((x, y) => y.score - x.score).map(sdk => {
+            const langColor = LANG_COLORS[sdk.language] || '#888';
+            const issueHealth = sdk.open_issues + sdk.closed_issues > 0
+              ? (sdk.closed_issues / (sdk.open_issues + sdk.closed_issues) * 100).toFixed(0)
+              : '50';
+            return (
+              <tr
+                data-lang={sdk.language}
+                data-type={sdk.type}
+                data-score={sdk.score}
+                data-stars={sdk.stars}
+                data-contributors={sdk.contributors}
+                data-dependents={sdk.dependents}
+                data-commit={sdk.last_commit_at}
+              >
+                <td class="col-name">
+                  <div class="sdk-name-cell">
+                    <a class="sdk-name" href={`/tool/${sdk.slug}/`}>{sdk.name}</a>
+                    <span class="sdk-repo">{sdk.full_name}</span>
+                  </div>
+                </td>
+                <td class="col-lang">
+                  <span class="lang-badge" style={`--lc: ${langColor}`}>
+                    <span class="lang-dot-inline"></span>
+                    {sdk.language}
+                  </span>
+                </td>
+                <td class="col-type">
+                  <span class={`type-badge type-${sdk.type}`}>{sdk.type}</span>
+                </td>
+                <td class="col-score">
+                  <div class="score-cell">
+                    <span class="score-val">{sdk.score.toFixed(1)}</span>
+                    <div class="score-bar">
+                      <div class="score-fill" style={`width:${sdk.score}%`}></div>
+                    </div>
+                  </div>
+                </td>
+                <td class="col-stars">
+                  <span class="num">{sdk.stars >= 1000 ? (sdk.stars / 1000).toFixed(sdk.stars >= 10000 ? 0 : 1) + 'k' : sdk.stars}</span>
+                </td>
+                <td class="col-contrib">
+                  <span class="num">{sdk.contributors}</span>
+                </td>
+                <td class="col-deps">
+                  <span class={`num ${sdk.dependents > 0 ? 'dep-pos' : 'dep-zero'}`}>
+                    {sdk.dependents > 0 ? sdk.dependents.toLocaleString('en-US') : '—'}
+                  </span>
+                </td>
+                <td class="col-commit">
+                  <span class="commit-date">{sdk.last_commit_at}</span>
+                </td>
+                <td class="col-maturity">
+                  <span class={`maturity-badge mat-${sdk.maturity}`}>{sdk.maturity}</span>
+                </td>
+                <td class="col-install">
+                  <code class="install-cmd">{sdk.install}</code>
+                </td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+    </div>
+
+    <p class="no-results hidden" id="no-results">No SDKs match the selected filters.</p>
+
+    <!-- Code Snippets -->
+    <div class="snippets-section">
+      <h2 class="section-title">Quickstart Code Examples</h2>
+      <p class="section-sub">Build your first MCP tool in each language. All examples create a simple "add" tool that sums two numbers.</p>
+
+      <div class="snippet-lang-tabs" id="snippet-tabs">
+        {Object.keys(codeSnippets).map((lang, i) => (
+          <button
+            class={`snip-tab ${i === 0 ? 'active' : ''}`}
+            data-lang={lang}
+            style={`--lc: ${LANG_COLORS[lang] || '#888'}`}
+          >
+            <span class="snip-dot"></span>
+            {lang}
+          </button>
+        ))}
+      </div>
+
+      <div class="snippet-panels" id="snippet-panels">
+        {Object.entries(codeSnippets).map(([lang, variants], i) => (
+          <div class={`snip-panel ${i === 0 ? 'active' : ''}`} data-lang={lang}>
+            {variants.length > 1 && (
+              <div class="snip-variant-tabs">
+                {variants.map((v, vi) => (
+                  <button class={`var-tab ${vi === 0 ? 'active' : ''}`} data-variant={vi}>
+                    {v.label}
+                  </button>
+                ))}
+              </div>
+            )}
+            {variants.map((v, vi) => (
+              <div class={`snip-code ${vi === 0 ? 'active' : ''}`} data-variant={vi}>
+                <div class="code-header">
+                  <span class="code-lang">{v.lang}</span>
+                  <span class="code-label">{v.label}</span>
+                </div>
+                <pre class="code-block"><code>{v.code}</code></pre>
+              </div>
+            ))}
+          </div>
+        ))}
+      </div>
+    </div>
+
+    <!-- How to Choose -->
+    <div class="choose-section">
+      <h2 class="section-title">How to Choose</h2>
+      <div class="choose-grid">
+        <div class="choose-card">
+          <div class="choose-header">
+            <span class="choose-lang" style={`color: ${LANG_COLORS.Python}`}>Python</span>
+            <span class="choose-rec">Recommended: fastmcp</span>
+          </div>
+          <p>Best for data science workflows, AI/ML pipelines, and rapid prototyping. FastMCP's decorator pattern is the fastest path from idea to working server. Use the official SDK when you need strict spec compliance.</p>
+        </div>
+        <div class="choose-card">
+          <div class="choose-header">
+            <span class="choose-lang" style={`color: ${LANG_COLORS.TypeScript}`}>TypeScript</span>
+            <span class="choose-rec">Recommended: fastmcp or official</span>
+          </div>
+          <p>Best for Node.js backends and full-stack teams. The official SDK has more stars and full spec coverage. fastmcp (TS) offers faster DX with less boilerplate for simple use cases.</p>
+        </div>
+        <div class="choose-card">
+          <div class="choose-header">
+            <span class="choose-lang" style={`color: ${LANG_COLORS.Go}`}>Go</span>
+            <span class="choose-rec">Recommended: mcp-go</span>
+          </div>
+          <p>Best for high-performance servers, CLI tools, and infrastructure. mcp-go is #5 overall on AgentRank and battle-tested with 2,938 dependents. The official go-sdk is newer but maintained with Google.</p>
+        </div>
+        <div class="choose-card">
+          <div class="choose-header">
+            <span class="choose-lang" style={`color: ${LANG_COLORS.Rust}`}>Rust</span>
+            <span class="choose-rec">Recommended: either</span>
+          </div>
+          <p>Best for performance-critical servers and embedded environments. Both SDKs are in beta. The official rust-sdk has more contributors; rust-mcp-sdk has cleaner ergonomics and near-zero open issues.</p>
+        </div>
+        <div class="choose-card">
+          <div class="choose-header">
+            <span class="choose-lang" style={`color: ${LANG_COLORS.Java}`}>Java</span>
+            <span class="choose-rec">Recommended: java-sdk</span>
+          </div>
+          <p>Best for enterprise Spring Boot applications and JVM-based services. Only one production-grade option — the official SDK maintained with Spring AI. Integrates naturally with existing Spring ecosystem.</p>
+        </div>
+        <div class="choose-card">
+          <div class="choose-header">
+            <span class="choose-lang" style={`color: ${LANG_COLORS.Kotlin}`}>Kotlin</span>
+            <span class="choose-rec">Recommended: kotlin-sdk</span>
+          </div>
+          <p>Best for Android, JVM, and Kotlin Multiplatform projects. The official SDK maintained with JetBrains supports coroutines natively and includes KMP support. Still in beta — expect API changes.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- CTA -->
+    <div class="cta-bar">
+      <p>Tracking an MCP server or SDK? See its full score breakdown on AgentRank.</p>
+      <a href="/" class="cta-btn">Browse the Index →</a>
+    </div>
+  </div>
+</Base>
+
+<script>
+  // ── Filter logic ──────────────────────────────────────────────────────────
+  let activeLang = 'all';
+  let activeType = 'all';
+  let activeSortCol = 'score';
+  let sortDir = -1; // -1 = desc
+
+  function applyFilters() {
+    const tbody = document.getElementById('sdk-tbody');
+    const noResults = document.getElementById('no-results');
+    if (!tbody || !noResults) return;
+    const rows = Array.from(tbody.querySelectorAll('tr'));
+    let visible = 0;
+    for (const row of rows) {
+      const lang = row.dataset.lang || '';
+      const type = row.dataset.type || '';
+      const show =
+        (activeLang === 'all' || lang === activeLang) &&
+        (activeType === 'all' || type === activeType);
+      (row as HTMLElement).style.display = show ? '' : 'none';
+      if (show) visible++;
+    }
+    noResults.classList.toggle('hidden', visible > 0);
+  }
+
+  function applySort() {
+    const tbody = document.getElementById('sdk-tbody');
+    if (!tbody) return;
+    const rows = Array.from(tbody.querySelectorAll('tr')) as HTMLTableRowElement[];
+    rows.sort((a, b) => {
+      let va: string | number = '';
+      let vb: string | number = '';
+      if (activeSortCol === 'score') { va = parseFloat(a.dataset.score || '0'); vb = parseFloat(b.dataset.score || '0'); }
+      else if (activeSortCol === 'stars') { va = parseInt(a.dataset.stars || '0'); vb = parseInt(b.dataset.stars || '0'); }
+      else if (activeSortCol === 'contributors') { va = parseInt(a.dataset.contributors || '0'); vb = parseInt(b.dataset.contributors || '0'); }
+      else if (activeSortCol === 'dependents') { va = parseInt(a.dataset.dependents || '0'); vb = parseInt(b.dataset.dependents || '0'); }
+      else if (activeSortCol === 'commit') { va = a.dataset.commit || ''; vb = b.dataset.commit || ''; }
+      else if (activeSortCol === 'name') { va = (a.querySelector('.sdk-name')?.textContent || '').toLowerCase(); vb = (b.querySelector('.sdk-name')?.textContent || '').toLowerCase(); }
+      if (va < vb) return sortDir;
+      if (va > vb) return -sortDir;
+      return 0;
+    });
+    for (const row of rows) tbody.appendChild(row);
+  }
+
+  // Language filter pills
+  document.getElementById('lang-filters')?.addEventListener('click', (e) => {
+    const btn = (e.target as HTMLElement).closest('[data-filter="lang"]') as HTMLElement;
+    if (!btn) return;
+    activeLang = btn.dataset.value || 'all';
+    document.querySelectorAll('[data-filter="lang"]').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    applyFilters();
+  });
+
+  // Type filter pills
+  document.getElementById('type-filters')?.addEventListener('click', (e) => {
+    const btn = (e.target as HTMLElement).closest('[data-filter="type"]') as HTMLElement;
+    if (!btn) return;
+    activeType = btn.dataset.value || 'all';
+    document.querySelectorAll('[data-filter="type"]').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    applyFilters();
+  });
+
+  // Sort columns
+  document.getElementById('sdk-table')?.addEventListener('click', (e) => {
+    const th = (e.target as HTMLElement).closest('th.sortable') as HTMLElement;
+    if (!th) return;
+    const col = th.dataset.sort || '';
+    if (activeSortCol === col) {
+      sortDir = -sortDir;
+    } else {
+      activeSortCol = col;
+      sortDir = -1;
+    }
+    document.querySelectorAll('th.sortable').forEach(h => {
+      h.classList.remove('active-sort');
+      const icon = h.querySelector('.sort-icon');
+      if (icon) icon.textContent = '↕';
+    });
+    th.classList.add('active-sort');
+    const icon = th.querySelector('.sort-icon');
+    if (icon) icon.textContent = sortDir === -1 ? '↓' : '↑';
+    applySort();
+  });
+
+  // ── Code snippet tabs ──────────────────────────────────────────────────────
+  document.getElementById('snippet-tabs')?.addEventListener('click', (e) => {
+    const btn = (e.target as HTMLElement).closest('.snip-tab') as HTMLElement;
+    if (!btn) return;
+    const lang = btn.dataset.lang;
+    document.querySelectorAll('.snip-tab').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelectorAll('.snip-panel').forEach(p => {
+      p.classList.toggle('active', (p as HTMLElement).dataset.lang === lang);
+    });
+  });
+
+  // Variant tabs within a panel
+  document.getElementById('snippet-panels')?.addEventListener('click', (e) => {
+    const btn = (e.target as HTMLElement).closest('.var-tab') as HTMLElement;
+    if (!btn) return;
+    const panel = btn.closest('.snip-panel');
+    if (!panel) return;
+    const vi = btn.dataset.variant;
+    panel.querySelectorAll('.var-tab').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    panel.querySelectorAll('.snip-code').forEach(c => {
+      c.classList.toggle('active', (c as HTMLElement).dataset.variant === vi);
+    });
+  });
+</script>
+
+<style>
+  .breadcrumb {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    margin-bottom: 1.25rem;
+    display: flex;
+    gap: 0.4rem;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .breadcrumb a { color: var(--text-muted); text-decoration: none; }
+  .breadcrumb a:hover { color: var(--accent); }
+  .breadcrumb span:not(:last-child) { opacity: 0.5; }
+
+  .sdk-page { max-width: 1100px; }
+
+  /* ── Header ── */
+  .page-header { margin-bottom: 1.75rem; }
+  .page-title {
+    font-size: 1.4rem;
+    font-weight: 800;
+    margin-bottom: 0.4rem;
+  }
+  .page-sub {
+    font-size: 0.82rem;
+    color: var(--text-muted);
+    line-height: 1.6;
+    max-width: 640px;
+    margin-bottom: 0.6rem;
+  }
+  .header-meta {
+    font-size: 0.73rem;
+    color: var(--text-muted);
+    display: flex;
+    gap: 0.4rem;
+    align-items: center;
+  }
+  .meta-sep { opacity: 0.4; }
+
+  /* ── Filters ── */
+  .filter-bar {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-bottom: 1.25rem;
+  }
+  .filter-group {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+  }
+  .filter-label {
+    font-size: 0.68rem;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: var(--text-muted);
+    font-weight: 600;
+    width: 60px;
+    flex-shrink: 0;
+  }
+  .filter-pills {
+    display: flex;
+    gap: 0.35rem;
+    flex-wrap: wrap;
+  }
+  .pill {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    padding: 0.25rem 0.6rem;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--text-muted);
+    font-family: inherit;
+    font-size: 0.73rem;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: border-color 0.15s, color 0.15s, background 0.15s;
+    white-space: nowrap;
+  }
+  .pill:hover { border-color: var(--text-muted); color: var(--text); }
+  .pill.active {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: color-mix(in srgb, var(--accent) 8%, transparent);
+  }
+  .lang-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--lang-color, #888);
+    flex-shrink: 0;
+  }
+
+  /* ── Table ── */
+  .table-wrap {
+    overflow-x: auto;
+    margin-bottom: 0.5rem;
+  }
+  .sdk-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.8rem;
+    min-width: 780px;
+  }
+  .sdk-table th {
+    background: var(--bg-surface);
+    border-bottom: 2px solid var(--border);
+    padding: 0.5rem 0.6rem;
+    text-align: left;
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+    user-select: none;
+  }
+  .sdk-table th.sortable { cursor: pointer; }
+  .sdk-table th.sortable:hover { color: var(--text); }
+  .sdk-table th.active-sort { color: var(--accent); border-bottom-color: var(--accent); }
+  .sort-icon { font-size: 0.65rem; margin-left: 0.2rem; opacity: 0.7; }
+
+  .sdk-table td {
+    padding: 0.42rem 0.6rem;
+    border-bottom: 1px solid var(--border);
+    vertical-align: middle;
+  }
+  .sdk-table tr:hover td { background: var(--bg-hover); }
+
+  /* Column widths */
+  .col-name { min-width: 160px; }
+  .col-lang { min-width: 110px; }
+  .col-type { min-width: 90px; }
+  .col-score { min-width: 110px; }
+  .col-stars { min-width: 60px; text-align: right; }
+  .col-contrib { min-width: 60px; text-align: right; }
+  .col-deps { min-width: 70px; text-align: right; }
+  .col-commit { min-width: 100px; }
+  .col-maturity { min-width: 75px; }
+  .col-install { min-width: 220px; }
+
+  /* SDK name cell */
+  .sdk-name-cell { display: flex; flex-direction: column; gap: 0.1rem; }
+  .sdk-name {
+    font-weight: 600;
+    color: var(--text);
+    text-decoration: none;
+    font-size: 0.8rem;
+  }
+  .sdk-name:hover { color: var(--accent); }
+  .sdk-repo {
+    font-size: 0.66rem;
+    color: var(--text-muted);
+    word-break: break-all;
+  }
+
+  /* Lang badge */
+  .lang-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    font-size: 0.73rem;
+    font-weight: 500;
+    color: var(--lc, #888);
+  }
+  .lang-dot-inline {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--lc, #888);
+    flex-shrink: 0;
+  }
+
+  /* Type badge */
+  .type-badge {
+    display: inline-block;
+    padding: 0.1rem 0.4rem;
+    border-radius: 3px;
+    font-size: 0.65rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .type-official { background: color-mix(in srgb, var(--accent) 15%, transparent); color: var(--accent); border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent); }
+  .type-community { background: color-mix(in srgb, #3b82f6 15%, transparent); color: #60a5fa; border: 1px solid color-mix(in srgb, #3b82f6 30%, transparent); }
+
+  /* Score cell */
+  .score-cell { display: flex; flex-direction: column; gap: 0.2rem; }
+  .score-val { font-weight: 700; font-size: 0.82rem; color: var(--accent); }
+  .score-bar {
+    width: 80px;
+    height: 4px;
+    background: var(--border);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .score-fill {
+    height: 100%;
+    background: var(--accent);
+    border-radius: 2px;
+  }
+
+  /* Num cells */
+  .num { font-variant-numeric: tabular-nums; }
+  .dep-pos { color: var(--accent); font-weight: 600; }
+  .dep-zero { color: var(--text-muted); }
+
+  .commit-date { font-size: 0.73rem; color: var(--text-muted); }
+
+  /* Maturity badge */
+  .maturity-badge {
+    display: inline-block;
+    padding: 0.1rem 0.4rem;
+    border-radius: 3px;
+    font-size: 0.65rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .mat-stable { background: color-mix(in srgb, var(--accent) 15%, transparent); color: var(--accent); }
+  .mat-beta { background: color-mix(in srgb, #f59e0b 15%, transparent); color: #fbbf24; }
+  .mat-alpha { background: color-mix(in srgb, #ef4444 15%, transparent); color: #f87171; }
+
+  /* Install cmd */
+  .install-cmd {
+    font-family: inherit;
+    font-size: 0.72rem;
+    background: var(--bg-surface);
+    padding: 0.15rem 0.4rem;
+    border-radius: 3px;
+    border: 1px solid var(--border);
+    white-space: nowrap;
+    display: inline-block;
+    max-width: 220px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: var(--text-muted);
+  }
+
+  /* No results */
+  .no-results {
+    font-size: 0.82rem;
+    color: var(--text-muted);
+    padding: 1.5rem;
+    text-align: center;
+    border: 1px dashed var(--border);
+    border-radius: 4px;
+    margin-bottom: 1rem;
+  }
+  .hidden { display: none !important; }
+
+  /* ── Code Snippets ── */
+  .snippets-section { margin: 2.5rem 0; }
+  .section-title {
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-muted);
+    margin-bottom: 0.4rem;
+  }
+  .section-sub {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    margin-bottom: 1rem;
+  }
+
+  .snippet-lang-tabs {
+    display: flex;
+    gap: 0.3rem;
+    flex-wrap: wrap;
+    margin-bottom: 0.75rem;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 0.75rem;
+  }
+  .snip-tab {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    padding: 0.3rem 0.7rem;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--text-muted);
+    font-family: inherit;
+    font-size: 0.73rem;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .snip-tab:hover { color: var(--text); border-color: var(--text-muted); }
+  .snip-tab.active { border-color: var(--lc); color: var(--lc); background: color-mix(in srgb, var(--lc) 8%, transparent); }
+  .snip-dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: var(--lc, #888);
+    flex-shrink: 0;
+  }
+
+  .snip-panel { display: none; }
+  .snip-panel.active { display: block; }
+
+  .snip-variant-tabs {
+    display: flex;
+    gap: 0.3rem;
+    margin-bottom: 0.5rem;
+  }
+  .var-tab {
+    padding: 0.2rem 0.6rem;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--text-muted);
+    font-family: inherit;
+    font-size: 0.7rem;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .var-tab:hover { color: var(--text); }
+  .var-tab.active { border-color: var(--accent); color: var(--accent); }
+
+  .snip-code { display: none; }
+  .snip-code.active { display: block; }
+
+  .code-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-bottom: none;
+    padding: 0.4rem 0.75rem;
+    border-radius: 4px 4px 0 0;
+    font-size: 0.7rem;
+  }
+  .code-lang {
+    text-transform: uppercase;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    color: var(--text-muted);
+  }
+  .code-label { color: var(--text-muted); }
+
+  .code-block {
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: 0 0 4px 4px;
+    padding: 1rem;
+    overflow-x: auto;
+    font-size: 0.78rem;
+    line-height: 1.55;
+    margin: 0;
+  }
+  .code-block code { color: var(--text); white-space: pre; }
+
+  /* ── How to Choose ── */
+  .choose-section { margin: 2.5rem 0; }
+  .choose-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 0.75rem;
+    margin-top: 1rem;
+  }
+  .choose-card {
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 1rem;
+  }
+  .choose-header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+    flex-wrap: wrap;
+    gap: 0.3rem;
+  }
+  .choose-lang {
+    font-size: 0.85rem;
+    font-weight: 700;
+  }
+  .choose-rec {
+    font-size: 0.68rem;
+    color: var(--text-muted);
+  }
+  .choose-card p {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    line-height: 1.6;
+    margin: 0;
+  }
+
+  /* ── CTA ── */
+  .cta-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 1.1rem 1.25rem;
+    margin-top: 2rem;
+  }
+  .cta-bar p {
+    font-size: 0.82rem;
+    color: var(--text-muted);
+    margin: 0;
+  }
+  .cta-btn {
+    background: var(--accent);
+    color: #000;
+    padding: 0.45rem 1rem;
+    border-radius: 4px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+  .cta-btn:hover { opacity: 0.88; }
+
+  /* ── Mobile ── */
+  @media (max-width: 640px) {
+    .page-title { font-size: 1.15rem; }
+    .filter-label { width: auto; }
+    .choose-grid { grid-template-columns: 1fr; }
+    .cta-bar { flex-direction: column; align-items: flex-start; }
+  }
+</style>
