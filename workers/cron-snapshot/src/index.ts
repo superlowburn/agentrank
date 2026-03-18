@@ -389,6 +389,61 @@ ${lines.join("\n")}
 Scored nightly. Full index: agentrank-ai.com/tools`;
 }
 
+// ---------------------------------------------------------------------------
+// IndexNow — notify Bing and Yandex of updated URLs
+// ---------------------------------------------------------------------------
+
+const INDEXNOW_KEY = '8a7a5c3b-6d37-44fb-a44c-ded68d35d4f2';
+const SITE = 'https://agentrank-ai.com';
+const INDEXNOW_ENDPOINT = 'https://api.indexnow.org/indexnow';
+const INDEXNOW_BATCH_SIZE = 9000;
+
+const STATIC_URLS = [
+  '/', '/tools/', '/movers/', '/agents/', '/compare/', '/submit/',
+  '/docs/', '/blog/', '/category/', '/pricing/', '/methodology/', '/integrations/', '/embed/',
+];
+
+async function submitIndexNow(db: D1Database): Promise<void> {
+  const [toolRows, skillRows, categoryRows] = await Promise.all([
+    db.prepare('SELECT full_name FROM tools WHERE score IS NOT NULL').all(),
+    db.prepare('SELECT slug FROM skills WHERE score IS NOT NULL').all(),
+    db.prepare('SELECT DISTINCT category FROM tools WHERE category IS NOT NULL AND score IS NOT NULL UNION SELECT DISTINCT category FROM skills WHERE category IS NOT NULL AND score IS NOT NULL').all(),
+  ]);
+
+  const urls: string[] = STATIC_URLS.map(p => `${SITE}${p}`);
+
+  for (const row of toolRows.results as { full_name: string }[]) {
+    urls.push(`${SITE}/tool/${row.full_name.replace('/', '--')}/`);
+  }
+  for (const row of skillRows.results as { slug: string }[]) {
+    urls.push(`${SITE}/skill/${row.slug.replace(/\//g, '--').replace(/:/g, '-')}/`);
+  }
+  for (const row of categoryRows.results as { category: string }[]) {
+    urls.push(`${SITE}/category/${row.category}/`);
+  }
+
+  // Submit in batches
+  let submitted = 0;
+  for (let i = 0; i < urls.length; i += INDEXNOW_BATCH_SIZE) {
+    const batch = urls.slice(i, i + INDEXNOW_BATCH_SIZE);
+    const body = {
+      host: 'agentrank-ai.com',
+      key: INDEXNOW_KEY,
+      keyLocation: `${SITE}/${INDEXNOW_KEY}.txt`,
+      urlList: batch,
+    };
+    const res = await fetch(INDEXNOW_ENDPOINT, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json; charset=utf-8' },
+      body: JSON.stringify(body),
+    });
+    console.log(`[cron-snapshot] IndexNow batch ${i / INDEXNOW_BATCH_SIZE + 1}: ${batch.length} URLs → HTTP ${res.status}`);
+    submitted += batch.length;
+  }
+
+  console.log(`[cron-snapshot] IndexNow: submitted ${submitted} URLs total`);
+}
+
 // --- Scheduled handler ---
 
 export default {
@@ -414,7 +469,14 @@ export default {
     // Step 2: Always check our own skill install counts
     await checkpointSkillInstalls(env.DB);
 
-    // Step 3: On Mondays, log weekly content for the bot to consume
+    // Step 3: Submit updated URLs to IndexNow (Bing + Yandex)
+    try {
+      await submitIndexNow(env.DB);
+    } catch (e: any) {
+      console.log(`[cron-snapshot] IndexNow submission failed (non-fatal): ${e?.message}`);
+    }
+
+    // Step 4: On Mondays, log weekly content for the bot to consume
     // The bot reads from /api/v1/movers and /api/v1/new-tools — no storage needed here.
     // Just log for observability; the API endpoints do the computation live.
     if (isMonday) {
