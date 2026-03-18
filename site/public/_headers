@@ -1,0 +1,22 @@
+# Cloudflare Pages cache headers
+
+# Astro-generated static assets have content-hashed filenames — cache 1 year
+/_astro/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# OG images — semi-static, cache 7 days
+/og/*
+  Cache-Control: public, max-age=604800
+/og-image.png
+  Cache-Control: public, max-age=604800
+
+# embed.js — changes occasionally, cache 1 hour
+/embed.js
+  Cache-Control: public, max-age=3600
+
+# Prerendered HTML pages — serve fresh, allow CDN to cache briefly
+/*
+  Cache-Control: public, max-age=0, s-maxage=3600, stale-while-revalidate=86400
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: SAMEORIGIN
+  Referrer-Policy: strict-origin-when-cross-origin

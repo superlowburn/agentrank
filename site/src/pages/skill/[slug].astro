@@ -154,6 +154,9 @@ const relatedRows = await env.DB.prepare(
   'SELECT slug, name, score, rank FROM skills WHERE slug != ? AND score IS NOT NULL ORDER BY score DESC LIMIT 5'
 ).bind(skill.slug).all();
 const relatedSkills = relatedRows.results || [];
+
+// Edge cache skill pages for 1 hour, browser for 60s (scores update daily)
+Astro.response.headers.set('Cache-Control', 'public, max-age=60, s-maxage=3600, stale-while-revalidate=86400');
 ---
 
 <Base title={`${skill.name} — AgentRank`} description={summary} activeTab="skills" jsonLd={jsonLd} keywords={keywordsStr} canonicalUrl={pageUrl}>
@@ -321,7 +324,7 @@ const relatedSkills = relatedRows.results || [];
   <section class="badge-embed">
     <h3>Badge</h3>
     <div class="badge-preview">
-      <img src={`/api/badge/skill/${slug}`} alt={`AgentRank score for ${skill.name}`} />
+      <img src={`/api/badge/skill/${slug}`} alt={`AgentRank score for ${skill.name}`} height="20" loading="lazy" />
     </div>
     <div class="snippet">
       <label>Markdown</label>

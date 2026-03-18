@@ -256,6 +256,9 @@ if (relatedTools.length < 3) {
   ).bind(tool.full_name).all();
   relatedTools = (topRows.results || []) as Record<string, unknown>[];
 }
+
+// Edge cache tool pages for 1 hour, browser for 60s (scores update daily)
+Astro.response.headers.set('Cache-Control', 'public, max-age=60, s-maxage=3600, stale-while-revalidate=86400');
 ---
 
 <Base title={`${tool.full_name} — AgentRank`} description={summary} activeTab="tools" jsonLd={jsonLd} keywords={keywordsStr} canonicalUrl={pageUrl}>
@@ -397,7 +400,7 @@ if (relatedTools.length < 3) {
   <section class="badge-embed">
     <h3>Badge</h3>
     <div class="badge-preview">
-      <img src={`/api/badge/tool/${slug}`} alt={`AgentRank score for ${tool.full_name}`} />
+      <img src={`/api/badge/tool/${slug}`} alt={`AgentRank score for ${tool.full_name}`} height="20" loading="lazy" />
     </div>
     <div class="snippet">
       <label>Markdown</label>

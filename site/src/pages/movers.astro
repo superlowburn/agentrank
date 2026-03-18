@@ -134,6 +134,9 @@ interface MoverWithChange extends MoverRow {
   score_change: number;
   rank_change: number;
 }
+
+// Edge cache movers for 15 minutes (changes once daily but tolerate some staleness)
+Astro.response.headers.set('Cache-Control', 'public, max-age=0, s-maxage=900, stale-while-revalidate=86400');
 ---
 
 <Base
