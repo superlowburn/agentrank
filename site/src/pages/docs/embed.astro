@@ -1,0 +1,553 @@
+---
+import Base from '../../layouts/Base.astro';
+export const prerender = true;
+
+const SITE_URL = 'https://agentrank-ai.com';
+const exampleSlug = 'microsoft--playwright-mcp';
+const exampleTool = 'microsoft/playwright-mcp';
+
+const iframeCode = `<iframe src="${SITE_URL}/api/embed/${exampleSlug}.html" width="340" height="170" frameborder="0" style="border-radius:6px;border:none;overflow:hidden;"></iframe>`;
+const scriptCode = `<script src="${SITE_URL}/embed.js" data-tool="${exampleTool}"></script>`;
+const svgMdCode = `[![AgentRank](${SITE_URL}/api/embed/${exampleSlug}.svg)](${SITE_URL}/tool/${exampleSlug}/)`;
+const svgHtmlCode = `<a href="${SITE_URL}/tool/${exampleSlug}/"><img src="${SITE_URL}/api/embed/${exampleSlug}.svg" alt="AgentRank" height="148"></a>`;
+---
+
+<Base
+  title="Embed Documentation — AgentRank"
+  description="Embed AgentRank scores on your site or README. Three formats: JS snippet, HTML iframe, and SVG widget. No dependencies, updates daily."
+  keywords="AgentRank embed, MCP score widget, embed agent score, AgentRank iframe, README widget"
+  canonicalUrl={`${SITE_URL}/docs/embed/`}
+>
+  <div class="page-header">
+    <div class="breadcrumb"><a href="/docs/">Docs</a> / Embed</div>
+    <h1>Embed Scores</h1>
+    <p class="subtitle">Show live AgentRank scores on your site, README, or blog. Widgets update daily from real signals.</p>
+  </div>
+
+  <section class="method" id="script">
+    <h2>Method 1: JS Snippet <span class="badge">Simplest</span></h2>
+    <p>Drop a single script tag anywhere on the page. The widget renders inline, no iframe wrangling needed.</p>
+    <div class="code-block-wrap">
+      <div class="code-label">HTML</div>
+      <pre class="code-block" id="script-code">{scriptCode}</pre>
+      <button class="copy-btn" data-copy={scriptCode}>Copy</button>
+    </div>
+    <div class="field-note">
+      Replace <code>microsoft/playwright-mcp</code> with the GitHub <code>owner/repo</code> of any indexed tool.
+    </div>
+    <div class="preview-box">
+      <div class="preview-label">Live preview</div>
+      <iframe
+        src={`${SITE_URL}/api/embed/${exampleSlug}.html`}
+        width="340"
+        height="170"
+        frameborder="0"
+        scrolling="no"
+        style="border:none;border-radius:6px;display:block;"
+        title="AgentRank widget preview"
+      />
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <section class="method" id="iframe">
+    <h2>Method 2: HTML iframe</h2>
+    <p>Direct iframe embed. Works everywhere that allows iframes — blogs, newsletters, documentation sites.</p>
+    <div class="code-block-wrap">
+      <div class="code-label">HTML</div>
+      <pre class="code-block" id="iframe-code">{iframeCode}</pre>
+      <button class="copy-btn" data-copy={iframeCode}>Copy</button>
+    </div>
+    <div class="field-note">
+      Replace <code>{exampleSlug}</code> with the tool slug. Use <code>--</code> in place of <code>/</code>
+      (e.g. <code>anthropics/mcpkit</code> → <code>anthropics--mcpkit</code>).
+    </div>
+    <div class="params-table">
+      <div class="param-row">
+        <code class="param-name">src</code>
+        <span class="param-desc">Widget HTML URL. Format: <code>/api/embed/&#123;slug&#125;.html</code></span>
+      </div>
+      <div class="param-row">
+        <code class="param-name">width</code>
+        <span class="param-desc">Recommended: <code>340</code>. Widget scales down on smaller containers.</span>
+      </div>
+      <div class="param-row">
+        <code class="param-name">height</code>
+        <span class="param-desc">Recommended: <code>170</code>. Fixed layout — won't auto-resize.</span>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <section class="method" id="svg">
+    <h2>Method 3: SVG Widget <span class="badge">GitHub READMEs</span></h2>
+    <p>A static SVG image — works in GitHub READMEs and anywhere images are allowed but iframes aren't.</p>
+    <div class="svg-preview">
+      <img src={`${SITE_URL}/api/embed/${exampleSlug}.svg`} alt="AgentRank widget" height="148" />
+    </div>
+    <div class="code-block-wrap">
+      <div class="code-label">Markdown</div>
+      <pre class="code-block" id="svg-md-code">{svgMdCode}</pre>
+      <button class="copy-btn" data-copy={svgMdCode}>Copy</button>
+    </div>
+    <div class="code-block-wrap" style="margin-top:0.75rem;">
+      <div class="code-label">HTML</div>
+      <pre class="code-block" id="svg-html-code">{svgHtmlCode}</pre>
+      <button class="copy-btn" data-copy={svgHtmlCode}>Copy</button>
+    </div>
+    <div class="field-note">
+      SVG URL format: <code>/api/embed/&#123;slug&#125;.svg</code>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <section class="method" id="generator">
+    <h2>Embed Code Generator</h2>
+    <p>Enter a tool slug to generate the embed code:</p>
+    <div class="generator-row">
+      <input
+        type="text"
+        id="slug-input"
+        placeholder="e.g. microsoft--playwright-mcp"
+        autocomplete="off"
+        spellcheck="false"
+      />
+      <button class="gen-btn" id="gen-btn">Generate</button>
+    </div>
+    <div id="gen-output" class="gen-output hidden">
+      <div class="code-block-wrap">
+        <div class="code-label">JS Snippet</div>
+        <pre class="code-block" id="gen-script"></pre>
+        <button class="copy-btn" id="copy-gen-script">Copy</button>
+      </div>
+      <div class="code-block-wrap" style="margin-top:0.75rem;">
+        <div class="code-label">HTML iframe</div>
+        <pre class="code-block" id="gen-iframe"></pre>
+        <button class="copy-btn" id="copy-gen-iframe">Copy</button>
+      </div>
+      <div class="code-block-wrap" style="margin-top:0.75rem;">
+        <div class="code-label">SVG (Markdown)</div>
+        <pre class="code-block" id="gen-svg"></pre>
+        <button class="copy-btn" id="copy-gen-svg">Copy</button>
+      </div>
+      <div class="preview-box" style="margin-top:1rem;">
+        <div class="preview-label">Widget preview</div>
+        <iframe id="gen-preview" width="340" height="170" frameborder="0" scrolling="no" style="border:none;border-radius:6px;display:block;" title="Widget preview"></iframe>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <section class="method" id="find-slug">
+    <h2>Finding the Slug</h2>
+    <p>Every tool on AgentRank has a URL like <code>agentrank-ai.com/tool/owner--repo/</code>. The slug is the <code>owner--repo</code> part — replace <code>/</code> with <code>--</code>.</p>
+    <div class="examples-list">
+      <div class="example-row">
+        <code>microsoft/playwright-mcp</code> <span class="arrow">→</span> <code>microsoft--playwright-mcp</code>
+      </div>
+      <div class="example-row">
+        <code>anthropics/mcpkit</code> <span class="arrow">→</span> <code>anthropics--mcpkit</code>
+      </div>
+    </div>
+    <p class="field-note" style="margin-top:0.75rem;">
+      For the JS snippet (<code>data-tool</code>), you can use either format — the script handles the conversion automatically.
+    </p>
+  </section>
+
+  <div class="divider"></div>
+
+  <section class="method" id="caching">
+    <h2>Caching &amp; Updates</h2>
+    <ul class="info-list">
+      <li>Widget data updates daily when the AgentRank pipeline runs.</li>
+      <li>CDN cache TTL: 1 hour. Browser cache TTL: 10 minutes.</li>
+      <li>SVG and HTML endpoints both support <code>Cache-Control</code> with stale-while-revalidate semantics.</li>
+    </ul>
+  </section>
+
+  <div class="divider"></div>
+
+  <section class="method">
+    <h2>Find embed codes for all tools</h2>
+    <p>Browse all available badges and embed codes at <a href="/embed/">agentrank-ai.com/embed/</a>.</p>
+  </section>
+
+  <script>
+    // Copy buttons
+    document.querySelectorAll<HTMLButtonElement>('.copy-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const text = btn.dataset.copy || btn.previousElementSibling?.textContent || '';
+        if (!text) return;
+        navigator.clipboard.writeText(text.trim()).then(() => {
+          const orig = btn.textContent;
+          btn.textContent = 'Copied!';
+          setTimeout(() => { btn.textContent = orig; }, 2000);
+        });
+      });
+    });
+
+    // Generator
+    const slugInput = document.getElementById('slug-input') as HTMLInputElement;
+    const genBtn = document.getElementById('gen-btn') as HTMLButtonElement;
+    const genOutput = document.getElementById('gen-output') as HTMLElement;
+    const genScript = document.getElementById('gen-script') as HTMLElement;
+    const genIframe = document.getElementById('gen-iframe') as HTMLElement;
+    const genSvg = document.getElementById('gen-svg') as HTMLElement;
+    const genPreview = document.getElementById('gen-preview') as HTMLIFrameElement;
+    const copyGenScript = document.getElementById('copy-gen-script') as HTMLButtonElement;
+    const copyGenIframe = document.getElementById('copy-gen-iframe') as HTMLButtonElement;
+    const copyGenSvg = document.getElementById('copy-gen-svg') as HTMLButtonElement;
+    const BASE = 'https://agentrank-ai.com';
+
+    function generate() {
+      const raw = slugInput.value.trim();
+      if (!raw) return;
+      // Normalize slug: convert owner/repo → owner--repo
+      const slug = raw.replace('/', '--');
+      const toolPath = raw.replace('--', '/');
+
+      const scriptSnippet = `<script src="${BASE}/embed.js" data-tool="${toolPath}"><\/script>`;
+      const iframeSnippet = `<iframe src="${BASE}/api/embed/${slug}.html" width="340" height="170" frameborder="0" style="border-radius:6px;border:none;overflow:hidden;"></iframe>`;
+      const svgSnippet = `[![AgentRank](${BASE}/api/embed/${slug}.svg)](${BASE}/tool/${slug}/)`;
+
+      genScript.textContent = scriptSnippet;
+      genIframe.textContent = iframeSnippet;
+      genSvg.textContent = svgSnippet;
+
+      copyGenScript.dataset.copy = scriptSnippet;
+      copyGenIframe.dataset.copy = iframeSnippet;
+      copyGenSvg.dataset.copy = svgSnippet;
+
+      genPreview.src = `${BASE}/api/embed/${slug}.html`;
+      genOutput.classList.remove('hidden');
+    }
+
+    genBtn.addEventListener('click', generate);
+    slugInput.addEventListener('keydown', (e: KeyboardEvent) => {
+      if (e.key === 'Enter') generate();
+    });
+
+    // Wire copy buttons for generator
+    [copyGenScript, copyGenIframe, copyGenSvg].forEach(btn => {
+      btn.addEventListener('click', () => {
+        const text = btn.dataset.copy || '';
+        if (!text) return;
+        navigator.clipboard.writeText(text).then(() => {
+          const orig = btn.textContent;
+          btn.textContent = 'Copied!';
+          setTimeout(() => { btn.textContent = orig; }, 2000);
+        });
+      });
+    });
+  </script>
+</Base>
+
+<style>
+  .page-header {
+    margin-bottom: 2.5rem;
+  }
+
+  .breadcrumb {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    margin-bottom: 0.5rem;
+  }
+
+  .breadcrumb a {
+    color: var(--text-muted);
+    text-decoration: none;
+  }
+
+  .breadcrumb a:hover {
+    color: var(--accent);
+  }
+
+  h1 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+  }
+
+  .subtitle {
+    color: var(--text-muted);
+    font-size: 0.88rem;
+  }
+
+  .method {
+    margin-bottom: 0.5rem;
+  }
+
+  h2 {
+    font-size: 1rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .badge {
+    font-size: 0.65rem;
+    font-weight: 600;
+    background: var(--accent);
+    color: #000;
+    padding: 0.1rem 0.4rem;
+    border-radius: 3px;
+    letter-spacing: 0.3px;
+  }
+
+  p {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    margin-bottom: 0.75rem;
+    line-height: 1.5;
+  }
+
+  .code-block-wrap {
+    position: relative;
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 0.6rem 0.75rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .code-label {
+    font-size: 0.65rem;
+    color: var(--text-muted);
+    font-weight: 600;
+    flex-shrink: 0;
+    padding-top: 2px;
+    width: 3rem;
+  }
+
+  .code-block {
+    flex: 1;
+    font-size: 0.72rem;
+    color: var(--text);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-family: ui-monospace, 'Cascadia Code', 'Source Code Pro', monospace;
+    background: none;
+    border: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .copy-btn {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    padding: 0.2rem 0.45rem;
+    font-size: 0.65rem;
+    cursor: pointer;
+    color: var(--text-muted);
+    font-family: inherit;
+    flex-shrink: 0;
+    white-space: nowrap;
+  }
+
+  .copy-btn:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  .field-note {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    margin-bottom: 0.75rem;
+  }
+
+  .field-note code, p code {
+    background: var(--bg-surface);
+    padding: 0.1rem 0.3rem;
+    border-radius: 2px;
+    font-size: 0.7rem;
+    color: var(--text);
+  }
+
+  .preview-box {
+    margin-top: 0.75rem;
+    padding: 0.75rem;
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+  }
+
+  .preview-label {
+    font-size: 0.65rem;
+    color: var(--text-muted);
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+  }
+
+  .svg-preview {
+    margin-bottom: 0.75rem;
+  }
+
+  .svg-preview img {
+    display: block;
+    border-radius: 6px;
+  }
+
+  .params-table {
+    margin-bottom: 0.75rem;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .param-row {
+    display: flex;
+    gap: 1rem;
+    align-items: baseline;
+    padding: 0.45rem 0.75rem;
+    font-size: 0.8rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .param-row:last-child {
+    border-bottom: none;
+  }
+
+  .param-name {
+    flex-shrink: 0;
+    font-size: 0.72rem;
+    color: var(--accent);
+    background: var(--bg-surface);
+    padding: 0.1rem 0.3rem;
+    border-radius: 2px;
+    width: 4rem;
+    display: inline-block;
+  }
+
+  .param-desc {
+    color: var(--text-muted);
+    font-size: 0.78rem;
+  }
+
+  .param-desc code {
+    background: var(--bg-surface);
+    padding: 0.1rem 0.25rem;
+    border-radius: 2px;
+    font-size: 0.7rem;
+  }
+
+  .examples-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .example-row {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.78rem;
+    padding: 0.35rem 0.6rem;
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+  }
+
+  .example-row code {
+    font-size: 0.72rem;
+    color: var(--text);
+  }
+
+  .arrow {
+    color: var(--text-muted);
+  }
+
+  .info-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+  }
+
+  .info-list li {
+    font-size: 0.82rem;
+    color: var(--text-muted);
+    padding-left: 1rem;
+    position: relative;
+  }
+
+  .info-list li::before {
+    content: '·';
+    position: absolute;
+    left: 0;
+    color: var(--accent);
+  }
+
+  .divider {
+    border-top: 1px solid var(--border);
+    margin: 2rem 0;
+  }
+
+  .generator-row {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+  }
+
+  #slug-input {
+    flex: 1;
+    max-width: 320px;
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    padding: 0.4rem 0.6rem;
+    font-size: 0.82rem;
+    font-family: inherit;
+    color: var(--text);
+    outline: none;
+  }
+
+  #slug-input:focus {
+    border-color: var(--accent);
+  }
+
+  #slug-input::placeholder {
+    color: var(--text-muted);
+    opacity: 0.6;
+  }
+
+  .gen-btn {
+    background: var(--accent);
+    color: #000;
+    border: none;
+    border-radius: 3px;
+    padding: 0.4rem 0.9rem;
+    font-size: 0.82rem;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+  }
+
+  .gen-btn:hover {
+    opacity: 0.9;
+  }
+
+  .gen-output.hidden {
+    display: none;
+  }
+
+  .gen-output {
+    display: flex;
+    flex-direction: column;
+  }
+</style>

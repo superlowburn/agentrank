@@ -131,6 +131,22 @@
 - **Partnership angle:** Small but 100% aligned. A co-post or data share reaches the most engaged early MCP builders.
 - **Priority:** MEDIUM
 
+### 15. MarkTechPost
+- **URL:** https://www.marktechpost.com / https://newsletter.marktechpost.com
+- **Type:** AI/ML news publication + newsletter
+- **Audience:** 2,000,000+ AI professionals/developers; active MCP editorial (published "MCP vs. AI Agent Skills" March 13, 2026)
+- **Contact:** Contact form at marktechpost.com
+- **Partnership angle:** "Tool spotlight" article on AgentRank's scoring methodology. They actively cover MCP — a data-driven guest post on "how to evaluate MCP server quality" fits their format exactly.
+- **Priority:** MEDIUM
+
+### 16. The New Stack
+- **URL:** https://thenewstack.io
+- **Type:** Developer/DevOps media (~1.1M monthly visitors, 79% developers)
+- **Audience:** Published "Anthropic Donates the MCP Protocol to the Agentic AI Foundation"; active MCP coverage
+- **Contact:** https://thenewstack.io/contributions/ (formal contributor program)
+- **Partnership angle:** Op-ed or contributed article using AgentRank data as primary source: "The State of MCP Server Quality in 2026." They have a formal contributor program and their audience skews enterprise-side engineers.
+- **Priority:** MEDIUM
+
 ---
 
 ## Priority 4 — Agent Framework Docs + Blogs
@@ -215,7 +231,47 @@
 
 ## Priority 6 — GitHub Lists + Dev Community
 
-### 24. wong2/awesome-mcp-servers (GitHub)
+### 24. appcypher/awesome-mcp-servers (GitHub)
+- **URL:** https://github.com/appcypher/awesome-mcp-servers
+- **Type:** Curated GitHub list
+- **Audience:** 5,241 stars, 762 contributors — one of the more contributor-heavy forks
+- **Contact:** GitHub PR/issue; maintainer is Stephen Akinyemi (@appcypher)
+- **Partnership angle:** PR to reference AgentRank as a scoring/quality resource in the README preamble. Different maintainer from punkpeye — separate relationship to cultivate.
+- **Priority:** LOW
+
+### 25. kaushikb11/awesome-llm-agents (GitHub)
+- **URL:** https://github.com/kaushikb11/awesome-llm-agents
+- **Type:** Curated GitHub list of LLM agent frameworks
+- **Audience:** 1,200+ stars; actively maintained (last updated March 15, 2026)
+- **Contact:** GitHub PR; maintained by Kaushik Balasubramanian
+- **Partnership angle:** AgentRank covers agent tools and MCP servers — direct overlap with this list's scope. README tools section mention is a natural fit.
+- **Priority:** LOW
+
+### 26. MCPMarket
+- **URL:** https://mcpmarket.com
+- **Type:** MCP server marketplace with categories (Developer Tools, Data Science, Productivity, etc.)
+- **Audience:** Growing; organised by category with submission flow
+- **Contact:** https://mcpmarket.com/server (submit page)
+- **Partnership angle:** Category-level AgentRank leaderboards slot naturally into their categorical structure. Pitch featured "top ranked" sections per category powered by AgentRank data.
+- **Priority:** LOW
+
+### 27. ever-works/awesome-mcp-servers / mcpserver.works (GitHub)
+- **URL:** https://github.com/ever-works/awesome-mcp-servers / https://mcpserver.works
+- **Type:** GitHub curated list with per-server detail pages on companion website
+- **Audience:** Active; per-server detail pages at `/details/{name}.md`
+- **Contact:** GitHub issues or PR
+- **Partnership angle:** Per-server detail pages are exactly where an AgentRank score badge or link adds value. Automated badge embed or data feed via PR is feasible since it's open-source.
+- **Priority:** LOW
+
+### 28. LobeHub MCP Marketplace
+- **URL:** https://lobehub.com/mcp
+- **Type:** Open-source AI platform with integrated MCP marketplace (10,000+ tools)
+- **Audience:** Active open-source community; strong GitHub presence
+- **Contact:** https://lobehub.com/docs/usage/community/mcp-market (submission docs); GitHub at https://github.com/lobehub/lobehub
+- **Partnership angle:** AgentRank score badges embedded in their marketplace server detail pages. Open-source = PR-based integration is feasible. Different audience from GitHub-native directories.
+- **Priority:** LOW
+
+### 29. wong2/awesome-mcp-servers (GitHub)
 - **URL:** https://github.com/wong2/awesome-mcp-servers
 - **Type:** Curated GitHub list
 - **Audience:** 3,700+ stars, 854 forks
@@ -295,4 +351,103 @@
 
 ---
 
-*Output of AUT-116. Feeds the Week 3 partner outreach plan.*
+---
+
+## Outreach Email Templates
+
+Three reusable templates for the three main partnership pitches. Fill in `[TARGET]`, `[URL]`, `[LISTING_COUNT]` etc. before sending. **Steve approves all sends.**
+
+---
+
+### Template A — Embed Widget Offer
+
+Use for: MCP directories, marketplaces, curated lists that display server listings.
+
+**Subject:** Free quality scores for your [LISTING_COUNT] listings — AgentRank embed
+
+---
+
+Hi [NAME],
+
+I'm Steve, building AgentRank (agentrank-ai.com) — a daily-updating ranked index of 25,000+ MCP servers, scored on freshness, issue health, contributor count, and downstream dependents.
+
+[TARGET] is one of the most complete directories in the ecosystem. I'd like to offer a free embed widget so individual server pages on [TARGET] can display an AgentRank quality score inline.
+
+The technical integration is simple: a single `<script>` tag or a REST call to `GET /api/score/{owner}/{repo}` returning score, rank, and signal breakdown as JSON. You decide how to display it — badge, sort option, tooltip, detail pane.
+
+There's no cost and no lock-in. I ask only for an attribution link back to agentrank-ai.com as the score source.
+
+I can have the embed endpoint ready within 24 hours of a yes. Happy to share a technical spec or a sample data export first.
+
+Worth trying?
+
+Steve Mallett
+AgentRank | agentrank-ai.com
+@comforteagle
+
+---
+
+### Template B — Data Partnership
+
+Use for: directories, registries, or platforms that have their own signals AgentRank doesn't (install counts, usage, verification status).
+
+**Subject:** AgentRank × [TARGET] — data partnership?
+
+---
+
+Hi [NAME],
+
+I'm Steve, building AgentRank (agentrank-ai.com) — a live-scored index of 25,000+ MCP servers and agent tools, updated nightly from GitHub signals.
+
+[TARGET] has signals I don't: [THEIR_SIGNAL — e.g. install counts / usage data / verification status]. AgentRank has signals you don't: freshness scores, issue health ratios, downstream dependents, composite quality rankings.
+
+I think both products get stronger if we share data. Here's the rough shape I have in mind:
+
+- AgentRank exposes a free score API for [TARGET] listings so your users see quality alongside [THEIR_SIGNAL].
+- [TARGET] shares [THEIR_SIGNAL] as an input signal to improve AgentRank rankings.
+
+Both products stay independent. No exclusivity. Either party can end the arrangement. Attribution links in both directions.
+
+Is this something worth exploring? Happy to start with a small batch data export to see how the signals complement each other.
+
+Steve Mallett
+AgentRank | agentrank-ai.com
+@comforteagle
+
+---
+
+### Template C — Guest Post / Data Story Pitch
+
+Use for: newsletters, blogs, publications, developer media with editorial coverage of MCP/agents.
+
+**Subject:** Data story pitch: the MCP quality gap (25k servers, 68% abandoned)
+
+---
+
+Hi [NAME],
+
+I'm Steve, building AgentRank (agentrank-ai.com) — a ranked index of every MCP server and agent tool on GitHub, scored on real maintenance signals and updated daily.
+
+The data tells a story I haven't seen covered anywhere: the MCP ecosystem is enormous but the quality distribution is brutal.
+
+A few data points:
+
+- 25,000+ MCP repos indexed
+- 68% haven't had a commit in 90+ days — functionally abandoned
+- The top tools by stars and the top tools by maintainability are almost entirely different lists
+- Median issue close rate: 34% — the long tail is mostly unresponsive
+- The #1 ranked tool (7,003 stars, 43 contributors) is a Unity MCP server built by a team, not a solo dev
+
+I'd love to write a piece for [TARGET] on this: something like "We analyzed 25,000 MCP servers — here's what separates the ones worth using." The angle is practical for developers: how to use AgentRank's signals to avoid picking an abandoned tool.
+
+I write clearly, I have all the data, and I can turn it around fast. No sponsored label, no hidden agenda — just a data story that I think your audience would find useful.
+
+Interested? Happy to share a draft outline.
+
+Steve Mallett
+AgentRank | agentrank-ai.com
+@comforteagle
+
+---
+
+*Updated AUT-145. Added 7 new targets (MCPMarket, appcypher/awesome-mcp-servers, awesome-llm-agents, mcpserver.works, MarkTechPost, The New Stack, LobeHub) and 3 generic outreach templates. Feeds the Week 3 partner outreach plan. All sends require Steve's approval.*

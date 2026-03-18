@@ -203,6 +203,10 @@ const badgeUrl = `${SITE_URL}/api/badge/tool/${slug}`;
 const pageUrl = `${SITE_URL}/tool/${slug}`;
 const mdSnippet = `[![AgentRank](${badgeUrl})](${pageUrl})`;
 const htmlSnippet = `<a href="${pageUrl}"><img src="${badgeUrl}" alt="AgentRank"></a>`;
+const widgetIframeSnippet = `<iframe src="${SITE_URL}/api/embed/${slug}.html" width="340" height="170" frameborder="0" style="border-radius:6px;border:none;overflow:hidden;"></iframe>`;
+const widgetScriptSnippet = `<script src="${SITE_URL}/embed.js" data-tool="${tool.full_name}"><\/script>`;
+const widgetSvgSnippet = `[![AgentRank](${SITE_URL}/api/embed/${slug}.svg)](${pageUrl}/)`;
+
 const jsonLd = generateToolJsonLd({ ...tool, github_topics: githubTopics }, pageUrl);
 const keywordsStr = [...new Set([...tool.matched_queries, ...githubTopics])].join(', ');
 
@@ -410,6 +414,43 @@ if (relatedTools.length < 3) {
     </div>
   </section>
 
+  <section class="widget-embed">
+    <h3>Embed Widget <a href="/docs/embed/" class="embed-docs-link">docs →</a></h3>
+    <p class="widget-embed-desc">Embed a rich score widget on your site or blog.</p>
+    <div class="embed-tabs" id="embed-tabs">
+      <button class="embed-tab active" data-etab="script">JS Snippet</button>
+      <button class="embed-tab" data-etab="iframe">iframe</button>
+      <button class="embed-tab" data-etab="svg">SVG</button>
+    </div>
+    <div class="embed-panel" id="epanel-script">
+      <div class="snippet">
+        <label>HTML</label>
+        <div class="snippet-row">
+          <code class="snippet-code">{widgetScriptSnippet}</code>
+          <button class="copy-btn" data-copy={widgetScriptSnippet}>Copy</button>
+        </div>
+      </div>
+    </div>
+    <div class="embed-panel hidden" id="epanel-iframe">
+      <div class="snippet">
+        <label>HTML</label>
+        <div class="snippet-row">
+          <code class="snippet-code">{widgetIframeSnippet}</code>
+          <button class="copy-btn" data-copy={widgetIframeSnippet}>Copy</button>
+        </div>
+      </div>
+    </div>
+    <div class="embed-panel hidden" id="epanel-svg">
+      <div class="snippet">
+        <label>MD</label>
+        <div class="snippet-row">
+          <code class="snippet-code">{widgetSvgSnippet}</code>
+          <button class="copy-btn" data-copy={widgetSvgSnippet}>Copy</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <section class="metadata">
     <h3>Details</h3>
     <dl>
@@ -523,6 +564,17 @@ if (relatedTools.length < 3) {
           btn.textContent = 'Copied!';
           setTimeout(() => { btn.textContent = 'Copy link'; }, 2000);
         });
+      });
+    });
+
+    // Embed widget tabs
+    const embedTabs = document.querySelectorAll<HTMLButtonElement>('.embed-tab');
+    const embedPanels = document.querySelectorAll<HTMLElement>('.embed-panel');
+    embedTabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        const target = tab.dataset.etab!;
+        embedTabs.forEach(t => t.classList.toggle('active', t.dataset.etab === target));
+        embedPanels.forEach(p => p.classList.toggle('hidden', p.id !== `epanel-${target}`));
       });
     });
   </script>
@@ -860,7 +912,66 @@ if (relatedTools.length < 3) {
   }
 
   .badge-embed {
+    margin-bottom: 1.5rem;
+  }
+
+  .widget-embed {
     margin-bottom: 2rem;
+  }
+
+  .widget-embed h3 {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .embed-docs-link {
+    font-size: 0.7rem;
+    font-weight: 400;
+    color: var(--text-muted);
+    text-decoration: none;
+  }
+
+  .embed-docs-link:hover {
+    color: var(--accent);
+  }
+
+  .widget-embed-desc {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    margin-bottom: 0.5rem;
+  }
+
+  .embed-tabs {
+    display: flex;
+    gap: 0.15rem;
+    margin-bottom: 0.5rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .embed-tab {
+    background: none;
+    border: none;
+    border-bottom: 2px solid transparent;
+    padding: 0.25rem 0.6rem;
+    font-size: 0.72rem;
+    font-family: inherit;
+    cursor: pointer;
+    color: var(--text-muted);
+    margin-bottom: -1px;
+  }
+
+  .embed-tab.active {
+    color: var(--accent);
+    border-bottom-color: var(--accent);
+  }
+
+  .embed-tab:hover:not(.active) {
+    color: var(--text);
+  }
+
+  .embed-panel.hidden {
+    display: none;
   }
 
   .badge-preview {

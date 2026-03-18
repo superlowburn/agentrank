@@ -1,0 +1,447 @@
+---
+export const prerender = false;
+
+const { env } = (Astro.locals as any).runtime;
+const token = Astro.url.searchParams.get('token') ?? '';
+
+if (!env.DASH_TOKEN || token !== env.DASH_TOKEN) {
+  return new Response('<html><body style="background:#0a0a0a;color:#e5e5e5;font-family:monospace;display:flex;justify-content:center;align-items:center;height:100vh;margin:0"><h1>403 Forbidden</h1></body></html>', {
+    status: 403,
+    headers: { 'Content-Type': 'text/html' },
+  });
+}
+---
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>AgentRank Analytics</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
+  <style>
+    :root {
+      --bg: #0a0a0a;
+      --bg-surface: #141414;
+      --bg-hover: #1a1a1a;
+      --text: #e5e5e5;
+      --text-muted: #a1a1aa;
+      --accent: #22c55e;
+      --blue: #60a5fa;
+      --yellow: #facc15;
+      --purple: #c084fc;
+      --border: #27272a;
+      --red: #f87171;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: ui-monospace, 'Cascadia Code', 'Source Code Pro', Menlo, Consolas, monospace;
+      font-size: 14px;
+      line-height: 1.6;
+      padding: 2rem;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 2rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid var(--border);
+    }
+    header h1 { font-size: 1.25rem; color: var(--accent); }
+    header nav { display: flex; gap: 1rem; font-size: 0.8125rem; color: var(--text-muted); }
+    header nav a { color: var(--text-muted); text-decoration: none; }
+    header nav a:hover { color: var(--accent); }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 0.75rem;
+      margin-bottom: 2rem;
+    }
+    .card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 1rem;
+    }
+    .card-label { color: var(--text-muted); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.06em; }
+    .card-value { font-size: 1.75rem; font-weight: bold; margin: 0.25rem 0; font-variant-numeric: tabular-nums; }
+    .card-sub { color: var(--text-muted); font-size: 0.75rem; }
+    .card.accent { border-color: var(--accent); }
+    .card.accent .card-value { color: var(--accent); }
+
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem; }
+    .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem; }
+    @media (max-width: 900px) {
+      .grid-2, .grid-3 { grid-template-columns: 1fr; }
+    }
+
+    .panel {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 1rem;
+    }
+    .panel h2 {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 1rem;
+    }
+
+    .chart-wrap { position: relative; height: 200px; }
+    .chart-wrap-sm { position: relative; height: 150px; }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.8rem;
+    }
+    th {
+      text-align: left;
+      color: var(--text-muted);
+      font-weight: normal;
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      padding: 0.3rem 0.5rem;
+      border-bottom: 1px solid var(--border);
+    }
+    td {
+      padding: 0.3rem 0.5rem;
+      border-bottom: 1px solid var(--border);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 280px;
+    }
+    tr:hover td { background: var(--bg-hover); }
+    .num { text-align: right; font-variant-numeric: tabular-nums; }
+
+    .bar-row { display: flex; align-items: center; gap: 0.5rem; margin: 0.2rem 0; font-size: 0.8rem; }
+    .bar-label { min-width: 0; flex: 0 0 140px; text-align: right; color: var(--text-muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 0.75rem; }
+    .bar-track { flex: 1; height: 16px; background: var(--bg); border-radius: 3px; overflow: hidden; }
+    .bar-fill { height: 100%; border-radius: 3px; min-width: 2px; }
+    .bar-count { width: 50px; font-variant-numeric: tabular-nums; color: var(--text-muted); flex-shrink: 0; text-align: right; font-size: 0.75rem; }
+
+    .loading { color: var(--text-muted); font-size: 0.8rem; padding: 0.5rem 0; }
+    .error { color: var(--red); font-size: 0.8rem; padding: 0.5rem 0; }
+
+    .badge {
+      display: inline-block;
+      font-size: 0.65rem;
+      padding: 0 0.4rem;
+      border-radius: 3px;
+      font-weight: bold;
+      vertical-align: middle;
+    }
+    .badge-page { background: rgba(96,165,250,0.15); color: var(--blue); }
+    .badge-api  { background: rgba(250,204,21,0.15); color: var(--yellow); }
+    .badge-mcp  { background: rgba(192,132,252,0.15); color: var(--purple); }
+
+    .period-tabs { display: flex; gap: 0.5rem; margin-bottom: 1rem; }
+    .period-tab {
+      padding: 0.25rem 0.75rem;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      background: transparent;
+      color: var(--text-muted);
+      font-family: inherit;
+      font-size: 0.75rem;
+      cursor: pointer;
+    }
+    .period-tab.active { border-color: var(--accent); color: var(--accent); }
+
+    .trend-up { color: var(--accent); }
+    .trend-dn { color: var(--red); }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Analytics</h1>
+    <nav>
+      <a href={`/dash?token=${token}`}>Full Dashboard</a>
+      <span style="color:var(--border)">|</span>
+      <span id="last-updated" style="color:var(--text-muted)">Loading...</span>
+    </nav>
+  </header>
+
+  <!-- Summary Cards -->
+  <div class="cards" id="cards">
+    <div class="card"><div class="card-label">Loading...</div></div>
+  </div>
+
+  <!-- Traffic Trends -->
+  <div class="panel" style="margin-bottom:1.5rem">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem">
+      <h2 style="margin:0">Traffic Trends</h2>
+      <div class="period-tabs">
+        <button class="period-tab active" onclick="setPeriod('30d')">30d</button>
+        <button class="period-tab" onclick="setPeriod('7d')">7d</button>
+        <button class="period-tab" onclick="setPeriod('24h')">24h</button>
+      </div>
+    </div>
+    <div class="chart-wrap" id="chart-traffic-wrap">
+      <canvas id="chart-traffic"></canvas>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <!-- Top Pages -->
+    <div class="panel">
+      <h2>Top Pages (30d)</h2>
+      <div id="top-pages"><div class="loading">Loading...</div></div>
+    </div>
+    <!-- Top API Endpoints -->
+    <div class="panel">
+      <h2>Top API Endpoints (30d)</h2>
+      <div id="top-api"><div class="loading">Loading...</div></div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <!-- Referrers -->
+    <div class="panel">
+      <h2>Top Referrers (30d)</h2>
+      <div id="top-referrers"><div class="loading">Loading...</div></div>
+    </div>
+    <!-- UTM Sources -->
+    <div class="panel">
+      <h2>Channel Attribution — utm_source (30d)</h2>
+      <div id="utm-sources"><div class="loading">Loading...</div></div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <!-- Countries -->
+    <div class="panel">
+      <h2>Top Countries (30d)</h2>
+      <div id="top-countries"><div class="loading">Loading...</div></div>
+    </div>
+    <!-- Hourly today -->
+    <div class="panel">
+      <h2>Hourly (24h)</h2>
+      <div class="chart-wrap-sm">
+        <canvas id="chart-hourly"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <script define:vars={{ token }}>
+    const TOKEN = token;
+    let analyticsData = null;
+    let trafficChart = null;
+    let hourlyChart = null;
+    let currentPeriod = '30d';
+
+    const chartDefaults = {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: true, labels: { color: '#a1a1aa', font: { size: 11 }, boxWidth: 12, padding: 10 } },
+        tooltip: {
+          backgroundColor: '#1a1a1a',
+          borderColor: '#27272a',
+          borderWidth: 1,
+          titleColor: '#e5e5e5',
+          bodyColor: '#a1a1aa',
+        },
+      },
+      scales: {
+        x: {
+          grid: { color: '#1a1a1a' },
+          ticks: { color: '#71717a', font: { size: 10 }, maxTicksLimit: 12 },
+        },
+        y: {
+          grid: { color: '#1a1a1a' },
+          ticks: { color: '#71717a', font: { size: 10 } },
+          beginAtZero: true,
+        },
+      },
+    };
+
+    function fmt(n) {
+      if (n == null) return '0';
+      if (typeof n !== 'number') return n;
+      if (n >= 1000000) return (n / 1000000).toFixed(1) + 'M';
+      if (n >= 1000) return (n / 1000).toFixed(1) + 'k';
+      return n.toLocaleString();
+    }
+
+    function makeBars(items, labelKey, countKey, color = '#22c55e') {
+      if (!items || !items.length) return '<div class="loading">No data yet</div>';
+      const max = Math.max(...items.map(i => i[countKey] || 0));
+      return items.map(i =>
+        `<div class="bar-row">
+          <span class="bar-label" title="${i[labelKey]}">${i[labelKey] || 'unknown'}</span>
+          <div class="bar-track"><div class="bar-fill" style="width:${max ? ((i[countKey]/max)*100).toFixed(1) : 0}%;background:${color}"></div></div>
+          <span class="bar-count">${fmt(i[countKey])}</span>
+        </div>`
+      ).join('');
+    }
+
+    function makeTable(rows, cols) {
+      if (!rows || !rows.length) return '<div class="loading">No data yet</div>';
+      const hdr = cols.map(c => `<th>${c.label}</th>`).join('');
+      const body = rows.map(r =>
+        '<tr>' + cols.map(c => {
+          const v = c.fmt ? c.fmt(r[c.key], r) : (r[c.key] ?? '-');
+          return `<td class="${c.num ? 'num' : ''}" style="${c.maxw ? 'max-width:'+c.maxw+'px' : ''}">${v}</td>`;
+        }).join('') + '</tr>'
+      ).join('');
+      return `<table><thead><tr>${hdr}</tr></thead><tbody>${body}</tbody></table>`;
+    }
+
+    function buildTrafficChart(period) {
+      const canvas = document.getElementById('chart-traffic');
+      if (trafficChart) { trafficChart.destroy(); trafficChart = null; }
+
+      let labels, pageData, apiData, mcpData;
+
+      if (period === '24h') {
+        const rows = analyticsData.hourly_24h;
+        // Fill all 24 hours
+        const hourMap = {};
+        for (const r of rows) hourMap[r.hour] = r;
+        labels = Array.from({length: 24}, (_, i) => String(i).padStart(2, '0') + ':00');
+        pageData = labels.map(h => hourMap[h]?.page_visits ?? 0);
+        apiData  = labels.map(h => hourMap[h]?.api_calls  ?? 0);
+        mcpData  = labels.map(h => hourMap[h]?.mcp_calls  ?? 0);
+      } else {
+        const rows = analyticsData.daily_30d;
+        const cutoff = period === '7d' ? 7 : 30;
+        const filtered = rows.slice(-cutoff);
+        labels   = filtered.map(r => r.day.slice(5)); // MM-DD
+        pageData = filtered.map(r => r.page_visits ?? 0);
+        apiData  = filtered.map(r => r.api_calls   ?? 0);
+        mcpData  = filtered.map(r => r.mcp_calls   ?? 0);
+      }
+
+      trafficChart = new Chart(canvas, {
+        type: 'line',
+        data: {
+          labels,
+          datasets: [
+            { label: 'Page Visits', data: pageData, borderColor: '#60a5fa', backgroundColor: 'rgba(96,165,250,0.08)', tension: 0.3, fill: true, pointRadius: 2 },
+            { label: 'API Calls',   data: apiData,  borderColor: '#facc15', backgroundColor: 'rgba(250,204,21,0.06)', tension: 0.3, fill: true, pointRadius: 2 },
+            { label: 'MCP Calls',   data: mcpData,  borderColor: '#c084fc', backgroundColor: 'rgba(192,132,252,0.06)', tension: 0.3, fill: true, pointRadius: 2 },
+          ],
+        },
+        options: { ...chartDefaults },
+      });
+    }
+
+    function buildHourlyChart() {
+      const canvas = document.getElementById('chart-hourly');
+      if (hourlyChart) { hourlyChart.destroy(); hourlyChart = null; }
+
+      const rows = analyticsData.hourly_24h;
+      const hourMap = {};
+      for (const r of rows) hourMap[r.hour] = r;
+      const labels = Array.from({length: 24}, (_, i) => String(i).padStart(2, '0') + ':00');
+      const totals = labels.map(h => hourMap[h]?.total ?? 0);
+
+      hourlyChart = new Chart(canvas, {
+        type: 'bar',
+        data: {
+          labels,
+          datasets: [{ label: 'Requests', data: totals, backgroundColor: 'rgba(34,197,94,0.6)', borderColor: '#22c55e', borderWidth: 1 }],
+        },
+        options: {
+          ...chartDefaults,
+          plugins: { ...chartDefaults.plugins, legend: { display: false } },
+        },
+      });
+    }
+
+    function setPeriod(p) {
+      currentPeriod = p;
+      document.querySelectorAll('.period-tab').forEach(btn => {
+        btn.classList.toggle('active', btn.textContent === p);
+      });
+      if (analyticsData) buildTrafficChart(p);
+    }
+
+    async function loadAnalytics() {
+      const res = await fetch(`/api/analytics?token=${encodeURIComponent(TOKEN)}`);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      return await res.json();
+    }
+
+    loadAnalytics().then(d => {
+      analyticsData = d;
+
+      // Update timestamp
+      document.getElementById('last-updated').textContent = 'Updated ' + new Date().toLocaleTimeString();
+
+      const t24 = d.totals_24h || {};
+      const t7  = d.totals_7d  || {};
+      const t30 = d.totals_30d || {};
+
+      // Compute 7d vs prior-7d trend (using 30d data)
+      const rows30 = d.daily_30d || [];
+      const last7  = rows30.slice(-7).reduce((s, r) => s + (r.total ?? 0), 0);
+      const prev7  = rows30.slice(-14, -7).reduce((s, r) => s + (r.total ?? 0), 0);
+      const trendPct = prev7 > 0 ? Math.round(((last7 - prev7) / prev7) * 100) : null;
+      const trendHtml = trendPct != null
+        ? `<span class="${trendPct >= 0 ? 'trend-up' : 'trend-dn'}">${trendPct >= 0 ? '+' : ''}${trendPct}% vs prev 7d</span>`
+        : '';
+
+      // Summary cards
+      document.getElementById('cards').innerHTML = [
+        `<div class="card accent"><div class="card-label">Page Visits (24h)</div><div class="card-value">${fmt(t24.page_visits)}</div><div class="card-sub">${fmt(t24.api_calls)} api · ${fmt(t24.mcp_calls)} mcp</div></div>`,
+        `<div class="card"><div class="card-label">Page Visits (7d)</div><div class="card-value">${fmt(t7.page_visits)}</div><div class="card-sub">${trendHtml}</div></div>`,
+        `<div class="card"><div class="card-label">Page Visits (30d)</div><div class="card-value">${fmt(t30.page_visits)}</div><div class="card-sub">&nbsp;</div></div>`,
+        `<div class="card"><div class="card-label">API Calls (7d)</div><div class="card-value" style="color:var(--yellow)">${fmt(t7.api_calls)}</div><div class="card-sub">${fmt(t30.api_calls)} (30d)</div></div>`,
+        `<div class="card"><div class="card-label">MCP Calls (7d)</div><div class="card-value" style="color:var(--purple)">${fmt(t7.mcp_calls)}</div><div class="card-sub">${fmt(t30.mcp_calls)} (30d)</div></div>`,
+        `<div class="card"><div class="card-label">Total Requests (30d)</div><div class="card-value">${fmt(t30.total)}</div><div class="card-sub">${fmt(t7.total)} last 7d</div></div>`,
+        `<div class="card"><div class="card-label">Referral Sources</div><div class="card-value">${(d.top_referrers || []).length}</div><div class="card-sub">unique domains (30d)</div></div>`,
+        `<div class="card"><div class="card-label">UTM Channels</div><div class="card-value">${(d.utm_sources || []).length}</div><div class="card-sub">tracked channels (30d)</div></div>`,
+      ].join('');
+
+      // Charts
+      buildTrafficChart('30d');
+      buildHourlyChart();
+
+      // Top pages
+      document.getElementById('top-pages').innerHTML = makeTable(d.top_pages, [
+        { key: 'path', label: 'Page', maxw: 220 },
+        { key: 'visits', label: 'Visits', num: true },
+      ]);
+
+      // Top API endpoints
+      document.getElementById('top-api').innerHTML = makeBars(d.top_api_endpoints, 'path', 'calls', '#facc15');
+
+      // Referrers
+      document.getElementById('top-referrers').innerHTML = d.top_referrers?.length
+        ? makeTable(d.top_referrers, [
+            { key: 'referrer', label: 'Referrer', maxw: 220 },
+            { key: 'visits', label: 'Visits', num: true },
+          ])
+        : '<div class="loading">No external referrers yet</div>';
+
+      // UTM sources
+      document.getElementById('utm-sources').innerHTML = d.utm_sources?.length
+        ? makeTable(d.utm_sources, [
+            { key: 'utm_source', label: 'Channel' },
+            { key: 'visits', label: 'Visits', num: true },
+            { key: 'countries', label: 'Countries', num: true },
+            { key: 'first_seen', label: 'First Seen' },
+          ])
+        : '<div class="loading">No UTM-tagged visits yet<br>Add ?utm_source=... to launch links</div>';
+
+      // Countries
+      document.getElementById('top-countries').innerHTML = makeBars(d.top_countries, 'country', 'visits', '#60a5fa');
+
+    }).catch(e => {
+      document.getElementById('cards').innerHTML = `<div class="error">Failed to load: ${e.message}</div>`;
+    });
+  </script>
+</body>
+</html>
