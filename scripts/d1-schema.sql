@@ -210,6 +210,29 @@ CREATE INDEX IF NOT EXISTS idx_apiusage_key ON api_usage(api_key_id, date);
 -- CREATE TABLE IF NOT EXISTS api_usage (api_key_id TEXT NOT NULL, date TEXT NOT NULL, endpoint TEXT NOT NULL, request_count INTEGER NOT NULL DEFAULT 0, PRIMARY KEY (api_key_id, date, endpoint), FOREIGN KEY (api_key_id) REFERENCES api_keys(id));
 -- CREATE INDEX IF NOT EXISTS idx_apiusage_key ON api_usage(api_key_id, date);
 
+-- Score history — daily component-level signal snapshots per tool
+-- Used for sparklines and trend analysis on tool pages
+-- survives pipeline DROP/CREATE cycles
+CREATE TABLE IF NOT EXISTS score_history (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  tool_slug TEXT NOT NULL,
+  tool_type TEXT NOT NULL DEFAULT 'tool',
+  score REAL NOT NULL,
+  stars INTEGER NOT NULL DEFAULT 0,
+  freshness_score REAL,
+  issue_health REAL,
+  contributors INTEGER NOT NULL DEFAULT 0,
+  dependent_score REAL,
+  recorded_at TEXT NOT NULL DEFAULT (date('now')),
+  UNIQUE(tool_slug, tool_type, recorded_at)
+);
+CREATE INDEX IF NOT EXISTS idx_sh_slug ON score_history(tool_slug, tool_type, recorded_at);
+CREATE INDEX IF NOT EXISTS idx_sh_date ON score_history(recorded_at);
+-- Migration (run once on existing D1):
+-- CREATE TABLE IF NOT EXISTS score_history (id INTEGER PRIMARY KEY AUTOINCREMENT, tool_slug TEXT NOT NULL, tool_type TEXT NOT NULL DEFAULT 'tool', score REAL NOT NULL, stars INTEGER NOT NULL DEFAULT 0, freshness_score REAL, issue_health REAL, contributors INTEGER NOT NULL DEFAULT 0, dependent_score REAL, recorded_at TEXT NOT NULL DEFAULT (date('now')), UNIQUE(tool_slug, tool_type, recorded_at));
+-- CREATE INDEX IF NOT EXISTS idx_sh_slug ON score_history(tool_slug, tool_type, recorded_at);
+-- CREATE INDEX IF NOT EXISTS idx_sh_date ON score_history(recorded_at);
+
 -- Submissions table — survives pipeline DROP/CREATE cycles
 CREATE TABLE IF NOT EXISTS submissions (
   id INTEGER PRIMARY KEY AUTOINCREMENT,

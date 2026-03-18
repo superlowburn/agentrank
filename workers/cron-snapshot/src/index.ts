@@ -159,6 +159,76 @@ async function snapshotRankings(db: D1Database, date: string): Promise<number> {
   return inserted;
 }
 
+// --- Step 1b: Snapshot component-level scores into score_history ---
+
+function computeFreshnessScore(lastCommitAt: string | null, isArchived: number): number {
+  if (isArchived) return 0;
+  if (!lastCommitAt) return 0;
+  const days = (Date.now() - new Date(lastCommitAt).getTime()) / (1000 * 60 * 60 * 24);
+  if (days <= 7) return 1.0;
+  if (days <= 90) return 1.0 - (days - 7) / (90 - 7);
+  return Math.max(0, Math.exp(-(days - 90) / 90) * 0.1);
+}
+
+async function snapshotScoreHistory(db: D1Database, date: string): Promise<number> {
+  const tools = await db
+    .prepare(
+      `SELECT full_name, score, stars, open_issues, closed_issues, contributors, dependents, last_commit_at, is_archived
+       FROM tools WHERE score IS NOT NULL ORDER BY rank ASC LIMIT 5000`
+    )
+    .all();
+
+  const rows = (tools.results || []) as Array<{
+    full_name: string;
+    score: number;
+    stars: number;
+    open_issues: number;
+    closed_issues: number;
+    contributors: number;
+    dependents: number;
+    last_commit_at: string | null;
+    is_archived: number;
+  }>;
+
+  let inserted = 0;
+  const batchSize = 50;
+
+  for (let i = 0; i < rows.length; i += batchSize) {
+    const batch = rows.slice(i, i + batchSize);
+    const stmts = batch.map((r) => {
+      const freshness = computeFreshnessScore(r.last_commit_at, r.is_archived);
+      const total = (r.open_issues ?? 0) + (r.closed_issues ?? 0);
+      const issueHealth = total === 0 ? 0.3 : (r.closed_issues ?? 0) / total;
+      const dependentScore = Math.min(
+        1,
+        (r.dependents ?? 0) > 0 ? Math.log(1 + r.dependents) / Math.log(1 + 100000) : 0
+      );
+
+      return db
+        .prepare(
+          `INSERT OR IGNORE INTO score_history
+             (tool_slug, tool_type, score, stars, freshness_score, issue_health, contributors, dependent_score, recorded_at)
+           VALUES (?, 'tool', ?, ?, ?, ?, ?, ?, ?)`
+        )
+        .bind(
+          r.full_name,
+          r.score,
+          r.stars ?? 0,
+          Math.round(freshness * 1000) / 1000,
+          Math.round(issueHealth * 1000) / 1000,
+          r.contributors ?? 0,
+          Math.round(dependentScore * 1000) / 1000,
+          date
+        );
+    });
+
+    const results = await db.batch(stmts);
+    inserted += results.reduce((sum, r) => sum + (r.meta?.changes ?? 0), 0);
+  }
+
+  return inserted;
+}
+
 // --- Step 2: Compute biggest movers (rank delta over last 7 days) ---
 
 interface Mover {
@@ -331,6 +401,15 @@ export default {
     // Step 1: Always snapshot current rankings
     const inserted = await snapshotRankings(env.DB, today);
     console.log(`[cron-snapshot] Snapshot complete: ${inserted} rows inserted for ${today}`);
+
+    // Step 1b: Snapshot component-level scores into score_history
+    try {
+      const shInserted = await snapshotScoreHistory(env.DB, today);
+      console.log(`[cron-snapshot] score_history: ${shInserted} rows inserted for ${today}`);
+    } catch (e: any) {
+      // score_history table may not exist yet on older D1 instances — non-fatal
+      console.log(`[cron-snapshot] score_history snapshot skipped: ${e?.message}`);
+    }
 
     // Step 2: Always check our own skill install counts
     await checkpointSkillInstalls(env.DB);

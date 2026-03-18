@@ -1,12 +1,139 @@
 ---
-export const prerender = true;
+export const prerender = false;
 
 import Base from '../layouts/Base.astro';
-import { getMovers } from '../data/movers';
 import { toSkillSlug } from '../data/skills';
 import { toSlug } from '../data/tools';
 
-const movers = getMovers();
+const { env } = Astro.locals.runtime;
+
+const today = new Date().toISOString().slice(0, 10);
+const d7 = new Date(today + 'T00:00:00Z');
+d7.setUTCDate(d7.getUTCDate() - 7);
+const prevDateCutoff = d7.toISOString().slice(0, 10);
+
+interface MoverRow {
+  identifier: string;
+  name: string | null;
+  current_rank: number;
+  current_score: number;
+  prev_rank: number;
+  prev_score: number;
+}
+
+interface NewEntryRow {
+  identifier: string;
+  name: string | null;
+  rank: number;
+  score: number;
+}
+
+// Find the most recent snapshot date in rank_history
+let todaySnapshotDate: string | null = null;
+let comparisonDate: string | null = null;
+let hasData = false;
+
+try {
+  const latestRow = await env.DB.prepare(
+    `SELECT MAX(snapshot_date) as d FROM rank_history`
+  ).first<{ d: string | null }>();
+
+  todaySnapshotDate = latestRow?.d ?? null;
+
+  if (todaySnapshotDate) {
+    const prevRow = await env.DB.prepare(
+      `SELECT MAX(snapshot_date) as d FROM rank_history WHERE snapshot_date <= ?`
+    ).bind(prevDateCutoff).first<{ d: string | null }>();
+
+    comparisonDate = prevRow?.d ?? null;
+    hasData = !!comparisonDate;
+  }
+} catch {
+  // rank_history not yet populated
+}
+
+const daysSpan = hasData && todaySnapshotDate && comparisonDate
+  ? Math.round((new Date(todaySnapshotDate).getTime() - new Date(comparisonDate).getTime()) / (1000 * 60 * 60 * 24))
+  : null;
+
+async function fetchMovers(type: 'tool' | 'skill'): Promise<{ gainers: MoverRow[]; losers: MoverRow[]; new_entries: NewEntryRow[] }> {
+  if (!hasData || !todaySnapshotDate || !comparisonDate) {
+    return { gainers: [], losers: [], new_entries: [] };
+  }
+
+  const nameJoin = type === 'tool'
+    ? `LEFT JOIN tools t ON t.full_name = cur.tool_full_name`
+    : `LEFT JOIN skills s ON s.slug = cur.tool_full_name`;
+  const nameCol = type === 'tool' ? `t.full_name` : `s.name`;
+
+  const moversResult = await env.DB.prepare(
+    `SELECT
+       cur.tool_full_name AS identifier,
+       ${nameCol} AS name,
+       cur.rank AS current_rank,
+       cur.score AS current_score,
+       prev.rank AS prev_rank,
+       prev.score AS prev_score
+     FROM rank_history cur
+     JOIN rank_history prev
+       ON cur.tool_full_name = prev.tool_full_name
+      AND cur.tool_type = prev.tool_type
+      AND prev.snapshot_date = ?2
+     ${nameJoin}
+     WHERE cur.snapshot_date = ?1
+       AND cur.tool_type = ?3
+       AND ABS(cur.score - prev.score) >= 0.1
+     ORDER BY ABS(cur.score - prev.score) DESC
+     LIMIT 50`
+  ).bind(todaySnapshotDate, comparisonDate, type).all();
+
+  const rows = (moversResult.results || []) as MoverRow[];
+
+  const gainers = rows
+    .filter(r => r.current_score > r.prev_score)
+    .map(r => ({ ...r, score_change: Math.round((r.current_score - r.prev_score) * 100) / 100, rank_change: r.prev_rank - r.current_rank }))
+    .slice(0, 20);
+
+  const losers = rows
+    .filter(r => r.current_score < r.prev_score)
+    .map(r => ({ ...r, score_change: Math.round((r.current_score - r.prev_score) * 100) / 100, rank_change: r.prev_rank - r.current_rank }))
+    .slice(0, 20);
+
+  // New entries: in today's snapshot but not any earlier snapshot
+  const newResult = await env.DB.prepare(
+    `SELECT
+       cur.tool_full_name AS identifier,
+       ${nameCol} AS name,
+       cur.rank,
+       cur.score
+     FROM rank_history cur
+     ${nameJoin}
+     WHERE cur.snapshot_date = ?1
+       AND cur.tool_type = ?2
+       AND NOT EXISTS (
+         SELECT 1 FROM rank_history old
+         WHERE old.tool_full_name = cur.tool_full_name
+           AND old.tool_type = cur.tool_type
+           AND old.snapshot_date < ?1
+       )
+     ORDER BY cur.score DESC
+     LIMIT 20`
+  ).bind(todaySnapshotDate, type).all();
+
+  const new_entries = (newResult.results || []) as NewEntryRow[];
+
+  return { gainers, losers, new_entries };
+}
+
+const [toolMovers, skillMovers] = await Promise.all([
+  fetchMovers('tool'),
+  fetchMovers('skill'),
+]);
+
+interface MoverWithChange extends MoverRow {
+  score_change: number;
+  rank_change: number;
+}
 ---
 
 <Base
@@ -16,7 +143,7 @@ const movers = getMovers();
   activeTab="movers"
   canonicalUrl="https://agentrank-ai.com/movers/"
 >
-  {!movers.has_data ? (
+  {!hasData ? (
     <div class="empty-state">
       <h2>Weekly Movers</h2>
       <p>Movers data will be available after the first week of tracking. Check back soon.</p>
@@ -25,7 +152,7 @@ const movers = getMovers();
     <>
       <div class="header-info">
         <h2>Weekly Movers</h2>
-        <span class="meta">vs {movers.comparison_date} ({movers.days_span}d ago)</span>
+        <span class="meta">vs {comparisonDate} ({daysSpan}d ago)</span>
       </div>
 
       <div class="tabs" id="mover-tabs">
@@ -34,7 +161,7 @@ const movers = getMovers();
       </div>
 
       <div class="tab-content active" id="tab-skills">
-        {movers.skills.gainers.length > 0 && (
+        {skillMovers.gainers.length > 0 && (
           <>
             <h3 class="section-title">Top Gainers</h3>
             <div class="table-wrap">
@@ -49,7 +176,7 @@ const movers = getMovers();
                   </tr>
                 </thead>
                 <tbody>
-                  {movers.skills.gainers.map((m) => (
+                  {(skillMovers.gainers as unknown as MoverWithChange[]).map((m) => (
                     <tr>
                       <td class="rank">{m.current_rank}</td>
                       <td class="name"><a href={`/skill/${toSkillSlug(m.identifier)}/`}>{m.name || m.identifier}</a></td>
@@ -64,7 +191,7 @@ const movers = getMovers();
           </>
         )}
 
-        {movers.skills.losers.length > 0 && (
+        {skillMovers.losers.length > 0 && (
           <>
             <h3 class="section-title">Top Losers</h3>
             <div class="table-wrap">
@@ -79,7 +206,7 @@ const movers = getMovers();
                   </tr>
                 </thead>
                 <tbody>
-                  {movers.skills.losers.map((m) => (
+                  {(skillMovers.losers as unknown as MoverWithChange[]).map((m) => (
                     <tr>
                       <td class="rank">{m.current_rank}</td>
                       <td class="name"><a href={`/skill/${toSkillSlug(m.identifier)}/`}>{m.name || m.identifier}</a></td>
@@ -94,7 +221,7 @@ const movers = getMovers();
           </>
         )}
 
-        {movers.skills.new_entries.length > 0 && (
+        {skillMovers.new_entries.length > 0 && (
           <>
             <h3 class="section-title">New This Week</h3>
             <div class="table-wrap">
@@ -107,7 +234,7 @@ const movers = getMovers();
                   </tr>
                 </thead>
                 <tbody>
-                  {movers.skills.new_entries.slice(0, 20).map((e) => (
+                  {skillMovers.new_entries.map((e) => (
                     <tr>
                       <td class="rank">{e.rank}</td>
                       <td class="name"><a href={`/skill/${toSkillSlug(e.identifier)}/`}>{e.name || e.identifier}</a></td>
@@ -120,13 +247,13 @@ const movers = getMovers();
           </>
         )}
 
-        {movers.skills.gainers.length === 0 && movers.skills.losers.length === 0 && movers.skills.new_entries.length === 0 && (
+        {skillMovers.gainers.length === 0 && skillMovers.losers.length === 0 && skillMovers.new_entries.length === 0 && (
           <p class="no-data">No skill score changes this week.</p>
         )}
       </div>
 
       <div class="tab-content" id="tab-tools">
-        {movers.tools.gainers.length > 0 && (
+        {toolMovers.gainers.length > 0 && (
           <>
             <h3 class="section-title">Top Gainers</h3>
             <div class="table-wrap">
@@ -141,7 +268,7 @@ const movers = getMovers();
                   </tr>
                 </thead>
                 <tbody>
-                  {movers.tools.gainers.map((m) => (
+                  {(toolMovers.gainers as unknown as MoverWithChange[]).map((m) => (
                     <tr>
                       <td class="rank">{m.current_rank}</td>
                       <td class="name"><a href={`/tool/${toSlug(m.identifier)}/`}>{m.name || m.identifier}</a></td>
@@ -156,7 +283,7 @@ const movers = getMovers();
           </>
         )}
 
-        {movers.tools.losers.length > 0 && (
+        {toolMovers.losers.length > 0 && (
           <>
             <h3 class="section-title">Top Losers</h3>
             <div class="table-wrap">
@@ -171,7 +298,7 @@ const movers = getMovers();
                   </tr>
                 </thead>
                 <tbody>
-                  {movers.tools.losers.map((m) => (
+                  {(toolMovers.losers as unknown as MoverWithChange[]).map((m) => (
                     <tr>
                       <td class="rank">{m.current_rank}</td>
                       <td class="name"><a href={`/tool/${toSlug(m.identifier)}/`}>{m.name || m.identifier}</a></td>
@@ -186,7 +313,7 @@ const movers = getMovers();
           </>
         )}
 
-        {movers.tools.new_entries.length > 0 && (
+        {toolMovers.new_entries.length > 0 && (
           <>
             <h3 class="section-title">New This Week</h3>
             <div class="table-wrap">
@@ -199,7 +326,7 @@ const movers = getMovers();
                   </tr>
                 </thead>
                 <tbody>
-                  {movers.tools.new_entries.slice(0, 20).map((e) => (
+                  {toolMovers.new_entries.map((e) => (
                     <tr>
                       <td class="rank">{e.rank}</td>
                       <td class="name"><a href={`/tool/${toSlug(e.identifier)}/`}>{e.name || e.identifier}</a></td>
@@ -212,7 +339,7 @@ const movers = getMovers();
           </>
         )}
 
-        {movers.tools.gainers.length === 0 && movers.tools.losers.length === 0 && movers.tools.new_entries.length === 0 && (
+        {toolMovers.gainers.length === 0 && toolMovers.losers.length === 0 && toolMovers.new_entries.length === 0 && (
           <p class="no-data">No tool score changes this week.</p>
         )}
       </div>

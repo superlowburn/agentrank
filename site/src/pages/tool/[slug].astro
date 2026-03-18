@@ -140,6 +140,52 @@ const radarLabelData = scoredSigs.map((s, i) => {
 
 const advice = tool.score <= 85 ? getAdvice(tool) : [];
 
+// Score history for sparkline — query rank_history (last 30 days, oldest first)
+const histResult = await env.DB.prepare(
+  `SELECT snapshot_date as date, score, rank
+   FROM rank_history
+   WHERE tool_full_name = ? AND tool_type = 'tool'
+   ORDER BY snapshot_date ASC
+   LIMIT 30`
+).bind(fullName).all();
+
+const scoreHistory = (histResult.results || []) as { date: string; score: number; rank: number }[];
+
+// Trend: compare today vs 7 days ago
+let trend7d: { direction: 'up' | 'down' | 'stable'; pct: number } | null = null;
+if (scoreHistory.length >= 2) {
+  const latest = scoreHistory[scoreHistory.length - 1];
+  const cutoff = new Date(latest.date + 'T00:00:00Z');
+  cutoff.setUTCDate(cutoff.getUTCDate() - 7);
+  const cutoffStr = cutoff.toISOString().slice(0, 10);
+  const baseline = [...scoreHistory].reverse().find(h => h.date <= cutoffStr);
+  if (baseline && baseline.score > 0) {
+    const delta = latest.score - baseline.score;
+    const pct = Math.round(Math.abs(delta) / baseline.score * 1000) / 10;
+    trend7d = {
+      direction: delta > 0.5 ? 'up' : delta < -0.5 ? 'down' : 'stable',
+      pct,
+    };
+  }
+}
+
+// Build SVG sparkline path
+let sparklinePath = '';
+let sparklineWidth = 80;
+let sparklineHeight = 24;
+if (scoreHistory.length >= 2) {
+  const scores = scoreHistory.map(h => h.score);
+  const minS = Math.min(...scores);
+  const maxS = Math.max(...scores);
+  const range = maxS - minS || 1;
+  const pts = scores.map((s, i) => {
+    const x = (i / (scores.length - 1)) * sparklineWidth;
+    const y = sparklineHeight - ((s - minS) / range) * (sparklineHeight - 2) - 1;
+    return `${x.toFixed(1)},${y.toFixed(1)}`;
+  });
+  sparklinePath = `M${pts.join('L')}`;
+}
+
 const totalTools = (await env.DB.prepare('SELECT COUNT(*) as count FROM tools').first())?.count as number || 0;
 const summary = generateToolSummary({ ...tool, github_topics: githubTopics });
 const contextSentences = generateContextSentences({
@@ -222,6 +268,18 @@ if (relatedTools.length < 3) {
       <span class="score-badge" style={`color: ${scoreColor(tool.score)}`}>
         Score: {tool.score.toFixed(1)}
       </span>
+      {sparklinePath && (
+        <span class="sparkline-wrap" title="Score trend (30 days)">
+          <svg class="sparkline" viewBox={`0 0 ${sparklineWidth} ${sparklineHeight}`} width={sparklineWidth} height={sparklineHeight} aria-hidden="true">
+            <path d={sparklinePath} fill="none" stroke="var(--accent)" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round" />
+          </svg>
+        </span>
+      )}
+      {trend7d && (
+        <span class={`trend-badge trend-${trend7d.direction}`} title={`${trend7d.direction === 'up' ? '+' : trend7d.direction === 'down' ? '-' : ''}${trend7d.pct}% vs 7 days ago`}>
+          {trend7d.direction === 'up' ? '↑' : trend7d.direction === 'down' ? '↓' : '→'} {trend7d.pct}%
+        </span>
+      )}
       <span class="rank-badge">Rank #{tool.rank}</span>
       {tool.is_archived && <span class="badge archived">Archived</span>}
     </div>
@@ -523,6 +581,43 @@ if (relatedTools.length < 3) {
   .score-badge {
     font-weight: 700;
     font-size: 1rem;
+  }
+
+  .sparkline-wrap {
+    display: inline-flex;
+    align-items: center;
+    opacity: 0.85;
+  }
+
+  .sparkline {
+    display: block;
+    vertical-align: middle;
+  }
+
+  .trend-badge {
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 0.1rem 0.35rem;
+    border-radius: 3px;
+    letter-spacing: 0.01em;
+  }
+
+  .trend-up {
+    color: #22c55e;
+    background: color-mix(in srgb, #22c55e 12%, transparent);
+    border: 1px solid color-mix(in srgb, #22c55e 30%, transparent);
+  }
+
+  .trend-down {
+    color: #ef4444;
+    background: color-mix(in srgb, #ef4444 12%, transparent);
+    border: 1px solid color-mix(in srgb, #ef4444 30%, transparent);
+  }
+
+  .trend-stable {
+    color: var(--text-muted);
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
   }
 
   .rank-badge {
