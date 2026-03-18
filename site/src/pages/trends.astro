@@ -1,0 +1,728 @@
+---
+export const prerender = false;
+
+import Base from '../layouts/Base.astro';
+import { toSlug } from '../data/tools';
+import { toSkillSlug } from '../data/skills';
+
+const { env } = Astro.locals.runtime;
+
+const today = new Date().toISOString().slice(0, 10);
+const d7 = new Date(today + 'T00:00:00Z');
+d7.setUTCDate(d7.getUTCDate() - 7);
+const prevDateCutoff = d7.toISOString().slice(0, 10);
+
+interface MoverRow {
+  identifier: string;
+  name: string | null;
+  current_rank: number;
+  current_score: number;
+  prev_rank: number;
+  prev_score: number;
+  score_change: number;
+  rank_change: number;
+}
+
+interface NewEntryRow {
+  identifier: string;
+  name: string | null;
+  rank: number;
+  score: number;
+}
+
+interface CategoryTrendRow {
+  category: string;
+  total_tools: number;
+  avg_score: number;
+  gainers: number;
+  losers: number;
+  new_entries: number;
+}
+
+interface StatsRow {
+  total_tools: number;
+  avg_score: number;
+  total_skills: number;
+}
+
+let todaySnapshotDate: string | null = null;
+let comparisonDate: string | null = null;
+let hasData = false;
+let daysSpan: number | null = null;
+
+try {
+  const latestRow = await env.DB.prepare(
+    `SELECT MAX(snapshot_date) as d FROM rank_history`
+  ).first<{ d: string | null }>();
+
+  todaySnapshotDate = latestRow?.d ?? null;
+
+  if (todaySnapshotDate) {
+    const prevRow = await env.DB.prepare(
+      `SELECT MAX(snapshot_date) as d FROM rank_history WHERE snapshot_date <= ?`
+    ).bind(prevDateCutoff).first<{ d: string | null }>();
+
+    comparisonDate = prevRow?.d ?? null;
+    hasData = !!comparisonDate;
+
+    if (hasData && todaySnapshotDate && comparisonDate) {
+      daysSpan = Math.round(
+        (new Date(todaySnapshotDate).getTime() - new Date(comparisonDate).getTime()) /
+        (1000 * 60 * 60 * 24)
+      );
+    }
+  }
+} catch {
+  // rank_history not yet populated
+}
+
+// Stats
+let stats: StatsRow = { total_tools: 0, avg_score: 0, total_skills: 0 };
+let newThisWeekCount = 0;
+let updatedThisWeekCount = 0;
+
+if (todaySnapshotDate) {
+  try {
+    const statsRow = await env.DB.prepare(
+      `SELECT
+         SUM(CASE WHEN tool_type = 'tool' THEN 1 ELSE 0 END) as total_tools,
+         AVG(CASE WHEN tool_type = 'tool' THEN score ELSE NULL END) as avg_score,
+         SUM(CASE WHEN tool_type = 'skill' THEN 1 ELSE 0 END) as total_skills
+       FROM rank_history
+       WHERE snapshot_date = ?`
+    ).bind(todaySnapshotDate).first<StatsRow>();
+
+    if (statsRow) {
+      stats = {
+        total_tools: statsRow.total_tools ?? 0,
+        avg_score: Math.round((statsRow.avg_score ?? 0) * 10) / 10,
+        total_skills: statsRow.total_skills ?? 0,
+      };
+    }
+
+    // New this week: first seen >= cutoff
+    const newCountRow = await env.DB.prepare(
+      `SELECT COUNT(*) as cnt
+       FROM (
+         SELECT cur.tool_full_name
+         FROM rank_history cur
+         WHERE cur.snapshot_date = ?1
+           AND cur.tool_type = 'tool'
+           AND NOT EXISTS (
+             SELECT 1 FROM rank_history old
+             WHERE old.tool_full_name = cur.tool_full_name
+               AND old.tool_type = cur.tool_type
+               AND old.snapshot_date < ?1
+           )
+       )`
+    ).bind(todaySnapshotDate).first<{ cnt: number }>();
+    newThisWeekCount = newCountRow?.cnt ?? 0;
+
+    if (hasData && comparisonDate) {
+      // Updated/gained this week: had any score change
+      const updatedRow = await env.DB.prepare(
+        `SELECT COUNT(*) as cnt
+         FROM rank_history cur
+         JOIN rank_history prev
+           ON cur.tool_full_name = prev.tool_full_name
+          AND cur.tool_type = prev.tool_type
+          AND prev.snapshot_date = ?2
+         WHERE cur.snapshot_date = ?1
+           AND cur.tool_type = 'tool'
+           AND ABS(cur.score - prev.score) >= 0.01`
+      ).bind(todaySnapshotDate, comparisonDate).first<{ cnt: number }>();
+      updatedThisWeekCount = updatedRow?.cnt ?? 0;
+    }
+  } catch {
+    // ignore
+  }
+}
+
+// Biggest Movers (tools only, top 10 gainers + losers by score change)
+let gainers: MoverRow[] = [];
+let losers: MoverRow[] = [];
+let newEntries: NewEntryRow[] = [];
+
+if (hasData && todaySnapshotDate && comparisonDate) {
+  try {
+    const moversResult = await env.DB.prepare(
+      `SELECT
+         cur.tool_full_name AS identifier,
+         t.full_name AS name,
+         cur.rank AS current_rank,
+         cur.score AS current_score,
+         prev.rank AS prev_rank,
+         prev.score AS prev_score
+       FROM rank_history cur
+       JOIN rank_history prev
+         ON cur.tool_full_name = prev.tool_full_name
+        AND cur.tool_type = prev.tool_type
+        AND prev.snapshot_date = ?2
+       LEFT JOIN tools t ON t.full_name = cur.tool_full_name
+       WHERE cur.snapshot_date = ?1
+         AND cur.tool_type = 'tool'
+         AND ABS(cur.score - prev.score) >= 0.1
+       ORDER BY ABS(cur.score - prev.score) DESC
+       LIMIT 60`
+    ).bind(todaySnapshotDate, comparisonDate).all();
+
+    const rows = ((moversResult.results || []) as Array<{
+      identifier: string;
+      name: string | null;
+      current_rank: number;
+      current_score: number;
+      prev_rank: number;
+      prev_score: number;
+    }>).map(r => ({
+      ...r,
+      score_change: Math.round((r.current_score - r.prev_score) * 100) / 100,
+      rank_change: r.prev_rank - r.current_rank,
+    }));
+
+    gainers = rows.filter(r => r.score_change > 0).slice(0, 10);
+    losers = rows.filter(r => r.score_change < 0).slice(0, 10);
+
+    // New entries
+    const newResult = await env.DB.prepare(
+      `SELECT
+         cur.tool_full_name AS identifier,
+         t.full_name AS name,
+         cur.rank,
+         cur.score
+       FROM rank_history cur
+       LEFT JOIN tools t ON t.full_name = cur.tool_full_name
+       WHERE cur.snapshot_date = ?1
+         AND cur.tool_type = 'tool'
+         AND NOT EXISTS (
+           SELECT 1 FROM rank_history old
+           WHERE old.tool_full_name = cur.tool_full_name
+             AND old.tool_type = cur.tool_type
+             AND old.snapshot_date < ?1
+         )
+       ORDER BY cur.score DESC
+       LIMIT 10`
+    ).bind(todaySnapshotDate).all();
+
+    newEntries = (newResult.results || []) as NewEntryRow[];
+  } catch {
+    // ignore
+  }
+}
+
+// Category Trends
+let categoryTrends: CategoryTrendRow[] = [];
+
+if (hasData && todaySnapshotDate && comparisonDate) {
+  try {
+    const catResult = await env.DB.prepare(
+      `SELECT
+         COALESCE(t.category, 'other') AS category,
+         COUNT(*) AS total_tools,
+         ROUND(AVG(cur.score), 1) AS avg_score,
+         SUM(CASE WHEN cur.score > prev.score THEN 1 ELSE 0 END) AS gainers,
+         SUM(CASE WHEN cur.score < prev.score THEN 1 ELSE 0 END) AS losers,
+         0 AS new_entries
+       FROM rank_history cur
+       JOIN rank_history prev
+         ON cur.tool_full_name = prev.tool_full_name
+        AND cur.tool_type = prev.tool_type
+        AND prev.snapshot_date = ?2
+       LEFT JOIN tools t ON t.full_name = cur.tool_full_name
+       WHERE cur.snapshot_date = ?1
+         AND cur.tool_type = 'tool'
+       GROUP BY COALESCE(t.category, 'other')
+       HAVING total_tools >= 5
+       ORDER BY CAST(gainers AS REAL) / total_tools DESC
+       LIMIT 12`
+    ).bind(todaySnapshotDate, comparisonDate).all();
+
+    categoryTrends = (catResult.results || []) as CategoryTrendRow[];
+  } catch {
+    // ignore
+  }
+}
+
+function formatCategory(slug: string): string {
+  const map: Record<string, string> = {
+    'mcp-server': 'MCP Server',
+    'agent-framework': 'Agent Framework',
+    'ai-tool': 'AI Tool',
+    'llm-client': 'LLM Client',
+    'code-assistant': 'Code Assistant',
+    'data-processing': 'Data Processing',
+    'browser-automation': 'Browser Automation',
+    'database': 'Database',
+    'filesystem': 'Filesystem',
+    'search': 'Search & RAG',
+    'api-integration': 'API Integration',
+    'deployment': 'Deployment & DevOps',
+    'code-generation': 'Code Generation',
+    'monitoring': 'Monitoring',
+    'communication': 'Communication',
+    'ai-models': 'AI Models',
+    'other': 'Other',
+  };
+  return map[slug] || slug;
+}
+
+// Edge cache 15 min
+Astro.response.headers.set('Cache-Control', 'public, max-age=0, s-maxage=900, stale-while-revalidate=86400');
+---
+
+<Base
+  title="AgentRank — Weekly Trends"
+  description="Weekly trends for MCP servers and AI agent tools: biggest movers, new entries, category momentum, and ecosystem stats. Updated daily."
+  keywords="MCP server trends, weekly AI tool rankings, agent tool momentum, new MCP servers, AI ecosystem trends"
+  activeTab="trends"
+  canonicalUrl="https://agentrank-ai.com/trends/"
+>
+  <div class="page-header">
+    <h2>Weekly Trends</h2>
+    {hasData && todaySnapshotDate && comparisonDate && (
+      <span class="meta">
+        {todaySnapshotDate} vs {comparisonDate} ({daysSpan}d window)
+      </span>
+    )}
+  </div>
+
+  {!hasData ? (
+    <div class="empty-state">
+      <p>Trend data will be available after the first week of tracking. Check back soon.</p>
+    </div>
+  ) : (
+    <>
+      {/* Stats bar */}
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-value">{stats.total_tools.toLocaleString('en-US')}</div>
+          <div class="stat-label">Tools indexed</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value">{stats.total_skills.toLocaleString('en-US')}</div>
+          <div class="stat-label">Skills indexed</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value">{stats.avg_score.toFixed(1)}</div>
+          <div class="stat-label">Avg score</div>
+        </div>
+        <div class="stat-card highlight">
+          <div class="stat-value">{newThisWeekCount.toLocaleString('en-US')}</div>
+          <div class="stat-label">New this week</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value">{updatedThisWeekCount.toLocaleString('en-US')}</div>
+          <div class="stat-label">Score changes</div>
+        </div>
+      </div>
+
+      {/* Biggest Movers */}
+      {(gainers.length > 0 || losers.length > 0) && (
+        <section class="section">
+          <h3 class="section-title">Biggest Movers</h3>
+          <div class="movers-grid">
+            {gainers.length > 0 && (
+              <div class="movers-col">
+                <div class="col-header gainer-header">Top Gainers</div>
+                <div class="table-wrap">
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>#</th>
+                        <th>Tool</th>
+                        <th>Score</th>
+                        <th>+/-</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {gainers.map((m) => (
+                        <tr>
+                          <td class="rank">{m.current_rank}</td>
+                          <td class="name">
+                            <a href={`/tool/${toSlug(m.identifier)}/`}>
+                              {m.name ? m.name.split('/')[1] || m.name : m.identifier.split('/')[1] || m.identifier}
+                            </a>
+                          </td>
+                          <td class="score">{m.current_score.toFixed(1)}</td>
+                          <td class="change positive">+{m.score_change.toFixed(2)}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            )}
+            {losers.length > 0 && (
+              <div class="movers-col">
+                <div class="col-header loser-header">Top Losers</div>
+                <div class="table-wrap">
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>#</th>
+                        <th>Tool</th>
+                        <th>Score</th>
+                        <th>+/-</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {losers.map((m) => (
+                        <tr>
+                          <td class="rank">{m.current_rank}</td>
+                          <td class="name">
+                            <a href={`/tool/${toSlug(m.identifier)}/`}>
+                              {m.name ? m.name.split('/')[1] || m.name : m.identifier.split('/')[1] || m.identifier}
+                            </a>
+                          </td>
+                          <td class="score">{m.current_score.toFixed(1)}</td>
+                          <td class="change negative">{m.score_change.toFixed(2)}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            )}
+          </div>
+          <div class="see-more">
+            <a href="/movers/">See all movers (including Skills) &rarr;</a>
+          </div>
+        </section>
+      )}
+
+      {/* New Entries */}
+      {newEntries.length > 0 && (
+        <section class="section">
+          <h3 class="section-title">New This Week</h3>
+          <div class="table-wrap">
+            <table class="entries-table">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Tool</th>
+                  <th>Rank</th>
+                  <th>Score</th>
+                </tr>
+              </thead>
+              <tbody>
+                {newEntries.map((e, i) => (
+                  <tr>
+                    <td class="rank">{i + 1}</td>
+                    <td class="name">
+                      <a href={`/tool/${toSlug(e.identifier)}/`}>
+                        {e.name || e.identifier}
+                      </a>
+                    </td>
+                    <td class="rank-col">#{e.rank}</td>
+                    <td class="score">{e.score.toFixed(1)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </section>
+      )}
+
+      {/* Category Trends */}
+      {categoryTrends.length > 0 && (
+        <section class="section">
+          <h3 class="section-title">Category Momentum</h3>
+          <div class="category-grid">
+            {categoryTrends.map((c) => {
+              const momentum = c.total_tools > 0
+                ? Math.round((c.gainers / c.total_tools) * 100)
+                : 0;
+              const barWidth = Math.max(2, Math.min(100, momentum));
+              return (
+                <a class="category-card" href={`/category/${c.category}/`}>
+                  <div class="cat-top">
+                    <span class="cat-name">{formatCategory(c.category)}</span>
+                    <span class="cat-count">{c.total_tools} tools</span>
+                  </div>
+                  <div class="momentum-bar-wrap">
+                    <div class="momentum-bar" style={`width: ${barWidth}%`}></div>
+                  </div>
+                  <div class="cat-bottom">
+                    <span class="cat-gainers">+{c.gainers} gaining</span>
+                    <span class="cat-score">avg {c.avg_score.toFixed(1)}</span>
+                  </div>
+                </a>
+              );
+            })}
+          </div>
+        </section>
+      )}
+    </>
+  )}
+</Base>
+
+<style>
+  .page-header {
+    display: flex;
+    align-items: baseline;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .page-header h2 {
+    font-size: 1.1rem;
+    font-weight: 700;
+  }
+
+  .meta {
+    color: var(--text-muted);
+    font-size: 0.78rem;
+  }
+
+  .empty-state {
+    padding: 3rem 1rem;
+    text-align: center;
+    color: var(--text-muted);
+  }
+
+  /* Stats */
+  .stats-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-bottom: 2rem;
+  }
+
+  .stat-card {
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 0.75rem 1.25rem;
+    min-width: 120px;
+    flex: 1;
+  }
+
+  .stat-card.highlight {
+    border-color: var(--accent);
+  }
+
+  .stat-value {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--accent);
+    line-height: 1.2;
+  }
+
+  .stat-label {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    margin-top: 0.2rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  /* Sections */
+  .section {
+    margin-bottom: 2.5rem;
+  }
+
+  .section-title {
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: var(--text-muted);
+    margin-bottom: 0.75rem;
+  }
+
+  /* Movers */
+  .movers-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+  }
+
+  @media (max-width: 640px) {
+    .movers-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .col-header {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 0.3rem 0.75rem;
+    margin-bottom: 0;
+    border-radius: 4px 4px 0 0;
+  }
+
+  .gainer-header {
+    background: rgba(34, 197, 94, 0.12);
+    color: #22c55e;
+    border: 1px solid rgba(34, 197, 94, 0.25);
+    border-bottom: none;
+  }
+
+  .loser-header {
+    background: rgba(239, 68, 68, 0.1);
+    color: #ef4444;
+    border: 1px solid rgba(239, 68, 68, 0.2);
+    border-bottom: none;
+  }
+
+  .table-wrap {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.82rem;
+  }
+
+  .entries-table {
+    max-width: 600px;
+  }
+
+  th {
+    background: var(--bg-surface);
+    border-bottom: 2px solid var(--border);
+    padding: 0.4rem 0.6rem;
+    text-align: left;
+    font-weight: 600;
+    white-space: nowrap;
+    color: var(--text-muted);
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  td {
+    padding: 0.35rem 0.6rem;
+    border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+  }
+
+  tr:hover td {
+    background: var(--bg-hover);
+  }
+
+  .rank {
+    color: var(--text-muted);
+    width: 2.5rem;
+    font-size: 0.75rem;
+  }
+
+  .rank-col {
+    color: var(--text-muted);
+    font-size: 0.75rem;
+  }
+
+  .name a {
+    color: var(--text);
+    font-weight: 500;
+  }
+
+  .name a:hover {
+    color: var(--accent);
+    text-decoration: none;
+  }
+
+  .score {
+    color: var(--text-muted);
+    font-size: 0.78rem;
+  }
+
+  .change.positive {
+    color: #22c55e;
+    font-weight: 700;
+    font-size: 0.78rem;
+  }
+
+  .change.negative {
+    color: #ef4444;
+    font-weight: 700;
+    font-size: 0.78rem;
+  }
+
+  .see-more {
+    margin-top: 0.75rem;
+    font-size: 0.78rem;
+  }
+
+  .see-more a {
+    color: var(--text-muted);
+  }
+
+  .see-more a:hover {
+    color: var(--accent);
+    text-decoration: none;
+  }
+
+  /* Category cards */
+  .category-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 0.75rem;
+  }
+
+  .category-card {
+    display: block;
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 0.75rem 1rem;
+    text-decoration: none;
+    color: var(--text);
+    transition: border-color 0.15s, background 0.15s;
+  }
+
+  .category-card:hover {
+    border-color: var(--accent);
+    background: var(--bg-hover);
+    text-decoration: none;
+  }
+
+  .cat-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 0.5rem;
+  }
+
+  .cat-name {
+    font-weight: 600;
+    font-size: 0.82rem;
+  }
+
+  .cat-count {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+  }
+
+  .momentum-bar-wrap {
+    background: var(--border);
+    border-radius: 2px;
+    height: 4px;
+    margin-bottom: 0.5rem;
+    overflow: hidden;
+  }
+
+  .momentum-bar {
+    background: var(--accent);
+    height: 100%;
+    border-radius: 2px;
+    transition: width 0.3s ease;
+  }
+
+  .cat-bottom {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.7rem;
+  }
+
+  .cat-gainers {
+    color: #22c55e;
+  }
+
+  .cat-score {
+    color: var(--text-muted);
+  }
+</style>
