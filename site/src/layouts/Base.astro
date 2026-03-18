@@ -369,6 +369,162 @@ const ogImageHeight = ogImage ? '630' : '500';
         }
       });
     </script>
+    <!-- Scroll-triggered sticky subscribe bar (blog pages only) -->
+    <div id="sticky-bar" style="display:none">
+      <form id="sticky-bar-form" novalidate>
+        <span class="sticky-bar-label">Get the weekly AgentRank digest</span>
+        <input type="email" id="sticky-bar-email" name="email" placeholder="your@email.com" autocomplete="email" required />
+        <input type="text" name="_hp" class="sticky-hp" tabindex="-1" autocomplete="off" />
+        <button type="submit" id="sticky-bar-btn">Subscribe</button>
+        <span id="sticky-bar-msg" aria-live="polite"></span>
+      </form>
+      <button class="sticky-bar-close" id="sticky-bar-close" aria-label="Dismiss">&times;</button>
+    </div>
+    <style>
+      #sticky-bar {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: var(--bg-surface);
+        border-top: 1px solid var(--accent);
+        padding: 0.6rem 1rem;
+        z-index: 100;
+        align-items: center;
+        gap: 0.75rem;
+        font-size: 0.82rem;
+        flex-wrap: wrap;
+      }
+      #sticky-bar form {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        flex: 1;
+        flex-wrap: wrap;
+      }
+      .sticky-bar-label { color: var(--text-muted); white-space: nowrap; }
+      #sticky-bar-email {
+        background: var(--bg);
+        border: 1px solid var(--border);
+        color: var(--text);
+        padding: 0.3rem 0.6rem;
+        border-radius: 4px;
+        font-family: inherit;
+        font-size: 0.8rem;
+        width: 180px;
+      }
+      #sticky-bar-email:focus { outline: 1px solid var(--accent); border-color: var(--accent); }
+      #sticky-bar form button[type="submit"] {
+        background: var(--accent);
+        color: #000;
+        border: none;
+        border-radius: 4px;
+        padding: 0.3rem 0.75rem;
+        font-family: inherit;
+        font-size: 0.8rem;
+        font-weight: 600;
+        cursor: pointer;
+        white-space: nowrap;
+        transition: opacity 0.15s;
+      }
+      #sticky-bar form button[type="submit"]:hover { opacity: 0.85; }
+      #sticky-bar form button[type="submit"]:disabled { opacity: 0.5; cursor: not-allowed; }
+      #sticky-bar-msg { font-size: 0.75rem; }
+      #sticky-bar-msg.success { color: var(--accent); }
+      #sticky-bar-msg.error { color: #ef4444; }
+      .sticky-bar-close {
+        background: none;
+        border: none;
+        color: var(--text-muted);
+        font-size: 1.1rem;
+        cursor: pointer;
+        padding: 0 0.25rem;
+        line-height: 1;
+        margin-left: auto;
+      }
+      .sticky-bar-close:hover { color: var(--text); }
+      .sticky-hp {
+        position: absolute;
+        left: -9999px;
+        opacity: 0;
+        height: 0;
+        width: 0;
+        pointer-events: none;
+      }
+    </style>
+    <script>
+      (function () {
+        if (!window.location.pathname.startsWith('/blog/') || window.location.pathname === '/blog/') return;
+        const bar = document.getElementById('sticky-bar');
+        const closeBtn = document.getElementById('sticky-bar-close');
+        const form = document.getElementById('sticky-bar-form') as HTMLFormElement | null;
+        const emailInput = document.getElementById('sticky-bar-email') as HTMLInputElement | null;
+        const submitBtn = document.getElementById('sticky-bar-btn') as HTMLButtonElement | null;
+        const msg = document.getElementById('sticky-bar-msg') as HTMLSpanElement | null;
+        if (!bar) return;
+
+        const DISMISSED_KEY = 'ar_sticky_dismissed';
+        if (sessionStorage.getItem(DISMISSED_KEY)) return;
+
+        let shown = false;
+        const showBar = () => {
+          if (shown) return;
+          shown = true;
+          bar.style.display = 'flex';
+        };
+        const hideBar = () => {
+          bar.style.display = 'none';
+        };
+
+        window.addEventListener('scroll', () => {
+          const scrolled = window.scrollY + window.innerHeight;
+          const total = document.body.scrollHeight;
+          if (scrolled / total >= 0.7) showBar();
+        }, { passive: true });
+
+        closeBtn?.addEventListener('click', () => {
+          hideBar();
+          sessionStorage.setItem(DISMISSED_KEY, '1');
+        });
+
+        form?.addEventListener('submit', async (e) => {
+          e.preventDefault();
+          const hp = (form.querySelector<HTMLInputElement>('.sticky-hp')?.value ?? '');
+          if (hp) return;
+          const email = emailInput!.value.trim();
+          if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+            msg!.textContent = 'Enter a valid email.';
+            msg!.className = 'error';
+            return;
+          }
+          submitBtn!.disabled = true;
+          msg!.textContent = '';
+          msg!.className = '';
+          try {
+            const res = await fetch('/api/subscribe', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ email, source: 'sticky-blog', _hp: '' }),
+            });
+            const data = await res.json();
+            if (data.success) {
+              msg!.textContent = data.already ? "Already subscribed." : "You're in.";
+              msg!.className = 'success';
+              emailInput!.value = '';
+              setTimeout(() => { hideBar(); sessionStorage.setItem(DISMISSED_KEY, '1'); }, 2000);
+            } else {
+              msg!.textContent = data.error || 'Something went wrong.';
+              msg!.className = 'error';
+              submitBtn!.disabled = false;
+            }
+          } catch {
+            msg!.textContent = 'Network error.';
+            msg!.className = 'error';
+            submitBtn!.disabled = false;
+          }
+        });
+      })();
+    </script>
     <!-- Cloudflare Web Analytics -->
     <script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "9e9faec619504d9ba50fba0ee6cd4916"}'></script>
   </body>

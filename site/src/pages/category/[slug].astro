@@ -2,6 +2,7 @@
 export const prerender = true;
 
 import Base from '../../layouts/Base.astro';
+import BlogSubscribeCTA from '../../components/BlogSubscribeCTA.astro';
 import { getAllTools } from '../../data/ranked';
 import { getAllSkills } from '../../data/ranked-skills';
 import { toSlug, formatStars, relativeTime, scoreColor } from '../../data/tools';
@@ -291,6 +292,8 @@ const jsonLd = categoryItemListJsonLd
       </div>
     </section>
   )}
+
+  <BlogSubscribeCTA source={`category-${slug}`} />
 </Base>
 
 <style>

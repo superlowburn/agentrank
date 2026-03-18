@@ -2,6 +2,7 @@
 export const prerender = true;
 
 import Base from '../layouts/Base.astro';
+import BlogSubscribeCTA from '../components/BlogSubscribeCTA.astro';
 import { getTopTools, getAllTools } from '../data/ranked';
 import { toSlug, formatStars, relativeTime, scoreColor } from '../data/tools';
 import { CATEGORIES } from '../data/content-gen';
@@ -47,6 +48,8 @@ const itemListJsonLd = {
     </select>
     <span class="count"><span id="visible-count">{tools.length}</span> of {totalCount.toLocaleString('en-US')} tools (top {TOP_N})</span>
   </div>
+
+  <BlogSubscribeCTA source="tools" />
 
   <div class="category-nav">
     {usedCategories.map((cat) => (
