@@ -7,14 +7,115 @@
  */
 
 import { chromium } from 'playwright';
-import { writeFileSync, mkdirSync } from 'fs';
+import { writeFileSync, mkdirSync, readFileSync } from 'fs';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const OUT_DIR = join(__dirname, '../site/public/og');
+const COMPARE_OUT_DIR = join(__dirname, '../site/public/og/compare');
+const ALTERNATIVES_OUT_DIR = join(__dirname, '../site/public/og/alternatives');
 
 mkdirSync(OUT_DIR, { recursive: true });
+mkdirSync(COMPARE_OUT_DIR, { recursive: true });
+mkdirSync(ALTERNATIVES_OUT_DIR, { recursive: true });
+
+// ── Data helpers (mirrors ranked.ts / tools.ts / content-gen.ts) ──────────────
+
+const rankedData = JSON.parse(readFileSync(join(__dirname, '../data/ranked.json'), 'utf-8'));
+
+function toSlug(fullName) {
+  return fullName.replace('/', '--');
+}
+
+function classifyTool(tool) {
+  const text = [
+    tool.description || '',
+    (tool.github_topics || []).join(' '),
+    tool.full_name,
+  ].join(' ').toLowerCase();
+  const queries = (tool.matched_queries || []).join(' ').toLowerCase();
+
+  if (/\b(multi[- ]?agent|orchestrat|workflow)\b/.test(text) || /a2a/.test(queries) ||
+      /\b(sdk|framework|library|toolkit)\b.*\b(mcp|agent|llm)\b|\b(mcp|agent|llm)\b.*\b(sdk|framework|library|toolkit)\b/.test(text))
+    return 'agent-framework';
+  if (/\b(playwright|puppeteer|selenium|headless.*browser|browser.*automat|web.*scrape|scraping)\b/.test(text))
+    return 'browser-automation';
+  if (/\b(postgres|postgresql|mysql|sqlite|mongodb|redis|cassandra|supabase|neon|planetscale|cockroach|turso|libsql|database.*server|sql.*server)\b/.test(text))
+    return 'database';
+  if (/\b(filesystem|file.*system|local.*file|file.*access|file.*manager|directory.*list|read.*write.*file|file.*server)\b/.test(text))
+    return 'filesystem';
+  if (/\b(vector.*store|vector.*db|embedding.*search|semantic.*search|rag\b|retrieval.*augment|pinecone|weaviate|qdrant|chroma|milvus|opensearch|elasticsearch)\b/.test(text))
+    return 'search';
+  if (/\b(prometheus|grafana|datadog|sentry|opentelemetry|otel|observability|telemetry|tracing)\b/.test(text))
+    return 'monitoring';
+  if (/\b(slack|discord|telegram|twilio|sendgrid|mailgun|smtp|email.*send|send.*email|webhook.*notif)\b/.test(text))
+    return 'communication';
+  if (/\b(litellm|llm.*gateway|llm.*proxy|llm.*router|ai.*gateway|openai.*compat|model.*router)\b/.test(text))
+    return 'llm-client';
+  if (/\b(ollama|llama\.cpp|lm.?studio|hugging.?face.*model|mistral.*api|openai.*api|anthropic.*api|gemini.*api|model.*inference|inference.*server|local.*llm|run.*model)\b/.test(text))
+    return 'ai-models';
+  if (/\b(docker|kubernetes|k8s\b|helm\b|terraform|ansible|github.*actions|gitlab.*ci|ci.*cd|infrastructure.*as.*code|container.*deploy|cloud.*deploy)\b/.test(text))
+    return 'deployment';
+  if (/\b(code.*gen|generat.*code|scaffold|boilerplate|code.*synthesis|codegen|generate.*function|generate.*test)\b/.test(text))
+    return 'code-generation';
+  if (/\b(rest.*api|graphql.*api|openapi|swagger|webhook.*integr|api.*integr|zapier|n8n\b|make\.com|api.*connect)\b/.test(text))
+    return 'api-integration';
+  if (/\b(apache.*kafka|apache.*spark|apache.*airflow|dbt\b|etl\b|data.*pipeline|data.*ingestion|data.*transform)\b/.test(text))
+    return 'data-processing';
+  if (/mcp|model.*context.*protocol/.test(queries))
+    return 'mcp-server';
+  return 'ai-tool';
+}
+
+function getComparisonPairs(minScore = 50) {
+  const topTools = rankedData.map(t => ({ ...t, category: classifyTool(t) })).filter(t => (t.score ?? 0) >= minScore);
+  const byCategory = {};
+  for (const t of topTools) {
+    const cat = t.category || 'other';
+    if (!byCategory[cat]) byCategory[cat] = [];
+    byCategory[cat].push(t);
+  }
+  const pairs = [];
+  for (const cats of Object.values(byCategory)) {
+    const top = cats.slice(0, 10);
+    if (top.length < 2) continue;
+    for (let i = 0; i < top.length - 1; i++) {
+      for (let j = i + 1; j < top.length; j++) {
+        pairs.push({ a: top[i], b: top[j] });
+      }
+    }
+  }
+  pairs.sort((x, y) => (y.a.score + y.b.score) - (x.a.score + x.b.score));
+  return pairs.slice(0, 60);
+}
+
+// ── Compare pages ─────────────────────────────────────────────────────────────
+
+const COMPARE_PAGES = getComparisonPairs().map(({ a, b }) => {
+  const nameA = a.full_name.split('/')[1] || a.full_name;
+  const nameB = b.full_name.split('/')[1] || b.full_name;
+  return {
+    slug: `${toSlug(a.full_name)}-vs-${toSlug(b.full_name)}`,
+    title: `${nameA} vs ${nameB}`,
+    subtitle: 'AgentRank Score Comparison',
+    label: 'agentrank-ai.com/compare',
+    type: 'compare',
+  };
+});
+
+// ── Alternatives pages ────────────────────────────────────────────────────────
+
+const ALTERNATIVES_PAGES = rankedData.slice(0, 100).map(tool => {
+  const shortName = tool.full_name.split('/')[1] || tool.full_name;
+  return {
+    slug: toSlug(tool.full_name),
+    title: `Best Alternatives to ${shortName}`,
+    subtitle: 'Ranked by AgentRank',
+    label: 'agentrank-ai.com/alternatives',
+    type: 'alternatives',
+  };
+});
 
 // Pages to generate OG images for
 const PAGES = [
@@ -220,6 +321,15 @@ const PAGES = [
 
 function buildHtml(page) {
   const isBlog = page.type === 'blog';
+  const isCompare = page.type === 'compare';
+  const isAlternatives = page.type === 'alternatives';
+
+  const labelText = isBlog ? 'AgentRank Blog'
+    : isCompare ? 'AgentRank Compare'
+    : isAlternatives ? 'AgentRank Alternatives'
+    : 'AgentRank';
+
+  const titleSize = page.title.length > 40 ? '44px' : page.title.length > 28 ? '52px' : '64px';
 
   return `<!DOCTYPE html>
 <html>
@@ -274,12 +384,12 @@ function buildHtml(page) {
     color: #22c55e;
     letter-spacing: 0.12em;
     text-transform: uppercase;
-    margin-bottom: ${isBlog ? '28px' : '20px'};
+    margin-bottom: ${isBlog || isCompare || isAlternatives ? '28px' : '20px'};
     opacity: 0.9;
   }
 
   .title {
-    font-size: ${page.title.length > 40 ? '48px' : page.title.length > 28 ? '56px' : '64px'};
+    font-size: ${titleSize};
     font-weight: 700;
     color: #22c55e;
     line-height: 1.1;
@@ -328,7 +438,7 @@ function buildHtml(page) {
 </style>
 </head>
 <body>
-  <div class="label">${isBlog ? 'AgentRank Blog' : 'AgentRank'}</div>
+  <div class="label">${labelText}</div>
   <div class="title">${page.title}</div>
   <div class="subtitle">${page.subtitle}</div>
   <div class="divider"></div>
@@ -346,20 +456,44 @@ async function main() {
   await page.setViewportSize({ width: 1200, height: 630 });
 
   let count = 0;
+
+  // ── Standard pages ──────────────────────────────────────────────────────────
   for (const item of PAGES) {
     const html = buildHtml(item);
     await page.setContent(html, { waitUntil: 'domcontentloaded' });
-    // Brief wait for fonts if loaded
     await page.waitForTimeout(200);
-
     const outPath = join(OUT_DIR, `${item.slug}.png`);
     await page.screenshot({ path: outPath, type: 'png' });
     console.log(`  generated: og/${item.slug}.png`);
     count++;
   }
 
+  // ── Compare pages ───────────────────────────────────────────────────────────
+  console.log(`\nGenerating ${COMPARE_PAGES.length} compare OG images...`);
+  for (const item of COMPARE_PAGES) {
+    const html = buildHtml(item);
+    await page.setContent(html, { waitUntil: 'domcontentloaded' });
+    await page.waitForTimeout(200);
+    const outPath = join(COMPARE_OUT_DIR, `${item.slug}.png`);
+    await page.screenshot({ path: outPath, type: 'png' });
+    console.log(`  generated: og/compare/${item.slug}.png`);
+    count++;
+  }
+
+  // ── Alternatives pages ──────────────────────────────────────────────────────
+  console.log(`\nGenerating ${ALTERNATIVES_PAGES.length} alternatives OG images...`);
+  for (const item of ALTERNATIVES_PAGES) {
+    const html = buildHtml(item);
+    await page.setContent(html, { waitUntil: 'domcontentloaded' });
+    await page.waitForTimeout(200);
+    const outPath = join(ALTERNATIVES_OUT_DIR, `${item.slug}.png`);
+    await page.screenshot({ path: outPath, type: 'png' });
+    console.log(`  generated: og/alternatives/${item.slug}.png`);
+    count++;
+  }
+
   await browser.close();
-  console.log(`\nDone. Generated ${count} OG images in site/public/og/`);
+  console.log(`\nDone. Generated ${count} OG images total.`);
 }
 
 main().catch((err) => {
