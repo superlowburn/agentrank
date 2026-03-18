@@ -45,10 +45,11 @@ export const GET: APIRoute = async ({ locals }) => {
   const { env } = (locals as any).runtime;
   const db = env.DB;
 
-  const [toolRows, skillRows, categoryRows] = await Promise.all([
+  const [toolRows, skillRows, categoryRows, altRows] = await Promise.all([
     db.prepare('SELECT full_name FROM tools WHERE score IS NOT NULL').all(),
     db.prepare('SELECT slug FROM skills WHERE score IS NOT NULL').all(),
     db.prepare('SELECT DISTINCT category FROM tools WHERE category IS NOT NULL AND score IS NOT NULL UNION SELECT DISTINCT category FROM skills WHERE category IS NOT NULL AND score IS NOT NULL').all(),
+    db.prepare('SELECT full_name FROM tools WHERE score IS NOT NULL ORDER BY score DESC LIMIT 100').all(),
   ]);
 
   const today = new Date().toISOString().slice(0, 10);
@@ -82,6 +83,14 @@ export const GET: APIRoute = async ({ locals }) => {
   for (const row of categoryRows.results as { category: string }[]) {
     urls += `  <url>
     <loc>${SITE}/category/${escapeXml(row.category)}/</loc>
+    <changefreq>weekly</changefreq>
+  </url>\n`;
+  }
+
+  for (const row of altRows.results as { full_name: string }[]) {
+    const slug = row.full_name.replace('/', '--');
+    urls += `  <url>
+    <loc>${SITE}/alternatives/${escapeXml(slug)}/</loc>
     <changefreq>weekly</changefreq>
   </url>\n`;
   }

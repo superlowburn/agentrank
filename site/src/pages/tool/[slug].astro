@@ -511,6 +511,7 @@ Astro.response.headers.set('Cache-Control', 'public, max-age=60, s-maxage=3600, 
   )}
 
   <section class="tool-nav-links">
+    <a href={`/alternatives/${slug}/`} class="nav-link">See alternatives to {tool.full_name} &rarr;</a>
     {toolCategory && (
       <a href={`/category/${toolCategory}/`} class="nav-link">Browse {toolCategory} category &rarr;</a>
     )}

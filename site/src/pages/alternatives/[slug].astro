@@ -1,0 +1,460 @@
+---
+export const prerender = true;
+
+import Base from '../../layouts/Base.astro';
+import { getAllTools } from '../../data/ranked';
+import { toSlug, relativeTime, scoreColor, formatStars, type Tool } from '../../data/tools';
+import { CATEGORIES } from '../../data/content-gen';
+
+const SITE = 'https://agentrank-ai.com';
+
+function freshnessScore(t: Tool): number {
+  const days = Math.floor((Date.now() - new Date(t.last_commit_at).getTime()) / 86_400_000);
+  if (days <= 7) return 1.0;
+  if (days <= 90) return 1 - ((days - 7) / 83) * 0.6;
+  return Math.max(0, 0.4 * Math.exp(-(days - 90) / 180));
+}
+
+export function getStaticPaths() {
+  const allTools = getAllTools();
+  const top100 = allTools.slice(0, 100);
+
+  return top100.map((tool) => {
+    const category = tool.category || null;
+    const language = (tool.language || '').toLowerCase();
+
+    let alternatives: Tool[];
+
+    if (category) {
+      alternatives = allTools
+        .filter((t) => t.full_name !== tool.full_name && t.category === category)
+        .sort((a, b) => b.score - a.score)
+        .slice(0, 10);
+    } else {
+      alternatives = [];
+    }
+
+    // Fallback to same language if not enough alternatives
+    if (alternatives.length < 3 && language) {
+      alternatives = allTools
+        .filter(
+          (t) =>
+            t.full_name !== tool.full_name &&
+            (t.language || '').toLowerCase() === language &&
+            !alternatives.some((a) => a.full_name === t.full_name)
+        )
+        .sort((a, b) => b.score - a.score)
+        .slice(0, 10 - alternatives.length);
+    }
+
+    return {
+      params: { slug: toSlug(tool.full_name) },
+      props: { tool, alternatives },
+    };
+  });
+}
+
+const { tool, alternatives } = Astro.props as { tool: Tool; alternatives: Tool[] };
+const { slug } = Astro.params;
+
+const shortName = tool.full_name.split('/')[1] || tool.full_name;
+const catLabel = CATEGORIES[tool.category || 'other'] || 'MCP Tool';
+const canonicalUrl = `${SITE}/alternatives/${slug}/`;
+
+const title = `Best Alternatives to ${shortName} | AgentRank`;
+const description = `Top ${shortName} alternatives ranked by AgentRank score. Compare ${catLabel} tools by stars, freshness, and real adoption signals.`;
+const keywords = `${shortName} alternatives, ${tool.full_name} alternatives, best ${catLabel} tools, ${catLabel} alternatives`;
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    {
+      '@type': 'ListItem',
+      position: 1,
+      name: 'Home',
+      item: SITE,
+    },
+    {
+      '@type': 'ListItem',
+      position: 2,
+      name: 'Tools',
+      item: `${SITE}/tools/`,
+    },
+    {
+      '@type': 'ListItem',
+      position: 3,
+      name: tool.full_name,
+      item: `${SITE}/tool/${slug}/`,
+    },
+    {
+      '@type': 'ListItem',
+      position: 4,
+      name: `Best Alternatives to ${shortName}`,
+      item: canonicalUrl,
+    },
+  ],
+};
+---
+
+<Base title={title} description={description} canonicalUrl={canonicalUrl} jsonLd={jsonLd} keywords={keywords}>
+  <nav class="breadcrumb">
+    <a href="/">Home</a>
+    <span>/</span>
+    <a href="/tools/">Tools</a>
+    <span>/</span>
+    <a href={`/tool/${slug}/`}>{shortName}</a>
+    <span>/</span>
+    <span>Alternatives</span>
+  </nav>
+
+  <div class="alt-page">
+    <h1 class="page-title">Best Alternatives to {shortName}</h1>
+    <p class="page-sub">
+      Ranked by AgentRank score — updated daily from real GitHub signals.
+    </p>
+
+    <!-- Target tool card -->
+    <div class="target-card">
+      <div class="target-left">
+        <div class="target-label">You're replacing</div>
+        <a href={`/tool/${slug}/`} class="target-name">{tool.full_name}</a>
+        {tool.description && <p class="target-desc">{tool.description.slice(0, 160)}{tool.description.length > 160 ? '…' : ''}</p>}
+        <div class="target-meta">
+          <span class="target-score" style={`color: ${scoreColor(tool.score)}`}>Score {tool.score.toFixed(1)}</span>
+          <span class="target-rank">Rank #{tool.rank}</span>
+          {tool.category && (
+            <a href={`/category/${tool.category}/`} class="target-cat">{catLabel}</a>
+          )}
+        </div>
+      </div>
+      <a href={`/tool/${slug}/`} class="target-profile-link">View full profile →</a>
+    </div>
+
+    <!-- Alternatives list -->
+    {alternatives.length > 0 ? (
+      <div class="alt-list">
+        <h2 class="section-title">
+          {tool.category
+            ? `Top ${catLabel} Alternatives`
+            : tool.language
+            ? `Top ${tool.language} Tool Alternatives`
+            : 'Top Alternatives'}
+        </h2>
+        {alternatives.map((alt, i) => {
+          const altShortName = alt.full_name.split('/')[1] || alt.full_name;
+          const altSlug = toSlug(alt.full_name);
+          const fresh = freshnessScore(alt);
+          return (
+            <div class="alt-row">
+              <div class="alt-rank">{i + 1}</div>
+              <div class="alt-body">
+                <div class="alt-header">
+                  <a href={`/tool/${altSlug}/`} class="alt-name">{alt.full_name}</a>
+                  <span class="alt-score" style={`color: ${scoreColor(alt.score)}`}>{alt.score.toFixed(1)}</span>
+                </div>
+                {alt.description && (
+                  <p class="alt-desc">{alt.description.slice(0, 120)}{alt.description.length > 120 ? '…' : ''}</p>
+                )}
+                <div class="alt-signals">
+                  <span class="sig-pill">
+                    <span class="sig-label">Stars</span>
+                    <span class="sig-val">{formatStars(alt.stars)}</span>
+                  </span>
+                  <span class="sig-pill">
+                    <span class="sig-label">Freshness</span>
+                    <span class="sig-val">{(fresh * 100).toFixed(0)}%</span>
+                  </span>
+                  <span class="sig-pill">
+                    <span class="sig-label">Updated</span>
+                    <span class="sig-val">{relativeTime(alt.last_commit_at)}</span>
+                  </span>
+                  {alt.language && (
+                    <span class="sig-pill lang-pill">
+                      <span class="sig-val">{alt.language}</span>
+                    </span>
+                  )}
+                </div>
+              </div>
+              <a href={`/tool/${altSlug}/`} class="alt-cta">View →</a>
+            </div>
+          );
+        })}
+      </div>
+    ) : (
+      <div class="no-alts">
+        <p>No alternatives found in the same category. <a href="/tools/">Browse all tools →</a></p>
+      </div>
+    )}
+
+    <!-- Internal links -->
+    <div class="nav-links">
+      <a href="/tools/" class="nav-link">Browse all ranked tools →</a>
+      {tool.category && (
+        <a href={`/category/${tool.category}/`} class="nav-link">Browse {catLabel} category →</a>
+      )}
+      <a href="/methodology/" class="nav-link">How AgentRank scores tools →</a>
+    </div>
+  </div>
+</Base>
+
+<style>
+  .breadcrumb {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    margin-bottom: 1.25rem;
+    display: flex;
+    gap: 0.4rem;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .breadcrumb a { color: var(--text-muted); text-decoration: none; }
+  .breadcrumb a:hover { color: var(--accent); }
+  .breadcrumb span:not(:last-child) { opacity: 0.5; }
+
+  .alt-page { max-width: 800px; }
+
+  .page-title {
+    font-size: 1.4rem;
+    font-weight: 700;
+    margin-bottom: 0.35rem;
+    line-height: 1.3;
+  }
+
+  .page-sub {
+    color: var(--text-muted);
+    font-size: 0.82rem;
+    margin-bottom: 1.75rem;
+  }
+
+  /* Target card */
+  .target-card {
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 1rem 1.25rem;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 2rem;
+  }
+
+  .target-left { flex: 1; min-width: 0; }
+
+  .target-label {
+    font-size: 0.68rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-muted);
+    margin-bottom: 0.25rem;
+  }
+
+  .target-name {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--text);
+    text-decoration: none;
+    word-break: break-all;
+    display: block;
+    margin-bottom: 0.35rem;
+  }
+  .target-name:hover { color: var(--accent); }
+
+  .target-desc {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    line-height: 1.5;
+    margin: 0 0 0.5rem;
+  }
+
+  .target-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+  }
+
+  .target-score {
+    font-weight: 700;
+    font-size: 0.82rem;
+  }
+
+  .target-rank {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+  }
+
+  .target-cat {
+    font-size: 0.72rem;
+    color: var(--accent);
+    text-decoration: none;
+    background: color-mix(in srgb, var(--accent) 10%, transparent);
+    border: 1px solid color-mix(in srgb, var(--accent) 25%, transparent);
+    padding: 0.1rem 0.4rem;
+    border-radius: 3px;
+  }
+  .target-cat:hover { text-decoration: underline; }
+
+  .target-profile-link {
+    font-size: 0.75rem;
+    color: var(--accent);
+    text-decoration: none;
+    white-space: nowrap;
+    flex-shrink: 0;
+    align-self: center;
+  }
+  .target-profile-link:hover { text-decoration: underline; }
+
+  /* Section title */
+  .section-title {
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-muted);
+    margin: 0 0 1rem;
+  }
+
+  /* Alternatives list */
+  .alt-list { margin-bottom: 2rem; }
+
+  .alt-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    padding: 0.875rem 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .alt-row:last-child { border-bottom: none; }
+
+  .alt-rank {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--text-muted);
+    width: 1.5rem;
+    flex-shrink: 0;
+    padding-top: 0.1rem;
+    text-align: right;
+  }
+
+  .alt-body { flex: 1; min-width: 0; }
+
+  .alt-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    margin-bottom: 0.2rem;
+  }
+
+  .alt-name {
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: var(--text);
+    text-decoration: none;
+    word-break: break-all;
+  }
+  .alt-name:hover { color: var(--accent); }
+
+  .alt-score {
+    font-size: 0.88rem;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+
+  .alt-desc {
+    font-size: 0.76rem;
+    color: var(--text-muted);
+    line-height: 1.4;
+    margin: 0 0 0.5rem;
+  }
+
+  .alt-signals {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+  }
+
+  .sig-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    font-size: 0.7rem;
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    padding: 0.1rem 0.4rem;
+    border-radius: 3px;
+  }
+
+  .lang-pill {
+    color: var(--accent);
+    border-color: color-mix(in srgb, var(--accent) 30%, transparent);
+  }
+
+  .sig-label {
+    color: var(--text-muted);
+  }
+
+  .sig-val {
+    font-weight: 500;
+    color: var(--text);
+  }
+
+  .lang-pill .sig-val { color: var(--accent); }
+
+  .alt-cta {
+    font-size: 0.75rem;
+    color: var(--accent);
+    text-decoration: none;
+    flex-shrink: 0;
+    align-self: center;
+    padding: 0.25rem 0.5rem;
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    background: var(--bg-surface);
+    white-space: nowrap;
+  }
+  .alt-cta:hover {
+    border-color: var(--accent);
+    text-decoration: none;
+  }
+
+  /* No alts */
+  .no-alts {
+    padding: 1.5rem;
+    text-align: center;
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    margin-bottom: 2rem;
+  }
+  .no-alts p { font-size: 0.85rem; color: var(--text-muted); margin: 0; }
+  .no-alts a { color: var(--accent); text-decoration: none; }
+  .no-alts a:hover { text-decoration: underline; }
+
+  /* Nav links */
+  .nav-links {
+    padding: 0.875rem 1rem;
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+
+  .nav-link {
+    font-size: 0.82rem;
+    color: var(--accent);
+    text-decoration: none;
+    font-weight: 500;
+  }
+  .nav-link:hover { text-decoration: underline; }
+
+  @media (max-width: 480px) {
+    .target-card { flex-direction: column; }
+    .alt-header { flex-direction: column; align-items: flex-start; gap: 0.25rem; }
+    .alt-cta { align-self: flex-start; }
+  }
+</style>
