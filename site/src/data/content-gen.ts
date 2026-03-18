@@ -515,11 +515,33 @@ export function generateToolJsonLd(tool: {
   last_commit_at: string;
   matched_queries: string[];
   github_topics?: string[];
+  category?: string | null;
 }, pageUrl: string): object {
   const topics = tool.github_topics || [];
   const keywords = [...new Set([...tool.matched_queries, ...topics])];
-  const isMcp = tool.matched_queries.some(q => q.toLowerCase().includes('mcp')) || topics.some(t => t.toLowerCase().includes('mcp'));
-  const applicationCategory = isMcp ? 'MCP Server' : 'AI Agent Tool';
+
+  // Use classifier category label, fall back to MCP/AI Tool heuristic
+  let applicationCategory: string;
+  if (tool.category && CATEGORIES[tool.category]) {
+    applicationCategory = CATEGORIES[tool.category];
+  } else {
+    const isMcp = tool.matched_queries.some(q => q.toLowerCase().includes('mcp')) || topics.some(t => t.toLowerCase().includes('mcp'));
+    applicationCategory = isMcp ? 'MCP Server' : 'AI Agent Tool';
+  }
+
+  // Author = GitHub owner (owner/repo → owner)
+  const owner = tool.full_name.split('/')[0];
+
+  // operatingSystem: MCP servers are generally cross-platform; use language to refine
+  const lang = tool.language?.toLowerCase() ?? '';
+  const operatingSystem = lang === 'swift' || lang === 'objective-c'
+    ? 'macOS, iOS'
+    : lang === 'kotlin' || lang === 'java'
+    ? 'Linux, macOS, Windows, Android'
+    : 'Linux, macOS, Windows';
+
+  // Map 0-100 AgentRank score to 1-5 scale for Google rich results
+  const ratingValue = (1 + (tool.score / 100) * 4).toFixed(1);
 
   return {
     '@context': 'https://schema.org',
@@ -528,16 +550,22 @@ export function generateToolJsonLd(tool: {
     description: tool.description || `Agent tool: ${tool.full_name}`,
     url: pageUrl,
     applicationCategory,
+    operatingSystem,
     codeRepository: tool.url,
     programmingLanguage: tool.language || undefined,
     license: tool.license || undefined,
     dateModified: tool.last_commit_at,
     keywords: keywords.length > 0 ? keywords.join(', ') : undefined,
+    author: {
+      '@type': 'Person',
+      name: owner,
+      url: `https://github.com/${owner}`,
+    },
     aggregateRating: {
       '@type': 'AggregateRating',
-      ratingValue: tool.score.toFixed(1),
-      bestRating: '100',
-      worstRating: '0',
+      ratingValue,
+      bestRating: '5',
+      worstRating: '1',
       ratingCount: 1,
     },
   };

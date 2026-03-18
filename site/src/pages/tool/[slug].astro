@@ -208,7 +208,7 @@ const widgetIframeSnippet = `<iframe src="${SITE_URL}/api/embed/${slug}.html" wi
 const widgetScriptSnippet = `<script src="${SITE_URL}/embed.js" data-tool="${tool.full_name}"><\/script>`;
 const widgetSvgSnippet = `[![AgentRank](${SITE_URL}/api/embed/${slug}.svg)](${badgeLinkUrl})`;
 
-const jsonLd = generateToolJsonLd({ ...tool, github_topics: githubTopics }, pageUrl);
+const jsonLd = generateToolJsonLd({ ...tool, github_topics: githubTopics, category: row.category as string | null }, pageUrl);
 const keywordsStr = [...new Set([...tool.matched_queries, ...githubTopics])].join(', ');
 
 // Category-to-blog mapping for contextual cross-links
