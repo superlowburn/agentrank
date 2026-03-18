@@ -1,0 +1,848 @@
+---
+export const prerender = true;
+
+import Base from '../../layouts/Base.astro';
+import BlogSubscribeCTA from '../../components/BlogSubscribeCTA.astro';
+import RelatedPosts from '../../components/RelatedPosts.astro';
+
+const relatedPosts = [
+  { href: '/blog/mcp-server-vs-rest-api/', title: 'MCP Server vs REST API: When to Use Each' },
+  { href: '/blog/mcp-server-landscape-q1-2026/', title: 'The MCP Server Landscape: Q1 2026' },
+  { href: '/blog/how-to-choose-an-mcp-server/', title: 'How to Choose an MCP Server in 2026' },
+];
+
+const publishDate = '2026-03-18';
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: 'A2A vs MCP: The Definitive Agent Protocol Comparison (2026)',
+  description: 'Google\'s Agent2Agent (A2A) and Anthropic\'s Model Context Protocol (MCP) solve different problems in the AI agent stack. A detailed comparison of design philosophy, use cases, ecosystem data, and how to decide which protocol your project needs.',
+  datePublished: publishDate,
+  dateModified: publishDate,
+  author: {
+    '@type': 'Organization',
+    name: 'AgentRank',
+    url: 'https://agentrank-ai.com',
+  },
+  publisher: {
+    '@type': 'Organization',
+    name: 'AgentRank',
+    url: 'https://agentrank-ai.com',
+    logo: {
+      '@type': 'ImageObject',
+      url: 'https://agentrank-ai.com/og-image.png',
+    },
+  },
+  mainEntityOfPage: {
+    '@type': 'WebPage',
+    '@id': 'https://agentrank-ai.com/blog/a2a-vs-mcp-agent-protocol-comparison/',
+  },
+  image: 'https://agentrank-ai.com/og-image.png',
+  keywords: 'a2a vs mcp, agent to agent protocol, mcp vs a2a, google a2a protocol, anthropic mcp, agent protocol comparison 2026',
+};
+
+const comparison = [
+  {
+    dimension: 'Primary purpose',
+    a2a: 'Agent-to-agent communication and task delegation',
+    mcp: 'Agent-to-tool and agent-to-data communication',
+  },
+  {
+    dimension: 'Who talks to what',
+    a2a: 'AI agents talking to other AI agents',
+    mcp: 'AI agents talking to tools, APIs, and data sources',
+  },
+  {
+    dimension: 'Core abstraction',
+    a2a: 'Tasks — units of work with status, artifacts, and streaming updates',
+    mcp: 'Tools, resources, and prompts — callable capabilities with schemas',
+  },
+  {
+    dimension: 'Transport',
+    a2a: 'HTTP with Server-Sent Events (SSE) for streaming',
+    mcp: 'stdio (local) or HTTP+SSE (remote)',
+  },
+  {
+    dimension: 'Discovery',
+    a2a: 'Agent Card JSON served at /.well-known/agent.json',
+    mcp: 'Protocol-native tool listing — agents query tools/list at runtime',
+  },
+  {
+    dimension: 'Authentication',
+    a2a: 'Standard HTTP auth — OAuth 2.0, API keys, bearer tokens',
+    mcp: 'Environment variables or header injection at transport level',
+  },
+  {
+    dimension: 'Originating org',
+    a2a: 'Google DeepMind (open standard)',
+    mcp: 'Anthropic (open standard)',
+  },
+  {
+    dimension: 'Launch date',
+    a2a: 'April 2025',
+    mcp: 'November 2024',
+  },
+  {
+    dimension: 'GitHub ecosystem',
+    a2a: '~2,400 repositories indexed (AgentRank, March 2026)',
+    mcp: '25,632 repositories indexed (AgentRank, March 2026)',
+  },
+  {
+    dimension: 'Best for',
+    a2a: 'Multi-agent orchestration, agent marketplaces, cross-vendor agent collaboration',
+    mcp: 'Giving agents access to tools: databases, APIs, file systems, services',
+  },
+];
+
+const ecosystemData = [
+  { protocol: 'MCP', repos: 25632, topCategory: 'Database access (847 repos)', growth: '2x Q3→Q4 2025, 2x again Q1 2026', clientSupport: 'Claude, Cursor, Copilot, Cline, VS Code, Windsurf, Zed' },
+  { protocol: 'A2A', repos: 2400, topCategory: 'Agent orchestration frameworks', growth: 'Rapid — launched April 2025, doubled each quarter', clientSupport: 'Google ADK, LangGraph, CrewAI, custom agent frameworks' },
+];
+---
+
+<Base
+  title="A2A vs MCP: The Definitive Agent Protocol Comparison (2026) — AgentRank"
+  description="Google's A2A and Anthropic's MCP solve different problems in the AI agent stack. A detailed, data-backed comparison of design philosophy, ecosystem size, use cases, and how to choose between them — with real data from the AgentRank index."
+  activeTab="blog"
+  keywords="a2a vs mcp, agent to agent protocol, mcp vs a2a, google a2a protocol, anthropic mcp comparison, agent protocol comparison 2026, a2a protocol explained, model context protocol vs agent to agent"
+  canonicalUrl="https://agentrank-ai.com/blog/a2a-vs-mcp-agent-protocol-comparison/"
+  jsonLd={jsonLd}
+  ogImage="/og/a2a-vs-mcp-agent-protocol-comparison.png"
+>
+  <article class="blog-post">
+    <header class="post-header">
+      <div class="breadcrumb"><a href="/blog/">Blog</a> <span>/</span></div>
+      <h1>A2A vs MCP: The Definitive Agent Protocol Comparison (2026)</h1>
+      <div class="post-meta">
+        <time datetime={publishDate}>March 18, 2026</time>
+        <span class="sep">&middot;</span>
+        <span>10 min read</span>
+        <span class="sep">&middot;</span>
+        <span>AgentRank Index</span>
+      </div>
+      <p class="lede">
+        Google's Agent2Agent (A2A) and Anthropic's Model Context Protocol (MCP) are the two dominant
+        open protocols shaping the AI agent ecosystem. They are frequently compared as competitors.
+        They are not — they solve fundamentally different problems. MCP connects agents to tools.
+        A2A connects agents to agents. Understanding that distinction determines everything about
+        which one your project needs, and whether you need both.
+      </p>
+    </header>
+
+    <nav class="toc">
+      <strong>Contents</strong>
+      <ol>
+        <li><a href="#the-one-line-answer">The one-line answer</a></li>
+        <li><a href="#what-is-mcp">What is MCP?</a></li>
+        <li><a href="#what-is-a2a">What is A2A?</a></li>
+        <li><a href="#comparison-table">Head-to-head comparison</a></li>
+        <li><a href="#design-philosophy">Design philosophy differences</a></li>
+        <li><a href="#ecosystem-data">Ecosystem data from the AgentRank index</a></li>
+        <li><a href="#when-to-use-mcp">When to use MCP</a></li>
+        <li><a href="#when-to-use-a2a">When to use A2A</a></li>
+        <li><a href="#use-both">When you need both</a></li>
+        <li><a href="#top-tools">Top tools from each ecosystem</a></li>
+        <li><a href="#decision">Decision framework</a></li>
+      </ol>
+    </nav>
+
+    <section id="the-one-line-answer">
+      <h2>The one-line answer</h2>
+      <p>
+        <strong>MCP gives agents hands.</strong> It lets an agent pick up tools — search the web,
+        query a database, call an API, read a file. Without MCP, an agent can only reason. With MCP,
+        it can act.
+      </p>
+      <p>
+        <strong>A2A gives agents colleagues.</strong> It lets an agent hand off work to another
+        agent — a specialized researcher, a code writer, a data analyst — and receive results back.
+        Without A2A, an agent works alone. With A2A, it can orchestrate a team.
+      </p>
+      <p>
+        The protocols are complementary layers in the same stack. A2A routes tasks between agents.
+        MCP gives each of those agents the tools to complete their tasks. Most production multi-agent
+        systems will eventually use both.
+      </p>
+    </section>
+
+    <section id="what-is-mcp">
+      <h2>What is MCP?</h2>
+      <p>
+        The Model Context Protocol (MCP) is an open standard published by Anthropic in November 2024.
+        It defines how AI clients (hosts like Claude Desktop, Cursor, or Copilot) connect to MCP servers —
+        processes that expose capabilities as tools, resources, or prompts.
+      </p>
+      <p>
+        The architecture has three layers:
+      </p>
+      <ul>
+        <li><strong>Host:</strong> The AI application — Claude Desktop, Cursor, a custom agent loop.</li>
+        <li><strong>Client:</strong> The MCP client inside the host, maintaining one connection per server.</li>
+        <li><strong>Server:</strong> A process exposing tools (callable functions), resources (data sources), and prompts (reusable templates).</li>
+      </ul>
+      <p>
+        When an agent needs a capability — query a Postgres database, search GitHub, send a Slack message —
+        it calls a tool on an MCP server. The server executes the operation and returns a result. The
+        protocol handles discovery (the agent asks what tools exist), schema communication (what parameters
+        each tool takes), and transport (stdio locally, HTTP+SSE remotely).
+      </p>
+      <p>
+        MCP has seen explosive adoption: 25,632 repositories in the AgentRank index as of March 2026,
+        with official servers from Redis, MongoDB, AWS, Azure, GCP, HashiCorp, Snyk, and dozens of
+        other vendors. Every major AI coding client — Claude Code, Cursor, GitHub Copilot, Cline,
+        Windsurf, VS Code — supports MCP natively.
+      </p>
+    </section>
+
+    <section id="what-is-a2a">
+      <h2>What is A2A?</h2>
+      <p>
+        The Agent2Agent (A2A) protocol is an open standard published by Google DeepMind in April 2025,
+        with contributions from over 50 technology partners including Salesforce, SAP, Atlassian, and
+        ServiceNow. It defines how AI agents communicate with each other — how one agent delegates work
+        to another, how task status is tracked, and how results are returned.
+      </p>
+      <p>
+        The core A2A abstractions are:
+      </p>
+      <ul>
+        <li><strong>Agent Card:</strong> A JSON manifest served at <code>/.well-known/agent.json</code> describing the agent's capabilities, supported modalities, and authentication requirements.</li>
+        <li><strong>Task:</strong> A unit of work with a unique ID, status lifecycle (submitted → working → completed/failed), and associated artifacts.</li>
+        <li><strong>Artifacts:</strong> The outputs an agent produces — text, files, structured data — streamed back to the caller via SSE.</li>
+        <li><strong>Push notifications:</strong> Webhook callbacks for long-running async tasks when SSE isn't appropriate.</li>
+      </ul>
+      <p>
+        A2A is explicitly designed for enterprise interoperability: agents from different vendors (Google,
+        Salesforce, SAP) can collaborate on a task without any custom integration. An orchestrator agent
+        discovers available agents via their Agent Cards, delegates subtasks, and assembles results —
+        all without knowing implementation details of the sub-agents.
+      </p>
+      <p>
+        The A2A ecosystem is smaller but fast-growing: approximately 2,400 repositories indexed on
+        AgentRank as of March 2026, concentrated in orchestration frameworks, agent development kits,
+        and enterprise integration adapters.
+      </p>
+    </section>
+
+    <section id="comparison-table">
+      <h2>Head-to-head comparison</h2>
+
+      <table class="data-table compare-table">
+        <thead>
+          <tr>
+            <th>Dimension</th>
+            <th>A2A</th>
+            <th>MCP</th>
+          </tr>
+        </thead>
+        <tbody>
+          {comparison.map((row) => (
+            <tr>
+              <td class="dimension-cell">{row.dimension}</td>
+              <td class="a2a-cell">{row.a2a}</td>
+              <td class="mcp-cell">{row.mcp}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </section>
+
+    <section id="design-philosophy">
+      <h2>Design philosophy differences</h2>
+
+      <h3>MCP: the tool-calling protocol</h3>
+      <p>
+        MCP was designed from a single insight: LLMs are powerful reasoning engines that need
+        standardized access to the external world. Before MCP, every AI integration required custom
+        function-calling wrappers per client. An agent using Claude needed different glue code than
+        an agent using GPT-4 or Gemini. MCP solved this by defining a universal protocol for
+        capability exposure.
+      </p>
+      <p>
+        The philosophy is <em>tools as first-class primitives</em>. An MCP server is a collection
+        of tools with schemas the agent can introspect at runtime. The server doesn't know or care
+        what agent is calling it. The agent doesn't need to know implementation details of the tool.
+        The protocol handles the contract between them.
+      </p>
+      <p>
+        This makes MCP ideal for building integrations once and distributing them everywhere — a
+        Postgres MCP server works the same whether it's being called by Claude, Cursor, or a custom
+        agent loop.
+      </p>
+
+      <h3>A2A: the delegation protocol</h3>
+      <p>
+        A2A was designed from a different insight: as agent systems grow more capable, you want
+        specialization. A research agent should be great at research. A code agent should be great
+        at code. A data analyst should be great at analysis. Monolithic agents that try to do
+        everything don't scale.
+      </p>
+      <p>
+        The philosophy is <em>agents as first-class services</em>. An A2A agent publishes an Agent
+        Card describing what it can do — what kinds of tasks it accepts, what modalities it supports,
+        how to authenticate. Other agents discover it via that card and delegate tasks to it. The
+        calling agent doesn't know how the sub-agent implements its capabilities. It only knows what
+        the agent card advertises.
+      </p>
+      <p>
+        This makes A2A ideal for building composable agent networks — where different teams, vendors,
+        or services can contribute specialized agents that interoperate without custom integration.
+      </p>
+
+      <h3>Where the protocols overlap</h3>
+      <p>
+        Both protocols use SSE for streaming, both are transport-agnostic by design, and both are
+        open standards with no lock-in to a specific vendor's model or runtime. Both use JSON as
+        the data format. The surface-level similarities can create confusion — but the intent and
+        use cases are distinct.
+      </p>
+      <p>
+        The clearest mental model: MCP is vertical (agent → tool), A2A is horizontal (agent → agent).
+        A production multi-agent system typically needs both: A2A to coordinate between agents,
+        MCP to give each agent its tools.
+      </p>
+    </section>
+
+    <section id="ecosystem-data">
+      <h2>Ecosystem data from the AgentRank index</h2>
+      <p>
+        The AgentRank index crawls GitHub daily for agent tools and scores them by real quality signals:
+        stars, freshness, issue health, contributors, and inbound dependents. As of March 2026:
+      </p>
+
+      <table class="data-table ecosystem-table">
+        <thead>
+          <tr>
+            <th>Protocol</th>
+            <th>Indexed repos</th>
+            <th>Top category</th>
+            <th>Growth</th>
+            <th>Client support</th>
+          </tr>
+        </thead>
+        <tbody>
+          {ecosystemData.map((row) => (
+            <tr>
+              <td class="protocol-cell"><strong>{row.protocol}</strong></td>
+              <td>{row.repos.toLocaleString()}</td>
+              <td>{row.topCategory}</td>
+              <td>{row.growth}</td>
+              <td>{row.clientSupport}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+
+      <p>
+        MCP's 10x lead in indexed repositories reflects its earlier launch (November 2024 vs April 2025)
+        and the fact that MCP servers are often single-purpose tools that proliferate quickly — one
+        MCP server per integration. A2A implementations are typically heavier frameworks or orchestration
+        layers, so fewer total repositories doesn't mean less adoption in production.
+      </p>
+      <p>
+        Both ecosystems are on exponential growth curves. MCP doubled in size between Q3 and Q4 2025,
+        then doubled again in Q1 2026. A2A is following a similar trajectory from its April 2025 launch,
+        with particular concentration in enterprise integration frameworks where Google's partnerships
+        (Salesforce, SAP, Atlassian, ServiceNow) drive adoption.
+      </p>
+      <p>
+        See the <a href="/blog/mcp-server-landscape-q1-2026/" class="inline-link">Q1 2026 ecosystem report</a> for the full MCP breakdown. AgentRank will publish a dedicated A2A ecosystem report as the index coverage expands.
+      </p>
+    </section>
+
+    <section id="when-to-use-mcp">
+      <h2>When to use MCP</h2>
+
+      <h3>You're giving an agent access to tools or data</h3>
+      <p>
+        Any time you want an AI agent to interact with an external system — a database, an API, a
+        file system, a SaaS product — MCP is the right protocol. You write a server that wraps the
+        system as tools. Every MCP-compatible agent can then discover and use those tools without
+        any additional integration work.
+      </p>
+
+      <h3>You want zero-maintenance distribution across AI clients</h3>
+      <p>
+        An MCP server published once works in Claude Desktop, Cursor, Copilot, Cline, VS Code,
+        Windsurf, and Zed. You write the integration once. All of those clients get access
+        automatically when users add your server to their config. The protocol handles discovery,
+        schema communication, and execution.
+      </p>
+
+      <h3>You're building an internal toolbox for an AI-first team</h3>
+      <p>
+        Teams adopting AI coding agents typically start with MCP: expose your Postgres database,
+        your internal APIs, your Jira board, your GitHub repos as MCP servers. The team's agents get
+        access to internal systems without anyone writing integration code. This is the fastest path
+        to AI-augmented workflows in an existing engineering org.
+      </p>
+
+      <h3>Your integration is tool-shaped, not agent-shaped</h3>
+      <p>
+        If what you're building has discrete, callable operations with clear inputs and outputs —
+        "search for X", "create a record", "fetch document Y" — it's tool-shaped. Build an MCP server.
+        The tool-calling pattern fits naturally, the schema is self-documenting, and agents know
+        exactly how to use it.
+      </p>
+    </section>
+
+    <section id="when-to-use-a2a">
+      <h2>When to use A2A</h2>
+
+      <h3>You're building a multi-agent orchestration system</h3>
+      <p>
+        If your system has multiple specialized agents that need to collaborate on complex tasks —
+        a research agent, a writer agent, a fact-checker agent, an editor agent all working on the
+        same document — A2A provides the coordination layer. The orchestrator delegates, tracks
+        status, receives artifacts, and assembles the final result.
+      </p>
+
+      <h3>You're building agents from different vendors that need to interoperate</h3>
+      <p>
+        A2A's primary motivation is enterprise cross-vendor interoperability. If you have a Salesforce
+        CRM agent and a Google Workspace agent that need to collaborate on a customer success workflow,
+        A2A handles the coordination without requiring either vendor to know implementation details
+        of the other. The Agent Card is the contract.
+      </p>
+
+      <h3>Your "tool" is actually a complex autonomous agent</h3>
+      <p>
+        If the capability you're exposing involves multi-step reasoning, uncertainty, long-running
+        operations, or requires its own tool access — it's agent-shaped, not tool-shaped. An MCP tool
+        is a deterministic function. An A2A agent is an autonomous process. If you'd be tempted to
+        put an LLM inside your MCP tool handler, you probably want an A2A agent instead.
+      </p>
+
+      <h3>You need streaming status updates on long-running tasks</h3>
+      <p>
+        A2A's task lifecycle model (submitted → working → completed) with SSE streaming and push
+        notifications is designed for operations that take seconds to minutes. MCP tool calls are
+        typically synchronous or near-synchronous. For agent workflows that run for extended periods
+        and need to report progress, A2A's task model is a better fit.
+      </p>
+    </section>
+
+    <section id="use-both">
+      <h2>When you need both</h2>
+      <p>
+        Most serious multi-agent production systems will end up using both protocols — A2A at the
+        agent coordination layer and MCP at the tool access layer. The typical architecture looks
+        like this:
+      </p>
+      <ul>
+        <li>An <strong>orchestrator agent</strong> receives a high-level task from the user.</li>
+        <li>It uses <strong>A2A</strong> to discover and delegate subtasks to specialized agents (research agent, code agent, data agent).</li>
+        <li>Each specialized agent uses <strong>MCP</strong> to access the tools it needs (database, web search, file system, APIs).</li>
+        <li>Results flow back via <strong>A2A</strong> artifacts to the orchestrator, which assembles the final output.</li>
+      </ul>
+      <p>
+        This pattern is emerging as the reference architecture for production multi-agent systems.
+        Google's Agent Development Kit (ADK) implements exactly this: agents use A2A to coordinate
+        and MCP to access tools. LangGraph and CrewAI have similar layered approaches.
+      </p>
+      <p>
+        The key insight is that A2A and MCP operate at different layers of the stack. They don't
+        compete — they compose.
+      </p>
+    </section>
+
+    <section id="top-tools">
+      <h2>Top tools from each ecosystem</h2>
+
+      <h3>Top MCP servers (by AgentRank score)</h3>
+      <p>
+        The AgentRank index ranks over 25,000 MCP servers by composite quality signals. Top-scoring
+        categories include database access, DevOps automation, and developer tooling. Official servers
+        from major vendors (Redis, MongoDB, Neon, AWS, GCP, HashiCorp) consistently rank highest due
+        to high contributor counts, active issue resolution, and wide inbound dependency graphs.
+      </p>
+      <p>
+        Browse the <a href="/tools/" class="inline-link">full MCP tool index</a> — sorted by AgentRank score,
+        filterable by category and language. <a href="/compare/" class="inline-link">Compare any two tools head-to-head</a> to see signal breakdowns side by side.
+      </p>
+
+      <h3>Top A2A tools (by AgentRank score)</h3>
+      <p>
+        The A2A ecosystem in the AgentRank index is concentrated in three categories:
+      </p>
+      <ul>
+        <li><strong>Agent Development Kits:</strong> Google's ADK, LangGraph, CrewAI — frameworks for building A2A-compatible agents.</li>
+        <li><strong>Orchestration layers:</strong> Systems that manage agent discovery, task routing, and result aggregation.</li>
+        <li><strong>Enterprise adapters:</strong> Connectors that wrap existing enterprise systems (Salesforce, SAP, ServiceNow) as A2A-compatible agents.</li>
+      </ul>
+      <p>
+        The highest-scoring A2A repositories are framework-level — they have large contributor counts,
+        active maintenance, and high star velocity, reflecting their role as infrastructure rather
+        than point integrations.
+      </p>
+      <p>
+        AgentRank indexes both MCP and A2A ecosystems using the same five-signal scoring methodology,
+        allowing direct comparison across protocols. See the <a href="/methodology/" class="inline-link">scoring methodology</a> for the signal weights and normalization approach.
+      </p>
+    </section>
+
+    <section id="decision">
+      <h2>Decision framework</h2>
+      <p>Answer these four questions:</p>
+
+      <div class="decision-grid">
+        <div class="decision-card">
+          <div class="decision-q">Is your consumer an agent calling a tool, or an agent calling another agent?</div>
+          <div class="decision-a mcp-answer"><strong>Tool</strong> → Build MCP server</div>
+          <div class="decision-a a2a-answer"><strong>Agent</strong> → Build A2A agent</div>
+        </div>
+        <div class="decision-card">
+          <div class="decision-q">Is the capability deterministic (clear inputs → clear outputs) or autonomous (requires reasoning, multiple steps)?</div>
+          <div class="decision-a mcp-answer"><strong>Deterministic</strong> → MCP tool</div>
+          <div class="decision-a a2a-answer"><strong>Autonomous</strong> → A2A agent</div>
+        </div>
+        <div class="decision-card">
+          <div class="decision-q">Do you need to interoperate with AI clients today (Claude, Cursor, Copilot)?</div>
+          <div class="decision-a mcp-answer"><strong>Yes</strong> → MCP — broad client support now</div>
+          <div class="decision-a a2a-answer"><strong>No</strong> → A2A is viable; check your framework's support</div>
+        </div>
+        <div class="decision-card">
+          <div class="decision-q">Are you building a multi-agent system with specialized sub-agents?</div>
+          <div class="decision-a a2a-answer"><strong>Yes</strong> → A2A for coordination, MCP for each agent's tools</div>
+          <div class="decision-a mcp-answer"><strong>No</strong> → MCP alone is probably sufficient</div>
+        </div>
+      </div>
+
+      <div class="tldr-box">
+        <strong>The short version:</strong>
+        <ul>
+          <li>Building a tool that agents can call? → <strong>MCP</strong></li>
+          <li>Building an agent that other agents can hire? → <strong>A2A</strong></li>
+          <li>Building a production multi-agent system? → <strong>Both, at different layers</strong></li>
+        </ul>
+      </div>
+
+      <div class="cta-box">
+        <p>
+          <strong>Browse the full index:</strong> <a href="/tools/">AgentRank tool index</a> — 25,000+ MCP servers and A2A tools ranked by real quality signals.
+        </p>
+        <p>
+          <strong>Compare tools:</strong> <a href="/compare/">Side-by-side comparison</a> — stars, freshness, issue health, and AgentRank scores.
+        </p>
+        <p>
+          <strong>API access:</strong> <a href="/api-docs/">AgentRank API</a> — query the index programmatically for both MCP and A2A tools.
+        </p>
+      </div>
+    </section>
+
+    <RelatedPosts posts={relatedPosts} />
+    <BlogSubscribeCTA source="blog" />
+    <footer class="post-footer">
+      <p class="methodology">
+        <strong>Methodology:</strong> Ecosystem data from the AgentRank index crawled March 2026.
+        25,632 MCP repositories and approximately 2,400 A2A repositories indexed from GitHub via
+        keyword search. Scores computed from five signals: stars (15%), freshness (25%), issue health
+        (25%), contributors (10%), inbound dependents (25%). See <a href="/methodology/">full methodology</a>.
+      </p>
+      <p class="share-line">
+        Found this useful? <a href="https://x.com/AgentRank_ai" target="_blank" rel="noopener noreferrer">Follow @AgentRank_ai</a> for
+        weekly ecosystem updates, biggest movers, and new tool spotlights.
+      </p>
+    </footer>
+  </article>
+
+  <style>
+    .blog-post {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 2rem 0 3rem;
+    }
+
+    .breadcrumb {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      margin-bottom: 0.75rem;
+    }
+
+    .breadcrumb span {
+      margin: 0 0.25rem;
+      opacity: 0.5;
+    }
+
+    .post-header {
+      margin-bottom: 2rem;
+      padding-bottom: 1.5rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .post-header h1 {
+      font-size: 1.6rem;
+      font-weight: 700;
+      line-height: 1.3;
+      margin-bottom: 0.75rem;
+    }
+
+    .post-meta {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      flex-wrap: wrap;
+      margin-bottom: 1rem;
+    }
+
+    .sep {
+      opacity: 0.4;
+    }
+
+    .lede {
+      font-size: 1rem;
+      line-height: 1.7;
+      color: var(--text);
+      opacity: 0.9;
+    }
+
+    .toc {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 1rem 1.25rem;
+      margin-bottom: 2.5rem;
+      font-size: 0.82rem;
+    }
+
+    .toc strong {
+      display: block;
+      margin-bottom: 0.6rem;
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+    }
+
+    .toc ol {
+      margin: 0;
+      padding-left: 1.2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+    }
+
+    .toc a {
+      color: var(--text-muted);
+    }
+
+    .toc a:hover {
+      color: var(--accent);
+    }
+
+    section {
+      margin-bottom: 3rem;
+    }
+
+    section h2 {
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin-bottom: 0.75rem;
+      padding-bottom: 0.4rem;
+      border-bottom: 2px solid var(--accent);
+      display: inline-block;
+    }
+
+    section h3 {
+      font-size: 0.95rem;
+      font-weight: 700;
+      margin: 1.5rem 0 0.5rem;
+      color: var(--text);
+    }
+
+    section p {
+      font-size: 0.9rem;
+      line-height: 1.75;
+      color: var(--text);
+      opacity: 0.9;
+      margin-bottom: 0.9rem;
+    }
+
+    section ul {
+      font-size: 0.9rem;
+      line-height: 1.75;
+      color: var(--text);
+      opacity: 0.9;
+      margin: 0.5rem 0 0.9rem;
+      padding-left: 1.4rem;
+    }
+
+    section ul li {
+      margin-bottom: 0.4rem;
+    }
+
+    .inline-link {
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.82rem;
+      margin: 1rem 0 1.25rem;
+    }
+
+    .data-table th {
+      text-align: left;
+      font-weight: 600;
+      color: var(--text-muted);
+      border-bottom: 1px solid var(--border);
+      padding: 0.4rem 0.75rem 0.4rem 0;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+
+    .data-table td {
+      padding: 0.5rem 0.75rem 0.5rem 0;
+      border-bottom: 1px solid var(--border);
+      color: var(--text);
+      vertical-align: top;
+      font-size: 0.82rem;
+      line-height: 1.5;
+    }
+
+    .data-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .compare-table .dimension-cell {
+      font-weight: 600;
+      width: 22%;
+      font-size: 0.78rem;
+      color: var(--text-muted);
+    }
+
+    .compare-table .a2a-cell {
+      width: 39%;
+    }
+
+    .compare-table .mcp-cell {
+      width: 39%;
+    }
+
+    .ecosystem-table .protocol-cell {
+      width: 8%;
+    }
+
+    .decision-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      margin: 1rem 0 1.5rem;
+    }
+
+    .decision-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 0.75rem 1rem;
+    }
+
+    .decision-q {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 0.5rem;
+    }
+
+    .decision-a {
+      font-size: 0.82rem;
+      line-height: 1.5;
+      color: var(--text-muted);
+      padding-left: 0.5rem;
+    }
+
+    .mcp-answer {
+      color: var(--accent);
+    }
+
+    .a2a-answer {
+      color: var(--accent);
+    }
+
+    .tldr-box {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 1rem 1.25rem;
+      margin-bottom: 1.5rem;
+      font-size: 0.9rem;
+    }
+
+    .tldr-box strong {
+      display: block;
+      margin-bottom: 0.5rem;
+    }
+
+    .tldr-box ul {
+      margin: 0.25rem 0 0;
+      padding-left: 1.2rem;
+    }
+
+    .tldr-box li {
+      margin-bottom: 0.25rem;
+    }
+
+    .cta-box {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      border-radius: 4px;
+      padding: 1rem 1.25rem;
+      margin-top: 1.5rem;
+    }
+
+    .cta-box p {
+      font-size: 0.9rem;
+      line-height: 1.75;
+      color: var(--text);
+      opacity: 0.9;
+      margin-bottom: 0.5rem;
+    }
+
+    .cta-box p:last-child {
+      margin-bottom: 0;
+    }
+
+    .post-footer {
+      margin-top: 3rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--border);
+    }
+
+    .methodology {
+      font-size: 0.75rem !important;
+      color: var(--text-muted) !important;
+      opacity: 1 !important;
+    }
+
+    .share-line {
+      font-size: 0.82rem !important;
+      margin-top: 0.75rem;
+    }
+
+    @media (max-width: 640px) {
+      .post-header h1 {
+        font-size: 1.3rem;
+      }
+
+      .data-table {
+        font-size: 0.75rem;
+      }
+
+      .compare-table .dimension-cell {
+        width: 30%;
+      }
+
+      .ecosystem-table {
+        display: block;
+        overflow-x: auto;
+      }
+    }
+  </style>
+</Base>

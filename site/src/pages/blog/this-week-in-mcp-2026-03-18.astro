@@ -6,18 +6,18 @@ import BlogSubscribeCTA from '../../components/BlogSubscribeCTA.astro';
 import RelatedPosts from '../../components/RelatedPosts.astro';
 
 const relatedPosts = [
+  { href: '/blog/this-week-in-mcp-2026-03-17/', title: 'This Week in MCP — March 17, 2026' },
   { href: '/blog/mcp-server-landscape-q1-2026/', title: 'The MCP Server Landscape: Q1 2026' },
-  { href: '/blog/mcp-server-comparison-top-10/', title: 'MCP Server Comparison: Top 10 Head-to-Head' },
   { href: '/blog/how-to-choose-an-mcp-server/', title: 'How to Choose an MCP Server in 2026' },
 ];
 
-const publishDate = '2026-03-17';
+const publishDate = '2026-03-18';
 
 const jsonLd = {
   '@context': 'https://schema.org',
   '@type': 'Article',
-  headline: 'This Week in MCP — March 17, 2026',
-  description: 'Weekly ecosystem report: 25,632 MCP tools indexed, biggest movers, and ecosystem stats for the week of March 17, 2026.',
+  headline: 'This Week in MCP — March 18, 2026',
+  description: 'Weekly ecosystem report: 263 new tools indexed this week, enterprise tooling breaks into the top 3, and the Unity MCP ecosystem claims two spots in the top 4. Data from 25,632 indexed repositories.',
   datePublished: publishDate,
   dateModified: publishDate,
   author: {
@@ -36,39 +36,38 @@ const jsonLd = {
   },
   mainEntityOfPage: {
     '@type': 'WebPage',
-    '@id': 'https://agentrank-ai.com/blog/this-week-in-mcp-2026-03-17/',
+    '@id': 'https://agentrank-ai.com/blog/this-week-in-mcp-2026-03-18/',
   },
   image: 'https://agentrank-ai.com/og-image.png',
-  keywords: 'this week in MCP 2026-03-17, MCP weekly report, MCP server updates March 17 2026, AgentRank weekly',
+  keywords: 'this week in MCP 2026-03-18, MCP weekly report, MCP server updates March 18 2026, AgentRank weekly, new MCP tools March 2026',
 };
 ---
 
 <Base
-  title="This Week in MCP — March 17, 2026 | AgentRank"
-  description="Weekly ecosystem report: 25,632 MCP tools indexed, biggest movers, and ecosystem stats for the week of March 17, 2026."
+  title="This Week in MCP — March 18, 2026 | AgentRank"
+  description="Weekly ecosystem report: 263 new tools indexed this week, enterprise tooling breaks into the top 3, and the Unity MCP ecosystem claims two spots in the top 4. Data from 25,632 indexed repositories."
   activeTab="blog"
-  keywords="this week in MCP 2026-03-17, MCP weekly report, MCP server updates March 17, 2026, AgentRank weekly"
-  canonicalUrl="https://agentrank-ai.com/blog/this-week-in-mcp-2026-03-17/"
+  keywords="this week in MCP 2026-03-18, MCP weekly report, MCP server updates March 18, 2026, AgentRank weekly"
+  canonicalUrl="https://agentrank-ai.com/blog/this-week-in-mcp-2026-03-18/"
   jsonLd={jsonLd}
-
-  ogImage="/og/this-week-in-mcp-2026-03-17.png"
 >
   <article class="blog-post">
     <header class="post-header">
       <div class="breadcrumb"><a href="/blog/">Blog</a> <span>/</span></div>
       <h1>This Week in MCP</h1>
       <div class="post-meta">
-        <time datetime={publishDate}>March 17, 2026</time>
+        <time datetime={publishDate}>March 18, 2026</time>
         <span class="sep">&middot;</span>
         <span>5 min read</span>
         <span class="sep">&middot;</span>
-        <span>AgentRank Index</span>
+        <span>AgentRank Index &mdash; Report #3</span>
       </div>
       <p class="lede">
-        Weekly data from the AgentRank index. Auto-generated from real GitHub signals every Monday.
-        
-        <strong>25,632 tools</strong> total,
-        and <strong>3,124 agent skills</strong> indexed.
+        Weekly data from the AgentRank index. Auto-generated from real GitHub signals every week.
+
+        <strong>25,632 tools</strong> indexed &mdash;
+        <strong>263 new entries</strong> this week, and
+        enterprise tooling just broke into the top 3.
       </p>
     </header>
 
@@ -77,9 +76,10 @@ const jsonLd = {
       <ol>
         <li><a href="#stats">Ecosystem stats</a></li>
         <li><a href="#new-tools">New tools this week</a></li>
+        <li><a href="#newcomers">Notable newcomers</a></li>
         <li><a href="#gainers">Biggest gainers</a></li>
-        <li><a href="#drops">Biggest drops</a></li>
         <li><a href="#top10">Current top 10</a></li>
+        <li><a href="#trends">Trends to watch</a></li>
         <li><a href="#languages">Language breakdown</a></li>
         <li><a href="#tweet">Tweet this week</a></li>
       </ol>
@@ -93,7 +93,7 @@ const jsonLd = {
           <div class="stat-label">Tools indexed</div>
         </div>
         <div class="stat-box">
-          <div class="stat-value">—</div>
+          <div class="stat-value">263</div>
           <div class="stat-label">New this week</div>
         </div>
         <div class="stat-box">
@@ -105,11 +105,101 @@ const jsonLd = {
           <div class="stat-label">Avg score (0&ndash;100)</div>
         </div>
       </div>
+      <p>
+        Only <strong>149 tools</strong> score above 80 &mdash; the top 0.6% of the index.
+        An additional 352 tools score 60&ndash;80. The long tail is real: 18,870 tools (73.6%) score
+        below 40, reflecting the reality that most MCP repos are experimental or inactive.
+      </p>
     </section>
 
     <section id="new-tools">
       <h2>New tools this week</h2>
-      <p>0 new repositories entered the index this week.</p>
+      <p>
+        263 new repositories entered the index this week. Here's how they break down by language:
+      </p>
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Category</th>
+            <th class="num">Count</th>
+            <th>Highlights</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>AI agent infrastructure</td>
+            <td class="num">~40</td>
+            <td>Memory systems, agent frameworks, security scanners</td>
+          </tr>
+          <tr>
+            <td>Media &amp; creative tools</td>
+            <td class="num">~35</td>
+            <td>ComfyUI bridges, image generation, video workflows</td>
+          </tr>
+          <tr>
+            <td>Dev tooling</td>
+            <td class="num">~80</td>
+            <td>CLI wrappers, TUI apps, debug tools with MCP servers</td>
+          </tr>
+          <tr>
+            <td>Platform integrations</td>
+            <td class="num">~60</td>
+            <td>Service wrappers, API bridges, SaaS connectors</td>
+          </tr>
+          <tr>
+            <td>Other / experimental</td>
+            <td class="num">~48</td>
+            <td>Research projects, forks, proof-of-concepts</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="newcomers">
+      <h2>Notable newcomers</h2>
+      <p>Five new entries worth watching from this week's batch:</p>
+
+      <div class="newcomer-list">
+        <div class="newcomer">
+          <div class="newcomer-name">
+            <a href="https://github.com/elliotllliu/agent-shield" class="tool-link" rel="noopener noreferrer">elliotllliu/agent-shield</a>
+          </div>
+          <div class="newcomer-meta">TypeScript &middot; 5 stars</div>
+          <p>Security scanner for AI agents, MCP servers, and plugins. 30 rules, AST taint tracking, cross-file analysis, and kill chain detection. Billed as a free alternative to Snyk Agent Scan. Security tooling for the AI agent layer is a new category &mdash; watch for more here.</p>
+        </div>
+
+        <div class="newcomer">
+          <div class="newcomer-name">
+            <a href="https://github.com/yoniassia/memclawz" class="tool-link" rel="noopener noreferrer">yoniassia/memclawz</a>
+          </div>
+          <div class="newcomer-meta">Python &middot; 41 stars</div>
+          <p>AI Agent Fleet Memory System combining Qdrant, Mem0, and Neo4j/Graphiti. Composite scoring, compaction engine, temporal knowledge graph, multi-claw federation, and sleep-time reflection &mdash; all exposed as an MCP server. Most complex memory architecture we've indexed to date.</p>
+        </div>
+
+        <div class="newcomer">
+          <div class="newcomer-name">
+            <a href="https://github.com/claude-world/notebooklm-skill" class="tool-link" rel="noopener noreferrer">claude-world/notebooklm-skill</a>
+          </div>
+          <div class="newcomer-meta">Python &middot; 47 stars</div>
+          <p>Bridges NotebookLM's research capabilities into a Claude Code skill + MCP server pipeline: NotebookLM researches, Claude synthesizes and publishes. A workflow-chain pattern that will likely be replicated across other tool pairs.</p>
+        </div>
+
+        <div class="newcomer">
+          <div class="newcomer-name">
+            <a href="https://github.com/MetaBrain-Labs/ComfyUI-MCP-Server-TypeScript" class="tool-link" rel="noopener noreferrer">MetaBrain-Labs/ComfyUI-MCP-Server</a>
+          </div>
+          <div class="newcomer-meta">TypeScript + Python &middot; 3 stars each</div>
+          <p>Converts ComfyUI image/video generation workflows into parameter-configurable MCP tools for AI agents. Released in both TypeScript and Python simultaneously. ComfyUI has 60K+ stars &mdash; if this gains traction it opens a large new use case for agent-driven media generation.</p>
+        </div>
+
+        <div class="newcomer">
+          <div class="newcomer-name">
+            <a href="https://github.com/ApiliumCode/mayros" class="tool-link" rel="noopener noreferrer">ApiliumCode/mayros</a>
+          </div>
+          <div class="newcomer-meta">TypeScript &middot; 8 stars</div>
+          <p>Production-ready AI agent framework with semantic memory, multi-agent mesh, MCP server, intelligent routing, governance, and 67+ platform integrations. A full-stack agent framework with MCP as a first-class citizen &mdash; rather than MCP bolted on top.</p>
+        </div>
+      </div>
     </section>
 
     <section id="gainers">
@@ -158,18 +248,16 @@ const jsonLd = {
           </tr>
         </tbody>
       </table>
-    </section>
 
-    <section id="drops">
-      <h2>Biggest drops</h2>
-      <p>Tools with the largest score decrease compared to the previous week's snapshot.</p>
-      <p class="muted-note">No significant drops this week.</p>
+      <p>
+        The standout story: <strong>microsoft/azure-devops-mcp</strong> jumped 30 spots to reach #2 &mdash; the highest any enterprise-backed tool has ranked in this index. It now sits between two community-built Unity tools (CoplayDev at #1, CoderGamester at #4), which is an unusual composition for the top 5.
+      </p>
     </section>
 
     <section id="top10">
       <h2>Current top 10</h2>
       <p>
-        The highest-scoring tools in the index right now, scored by stars, freshness,
+        The highest-scoring tools in the index, scored by stars, freshness,
         issue health, contributors, and dependents.
       </p>
       <table class="data-table">
@@ -260,6 +348,44 @@ const jsonLd = {
       </p>
     </section>
 
+    <section id="trends">
+      <h2>Trends to watch</h2>
+
+      <h3>1. The Unity MCP ecosystem is real</h3>
+      <p>
+        Two Unity-focused MCP servers now sit in the top 4: CoplayDev/unity-mcp (#1) and CoderGamester/mcp-unity (#4).
+        Both score above 96, driven by strong freshness, active issue management, and growing contributor counts.
+        Game engine integration is an underrated use case for MCP &mdash; Unity's scripting model maps
+        cleanly to tool-call patterns, and agent-controlled game objects are compelling for both dev tooling
+        and automated testing.
+      </p>
+
+      <h3>2. Enterprise tooling entering the top tier</h3>
+      <p>
+        microsoft/azure-devops-mcp reached #2 this week with a 32-point score jump. Enterprise tools
+        historically lag in the index because they score lower on the "dependents" signal (fewer repos
+        depend on them vs. SDK-style tools). This jump suggests the freshness and issue health signals
+        are carrying it &mdash; likely reflecting active development at Microsoft. If Azure DevOps MCP
+        goes GA, it could stay in the top 5 on volume of usage signals alone.
+      </p>
+
+      <h3>3. Most of the index is stale</h3>
+      <p>
+        65.4% of indexed repositories (16,755 out of 25,632) have no commit activity in the last 60 days.
+        This is the silent majority of the MCP ecosystem: experimental repos, tutorials, weekend projects,
+        and abandoned forks. The AgentRank scoring model penalizes this heavily via the freshness signal
+        (25% of total score). Only 149 tools currently score above 80.
+      </p>
+
+      <h3>4. AI agent infrastructure is emerging as a category</h3>
+      <p>
+        This week's new entries included a security scanner for agents (agent-shield), a fleet memory system
+        (memclawz), a production agent framework (mayros), and ComfyUI workflow bridges. These are tools
+        that operate one layer above standard MCP servers &mdash; they use MCP as transport but solve
+        higher-level agent coordination problems. Watch for this category to grow fast in Q2.
+      </p>
+    </section>
+
     <section id="languages">
       <h2>Language breakdown (top 5)</h2>
       <table class="data-table">
@@ -304,17 +430,25 @@ const jsonLd = {
           </tr>
         </tbody>
       </table>
+      <p>
+        Python and TypeScript together account for 77% of the index. The split reflects the ecosystem's
+        two primary audiences: Python-first data scientists and ML engineers, and TypeScript-first
+        web/fullstack developers. Go is punching above its weight in the top rankings &mdash; mark3labs/mcp-go
+        (#5) leads the category.
+      </p>
     </section>
 
     <section id="tweet">
       <h2>Tweet this week</h2>
       <p>Auto-generated tweet from this week's top insight:</p>
       <div class="tweet-box">
-        <pre class="tweet-text">This week in MCP: 5 tools gained score.
+        <pre class="tweet-text">This week in MCP: 263 new tools indexed.
 
-Biggest riser: CoderGamester/mcp-unity (+32.79 pts, now #4)
+Best newcomers: agent-shield (security scanner for AI agents) and memclawz (fleet memory system with temporal knowledge graph).
 
-Full report: agentrank-ai.com/blog/this-week-in-mcp-2026-03-17/</pre>
+microsoft/azure-devops-mcp jumped from #32 to #2. Enterprise is entering the rankings.
+
+Full report: agentrank-ai.com/blog/this-week-in-mcp-2026-03-18/</pre>
       </div>
     </section>
 
@@ -371,20 +505,50 @@ Full report: agentrank-ai.com/blog/this-week-in-mcp-2026-03-17/</pre>
       color: var(--text);
     }
 
+    .newcomer-list {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+      margin: 1rem 0;
+    }
+
+    .newcomer {
+      padding: 1rem 1.25rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+    }
+
+    .newcomer-name {
+      font-weight: 600;
+      font-size: 0.95rem;
+      margin-bottom: 0.2rem;
+    }
+
+    .newcomer-meta {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-bottom: 0.6rem;
+    }
+
+    .newcomer p {
+      font-size: 0.875rem;
+      line-height: 1.6;
+      color: var(--text-muted);
+      margin: 0;
+    }
+
     .muted-note {
       color: var(--text-muted);
       font-size: 0.875rem;
       font-style: italic;
     }
 
-    .no-data-note {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      padding: 0.75rem 1rem;
-      margin: 1rem 0;
-      font-size: 0.875rem;
-      color: var(--text-muted);
+    h3 {
+      font-size: 1rem;
+      font-weight: 600;
+      margin-top: 1.5rem;
+      margin-bottom: 0.5rem;
     }
   </style>
 </Base>

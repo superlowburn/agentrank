@@ -6,6 +6,13 @@ import BlogSubscribeCTA from '../../components/BlogSubscribeCTA.astro';
 
 const posts = [
   {
+    slug: 'a2a-vs-mcp-agent-protocol-comparison',
+    title: 'A2A vs MCP: The Definitive Agent Protocol Comparison (2026)',
+    description: 'Google\'s A2A and Anthropic\'s MCP solve different problems in the AI agent stack. A data-backed comparison of design philosophy, ecosystem size, use cases, and a decision framework for choosing between them.',
+    date: '2026-03-18',
+    readTime: '10 min read',
+  },
+  {
     slug: 'fastmcp-tutorial-python-mcp-server',
     title: 'FastMCP Tutorial: Build a Python MCP Server in 20 Minutes',
     description: 'Step-by-step FastMCP 3.0 tutorial: tools, resources, prompts, MCP Inspector testing, Claude Desktop setup, and Cloudflare Workers deployment. Covers composability, OpenAPI mounting, proxy mode, OAuth, and OpenTelemetry.',
@@ -45,6 +52,13 @@ const posts = [
     title: 'This Week in MCP — March 24, 2026',
     description: 'Weekly ecosystem report: top 10 reshuffled — PrefectHQ/fastmcp rises from #7 to #1, modelcontextprotocol SDKs surge in. Freshness beats stars.',
     date: '2026-03-24',
+    readTime: '5 min read',
+  },
+  {
+    slug: 'this-week-in-mcp-2026-03-18',
+    title: 'This Week in MCP — March 18, 2026',
+    description: 'Weekly ecosystem report: 263 new tools indexed, enterprise tooling breaks into the top 3, and the Unity MCP ecosystem claims two spots in the top 4. Data from 25,632 repositories.',
+    date: '2026-03-18',
     readTime: '5 min read',
   },
   {
@@ -193,6 +207,7 @@ const jsonLd = {
   keywords="MCP server blog, agent tools analysis, MCP ecosystem data, best MCP servers 2026"
   canonicalUrl="https://agentrank-ai.com/blog/"
   jsonLd={jsonLd}
+  ogImage="/og/blog.png"
 >
   <div class="blog-index">
     <div class="page-header">
