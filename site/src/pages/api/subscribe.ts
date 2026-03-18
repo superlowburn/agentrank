@@ -91,6 +91,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
 
   let email: string | undefined;
   let source: string = 'homepage';
+  let honeypot: string = '';
 
   const ct = request.headers.get('content-type') || '';
   try {
@@ -98,13 +99,20 @@ export const POST: APIRoute = async ({ request, locals }) => {
       const data = await request.json();
       email = data.email?.trim();
       source = data.source?.trim() || 'homepage';
+      honeypot = data._hp?.trim() || '';
     } else {
       const fd = await request.formData();
       email = (fd.get('email') as string | null)?.trim();
       source = (fd.get('source') as string | null)?.trim() || 'homepage';
+      honeypot = ((fd.get('_hp') as string | null)?.trim()) || '';
     }
   } catch {
     return json({ success: false, error: 'Invalid request body.' }, 400, corsOrigin);
+  }
+
+  // Honeypot: bots fill hidden fields, humans don't
+  if (honeypot) {
+    return json({ success: true }, 200, corsOrigin);
   }
 
   if (!email) {
@@ -114,7 +122,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
     return json({ success: false, error: 'Invalid email address.' }, 400, corsOrigin);
   }
 
-  const validSources = ['homepage', 'blog', 'embed'];
+  const validSources = ['homepage', 'footer', 'blog', 'embed'];
   if (!validSources.includes(source)) source = 'homepage';
 
   const clientIP = getClientIP(request);

@@ -19,6 +19,7 @@ const { source = 'blog' } = Astro.props;
       />
       <button type="submit">Subscribe</button>
     </div>
+    <input type="text" name="_hp" class="hp-field" tabindex="-1" autocomplete="off" />
     <span class="blog-subscribe-msg" aria-live="polite"></span>
   </form>
 </div>
@@ -111,6 +112,15 @@ const { source = 'blog' } = Astro.props;
     color: #ef4444;
   }
 
+  .hp-field {
+    position: absolute;
+    left: -9999px;
+    opacity: 0;
+    height: 0;
+    width: 0;
+    pointer-events: none;
+  }
+
   @media (max-width: 480px) {
     .blog-subscribe-row {
       flex-direction: column;
@@ -128,6 +138,8 @@ const { source = 'blog' } = Astro.props;
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
       const email = input.value.trim();
+      const hp = (form.querySelector<HTMLInputElement>('.hp-field')?.value ?? '');
+      if (hp) return; // honeypot triggered — silently abort
       if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
         msg.textContent = 'Please enter a valid email address.';
         msg.className = 'blog-subscribe-msg error';
@@ -140,7 +152,7 @@ const { source = 'blog' } = Astro.props;
         const res = await fetch('/api/subscribe', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email, source }),
+          body: JSON.stringify({ email, source, _hp: '' }),
         });
         const data = await res.json();
         if (data.success) {
