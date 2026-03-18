@@ -27,6 +27,8 @@ CREATE TABLE tools (
 CREATE INDEX idx_tools_full_name ON tools(full_name);
 CREATE INDEX idx_tools_rank ON tools(rank);
 CREATE INDEX idx_tools_score ON tools(score DESC);
+-- Migration (run once on existing D1 if pipeline hasn't rebuilt the table):
+-- ALTER TABLE tools ADD COLUMN category TEXT;
 
 DROP TABLE IF EXISTS skills;
 
@@ -54,6 +56,8 @@ CREATE TABLE skills (
 CREATE INDEX idx_skills_rank ON skills(rank);
 CREATE INDEX idx_skills_score ON skills(score DESC);
 CREATE INDEX idx_skills_slug ON skills(slug);
+-- Migration (run once on existing D1 if pipeline hasn't rebuilt the table):
+-- ALTER TABLE skills ADD COLUMN category TEXT;
 
 DROP TABLE IF EXISTS agents;
 
@@ -149,16 +153,18 @@ CREATE INDEX IF NOT EXISTS idx_rh_tool ON rank_history(tool_full_name, tool_type
 CREATE TABLE IF NOT EXISTS email_subscribers (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   email TEXT NOT NULL,
-  source TEXT NOT NULL DEFAULT 'homepage',  -- 'homepage', 'blog', 'embed'
+  source TEXT NOT NULL DEFAULT 'homepage',  -- 'homepage', 'blog', 'embed', 'subscribe-page', etc.
   subscribed_at TEXT NOT NULL DEFAULT (datetime('now')),
   confirmed INTEGER NOT NULL DEFAULT 0,     -- 0 = unconfirmed, 1 = confirmed
-  ip_hash TEXT                              -- SHA-256 of subscriber IP (not raw)
+  ip_hash TEXT,                             -- SHA-256 of subscriber IP (not raw)
+  utm_params TEXT                           -- JSON blob of UTM params at subscribe time
 );
 CREATE UNIQUE INDEX IF NOT EXISTS idx_email_subscribers_email ON email_subscribers(email);
 CREATE INDEX IF NOT EXISTS idx_email_subscribers_source ON email_subscribers(source);
 -- Migration (run once on existing D1):
 -- ALTER TABLE email_subscribers ADD COLUMN confirmed INTEGER NOT NULL DEFAULT 0;
 -- ALTER TABLE email_subscribers ADD COLUMN ip_hash TEXT;
+-- ALTER TABLE email_subscribers ADD COLUMN utm_params TEXT;
 
 -- Install checkpoints — tracks our own skill install counts over time (from skills.sh)
 -- survives pipeline DROP/CREATE cycles

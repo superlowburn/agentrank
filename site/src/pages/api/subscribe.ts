@@ -92,6 +92,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
   let email: string | undefined;
   let source: string = 'homepage';
   let honeypot: string = '';
+  let utmParams: Record<string, string> | null = null;
 
   const ct = request.headers.get('content-type') || '';
   try {
@@ -100,6 +101,15 @@ export const POST: APIRoute = async ({ request, locals }) => {
       email = data.email?.trim();
       source = data.source?.trim() || 'homepage';
       honeypot = data._hp?.trim() || '';
+      if (data.utm_params && typeof data.utm_params === 'object') {
+        const filtered = Object.fromEntries(
+          Object.entries(data.utm_params as Record<string, unknown>)
+            .filter(([k, v]) => typeof v === 'string' && v.length > 0 && v.length <= 200
+              && /^utm_(source|medium|campaign|content|term)$/.test(k))
+            .map(([k, v]) => [k, (v as string).slice(0, 200)])
+        );
+        if (Object.keys(filtered).length > 0) utmParams = filtered;
+      }
     } else {
       const fd = await request.formData();
       email = (fd.get('email') as string | null)?.trim();
@@ -122,7 +132,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
     return json({ success: false, error: 'Invalid email address.' }, 400, corsOrigin);
   }
 
-  const validSources = ['homepage', 'footer', 'blog', 'embed'];
+  const validSources = ['homepage', 'footer', 'blog', 'blog-index', 'embed', 'subscribe-page'];
   if (!validSources.includes(source)) source = 'homepage';
 
   const clientIP = getClientIP(request);
@@ -139,8 +149,8 @@ export const POST: APIRoute = async ({ request, locals }) => {
 
   try {
     await env.DB.prepare(
-      'INSERT INTO email_subscribers (email, source, ip_hash) VALUES (?, ?, ?)'
-    ).bind(email.toLowerCase(), source, ipHash).run();
+      'INSERT INTO email_subscribers (email, source, ip_hash, utm_params) VALUES (?, ?, ?, ?)'
+    ).bind(email.toLowerCase(), source, ipHash, utmParams ? JSON.stringify(utmParams) : null).run();
 
     return json({ success: true }, 201, corsOrigin);
   } catch (err: any) {
