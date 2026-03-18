@@ -1,0 +1,733 @@
+---
+import Base from '../../../layouts/Base.astro';
+
+export const prerender = false;
+
+const { env } = Astro.locals.runtime;
+
+// Parse session cookie
+function parseCookies(header: string): Record<string, string> {
+  return Object.fromEntries(
+    header.split('; ').filter(Boolean).map((c) => {
+      const i = c.indexOf('=');
+      return [c.slice(0, i), c.slice(i + 1)];
+    })
+  );
+}
+
+const cookies = parseCookies(Astro.request.headers.get('cookie') || '');
+const rawSession = cookies.claim_session ? decodeURIComponent(cookies.claim_session) : null;
+
+if (!rawSession) {
+  return Astro.redirect('/pricing/?ref=dashboard_noauth');
+}
+
+const colonIdx = rawSession.indexOf(':');
+const sessionSlug = rawSession.slice(0, colonIdx);
+const githubUsername = rawSession.slice(colonIdx + 1);
+
+if (!githubUsername) {
+  return Astro.redirect('/pricing/?ref=dashboard_noauth');
+}
+
+// Get all verified claims for this user
+const claimsResult = await env.DB.prepare(
+  'SELECT tool_full_name FROM claims WHERE github_username = ? AND verified = 1 AND status = ? ORDER BY created_at ASC'
+).bind(githubUsername, 'active').all();
+
+const claimedToolsList = (claimsResult.results || []) as { tool_full_name: string }[];
+
+if (claimedToolsList.length === 0) {
+  return Astro.redirect('/pricing/?ref=dashboard_unclaimed');
+}
+
+// Which tool to show
+const urlParams = new URL(Astro.request.url).searchParams;
+const requestedSlug = urlParams.get('slug');
+const requestedFullName = requestedSlug ? requestedSlug.replace('--', '/') : null;
+
+let currentFullName: string;
+if (requestedFullName && claimedToolsList.some((c) => c.tool_full_name === requestedFullName)) {
+  currentFullName = requestedFullName;
+} else {
+  const cookieFullName = sessionSlug.replace('--', '/');
+  currentFullName = claimedToolsList.some((c) => c.tool_full_name === cookieFullName)
+    ? cookieFullName
+    : claimedToolsList[0].tool_full_name;
+}
+
+const currentSlug = currentFullName.replace('/', '--');
+
+// Tool data
+const tool = await env.DB.prepare(
+  `SELECT full_name, url, description, rank, score, stars, open_issues, closed_issues,
+          contributors, dependents, last_commit_at, language, license
+   FROM tools WHERE full_name = ?`
+).bind(currentFullName).first() as Record<string, unknown> | null;
+
+if (!tool) {
+  return Astro.redirect('/pricing/?ref=dashboard_unclaimed');
+}
+
+// Claim enrichment
+const claim = await env.DB.prepare(
+  'SELECT tagline, category, logo_url, is_deprecated FROM claims WHERE tool_full_name = ? AND github_username = ? AND verified = 1'
+).bind(currentFullName, githubUsername).first() as Record<string, unknown> | null;
+
+// 7-day page views
+const viewResult = await env.DB.prepare(
+  `SELECT COUNT(*) as count FROM request_log
+   WHERE path LIKE ? AND type = 'page' AND ts >= datetime('now', '-7 days')`
+).bind(`/tool/${currentSlug}%`).first() as { count: number } | null;
+
+const viewCount7d = viewResult?.count ?? 0;
+
+// Total tools for rank context
+const totalResult = await env.DB.prepare(
+  'SELECT COUNT(*) as count FROM tools WHERE is_archived = 0'
+).first() as { count: number } | null;
+
+const totalTools = (totalResult?.count ?? 0).toLocaleString();
+
+// Score signals
+const stars = (tool.stars as number) || 0;
+const openIssues = (tool.open_issues as number) || 0;
+const closedIssues = (tool.closed_issues as number) || 0;
+const contributors = (tool.contributors as number) || 0;
+const dependents = (tool.dependents as number) || 0;
+const lastCommitAt = tool.last_commit_at as string | null;
+const score = Math.round((tool.score as number) || 0);
+const rank = (tool.rank as number) || 0;
+
+const starsScore = Math.min(1, Math.log10(Math.max(1, stars)) / 4);
+const totalIssues = openIssues + closedIssues;
+const issueHealth = totalIssues > 0 ? closedIssues / totalIssues : 0.5;
+const contributorsScore = Math.min(1, Math.log10(Math.max(1, contributors)) / 2);
+const dependentsScore = Math.min(1, Math.log10(Math.max(1, dependents)) / 3);
+
+let freshnessScore = 0;
+let daysSinceCommit: number | null = null;
+if (lastCommitAt) {
+  daysSinceCommit = Math.floor((Date.now() - new Date(lastCommitAt).getTime()) / (1000 * 60 * 60 * 24));
+  freshnessScore = Math.max(0, 1 - daysSinceCommit / 180);
+}
+
+// Format last commit
+function formatDaysAgo(days: number | null): string {
+  if (days === null) return 'unknown';
+  if (days === 0) return 'today';
+  if (days === 1) return '1 day ago';
+  if (days < 30) return `${days} days ago`;
+  const months = Math.floor(days / 30);
+  if (months === 1) return '1 month ago';
+  if (months < 12) return `${months} months ago`;
+  const years = Math.floor(months / 12);
+  return years === 1 ? '1 year ago' : `${years} years ago`;
+}
+
+// Listing completeness
+const hasLogo = !!claim?.logo_url;
+const hasTagline = !!claim?.tagline;
+const hasCategory = !!claim?.category;
+const isVerifiedPro = false; // free tier only in this build
+
+const tagline = (claim?.tagline as string) || '';
+const category = (claim?.category as string) || '';
+const logoUrl = (claim?.logo_url as string) || '';
+
+const claimedToolsForSwitcher = claimedToolsList.map((c) => ({
+  full_name: c.tool_full_name,
+  slug: c.tool_full_name.replace('/', '--'),
+}));
+---
+
+<Base title={`Publisher Dashboard — ${currentFullName} — AgentRank`} description="AgentRank publisher dashboard">
+  <div class="dash-header">
+    <div class="dash-title-row">
+      <h2>Publisher Dashboard</h2>
+      {isVerifiedPro && <span class="pro-badge">Verified Publisher</span>}
+    </div>
+    <div class="tool-row">
+      <span class="tool-name">{currentFullName}</span>
+      <div class="tool-actions">
+        <a href={`/tool/${currentSlug}/`} class="action-link">View listing</a>
+        <a href={`/claim/${currentSlug}/`} class="action-link">Edit listing</a>
+        {claimedToolsForSwitcher.length > 1 && (
+          <div class="switcher-wrap">
+            <select id="tool-switcher" class="tool-switcher">
+              {claimedToolsForSwitcher.map((t) => (
+                <option value={t.slug} selected={t.full_name === currentFullName}>
+                  {t.full_name}
+                </option>
+              ))}
+            </select>
+          </div>
+        )}
+      </div>
+    </div>
+  </div>
+
+  <div class="stats-row">
+    <div class="stat-card">
+      <div class="stat-label">AgentRank Score</div>
+      <div class="stat-value score-value">{score}</div>
+      <div class="stat-sub">of 100</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Global Rank</div>
+      <div class="stat-value">#{rank.toLocaleString()}</div>
+      <div class="stat-sub">of {totalTools}+</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Views (7d)</div>
+      <div class="stat-value">{viewCount7d.toLocaleString()}</div>
+      <div class="stat-sub">last 7 days</div>
+    </div>
+  </div>
+
+  <!-- Locked analytics teaser -->
+  <div class="locked-panel">
+    <div class="locked-panel-header">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+        <path d="M7 1C5.343 1 4 2.343 4 4v1H3a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V6a1 1 0 0 0-1-1h-1V4c0-1.657-1.343-3-3-3zm0 1.5c.828 0 1.5.672 1.5 1.5v1h-3V4c0-.828.672-1.5 1.5-1.5z" fill="currentColor"/>
+      </svg>
+      Unlock publisher analytics
+    </div>
+    <p class="locked-desc">See score trend over time, referral sources, comparison events, install attribution, and set score-change email alerts.</p>
+    <div class="locked-charts">
+      <div class="locked-chart">
+        <div class="chart-fake">
+          <div class="chart-fake-bar" style="height:40%"></div>
+          <div class="chart-fake-bar" style="height:55%"></div>
+          <div class="chart-fake-bar" style="height:70%"></div>
+          <div class="chart-fake-bar" style="height:65%"></div>
+          <div class="chart-fake-bar" style="height:80%"></div>
+          <div class="chart-fake-bar" style="height:75%"></div>
+          <div class="chart-fake-bar" style="height:90%"></div>
+        </div>
+        <div class="chart-lock-label">
+          <svg width="12" height="12" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+            <path d="M7 1C5.343 1 4 2.343 4 4v1H3a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V6a1 1 0 0 0-1-1h-1V4c0-1.657-1.343-3-3-3zm0 1.5c.828 0 1.5.672 1.5 1.5v1h-3V4c0-.828.672-1.5 1.5-1.5z" fill="currentColor"/>
+          </svg>
+          Score trend (30d)
+        </div>
+      </div>
+      <div class="locked-chart">
+        <div class="chart-fake">
+          <div class="chart-fake-bar" style="height:30%"></div>
+          <div class="chart-fake-bar" style="height:60%"></div>
+          <div class="chart-fake-bar" style="height:45%"></div>
+          <div class="chart-fake-bar" style="height:80%"></div>
+          <div class="chart-fake-bar" style="height:50%"></div>
+          <div class="chart-fake-bar" style="height:70%"></div>
+          <div class="chart-fake-bar" style="height:40%"></div>
+        </div>
+        <div class="chart-lock-label">
+          <svg width="12" height="12" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+            <path d="M7 1C5.343 1 4 2.343 4 4v1H3a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V6a1 1 0 0 0-1-1h-1V4c0-1.657-1.343-3-3-3zm0 1.5c.828 0 1.5.672 1.5 1.5v1h-3V4c0-.828.672-1.5 1.5-1.5z" fill="currentColor"/>
+          </svg>
+          Referral sources
+        </div>
+      </div>
+    </div>
+    <a href="/pricing/" class="upgrade-cta">Upgrade to Verified Publisher Pro — $29/mo &rarr;</a>
+  </div>
+
+  <!-- Score breakdown -->
+  <div class="section">
+    <div class="section-header">
+      Score breakdown
+      <a href="/methodology/" class="section-link">How to improve &rarr;</a>
+    </div>
+    <div class="signals">
+      <div class="signal-row">
+        <span class="signal-label">Stars</span>
+        <div class="signal-bar-wrap">
+          <div class="signal-bar" style={`width:${Math.round(starsScore * 100)}%`}></div>
+        </div>
+        <span class="signal-val">{starsScore.toFixed(2)}</span>
+        <span class="signal-detail">{stars.toLocaleString()} stars</span>
+      </div>
+      <div class="signal-row">
+        <span class="signal-label">Freshness</span>
+        <div class="signal-bar-wrap">
+          <div class="signal-bar" style={`width:${Math.round(freshnessScore * 100)}%`}></div>
+        </div>
+        <span class="signal-val">{freshnessScore.toFixed(2)}</span>
+        <span class="signal-detail">Last commit: {formatDaysAgo(daysSinceCommit)}</span>
+      </div>
+      <div class="signal-row">
+        <span class="signal-label">Issue health</span>
+        <div class="signal-bar-wrap">
+          <div class={`signal-bar ${issueHealth < 0.4 ? 'signal-bar-warn' : ''}`} style={`width:${Math.round(issueHealth * 100)}%`}></div>
+        </div>
+        <span class="signal-val">{issueHealth.toFixed(2)}</span>
+        <span class="signal-detail">
+          {openIssues} open, {closedIssues} closed
+          {issueHealth < 0.4 && <span class="signal-hint"> — needs work</span>}
+        </span>
+      </div>
+      <div class="signal-row">
+        <span class="signal-label">Contributors</span>
+        <div class="signal-bar-wrap">
+          <div class="signal-bar" style={`width:${Math.round(contributorsScore * 100)}%`}></div>
+        </div>
+        <span class="signal-val">{contributorsScore.toFixed(2)}</span>
+        <span class="signal-detail">{contributors} contributor{contributors !== 1 ? 's' : ''}</span>
+      </div>
+      <div class="signal-row">
+        <span class="signal-label">Dependents</span>
+        <div class="signal-bar-wrap">
+          <div class="signal-bar" style={`width:${Math.round(dependentsScore * 100)}%`}></div>
+        </div>
+        <span class="signal-val">{dependentsScore.toFixed(2)}</span>
+        <span class="signal-detail">{dependents.toLocaleString()} dependent repos</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Listing status -->
+  <div class="section">
+    <div class="section-header">Listing status</div>
+    <div class="checklist">
+      <div class="check-row check-done">
+        <span class="check-icon">&#10003;</span>
+        <span>Claimed by <strong>@{githubUsername}</strong></span>
+      </div>
+      <div class={`check-row ${hasLogo ? 'check-done' : 'check-missing'}`}>
+        <span class="check-icon">{hasLogo ? '✓' : '✗'}</span>
+        <span>
+          Logo
+          {!hasLogo && <a href={`/claim/${currentSlug}/`} class="check-link">Add logo &rarr;</a>}
+          {hasLogo && <span class="check-val">{logoUrl.replace(/^https?:\/\//, '').slice(0, 40)}{logoUrl.length > 40 ? '...' : ''}</span>}
+        </span>
+      </div>
+      <div class={`check-row ${hasTagline ? 'check-done' : 'check-missing'}`}>
+        <span class="check-icon">{hasTagline ? '✓' : '✗'}</span>
+        <span>
+          Tagline
+          {!hasTagline && <a href={`/claim/${currentSlug}/`} class="check-link">Add tagline &rarr;</a>}
+          {hasTagline && <span class="check-val">"{tagline}"</span>}
+        </span>
+      </div>
+      <div class={`check-row ${hasCategory ? 'check-done' : 'check-missing'}`}>
+        <span class="check-icon">{hasCategory ? '✓' : '✗'}</span>
+        <span>
+          Category
+          {!hasCategory && <a href={`/claim/${currentSlug}/`} class="check-link">Add category &rarr;</a>}
+          {hasCategory && <span class="check-val">{category}</span>}
+        </span>
+      </div>
+      <div class="check-row check-locked">
+        <span class="check-icon check-icon-lock">
+          <svg width="10" height="10" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+            <path d="M7 1C5.343 1 4 2.343 4 4v1H3a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V6a1 1 0 0 0-1-1h-1V4c0-1.657-1.343-3-3-3zm0 1.5c.828 0 1.5.672 1.5 1.5v1h-3V4c0-.828.672-1.5 1.5-1.5z" fill="currentColor"/>
+          </svg>
+        </span>
+        <span>
+          Verified Publisher badge
+          <a href="/pricing/" class="check-link">Upgrade to add badge &rarr;</a>
+        </span>
+      </div>
+    </div>
+    <a href={`/claim/${currentSlug}/`} class="edit-link">Edit listing &rarr;</a>
+  </div>
+</Base>
+
+<script>
+  const switcher = document.getElementById('tool-switcher') as HTMLSelectElement | null;
+  if (switcher) {
+    switcher.addEventListener('change', () => {
+      const slug = switcher.value;
+      window.location.href = `/dashboard/publisher/?slug=${slug}`;
+    });
+  }
+</script>
+
+<style>
+  .dash-header {
+    margin-bottom: 2rem;
+  }
+
+  .dash-title-row {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .dash-title-row h2 {
+    font-size: 1.2rem;
+    font-weight: 700;
+  }
+
+  .pro-badge {
+    font-size: 0.7rem;
+    font-weight: 700;
+    background: var(--accent);
+    color: #000;
+    padding: 0.2rem 0.5rem;
+    border-radius: 3px;
+    letter-spacing: 0.04em;
+  }
+
+  .tool-row {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .tool-name {
+    font-size: 0.9rem;
+    color: var(--accent);
+    font-weight: 600;
+  }
+
+  .tool-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+  }
+
+  .action-link {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    text-decoration: none;
+  }
+
+  .action-link:hover {
+    color: var(--text);
+  }
+
+  .switcher-wrap {
+    display: inline-flex;
+  }
+
+  .tool-switcher {
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 0.2rem 0.5rem;
+    color: var(--text);
+    font-family: inherit;
+    font-size: 0.78rem;
+    cursor: pointer;
+  }
+
+  .tool-switcher:focus {
+    outline: none;
+    border-color: var(--accent);
+  }
+
+  /* Stats row */
+  .stats-row {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+  }
+
+  .stat-card {
+    flex: 1;
+    min-width: 140px;
+    max-width: 200px;
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 1rem 1.25rem;
+  }
+
+  .stat-label {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    margin-bottom: 0.35rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .stat-value {
+    font-size: 1.75rem;
+    font-weight: 700;
+    line-height: 1;
+    margin-bottom: 0.25rem;
+  }
+
+  .score-value {
+    color: var(--accent);
+  }
+
+  .stat-sub {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+  }
+
+  /* Locked analytics panel */
+  .locked-panel {
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 1.25rem;
+    margin-bottom: 2rem;
+  }
+
+  .locked-panel-header {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--accent);
+    margin-bottom: 0.5rem;
+  }
+
+  .locked-desc {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    margin-bottom: 1rem;
+    line-height: 1.5;
+  }
+
+  .locked-charts {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  .locked-chart {
+    flex: 1;
+    min-height: 80px;
+    background: var(--bg-hover);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .chart-fake {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: flex-end;
+    gap: 3px;
+    padding: 8px;
+    filter: blur(4px);
+    opacity: 0.4;
+  }
+
+  .chart-fake-bar {
+    flex: 1;
+    background: var(--accent);
+    border-radius: 2px 2px 0 0;
+    min-width: 8px;
+  }
+
+  .chart-lock-label {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    font-weight: 600;
+  }
+
+  .upgrade-cta {
+    display: inline-block;
+    background: var(--accent);
+    color: #000;
+    font-weight: 700;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    text-decoration: none;
+    font-size: 0.82rem;
+    letter-spacing: 0.01em;
+  }
+
+  .upgrade-cta:hover {
+    opacity: 0.88;
+    text-decoration: none;
+  }
+
+  /* Sections */
+  .section {
+    margin-bottom: 2rem;
+  }
+
+  .section-header {
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-muted);
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .section-link {
+    font-size: 0.75rem;
+    color: var(--accent);
+    text-decoration: none;
+    text-transform: none;
+    letter-spacing: 0;
+    font-weight: 600;
+  }
+
+  .section-link:hover {
+    text-decoration: underline;
+  }
+
+  /* Score signals */
+  .signals {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .signal-row {
+    display: grid;
+    grid-template-columns: 100px 1fr 44px auto;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .signal-label {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    white-space: nowrap;
+  }
+
+  .signal-bar-wrap {
+    height: 6px;
+    background: var(--bg-hover);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+
+  .signal-bar {
+    height: 100%;
+    background: var(--accent);
+    border-radius: 3px;
+    min-width: 2px;
+    transition: width 0.3s ease;
+  }
+
+  .signal-bar-warn {
+    background: #f59e0b;
+  }
+
+  .signal-val {
+    font-size: 0.78rem;
+    font-weight: 600;
+    text-align: right;
+  }
+
+  .signal-detail {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    white-space: nowrap;
+  }
+
+  .signal-hint {
+    color: #f59e0b;
+  }
+
+  /* Checklist */
+  .checklist {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .check-row {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-size: 0.82rem;
+  }
+
+  .check-icon {
+    width: 16px;
+    flex-shrink: 0;
+    text-align: center;
+    font-size: 0.85rem;
+  }
+
+  .check-icon-lock {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .check-done .check-icon {
+    color: var(--accent);
+  }
+
+  .check-missing .check-icon {
+    color: #f87171;
+  }
+
+  .check-locked {
+    color: var(--text-muted);
+  }
+
+  .check-val {
+    color: var(--text-muted);
+    font-size: 0.78rem;
+    margin-left: 0.25rem;
+  }
+
+  .check-link {
+    font-size: 0.75rem;
+    color: var(--accent);
+    text-decoration: none;
+    margin-left: 0.5rem;
+    font-weight: 600;
+  }
+
+  .check-link:hover {
+    text-decoration: underline;
+  }
+
+  .edit-link {
+    display: inline-block;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--accent);
+    text-decoration: none;
+  }
+
+  .edit-link:hover {
+    text-decoration: underline;
+  }
+
+  @media (max-width: 600px) {
+    .stats-row {
+      flex-direction: column;
+    }
+
+    .stat-card {
+      max-width: 100%;
+    }
+
+    .locked-charts {
+      flex-direction: column;
+    }
+
+    .signal-row {
+      grid-template-columns: 90px 1fr 40px;
+    }
+
+    .signal-detail {
+      display: none;
+    }
+  }
+</style>
