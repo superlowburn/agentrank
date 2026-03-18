@@ -1,6 +1,7 @@
 # AgentRank — Product Hunt Launch Draft
 
 > **STATUS: DRAFT — Do NOT submit. Steve must review and post.**
+> Last updated: 2026-03-17 by Vibe Coder. Screenshots captured and saved to `scripts/ph-screenshots/`.
 
 ---
 
@@ -24,15 +25,20 @@ AgentRank indexes 25,000+ MCP servers, AI skills, and agent tools — scored dai
 
 Your AI assistant recommends tools from frozen training data. It can't tell you if something was abandoned last week, or that something better shipped yesterday. **AgentRank fixes that.**
 
-We crawl GitHub nightly for every MCP server and agent tool in the ecosystem. Each one gets an AgentRank score (0–100) based on five real signals:
+We crawl GitHub nightly for every MCP server and agent tool in the ecosystem — and pull in skills from Glama and skills.sh. Each one gets an AgentRank score (0–100) based on eight real signals:
 
+- **Freshness** (20%) — days since last commit (anything over 90 days starts decaying hard)
+- **Issue health** (20%) — closed/total ratio (responsive maintainer = healthy tool)
 - **Stars** — raw popularity
-- **Freshness** — days since last commit (anything over 90 days starts decaying)
-- **Issue health** — closed/total ratio (responsive maintainer = healthy tool)
 - **Contributors** — bus factor risk
 - **Dependents** — how many other repos rely on this
+- **Registry downloads** — npm/PyPI install counts when available
+- **Platform breadth** — how many AI platforms support this tool
+- **Description quality** — is it documented enough to know what it does?
 
-The result: a live, daily-updating ranked index of 25,000+ tools. Browse it at agentrank-ai.com or install the MCP server and let your AI use it automatically.
+All weights and formulas are public at agentrank-ai.com/methodology — no black boxes, no pay-to-play.
+
+The result: a live, daily-updating ranked index of 25,000+ tools and 500 top skills. Browse it at agentrank-ai.com or install the MCP server and let your AI use it automatically.
 
 **One-line install:**
 ```
@@ -57,42 +63,22 @@ AgentRank is open source: github.com/superlowburn/agentrank
 
 ## 2. Screenshots
 
-> **ACTION REQUIRED: Capture these 6 screenshots from agentrank-ai.com before launch.**
-> Recommended size: 1270×760px. Use browser zoom at 100%, clean incognito window.
+> **Screenshots captured 2026-03-17. Files in `scripts/ph-screenshots/` at 1440×900px (2x retina via Chrome headless).**
+> PH recommends 1270×760px — consider resizing before upload, or crop to show the best portion.
 
-### Screenshot 1 — Main Leaderboard (agentrank-ai.com)
-**Filename:** `ph-01-leaderboard.png`
-- Show top 20 skills/tools with scores, ranks, and category badges
-- Ensure score bars are visible and the "Install" CTA strip is in frame
-- Best captured at ~1440px wide
+| File | Page | What it shows |
+|------|------|---------------|
+| `homepage.png` | agentrank-ai.com | Skills leaderboard — hero CTA, install command, ranked table with scores & platform badges |
+| `skill-detail.png` | /skill/glama-microsoft--playwright-mcp/ | Skill detail — signal breakdown bars, "How to Improve" section, badge embed code |
+| `tool-detail-radar.png` | /tool/CoplayDev--unity-mcp/ | Tool detail — radar chart + ecosystem tags + per-signal breakdown with weights |
+| `category.png` | /category/mcp-server/ | Category page — tools filtered by MCP Server category |
+| `api-docs.png` | /api-docs/ | REST API docs — endpoints, parameters, example responses |
 
-### Screenshot 2 — Tool Detail Page (agentrank-ai.com/tool/[top-tool])
-**Filename:** `ph-02-tool-detail.png`
-- Pick a top-ranked tool with a high score (90+)
-- Show the signal breakdown bars (Stars, Freshness, Issue Health, Contributors, Dependents)
-- Ensure the score badge and GitHub link are visible
+**Suggested PH upload order:** homepage → tool-detail-radar → skill-detail → category → api-docs
+(homepage first = it becomes the social card image when the listing is shared)
 
-### Screenshot 3 — Category Browse (agentrank-ai.com/category)
-**Filename:** `ph-03-categories.png`
-- Show the full category grid with domain icons and tool/skill counts
-- Demonstrates breadth of the index
-
-### Screenshot 4 — MCP Server in Action (terminal screenshot)
-**Filename:** `ph-04-mcp-install.png`
-- Show: `claude mcp add agentrank -- npx -y agentrank-mcp-server` in terminal
-- Then a Claude Code session where the AI uses `search` to find a tool
-- Demonstrates zero-config AI integration
-
-### Screenshot 5 — API Docs (agentrank-ai.com/api-docs)
-**Filename:** `ph-05-api.png`
-- Show the v1 API endpoint documentation
-- Highlight `/api/search` and `/api/tool/{slug}` endpoints
-- Good for developer audience on PH
-
-### Screenshot 6 — Daily Movers (agentrank-ai.com/movers)
-**Filename:** `ph-06-movers.png`
-- Show tools with biggest score changes in the last 24h
-- Demonstrates the "live" and "daily-updating" claim
+**Still needed (manual capture recommended):**
+- `ph-mcp-install.png` — terminal showing `claude mcp add agentrank -- npx -y agentrank-mcp-server` followed by an AI using it. This is the killer screenshot for a developer audience.
 
 ---
 
@@ -126,7 +112,7 @@ The MCP server is the part I'm most excited about. Install it once and your AI a
 
 A few things I'd love your feedback on:
 
-1. **The scoring weights** — Stars 15%, Freshness 25%, Issue Health 25%, Contributors 10%, Dependents 25%. Does this feel right to you? What signal am I missing?
+1. **The scoring weights** — Freshness 20%, Issue Health 20%, Stars, Contributors, Dependents, Registry Downloads, Platform Breadth, Description Quality. The weights are opinionated by design — does the ordering feel right to you? What signal am I missing?
 2. **The claim flow** — Maintainers can claim their listing and add context. Is this valuable or noise?
 3. **Categories** — Right now it's one big ranked list with filters. Worth splitting into dedicated category leaderboards?
 
@@ -186,13 +172,16 @@ agentrank-ai.com
 ```
 How AgentRank scores 25,000+ tools:
 
-• Stars (15%) — raw popularity
-• Freshness (25%) — days since last commit
-• Issue health (25%) — closed/total ratio
-• Contributors (10%) — bus factor
-• Dependents (25%) — who relies on this
+• Freshness (20%) — days since last commit
+• Issue health (20%) — closed/total ratio
+• Dependents — who relies on this
+• Stars — raw popularity
+• Contributors — bus factor
+• Registry downloads — npm/PyPI installs
+• Platform breadth — how many AI platforms support it
 
-Updated nightly. agentrank-ai.com
+8 signals, transparent weights, updated nightly.
+agentrank-ai.com/methodology
 ```
 
 ### Tweet E — Ask for upvotes (post at ~8h mark if momentum needs a push)
