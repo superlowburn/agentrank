@@ -24,6 +24,7 @@ const STATIC_PAGES = [
   { path: '/methodology/', changefreq: 'monthly' },
   { path: '/integrations/', changefreq: 'weekly' },
   { path: '/embed/', changefreq: 'monthly' },
+  { path: '/subscribe/', changefreq: 'monthly' },
 ];
 
 // Auto-discover blog posts at build time via Vite glob
