@@ -200,7 +200,7 @@ const licenseClass = getLicenseClass(tool.license);
 
 const SITE_URL = 'https://agentrank-ai.com';
 const badgeUrl = `${SITE_URL}/api/badge/tool/${slug}`;
-const pageUrl = `${SITE_URL}/tool/${slug}`;
+const pageUrl = `${SITE_URL}/tool/${slug}/`;
 const mdSnippet = `[![AgentRank](${badgeUrl})](${pageUrl})`;
 const htmlSnippet = `<a href="${pageUrl}"><img src="${badgeUrl}" alt="AgentRank"></a>`;
 const widgetIframeSnippet = `<iframe src="${SITE_URL}/api/embed/${slug}.html" width="340" height="170" frameborder="0" style="border-radius:6px;border:none;overflow:hidden;"></iframe>`;

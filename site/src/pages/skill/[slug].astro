@@ -111,7 +111,7 @@ const githubLink = skill.github_repo
 const advice = skill.score <= 85 ? getSkillAdvice(skill, repoData) : [];
 const SITE_URL = 'https://agentrank-ai.com';
 const badgeUrl = `${SITE_URL}/api/badge/skill/${slug}`;
-const pageUrl = `${SITE_URL}/skill/${slug}`;
+const pageUrl = `${SITE_URL}/skill/${slug}/`;
 const mdSnippet = `[![AgentRank](${badgeUrl})](${pageUrl})`;
 const htmlSnippet = `<a href="${pageUrl}"><img src="${badgeUrl}" alt="AgentRank"></a>`;
 
