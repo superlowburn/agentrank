@@ -15,6 +15,23 @@ if (!env.DASH_TOKEN) {
 } else {
   try {
     const db = env.DB;
+
+    function totalsQuery(window: string) {
+      return db.prepare(`
+        SELECT
+          SUM(CASE WHEN type='page' THEN 1 ELSE 0 END) AS page_visits,
+          SUM(CASE WHEN type='api' THEN 1 ELSE 0 END) AS api_calls,
+          SUM(CASE WHEN type='mcp' THEN 1 ELSE 0 END) AS mcp_calls,
+          COUNT(*) AS total,
+          SUM(CASE WHEN is_bot = 0 AND type='page' THEN 1 ELSE 0 END) AS human_page_visits,
+          SUM(CASE WHEN is_bot = 0 AND type='api' THEN 1 ELSE 0 END) AS human_api_calls,
+          SUM(CASE WHEN is_bot = 0 AND type='mcp' THEN 1 ELSE 0 END) AS human_mcp_calls,
+          SUM(CASE WHEN is_bot = 0 THEN 1 ELSE 0 END) AS human_total,
+          SUM(CASE WHEN is_bot = 1 THEN 1 ELSE 0 END) AS bot_total
+        FROM request_log WHERE ts > datetime('now', '${window}')
+      `).first();
+    }
+
     const [
       totals24h,
       totals7d,
@@ -26,30 +43,9 @@ if (!env.DASH_TOKEN) {
       dailyTraffic30d,
       emailSubscribers,
     ] = await Promise.all([
-      db.prepare(`
-        SELECT
-          SUM(CASE WHEN type='page' THEN 1 ELSE 0 END) AS page_visits,
-          SUM(CASE WHEN type='api' THEN 1 ELSE 0 END) AS api_calls,
-          SUM(CASE WHEN type='mcp' THEN 1 ELSE 0 END) AS mcp_calls,
-          COUNT(*) AS total
-        FROM request_log WHERE ts > datetime('now', '-1 day')
-      `).first(),
-      db.prepare(`
-        SELECT
-          SUM(CASE WHEN type='page' THEN 1 ELSE 0 END) AS page_visits,
-          SUM(CASE WHEN type='api' THEN 1 ELSE 0 END) AS api_calls,
-          SUM(CASE WHEN type='mcp' THEN 1 ELSE 0 END) AS mcp_calls,
-          COUNT(*) AS total
-        FROM request_log WHERE ts > datetime('now', '-7 days')
-      `).first(),
-      db.prepare(`
-        SELECT
-          SUM(CASE WHEN type='page' THEN 1 ELSE 0 END) AS page_visits,
-          SUM(CASE WHEN type='api' THEN 1 ELSE 0 END) AS api_calls,
-          SUM(CASE WHEN type='mcp' THEN 1 ELSE 0 END) AS mcp_calls,
-          COUNT(*) AS total
-        FROM request_log WHERE ts > datetime('now', '-30 days')
-      `).first(),
+      totalsQuery('-1 day'),
+      totalsQuery('-7 days'),
+      totalsQuery('-30 days'),
       db.prepare(`
         SELECT path, COUNT(*) AS errors
         FROM request_log
@@ -59,7 +55,7 @@ if (!env.DASH_TOKEN) {
       db.prepare(`
         SELECT path, COUNT(*) AS calls, ROUND(AVG(duration_ms), 0) AS avg_ms
         FROM request_log
-        WHERE ts > datetime('now', '-30 days') AND type IN ('api', 'mcp')
+        WHERE ts > datetime('now', '-30 days') AND type IN ('api', 'mcp') AND is_bot = 0
         GROUP BY path ORDER BY calls DESC LIMIT 15
       `).all(),
       db.prepare(`
@@ -67,6 +63,7 @@ if (!env.DASH_TOKEN) {
         FROM request_log
         WHERE ts > datetime('now', '-30 days')
           AND type = 'page'
+          AND is_bot = 0
           AND referrer IS NOT NULL AND referrer != ''
           AND referrer NOT LIKE '%agentrank-ai.com%'
         GROUP BY referrer ORDER BY visits DESC LIMIT 15
@@ -82,7 +79,10 @@ if (!env.DASH_TOKEN) {
           SUM(CASE WHEN type='page' THEN 1 ELSE 0 END) AS page_visits,
           SUM(CASE WHEN type='api' THEN 1 ELSE 0 END) AS api_calls,
           SUM(CASE WHEN type='mcp' THEN 1 ELSE 0 END) AS mcp_calls,
-          COUNT(*) AS total
+          COUNT(*) AS total,
+          SUM(CASE WHEN is_bot = 0 AND type='page' THEN 1 ELSE 0 END) AS human_page_visits,
+          SUM(CASE WHEN is_bot = 0 THEN 1 ELSE 0 END) AS human_total,
+          SUM(CASE WHEN is_bot = 1 THEN 1 ELSE 0 END) AS bot_total
         FROM request_log WHERE ts > datetime('now', '-30 days')
         GROUP BY day ORDER BY day ASC
       `).all(),
@@ -183,6 +183,39 @@ function fmtNum(n: any) {
     .page-header { margin-bottom: 1.5rem; }
     .page-header h1 { font-size: 1.1rem; font-weight: 700; }
     .page-header p { color: var(--text-muted); font-size: 0.82rem; margin-top: 0.25rem; }
+    .bot-toggle-bar {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 1.5rem;
+      padding: 0.6rem 0.9rem;
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      font-size: 0.82rem;
+    }
+    .bot-toggle-bar .mode-label {
+      font-weight: 600;
+    }
+    #bot-toggle-btn {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      border-radius: 4px;
+      padding: 0.3rem 0.65rem;
+      font-size: 0.78rem;
+      cursor: pointer;
+      transition: border-color 0.15s, color 0.15s;
+    }
+    #bot-toggle-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+    .bot-count-badge {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      margin-left: auto;
+    }
   </style>
 
   <div class="page-header">
@@ -196,36 +229,52 @@ function fmtNum(n: any) {
 
   {metrics && (
     <>
+      <!-- Bot/Human toggle -->
+      <div class="bot-toggle-bar">
+        <span class="mode-label" id="mode-label">Human traffic only</span>
+        <button id="bot-toggle-btn">Show all (incl. bots)</button>
+        <span class="bot-count-badge" id="bot-badge">
+          Bots (30d): {fmtNum(metrics.totals30d?.bot_total ?? 0)} &middot;
+          Humans (30d): {fmtNum(metrics.totals30d?.human_total ?? 0)}
+        </span>
+      </div>
+
       <!-- Summary Stats -->
       <section>
         <h2>Traffic Overview</h2>
         <div class="dash-grid">
           <div class="stat-card">
-            <div class="label">Total requests (24h)</div>
-            <div class="value">{fmtNum(metrics.totals24h?.total)}</div>
-            <div class="sub">
-              {fmtNum(metrics.totals24h?.page_visits)} pages &middot;
-              {fmtNum(metrics.totals24h?.api_calls)} API &middot;
-              {fmtNum(metrics.totals24h?.mcp_calls)} MCP
-            </div>
+            <div class="label">Requests (24h)</div>
+            <div class="value"
+              data-human={fmtNum(metrics.totals24h?.human_total)}
+              data-all={fmtNum(metrics.totals24h?.total)}
+            >{fmtNum(metrics.totals24h?.human_total)}</div>
+            <div class="sub"
+              data-human={`${fmtNum(metrics.totals24h?.human_page_visits)} pages · ${fmtNum(metrics.totals24h?.human_api_calls)} API · ${fmtNum(metrics.totals24h?.human_mcp_calls)} MCP`}
+              data-all={`${fmtNum(metrics.totals24h?.page_visits)} pages · ${fmtNum(metrics.totals24h?.api_calls)} API · ${fmtNum(metrics.totals24h?.mcp_calls)} MCP`}
+            >{`${fmtNum(metrics.totals24h?.human_page_visits)} pages · ${fmtNum(metrics.totals24h?.human_api_calls)} API · ${fmtNum(metrics.totals24h?.human_mcp_calls)} MCP`}</div>
           </div>
           <div class="stat-card">
-            <div class="label">Total requests (7d)</div>
-            <div class="value">{fmtNum(metrics.totals7d?.total)}</div>
-            <div class="sub">
-              {fmtNum(metrics.totals7d?.page_visits)} pages &middot;
-              {fmtNum(metrics.totals7d?.api_calls)} API &middot;
-              {fmtNum(metrics.totals7d?.mcp_calls)} MCP
-            </div>
+            <div class="label">Requests (7d)</div>
+            <div class="value"
+              data-human={fmtNum(metrics.totals7d?.human_total)}
+              data-all={fmtNum(metrics.totals7d?.total)}
+            >{fmtNum(metrics.totals7d?.human_total)}</div>
+            <div class="sub"
+              data-human={`${fmtNum(metrics.totals7d?.human_page_visits)} pages · ${fmtNum(metrics.totals7d?.human_api_calls)} API · ${fmtNum(metrics.totals7d?.human_mcp_calls)} MCP`}
+              data-all={`${fmtNum(metrics.totals7d?.page_visits)} pages · ${fmtNum(metrics.totals7d?.api_calls)} API · ${fmtNum(metrics.totals7d?.mcp_calls)} MCP`}
+            >{`${fmtNum(metrics.totals7d?.human_page_visits)} pages · ${fmtNum(metrics.totals7d?.human_api_calls)} API · ${fmtNum(metrics.totals7d?.human_mcp_calls)} MCP`}</div>
           </div>
           <div class="stat-card">
-            <div class="label">Total requests (30d)</div>
-            <div class="value">{fmtNum(metrics.totals30d?.total)}</div>
-            <div class="sub">
-              {fmtNum(metrics.totals30d?.page_visits)} pages &middot;
-              {fmtNum(metrics.totals30d?.api_calls)} API &middot;
-              {fmtNum(metrics.totals30d?.mcp_calls)} MCP
-            </div>
+            <div class="label">Requests (30d)</div>
+            <div class="value"
+              data-human={fmtNum(metrics.totals30d?.human_total)}
+              data-all={fmtNum(metrics.totals30d?.total)}
+            >{fmtNum(metrics.totals30d?.human_total)}</div>
+            <div class="sub"
+              data-human={`${fmtNum(metrics.totals30d?.human_page_visits)} pages · ${fmtNum(metrics.totals30d?.human_api_calls)} API · ${fmtNum(metrics.totals30d?.human_mcp_calls)} MCP`}
+              data-all={`${fmtNum(metrics.totals30d?.page_visits)} pages · ${fmtNum(metrics.totals30d?.api_calls)} API · ${fmtNum(metrics.totals30d?.mcp_calls)} MCP`}
+            >{`${fmtNum(metrics.totals30d?.human_page_visits)} pages · ${fmtNum(metrics.totals30d?.human_api_calls)} API · ${fmtNum(metrics.totals30d?.human_mcp_calls)} MCP`}</div>
           </div>
           <div class="stat-card">
             <div class="label">Email subscribers</div>
@@ -247,18 +296,30 @@ function fmtNum(n: any) {
         <section>
           <h2>Daily Traffic (30d)</h2>
           {(() => {
-            const max = Math.max(...metrics.dailyTraffic30d.map((r: any) => r.total || 0), 1);
+            const maxHuman = Math.max(...metrics.dailyTraffic30d.map((r: any) => r.human_total || 0), 1);
+            const maxAll = Math.max(...metrics.dailyTraffic30d.map((r: any) => r.total || 0), 1);
             return (
-              <div>
-                {metrics.dailyTraffic30d.map((r: any) => (
-                  <div class="chart-bar-row">
-                    <span class="chart-bar-label">{String(r.day).slice(5)}</span>
-                    <div class="chart-bar-track">
-                      <div class="chart-bar-fill" style={`width: ${Math.round((r.total / max) * 100)}%`}></div>
+              <div id="daily-chart">
+                {metrics.dailyTraffic30d.map((r: any) => {
+                  const humanPct = Math.round(((r.human_total || 0) / maxHuman) * 100);
+                  const allPct = Math.round(((r.total || 0) / maxAll) * 100);
+                  return (
+                    <div class="chart-bar-row">
+                      <span class="chart-bar-label">{String(r.day).slice(5)}</span>
+                      <div class="chart-bar-track">
+                        <div class="chart-bar-fill"
+                          style={`width: ${humanPct}%`}
+                          data-human-pct={`${humanPct}%`}
+                          data-all-pct={`${allPct}%`}
+                        ></div>
+                      </div>
+                      <span class="chart-bar-val"
+                        data-human={fmtNum(r.human_total)}
+                        data-all={fmtNum(r.total)}
+                      >{fmtNum(r.human_total)}</span>
                     </div>
-                    <span class="chart-bar-val">{fmtNum(r.total)}</span>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             );
           })()}
@@ -267,7 +328,7 @@ function fmtNum(n: any) {
 
       <!-- Top Referrers -->
       <section>
-        <h2>Top Referral Sources (30d)</h2>
+        <h2>Top Referral Sources (30d, human only)</h2>
         {metrics.topReferrers30d?.length > 0 ? (
           <table>
             <thead>
@@ -289,7 +350,7 @@ function fmtNum(n: any) {
 
       <!-- Top API Endpoints -->
       <section>
-        <h2>Top API Endpoints (30d)</h2>
+        <h2>Top API Endpoints (30d, human only)</h2>
         {metrics.topEndpoints30d?.length > 0 ? (
           <table>
             <thead>
@@ -357,8 +418,32 @@ function fmtNum(n: any) {
 
       <p style="color: var(--text-muted); font-size: 0.75rem;">
         Note: Site visitor counts are also tracked via Cloudflare Web Analytics (real-time, privacy-friendly).
-        API request metrics above come from the request_log D1 table.
+        API request metrics above come from the request_log D1 table. Human-only view excludes known bot UAs.
       </p>
     </>
   )}
 </Base>
+
+<script>
+  const btn = document.getElementById('bot-toggle-btn') as HTMLButtonElement | null;
+  const modeLabel = document.getElementById('mode-label');
+  if (btn) {
+    let showAll = false;
+    btn.addEventListener('click', () => {
+      showAll = !showAll;
+
+      // Toggle stat card values and sub-labels
+      document.querySelectorAll<HTMLElement>('[data-human][data-all]').forEach(el => {
+        el.textContent = showAll ? (el.dataset.all ?? '') : (el.dataset.human ?? '');
+      });
+
+      // Toggle chart bar widths and values
+      document.querySelectorAll<HTMLElement>('[data-human-pct][data-all-pct]').forEach(el => {
+        el.style.width = showAll ? (el.dataset.allPct ?? '0%') : (el.dataset.humanPct ?? '0%');
+      });
+
+      if (modeLabel) modeLabel.textContent = showAll ? 'All traffic (incl. bots)' : 'Human traffic only';
+      btn.textContent = showAll ? 'Show human only' : 'Show all (incl. bots)';
+    });
+  }
+</script>

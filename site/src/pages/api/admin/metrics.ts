@@ -9,6 +9,20 @@ function json(data: any, status = 200) {
   });
 }
 
+const TOTALS_SQL = (window: string) => `
+  SELECT
+    SUM(CASE WHEN type='page' THEN 1 ELSE 0 END) AS page_visits,
+    SUM(CASE WHEN type='api' THEN 1 ELSE 0 END) AS api_calls,
+    SUM(CASE WHEN type='mcp' THEN 1 ELSE 0 END) AS mcp_calls,
+    COUNT(*) AS total,
+    SUM(CASE WHEN is_bot = 0 AND type='page' THEN 1 ELSE 0 END) AS human_page_visits,
+    SUM(CASE WHEN is_bot = 0 AND type='api' THEN 1 ELSE 0 END) AS human_api_calls,
+    SUM(CASE WHEN is_bot = 0 AND type='mcp' THEN 1 ELSE 0 END) AS human_mcp_calls,
+    SUM(CASE WHEN is_bot = 0 THEN 1 ELSE 0 END) AS human_total,
+    SUM(CASE WHEN is_bot = 1 THEN 1 ELSE 0 END) AS bot_total
+  FROM request_log WHERE ts > datetime('now', '${window}')
+`;
+
 export const GET: APIRoute = async ({ locals, url }) => {
   const { env } = (locals as any).runtime;
   const token = url.searchParams.get('token');
@@ -33,33 +47,9 @@ export const GET: APIRoute = async ({ locals, url }) => {
       skillInstalls30d,
       dailyTraffic30d,
     ] = await Promise.all([
-      // Total requests by type
-      db.prepare(`
-        SELECT
-          SUM(CASE WHEN type='page' THEN 1 ELSE 0 END) AS page_visits,
-          SUM(CASE WHEN type='api' THEN 1 ELSE 0 END) AS api_calls,
-          SUM(CASE WHEN type='mcp' THEN 1 ELSE 0 END) AS mcp_calls,
-          COUNT(*) AS total
-        FROM request_log WHERE ts > datetime('now', '-1 day')
-      `).first(),
-
-      db.prepare(`
-        SELECT
-          SUM(CASE WHEN type='page' THEN 1 ELSE 0 END) AS page_visits,
-          SUM(CASE WHEN type='api' THEN 1 ELSE 0 END) AS api_calls,
-          SUM(CASE WHEN type='mcp' THEN 1 ELSE 0 END) AS mcp_calls,
-          COUNT(*) AS total
-        FROM request_log WHERE ts > datetime('now', '-7 days')
-      `).first(),
-
-      db.prepare(`
-        SELECT
-          SUM(CASE WHEN type='page' THEN 1 ELSE 0 END) AS page_visits,
-          SUM(CASE WHEN type='api' THEN 1 ELSE 0 END) AS api_calls,
-          SUM(CASE WHEN type='mcp' THEN 1 ELSE 0 END) AS mcp_calls,
-          COUNT(*) AS total
-        FROM request_log WHERE ts > datetime('now', '-30 days')
-      `).first(),
+      db.prepare(TOTALS_SQL('-1 day')).first(),
+      db.prepare(TOTALS_SQL('-7 days')).first(),
+      db.prepare(TOTALS_SQL('-30 days')).first(),
 
       // Unique IPs
       db.prepare(`SELECT COUNT(DISTINCT ip_hash) AS unique_ips FROM skill_pings WHERE ts > datetime('now', '-1 day')`).first().catch(() => ({ unique_ips: null })),
@@ -77,12 +67,13 @@ export const GET: APIRoute = async ({ locals, url }) => {
         LIMIT 20
       `).all(),
 
-      // Top API endpoints (30d)
+      // Top API endpoints (30d) — human only
       db.prepare(`
         SELECT path, COUNT(*) AS calls, ROUND(AVG(duration_ms), 0) AS avg_ms
         FROM request_log
         WHERE ts > datetime('now', '-30 days')
           AND type IN ('api', 'mcp')
+          AND is_bot = 0
         GROUP BY path
         ORDER BY calls DESC
         LIMIT 20
@@ -94,6 +85,7 @@ export const GET: APIRoute = async ({ locals, url }) => {
         FROM request_log
         WHERE ts > datetime('now', '-30 days')
           AND type = 'page'
+          AND is_bot = 0
           AND referrer IS NOT NULL AND referrer != ''
           AND referrer NOT LIKE '%agentrank-ai.com%'
         GROUP BY referrer
@@ -110,14 +102,17 @@ export const GET: APIRoute = async ({ locals, url }) => {
         ORDER BY unique_installs DESC
       `).all().catch(() => ({ results: [] })),
 
-      // Daily traffic (30d)
+      // Daily traffic (30d) — both total and human
       db.prepare(`
         SELECT
           date(ts) AS day,
           SUM(CASE WHEN type='page' THEN 1 ELSE 0 END) AS page_visits,
           SUM(CASE WHEN type='api' THEN 1 ELSE 0 END) AS api_calls,
           SUM(CASE WHEN type='mcp' THEN 1 ELSE 0 END) AS mcp_calls,
-          COUNT(*) AS total
+          COUNT(*) AS total,
+          SUM(CASE WHEN is_bot = 0 AND type='page' THEN 1 ELSE 0 END) AS human_page_visits,
+          SUM(CASE WHEN is_bot = 0 THEN 1 ELSE 0 END) AS human_total,
+          SUM(CASE WHEN is_bot = 1 THEN 1 ELSE 0 END) AS bot_total
         FROM request_log
         WHERE ts > datetime('now', '-30 days')
         GROUP BY day

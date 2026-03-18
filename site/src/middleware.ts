@@ -2,6 +2,20 @@ import { defineMiddleware } from 'astro:middleware';
 
 const SKIP_PREFIXES = ['/dash', '/_astro/', '/favicon'];
 
+// Known bot/crawler user-agent substrings (case-insensitive)
+const BOT_UA_PATTERNS = [
+  'meta-externalagent', 'facebookexternalhit', 'GPTBot', 'Googlebot',
+  'bingbot', 'YandexBot', 'AhrefsBot', 'ClaudeBot', 'Twitterbot',
+  'github-camo', 'SquirrelScan', 'curl/', 'node-fetch', 'python-requests',
+  'Go-http-client', 'Bytespider', 'PetalBot', 'SemrushBot', 'DotBot',
+  'MJ12bot', 'DataForSeoBot', 'ia_archiver', 'archive.org_bot',
+];
+
+function isBot(ua: string): boolean {
+  const lower = ua.toLowerCase();
+  return BOT_UA_PATTERNS.some(p => lower.includes(p.toLowerCase()));
+}
+
 function classifyRequest(path: string, ua: string): 'mcp' | 'api' | 'page' {
   if (ua.includes('AgentRank-MCP')) return 'mcp';
   if (path.startsWith('/api/')) return 'api';
@@ -44,8 +58,8 @@ export const onRequest = defineMiddleware(async (ctx, next) => {
     const { env } = (ctx.locals as any).runtime;
     if (env.DB) {
       const stmt = env.DB.prepare(
-        `INSERT INTO request_log (path, method, type, status, ua, country, duration_ms, query, referrer, utm_source)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+        `INSERT INTO request_log (path, method, type, status, ua, country, duration_ms, query, referrer, utm_source, is_bot)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
       ).bind(
         path,
         ctx.request.method,
@@ -57,6 +71,7 @@ export const onRequest = defineMiddleware(async (ctx, next) => {
         query?.slice(0, 500) ?? null,
         referrer,
         utmSource?.slice(0, 100) ?? null,
+        isBot(ua) ? 1 : 0,
       );
 
       // Fire-and-forget via waitUntil if available (Cloudflare)
