@@ -8,6 +8,8 @@ import RelatedPosts from '../../components/RelatedPosts.astro';
 const relatedPosts = [
   { href: '/blog/how-to-build-an-mcp-server/', title: 'How to Build an MCP Server in 2026' },
   { href: '/blog/mcp-server-vs-rest-api/', title: 'MCP Server vs REST API: When to Use Each' },
+  { href: '/blog/mcp-setup-guide-claude-cursor-windsurf/', title: 'How to Set Up MCP Servers in Claude Desktop, Cursor, and Windsurf' },
+  { href: '/blog/how-to-choose-an-mcp-server/', title: 'How to Choose an MCP Server in 2026' },
   { href: '/blog/mcp-server-landscape-q1-2026/', title: 'The MCP Server Landscape: Q1 2026' },
 ];
 
@@ -477,6 +479,7 @@ const capabilities = [
         The fastest path: install Claude Desktop or Cursor, then add MCP servers to your config.
         Both applications use a JSON configuration file where you list the servers you want to use.
         The server process starts automatically when the client launches.
+        See our <a href="/blog/mcp-setup-guide-claude-cursor-windsurf/" class="inline-link">step-by-step setup guide for Claude Desktop, Cursor, and Windsurf</a>.
       </p>
       <p>
         Most popular MCP servers install with a single <code>npx</code> or <code>uvx</code> command.
