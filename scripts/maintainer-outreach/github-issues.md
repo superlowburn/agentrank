@@ -16,7 +16,7 @@
 
 Hi @PrefectHQ team,
 
-I wanted to let you know that **fastmcp** is ranked **#1** on [AgentRank](https://agentrank-ai.com) with a score of **90.74/100**.
+I wanted to let you know that **fastmcp** is ranked **#1** on [AgentRank](https://agentrank-ai.com?utm_source=github_issue&utm_medium=outreach&utm_campaign=maintainer_notify) with a score of **90.74/100**.
 
 AgentRank is an open ranking of every MCP server and agent tool on GitHub — scored daily across five signals: stars, freshness, issue health, contributors, and dependents. We index 25,000+ tools.
 
@@ -30,7 +30,7 @@ AgentRank is an open ranking of every MCP server and agent tool on GitHub — sc
 | Contributors | thriving (208 contributors) |
 | Dependents | highly adopted (7,718 dependents) |
 
-**Full listing:** https://agentrank-ai.com/tools/prefecthq--fastmcp
+**Full listing:** https://agentrank-ai.com/tool/prefecthq--fastmcp/?utm_source=github_issue&utm_medium=outreach&utm_campaign=maintainer_notify
 
 ### What could improve your score
 
@@ -38,7 +38,7 @@ AgentRank is an open ranking of every MCP server and agent tool on GitHub — sc
 
 ### Claim your listing
 
-You can claim your tool listing at [agentrank-ai.com/claim](https://agentrank-ai.com/claim) to add a description, logo, and links. It's free — we just verify repo ownership.
+You can claim your tool listing at [https://agentrank-ai.com/claim](https://agentrank-ai.com/claim/?utm_source=github_issue&utm_medium=outreach&utm_campaign=maintainer_notify) to add a description, logo, and links. It's free — we just verify repo ownership.
 
 Thanks for building in the MCP ecosystem.
 
@@ -56,7 +56,7 @@ Thanks for building in the MCP ecosystem.
 
 Hi @mark3labs team,
 
-I wanted to let you know that **mcp-go** is ranked **#2** on [AgentRank](https://agentrank-ai.com) with a score of **88.43/100**.
+I wanted to let you know that **mcp-go** is ranked **#2** on [AgentRank](https://agentrank-ai.com?utm_source=github_issue&utm_medium=outreach&utm_campaign=maintainer_notify) with a score of **88.43/100**.
 
 AgentRank is an open ranking of every MCP server and agent tool on GitHub — scored daily across five signals: stars, freshness, issue health, contributors, and dependents. We index 25,000+ tools.
 
@@ -70,7 +70,7 @@ AgentRank is an open ranking of every MCP server and agent tool on GitHub — sc
 | Contributors | thriving (170 contributors) |
 | Dependents | highly adopted (2,938 dependents) |
 
-**Full listing:** https://agentrank-ai.com/tools/mark3labs--mcp-go
+**Full listing:** https://agentrank-ai.com/tool/mark3labs--mcp-go/?utm_source=github_issue&utm_medium=outreach&utm_campaign=maintainer_notify
 
 ### What could improve your score
 
@@ -78,7 +78,7 @@ AgentRank is an open ranking of every MCP server and agent tool on GitHub — sc
 
 ### Claim your listing
 
-You can claim your tool listing at [agentrank-ai.com/claim](https://agentrank-ai.com/claim) to add a description, logo, and links. It's free — we just verify repo ownership.
+You can claim your tool listing at [https://agentrank-ai.com/claim](https://agentrank-ai.com/claim/?utm_source=github_issue&utm_medium=outreach&utm_campaign=maintainer_notify) to add a description, logo, and links. It's free — we just verify repo ownership.
 
 Thanks for building in the MCP ecosystem.
 
@@ -96,7 +96,7 @@ Thanks for building in the MCP ecosystem.
 
 Hi @laravel team,
 
-I wanted to let you know that **boost** is ranked **#3** on [AgentRank](https://agentrank-ai.com) with a score of **84.34/100**.
+I wanted to let you know that **boost** is ranked **#3** on [AgentRank](https://agentrank-ai.com?utm_source=github_issue&utm_medium=outreach&utm_campaign=maintainer_notify) with a score of **84.34/100**.
 
 AgentRank is an open ranking of every MCP server and agent tool on GitHub — scored daily across five signals: stars, freshness, issue health, contributors, and dependents. We index 25,000+ tools.
 
@@ -110,7 +110,7 @@ AgentRank is an open ranking of every MCP server and agent tool on GitHub — sc
 | Contributors | healthy (76 contributors) |
 | Dependents | highly adopted (1,032 dependents) |
 
-**Full listing:** https://agentrank-ai.com/tools/laravel--boost
+**Full listing:** https://agentrank-ai.com/tool/laravel--boost/?utm_source=github_issue&utm_medium=outreach&utm_campaign=maintainer_notify
 
 ### What could improve your score
 
@@ -118,7 +118,7 @@ AgentRank is an open ranking of every MCP server and agent tool on GitHub — sc
 
 ### Claim your listing
 
-You can claim your tool listing at [agentrank-ai.com/claim](https://agentrank-ai.com/claim) to add a description, logo, and links. It's free — we just verify repo ownership.
+You can claim your tool listing at [https://agentrank-ai.com/claim](https://agentrank-ai.com/claim/?utm_source=github_issue&utm_medium=outreach&utm_campaign=maintainer_notify) to add a description, logo, and links. It's free — we just verify repo ownership.
 
 Thanks for building in the MCP ecosystem.
 
@@ -136,7 +136,7 @@ Thanks for building in the MCP ecosystem.
 
 Hi @modelcontextprotocol team,
 
-I wanted to let you know that **go-sdk** is ranked **#4** on [AgentRank](https://agentrank-ai.com) with a score of **80.92/100**.
+I wanted to let you know that **go-sdk** is ranked **#4** on [AgentRank](https://agentrank-ai.com?utm_source=github_issue&utm_medium=outreach&utm_campaign=maintainer_notify) with a score of **80.92/100**.
 
 AgentRank is an open ranking of every MCP server and agent tool on GitHub — scored daily across five signals: stars, freshness, issue health, contributors, and dependents. We index 25,000+ tools.
 
@@ -150,7 +150,7 @@ AgentRank is an open ranking of every MCP server and agent tool on GitHub — sc
 | Contributors | healthy (96 contributors) |
 | Dependents | highly adopted (1,009 dependents) |
 
-**Full listing:** https://agentrank-ai.com/tools/modelcontextprotocol--go-sdk
+**Full listing:** https://agentrank-ai.com/tool/modelcontextprotocol--go-sdk/?utm_source=github_issue&utm_medium=outreach&utm_campaign=maintainer_notify
 
 ### What could improve your score
 
@@ -158,7 +158,7 @@ AgentRank is an open ranking of every MCP server and agent tool on GitHub — sc
 
 ### Claim your listing
 
-You can claim your tool listing at [agentrank-ai.com/claim](https://agentrank-ai.com/claim) to add a description, logo, and links. It's free — we just verify repo ownership.
+You can claim your tool listing at [https://agentrank-ai.com/claim](https://agentrank-ai.com/claim/?utm_source=github_issue&utm_medium=outreach&utm_campaign=maintainer_notify) to add a description, logo, and links. It's free — we just verify repo ownership.
 
 Thanks for building in the MCP ecosystem.
 
@@ -176,7 +176,7 @@ Thanks for building in the MCP ecosystem.
 
 Hi @punkpeye team,
 
-I wanted to let you know that **mcp-proxy** is ranked **#5** on [AgentRank](https://agentrank-ai.com) with a score of **78.5/100**.
+I wanted to let you know that **mcp-proxy** is ranked **#5** on [AgentRank](https://agentrank-ai.com?utm_source=github_issue&utm_medium=outreach&utm_campaign=maintainer_notify) with a score of **78.5/100**.
 
 AgentRank is an open ranking of every MCP server and agent tool on GitHub — scored daily across five signals: stars, freshness, issue health, contributors, and dependents. We index 25,000+ tools.
 
@@ -190,7 +190,7 @@ AgentRank is an open ranking of every MCP server and agent tool on GitHub — sc
 | Contributors | healthy (21 contributors) |
 | Dependents | highly adopted (1,280 dependents) |
 
-**Full listing:** https://agentrank-ai.com/tools/punkpeye--mcp-proxy
+**Full listing:** https://agentrank-ai.com/tool/punkpeye--mcp-proxy/?utm_source=github_issue&utm_medium=outreach&utm_campaign=maintainer_notify
 
 ### What could improve your score
 
@@ -198,7 +198,7 @@ AgentRank is an open ranking of every MCP server and agent tool on GitHub — sc
 
 ### Claim your listing
 
-You can claim your tool listing at [agentrank-ai.com/claim](https://agentrank-ai.com/claim) to add a description, logo, and links. It's free — we just verify repo ownership.
+You can claim your tool listing at [https://agentrank-ai.com/claim](https://agentrank-ai.com/claim/?utm_source=github_issue&utm_medium=outreach&utm_campaign=maintainer_notify) to add a description, logo, and links. It's free — we just verify repo ownership.
 
 Thanks for building in the MCP ecosystem.
 
@@ -216,7 +216,7 @@ Thanks for building in the MCP ecosystem.
 
 Hi @mcp-use team,
 
-I wanted to let you know that **mcp-use** is ranked **#6** on [AgentRank](https://agentrank-ai.com) with a score of **77.83/100**.
+I wanted to let you know that **mcp-use** is ranked **#6** on [AgentRank](https://agentrank-ai.com?utm_source=github_issue&utm_medium=outreach&utm_campaign=maintainer_notify) with a score of **77.83/100**.
 
 AgentRank is an open ranking of every MCP server and agent tool on GitHub — scored daily across five signals: stars, freshness, issue health, contributors, and dependents. We index 25,000+ tools.
 
@@ -230,7 +230,7 @@ AgentRank is an open ranking of every MCP server and agent tool on GitHub — sc
 | Contributors | healthy (36 contributors) |
 | Dependents | well adopted (377 dependents) |
 
-**Full listing:** https://agentrank-ai.com/tools/mcp-use--mcp-use
+**Full listing:** https://agentrank-ai.com/tool/mcp-use--mcp-use/?utm_source=github_issue&utm_medium=outreach&utm_campaign=maintainer_notify
 
 ### What could improve your score
 
@@ -238,7 +238,7 @@ AgentRank is an open ranking of every MCP server and agent tool on GitHub — sc
 
 ### Claim your listing
 
-You can claim your tool listing at [agentrank-ai.com/claim](https://agentrank-ai.com/claim) to add a description, logo, and links. It's free — we just verify repo ownership.
+You can claim your tool listing at [https://agentrank-ai.com/claim](https://agentrank-ai.com/claim/?utm_source=github_issue&utm_medium=outreach&utm_campaign=maintainer_notify) to add a description, logo, and links. It's free — we just verify repo ownership.
 
 Thanks for building in the MCP ecosystem.
 
@@ -256,7 +256,7 @@ Thanks for building in the MCP ecosystem.
 
 Hi @punkpeye team,
 
-I wanted to let you know that **fastmcp** is ranked **#7** on [AgentRank](https://agentrank-ai.com) with a score of **76.44/100**.
+I wanted to let you know that **fastmcp** is ranked **#7** on [AgentRank](https://agentrank-ai.com?utm_source=github_issue&utm_medium=outreach&utm_campaign=maintainer_notify) with a score of **76.44/100**.
 
 AgentRank is an open ranking of every MCP server and agent tool on GitHub — scored daily across five signals: stars, freshness, issue health, contributors, and dependents. We index 25,000+ tools.
 
@@ -270,7 +270,7 @@ AgentRank is an open ranking of every MCP server and agent tool on GitHub — sc
 | Contributors | healthy (56 contributors) |
 | Dependents | highly adopted (1,296 dependents) |
 
-**Full listing:** https://agentrank-ai.com/tools/punkpeye--fastmcp
+**Full listing:** https://agentrank-ai.com/tool/punkpeye--fastmcp/?utm_source=github_issue&utm_medium=outreach&utm_campaign=maintainer_notify
 
 ### What could improve your score
 
@@ -278,7 +278,7 @@ AgentRank is an open ranking of every MCP server and agent tool on GitHub — sc
 
 ### Claim your listing
 
-You can claim your tool listing at [agentrank-ai.com/claim](https://agentrank-ai.com/claim) to add a description, logo, and links. It's free — we just verify repo ownership.
+You can claim your tool listing at [https://agentrank-ai.com/claim](https://agentrank-ai.com/claim/?utm_source=github_issue&utm_medium=outreach&utm_campaign=maintainer_notify) to add a description, logo, and links. It's free — we just verify repo ownership.
 
 Thanks for building in the MCP ecosystem.
 
@@ -296,7 +296,7 @@ Thanks for building in the MCP ecosystem.
 
 Hi @modelcontextprotocol team,
 
-I wanted to let you know that **ruby-sdk** is ranked **#8** on [AgentRank](https://agentrank-ai.com) with a score of **76.36/100**.
+I wanted to let you know that **ruby-sdk** is ranked **#8** on [AgentRank](https://agentrank-ai.com?utm_source=github_issue&utm_medium=outreach&utm_campaign=maintainer_notify) with a score of **76.36/100**.
 
 AgentRank is an open ranking of every MCP server and agent tool on GitHub — scored daily across five signals: stars, freshness, issue health, contributors, and dependents. We index 25,000+ tools.
 
@@ -310,7 +310,7 @@ AgentRank is an open ranking of every MCP server and agent tool on GitHub — sc
 | Contributors | healthy (41 contributors) |
 | Dependents | highly adopted (1,570 dependents) |
 
-**Full listing:** https://agentrank-ai.com/tools/modelcontextprotocol--ruby-sdk
+**Full listing:** https://agentrank-ai.com/tool/modelcontextprotocol--ruby-sdk/?utm_source=github_issue&utm_medium=outreach&utm_campaign=maintainer_notify
 
 ### What could improve your score
 
@@ -318,7 +318,7 @@ AgentRank is an open ranking of every MCP server and agent tool on GitHub — sc
 
 ### Claim your listing
 
-You can claim your tool listing at [agentrank-ai.com/claim](https://agentrank-ai.com/claim) to add a description, logo, and links. It's free — we just verify repo ownership.
+You can claim your tool listing at [https://agentrank-ai.com/claim](https://agentrank-ai.com/claim/?utm_source=github_issue&utm_medium=outreach&utm_campaign=maintainer_notify) to add a description, logo, and links. It's free — we just verify repo ownership.
 
 Thanks for building in the MCP ecosystem.
 
@@ -336,7 +336,7 @@ Thanks for building in the MCP ecosystem.
 
 Hi @modelcontextprotocol team,
 
-I wanted to let you know that **inspector** is ranked **#9** on [AgentRank](https://agentrank-ai.com) with a score of **75.26/100**.
+I wanted to let you know that **inspector** is ranked **#9** on [AgentRank](https://agentrank-ai.com?utm_source=github_issue&utm_medium=outreach&utm_campaign=maintainer_notify) with a score of **75.26/100**.
 
 AgentRank is an open ranking of every MCP server and agent tool on GitHub — scored daily across five signals: stars, freshness, issue health, contributors, and dependents. We index 25,000+ tools.
 
@@ -350,7 +350,7 @@ AgentRank is an open ranking of every MCP server and agent tool on GitHub — sc
 | Contributors | thriving (137 contributors) |
 | Dependents | well adopted (912 dependents) |
 
-**Full listing:** https://agentrank-ai.com/tools/modelcontextprotocol--inspector
+**Full listing:** https://agentrank-ai.com/tool/modelcontextprotocol--inspector/?utm_source=github_issue&utm_medium=outreach&utm_campaign=maintainer_notify
 
 ### What could improve your score
 
@@ -358,7 +358,7 @@ AgentRank is an open ranking of every MCP server and agent tool on GitHub — sc
 
 ### Claim your listing
 
-You can claim your tool listing at [agentrank-ai.com/claim](https://agentrank-ai.com/claim) to add a description, logo, and links. It's free — we just verify repo ownership.
+You can claim your tool listing at [https://agentrank-ai.com/claim](https://agentrank-ai.com/claim/?utm_source=github_issue&utm_medium=outreach&utm_campaign=maintainer_notify) to add a description, logo, and links. It's free — we just verify repo ownership.
 
 Thanks for building in the MCP ecosystem.
 
@@ -376,7 +376,7 @@ Thanks for building in the MCP ecosystem.
 
 Hi @kreuzberg-dev team,
 
-I wanted to let you know that **kreuzberg** is ranked **#10** on [AgentRank](https://agentrank-ai.com) with a score of **74.69/100**.
+I wanted to let you know that **kreuzberg** is ranked **#10** on [AgentRank](https://agentrank-ai.com?utm_source=github_issue&utm_medium=outreach&utm_campaign=maintainer_notify) with a score of **74.69/100**.
 
 AgentRank is an open ranking of every MCP server and agent tool on GitHub — scored daily across five signals: stars, freshness, issue health, contributors, and dependents. We index 25,000+ tools.
 
@@ -390,7 +390,7 @@ AgentRank is an open ranking of every MCP server and agent tool on GitHub — sc
 | Contributors | healthy (26 contributors) |
 | Dependents | growing (40 dependents) |
 
-**Full listing:** https://agentrank-ai.com/tools/kreuzberg-dev--kreuzberg
+**Full listing:** https://agentrank-ai.com/tool/kreuzberg-dev--kreuzberg/?utm_source=github_issue&utm_medium=outreach&utm_campaign=maintainer_notify
 
 ### What could improve your score
 
@@ -398,7 +398,7 @@ AgentRank is an open ranking of every MCP server and agent tool on GitHub — sc
 
 ### Claim your listing
 
-You can claim your tool listing at [agentrank-ai.com/claim](https://agentrank-ai.com/claim) to add a description, logo, and links. It's free — we just verify repo ownership.
+You can claim your tool listing at [https://agentrank-ai.com/claim](https://agentrank-ai.com/claim/?utm_source=github_issue&utm_medium=outreach&utm_campaign=maintainer_notify) to add a description, logo, and links. It's free — we just verify repo ownership.
 
 Thanks for building in the MCP ecosystem.
 
@@ -416,7 +416,7 @@ Thanks for building in the MCP ecosystem.
 
 Hi @NVIDIA team,
 
-I wanted to let you know that **NeMo-Agent-Toolkit** is ranked **#11** on [AgentRank](https://agentrank-ai.com) with a score of **74.06/100**.
+I wanted to let you know that **NeMo-Agent-Toolkit** is ranked **#11** on [AgentRank](https://agentrank-ai.com?utm_source=github_issue&utm_medium=outreach&utm_campaign=maintainer_notify) with a score of **74.06/100**.
 
 AgentRank is an open ranking of every MCP server and agent tool on GitHub — scored daily across five signals: stars, freshness, issue health, contributors, and dependents. We index 25,000+ tools.
 
@@ -430,7 +430,7 @@ AgentRank is an open ranking of every MCP server and agent tool on GitHub — sc
 | Contributors | healthy (74 contributors) |
 | Dependents | growing (42 dependents) |
 
-**Full listing:** https://agentrank-ai.com/tools/nvidia--nemo-agent-toolkit
+**Full listing:** https://agentrank-ai.com/tool/nvidia--nemo-agent-toolkit/?utm_source=github_issue&utm_medium=outreach&utm_campaign=maintainer_notify
 
 ### What could improve your score
 
@@ -438,7 +438,7 @@ AgentRank is an open ranking of every MCP server and agent tool on GitHub — sc
 
 ### Claim your listing
 
-You can claim your tool listing at [agentrank-ai.com/claim](https://agentrank-ai.com/claim) to add a description, logo, and links. It's free — we just verify repo ownership.
+You can claim your tool listing at [https://agentrank-ai.com/claim](https://agentrank-ai.com/claim/?utm_source=github_issue&utm_medium=outreach&utm_campaign=maintainer_notify) to add a description, logo, and links. It's free — we just verify repo ownership.
 
 Thanks for building in the MCP ecosystem.
 
@@ -456,7 +456,7 @@ Thanks for building in the MCP ecosystem.
 
 Hi @nickclyde team,
 
-I wanted to let you know that **duckduckgo-mcp-server** is ranked **#12** on [AgentRank](https://agentrank-ai.com) with a score of **70.77/100**.
+I wanted to let you know that **duckduckgo-mcp-server** is ranked **#12** on [AgentRank](https://agentrank-ai.com?utm_source=github_issue&utm_medium=outreach&utm_campaign=maintainer_notify) with a score of **70.77/100**.
 
 AgentRank is an open ranking of every MCP server and agent tool on GitHub — scored daily across five signals: stars, freshness, issue health, contributors, and dependents. We index 25,000+ tools.
 
@@ -470,7 +470,7 @@ AgentRank is an open ranking of every MCP server and agent tool on GitHub — sc
 | Contributors | small team (8 contributors) |
 | Dependents | growing (14 dependents) |
 
-**Full listing:** https://agentrank-ai.com/tools/nickclyde--duckduckgo-mcp-server
+**Full listing:** https://agentrank-ai.com/tool/nickclyde--duckduckgo-mcp-server/?utm_source=github_issue&utm_medium=outreach&utm_campaign=maintainer_notify
 
 ### What could improve your score
 
@@ -478,7 +478,7 @@ AgentRank is an open ranking of every MCP server and agent tool on GitHub — sc
 
 ### Claim your listing
 
-You can claim your tool listing at [agentrank-ai.com/claim](https://agentrank-ai.com/claim) to add a description, logo, and links. It's free — we just verify repo ownership.
+You can claim your tool listing at [https://agentrank-ai.com/claim](https://agentrank-ai.com/claim/?utm_source=github_issue&utm_medium=outreach&utm_campaign=maintainer_notify) to add a description, logo, and links. It's free — we just verify repo ownership.
 
 Thanks for building in the MCP ecosystem.
 
@@ -496,7 +496,7 @@ Thanks for building in the MCP ecosystem.
 
 Hi @rust-mcp-stack team,
 
-I wanted to let you know that **rust-mcp-sdk** is ranked **#13** on [AgentRank](https://agentrank-ai.com) with a score of **70.36/100**.
+I wanted to let you know that **rust-mcp-sdk** is ranked **#13** on [AgentRank](https://agentrank-ai.com?utm_source=github_issue&utm_medium=outreach&utm_campaign=maintainer_notify) with a score of **70.36/100**.
 
 AgentRank is an open ranking of every MCP server and agent tool on GitHub — scored daily across five signals: stars, freshness, issue health, contributors, and dependents. We index 25,000+ tools.
 
@@ -510,7 +510,7 @@ AgentRank is an open ranking of every MCP server and agent tool on GitHub — sc
 | Contributors | small team (8 contributors) |
 | Dependents | growing (56 dependents) |
 
-**Full listing:** https://agentrank-ai.com/tools/rust-mcp-stack--rust-mcp-sdk
+**Full listing:** https://agentrank-ai.com/tool/rust-mcp-stack--rust-mcp-sdk/?utm_source=github_issue&utm_medium=outreach&utm_campaign=maintainer_notify
 
 ### What could improve your score
 
@@ -518,7 +518,7 @@ AgentRank is an open ranking of every MCP server and agent tool on GitHub — sc
 
 ### Claim your listing
 
-You can claim your tool listing at [agentrank-ai.com/claim](https://agentrank-ai.com/claim) to add a description, logo, and links. It's free — we just verify repo ownership.
+You can claim your tool listing at [https://agentrank-ai.com/claim](https://agentrank-ai.com/claim/?utm_source=github_issue&utm_medium=outreach&utm_campaign=maintainer_notify) to add a description, logo, and links. It's free — we just verify repo ownership.
 
 Thanks for building in the MCP ecosystem.
 
@@ -536,7 +536,7 @@ Thanks for building in the MCP ecosystem.
 
 Hi @mongodb-js team,
 
-I wanted to let you know that **mongodb-mcp-server** is ranked **#14** on [AgentRank](https://agentrank-ai.com) with a score of **70.14/100**.
+I wanted to let you know that **mongodb-mcp-server** is ranked **#14** on [AgentRank](https://agentrank-ai.com?utm_source=github_issue&utm_medium=outreach&utm_campaign=maintainer_notify) with a score of **70.14/100**.
 
 AgentRank is an open ranking of every MCP server and agent tool on GitHub — scored daily across five signals: stars, freshness, issue health, contributors, and dependents. We index 25,000+ tools.
 
@@ -550,7 +550,7 @@ AgentRank is an open ranking of every MCP server and agent tool on GitHub — sc
 | Contributors | healthy (25 contributors) |
 | Dependents | growing (31 dependents) |
 
-**Full listing:** https://agentrank-ai.com/tools/mongodb-js--mongodb-mcp-server
+**Full listing:** https://agentrank-ai.com/tool/mongodb-js--mongodb-mcp-server/?utm_source=github_issue&utm_medium=outreach&utm_campaign=maintainer_notify
 
 ### What could improve your score
 
@@ -558,7 +558,7 @@ AgentRank is an open ranking of every MCP server and agent tool on GitHub — sc
 
 ### Claim your listing
 
-You can claim your tool listing at [agentrank-ai.com/claim](https://agentrank-ai.com/claim) to add a description, logo, and links. It's free — we just verify repo ownership.
+You can claim your tool listing at [https://agentrank-ai.com/claim](https://agentrank-ai.com/claim/?utm_source=github_issue&utm_medium=outreach&utm_campaign=maintainer_notify) to add a description, logo, and links. It's free — we just verify repo ownership.
 
 Thanks for building in the MCP ecosystem.
 
@@ -576,7 +576,7 @@ Thanks for building in the MCP ecosystem.
 
 Hi @logiscape team,
 
-I wanted to let you know that **mcp-sdk-php** is ranked **#15** on [AgentRank](https://agentrank-ai.com) with a score of **69.74/100**.
+I wanted to let you know that **mcp-sdk-php** is ranked **#15** on [AgentRank](https://agentrank-ai.com?utm_source=github_issue&utm_medium=outreach&utm_campaign=maintainer_notify) with a score of **69.74/100**.
 
 AgentRank is an open ranking of every MCP server and agent tool on GitHub — scored daily across five signals: stars, freshness, issue health, contributors, and dependents. We index 25,000+ tools.
 
@@ -590,7 +590,7 @@ AgentRank is an open ranking of every MCP server and agent tool on GitHub — sc
 | Contributors | small team (14 contributors) |
 | Dependents | growing (24 dependents) |
 
-**Full listing:** https://agentrank-ai.com/tools/logiscape--mcp-sdk-php
+**Full listing:** https://agentrank-ai.com/tool/logiscape--mcp-sdk-php/?utm_source=github_issue&utm_medium=outreach&utm_campaign=maintainer_notify
 
 ### What could improve your score
 
@@ -598,7 +598,7 @@ AgentRank is an open ranking of every MCP server and agent tool on GitHub — sc
 
 ### Claim your listing
 
-You can claim your tool listing at [agentrank-ai.com/claim](https://agentrank-ai.com/claim) to add a description, logo, and links. It's free — we just verify repo ownership.
+You can claim your tool listing at [https://agentrank-ai.com/claim](https://agentrank-ai.com/claim/?utm_source=github_issue&utm_medium=outreach&utm_campaign=maintainer_notify) to add a description, logo, and links. It's free — we just verify repo ownership.
 
 Thanks for building in the MCP ecosystem.
 
@@ -616,7 +616,7 @@ Thanks for building in the MCP ecosystem.
 
 Hi @gts360 team,
 
-I wanted to let you know that **django-mcp-server** is ranked **#16** on [AgentRank](https://agentrank-ai.com) with a score of **68.72/100**.
+I wanted to let you know that **django-mcp-server** is ranked **#16** on [AgentRank](https://agentrank-ai.com?utm_source=github_issue&utm_medium=outreach&utm_campaign=maintainer_notify) with a score of **68.72/100**.
 
 AgentRank is an open ranking of every MCP server and agent tool on GitHub — scored daily across five signals: stars, freshness, issue health, contributors, and dependents. We index 25,000+ tools.
 
@@ -630,7 +630,7 @@ AgentRank is an open ranking of every MCP server and agent tool on GitHub — sc
 | Contributors | small team (11 contributors) |
 | Dependents | growing (30 dependents) |
 
-**Full listing:** https://agentrank-ai.com/tools/gts360--django-mcp-server
+**Full listing:** https://agentrank-ai.com/tool/gts360--django-mcp-server/?utm_source=github_issue&utm_medium=outreach&utm_campaign=maintainer_notify
 
 ### What could improve your score
 
@@ -638,7 +638,7 @@ AgentRank is an open ranking of every MCP server and agent tool on GitHub — sc
 
 ### Claim your listing
 
-You can claim your tool listing at [agentrank-ai.com/claim](https://agentrank-ai.com/claim) to add a description, logo, and links. It's free — we just verify repo ownership.
+You can claim your tool listing at [https://agentrank-ai.com/claim](https://agentrank-ai.com/claim/?utm_source=github_issue&utm_medium=outreach&utm_campaign=maintainer_notify) to add a description, logo, and links. It's free — we just verify repo ownership.
 
 Thanks for building in the MCP ecosystem.
 
@@ -656,7 +656,7 @@ Thanks for building in the MCP ecosystem.
 
 Hi @TanStack team,
 
-I wanted to let you know that **cli** is ranked **#17** on [AgentRank](https://agentrank-ai.com) with a score of **68.63/100**.
+I wanted to let you know that **cli** is ranked **#17** on [AgentRank](https://agentrank-ai.com?utm_source=github_issue&utm_medium=outreach&utm_campaign=maintainer_notify) with a score of **68.63/100**.
 
 AgentRank is an open ranking of every MCP server and agent tool on GitHub — scored daily across five signals: stars, freshness, issue health, contributors, and dependents. We index 25,000+ tools.
 
@@ -670,7 +670,7 @@ AgentRank is an open ranking of every MCP server and agent tool on GitHub — sc
 | Contributors | healthy (89 contributors) |
 | Dependents | early (5 dependents) |
 
-**Full listing:** https://agentrank-ai.com/tools/tanstack--cli
+**Full listing:** https://agentrank-ai.com/tool/tanstack--cli/?utm_source=github_issue&utm_medium=outreach&utm_campaign=maintainer_notify
 
 ### What could improve your score
 
@@ -678,7 +678,7 @@ AgentRank is an open ranking of every MCP server and agent tool on GitHub — sc
 
 ### Claim your listing
 
-You can claim your tool listing at [agentrank-ai.com/claim](https://agentrank-ai.com/claim) to add a description, logo, and links. It's free — we just verify repo ownership.
+You can claim your tool listing at [https://agentrank-ai.com/claim](https://agentrank-ai.com/claim/?utm_source=github_issue&utm_medium=outreach&utm_campaign=maintainer_notify) to add a description, logo, and links. It's free — we just verify repo ownership.
 
 Thanks for building in the MCP ecosystem.
 
@@ -696,7 +696,7 @@ Thanks for building in the MCP ecosystem.
 
 Hi @getsentry team,
 
-I wanted to let you know that **XcodeBuildMCP** is ranked **#18** on [AgentRank](https://agentrank-ai.com) with a score of **68.5/100**.
+I wanted to let you know that **XcodeBuildMCP** is ranked **#18** on [AgentRank](https://agentrank-ai.com?utm_source=github_issue&utm_medium=outreach&utm_campaign=maintainer_notify) with a score of **68.5/100**.
 
 AgentRank is an open ranking of every MCP server and agent tool on GitHub — scored daily across five signals: stars, freshness, issue health, contributors, and dependents. We index 25,000+ tools.
 
@@ -710,7 +710,7 @@ AgentRank is an open ranking of every MCP server and agent tool on GitHub — sc
 | Contributors | healthy (32 contributors) |
 | Dependents | early (4 dependents) |
 
-**Full listing:** https://agentrank-ai.com/tools/getsentry--xcodebuildmcp
+**Full listing:** https://agentrank-ai.com/tool/getsentry--xcodebuildmcp/?utm_source=github_issue&utm_medium=outreach&utm_campaign=maintainer_notify
 
 ### What could improve your score
 
@@ -718,7 +718,7 @@ AgentRank is an open ranking of every MCP server and agent tool on GitHub — sc
 
 ### Claim your listing
 
-You can claim your tool listing at [agentrank-ai.com/claim](https://agentrank-ai.com/claim) to add a description, logo, and links. It's free — we just verify repo ownership.
+You can claim your tool listing at [https://agentrank-ai.com/claim](https://agentrank-ai.com/claim/?utm_source=github_issue&utm_medium=outreach&utm_campaign=maintainer_notify) to add a description, logo, and links. It's free — we just verify repo ownership.
 
 Thanks for building in the MCP ecosystem.
 
@@ -736,7 +736,7 @@ Thanks for building in the MCP ecosystem.
 
 Hi @brightdata team,
 
-I wanted to let you know that **brightdata-mcp** is ranked **#19** on [AgentRank](https://agentrank-ai.com) with a score of **68.15/100**.
+I wanted to let you know that **brightdata-mcp** is ranked **#19** on [AgentRank](https://agentrank-ai.com?utm_source=github_issue&utm_medium=outreach&utm_campaign=maintainer_notify) with a score of **68.15/100**.
 
 AgentRank is an open ranking of every MCP server and agent tool on GitHub — scored daily across five signals: stars, freshness, issue health, contributors, and dependents. We index 25,000+ tools.
 
@@ -750,7 +750,7 @@ AgentRank is an open ranking of every MCP server and agent tool on GitHub — sc
 | Contributors | small team (15 contributors) |
 | Dependents | growing (17 dependents) |
 
-**Full listing:** https://agentrank-ai.com/tools/brightdata--brightdata-mcp
+**Full listing:** https://agentrank-ai.com/tool/brightdata--brightdata-mcp/?utm_source=github_issue&utm_medium=outreach&utm_campaign=maintainer_notify
 
 ### What could improve your score
 
@@ -758,7 +758,7 @@ AgentRank is an open ranking of every MCP server and agent tool on GitHub — sc
 
 ### Claim your listing
 
-You can claim your tool listing at [agentrank-ai.com/claim](https://agentrank-ai.com/claim) to add a description, logo, and links. It's free — we just verify repo ownership.
+You can claim your tool listing at [https://agentrank-ai.com/claim](https://agentrank-ai.com/claim/?utm_source=github_issue&utm_medium=outreach&utm_campaign=maintainer_notify) to add a description, logo, and links. It's free — we just verify repo ownership.
 
 Thanks for building in the MCP ecosystem.
 
@@ -776,7 +776,7 @@ Thanks for building in the MCP ecosystem.
 
 Hi @CoplayDev team,
 
-I wanted to let you know that **unity-mcp** is ranked **#20** on [AgentRank](https://agentrank-ai.com) with a score of **68.04/100**.
+I wanted to let you know that **unity-mcp** is ranked **#20** on [AgentRank](https://agentrank-ai.com?utm_source=github_issue&utm_medium=outreach&utm_campaign=maintainer_notify) with a score of **68.04/100**.
 
 AgentRank is an open ranking of every MCP server and agent tool on GitHub — scored daily across five signals: stars, freshness, issue health, contributors, and dependents. We index 25,000+ tools.
 
@@ -790,7 +790,7 @@ AgentRank is an open ranking of every MCP server and agent tool on GitHub — sc
 | Contributors | healthy (43 contributors) |
 | Dependents | not yet tracked by GitHub dependency graph |
 
-**Full listing:** https://agentrank-ai.com/tools/coplaydev--unity-mcp
+**Full listing:** https://agentrank-ai.com/tool/coplaydev--unity-mcp/?utm_source=github_issue&utm_medium=outreach&utm_campaign=maintainer_notify
 
 ### What could improve your score
 
@@ -798,7 +798,7 @@ AgentRank is an open ranking of every MCP server and agent tool on GitHub — sc
 
 ### Claim your listing
 
-You can claim your tool listing at [agentrank-ai.com/claim](https://agentrank-ai.com/claim) to add a description, logo, and links. It's free — we just verify repo ownership.
+You can claim your tool listing at [https://agentrank-ai.com/claim](https://agentrank-ai.com/claim/?utm_source=github_issue&utm_medium=outreach&utm_campaign=maintainer_notify) to add a description, logo, and links. It's free — we just verify repo ownership.
 
 Thanks for building in the MCP ecosystem.
 
@@ -816,7 +816,7 @@ Thanks for building in the MCP ecosystem.
 
 Hi @duriantaco team,
 
-I wanted to let you know that **skylos** is ranked **#21** on [AgentRank](https://agentrank-ai.com) with a score of **67.85/100**.
+I wanted to let you know that **skylos** is ranked **#21** on [AgentRank](https://agentrank-ai.com?utm_source=github_issue&utm_medium=outreach&utm_campaign=maintainer_notify) with a score of **67.85/100**.
 
 AgentRank is an open ranking of every MCP server and agent tool on GitHub — scored daily across five signals: stars, freshness, issue health, contributors, and dependents. We index 25,000+ tools.
 
@@ -830,7 +830,7 @@ AgentRank is an open ranking of every MCP server and agent tool on GitHub — sc
 | Contributors | solo/micro (2 contributors) |
 | Dependents | growing (11 dependents) |
 
-**Full listing:** https://agentrank-ai.com/tools/duriantaco--skylos
+**Full listing:** https://agentrank-ai.com/tool/duriantaco--skylos/?utm_source=github_issue&utm_medium=outreach&utm_campaign=maintainer_notify
 
 ### What could improve your score
 
@@ -838,7 +838,7 @@ AgentRank is an open ranking of every MCP server and agent tool on GitHub — sc
 
 ### Claim your listing
 
-You can claim your tool listing at [agentrank-ai.com/claim](https://agentrank-ai.com/claim) to add a description, logo, and links. It's free — we just verify repo ownership.
+You can claim your tool listing at [https://agentrank-ai.com/claim](https://agentrank-ai.com/claim/?utm_source=github_issue&utm_medium=outreach&utm_campaign=maintainer_notify) to add a description, logo, and links. It's free — we just verify repo ownership.
 
 Thanks for building in the MCP ecosystem.
 
@@ -856,7 +856,7 @@ Thanks for building in the MCP ecosystem.
 
 Hi @antvis team,
 
-I wanted to let you know that **mcp-server-chart** is ranked **#22** on [AgentRank](https://agentrank-ai.com) with a score of **67.82/100**.
+I wanted to let you know that **mcp-server-chart** is ranked **#22** on [AgentRank](https://agentrank-ai.com?utm_source=github_issue&utm_medium=outreach&utm_campaign=maintainer_notify) with a score of **67.82/100**.
 
 AgentRank is an open ranking of every MCP server and agent tool on GitHub — scored daily across five signals: stars, freshness, issue health, contributors, and dependents. We index 25,000+ tools.
 
@@ -870,7 +870,7 @@ AgentRank is an open ranking of every MCP server and agent tool on GitHub — sc
 | Contributors | healthy (21 contributors) |
 | Dependents | early (7 dependents) |
 
-**Full listing:** https://agentrank-ai.com/tools/antvis--mcp-server-chart
+**Full listing:** https://agentrank-ai.com/tool/antvis--mcp-server-chart/?utm_source=github_issue&utm_medium=outreach&utm_campaign=maintainer_notify
 
 ### What could improve your score
 
@@ -878,7 +878,7 @@ AgentRank is an open ranking of every MCP server and agent tool on GitHub — sc
 
 ### Claim your listing
 
-You can claim your tool listing at [agentrank-ai.com/claim](https://agentrank-ai.com/claim) to add a description, logo, and links. It's free — we just verify repo ownership.
+You can claim your tool listing at [https://agentrank-ai.com/claim](https://agentrank-ai.com/claim/?utm_source=github_issue&utm_medium=outreach&utm_campaign=maintainer_notify) to add a description, logo, and links. It's free — we just verify repo ownership.
 
 Thanks for building in the MCP ecosystem.
 
@@ -896,7 +896,7 @@ Thanks for building in the MCP ecosystem.
 
 Hi @bytebase team,
 
-I wanted to let you know that **dbhub** is ranked **#23** on [AgentRank](https://agentrank-ai.com) with a score of **67.61/100**.
+I wanted to let you know that **dbhub** is ranked **#23** on [AgentRank](https://agentrank-ai.com?utm_source=github_issue&utm_medium=outreach&utm_campaign=maintainer_notify) with a score of **67.61/100**.
 
 AgentRank is an open ranking of every MCP server and agent tool on GitHub — scored daily across five signals: stars, freshness, issue health, contributors, and dependents. We index 25,000+ tools.
 
@@ -910,7 +910,7 @@ AgentRank is an open ranking of every MCP server and agent tool on GitHub — sc
 | Contributors | healthy (22 contributors) |
 | Dependents | early (2 dependents) |
 
-**Full listing:** https://agentrank-ai.com/tools/bytebase--dbhub
+**Full listing:** https://agentrank-ai.com/tool/bytebase--dbhub/?utm_source=github_issue&utm_medium=outreach&utm_campaign=maintainer_notify
 
 ### What could improve your score
 
@@ -918,7 +918,7 @@ AgentRank is an open ranking of every MCP server and agent tool on GitHub — sc
 
 ### Claim your listing
 
-You can claim your tool listing at [agentrank-ai.com/claim](https://agentrank-ai.com/claim) to add a description, logo, and links. It's free — we just verify repo ownership.
+You can claim your tool listing at [https://agentrank-ai.com/claim](https://agentrank-ai.com/claim/?utm_source=github_issue&utm_medium=outreach&utm_campaign=maintainer_notify) to add a description, logo, and links. It's free — we just verify repo ownership.
 
 Thanks for building in the MCP ecosystem.
 
@@ -936,7 +936,7 @@ Thanks for building in the MCP ecosystem.
 
 Hi @modelcontextprotocol team,
 
-I wanted to let you know that **rust-sdk** is ranked **#24** on [AgentRank](https://agentrank-ai.com) with a score of **66.87/100**.
+I wanted to let you know that **rust-sdk** is ranked **#24** on [AgentRank](https://agentrank-ai.com?utm_source=github_issue&utm_medium=outreach&utm_campaign=maintainer_notify) with a score of **66.87/100**.
 
 AgentRank is an open ranking of every MCP server and agent tool on GitHub — scored daily across five signals: stars, freshness, issue health, contributors, and dependents. We index 25,000+ tools.
 
@@ -950,7 +950,7 @@ AgentRank is an open ranking of every MCP server and agent tool on GitHub — sc
 | Contributors | thriving (143 contributors) |
 | Dependents | early (2 dependents) |
 
-**Full listing:** https://agentrank-ai.com/tools/modelcontextprotocol--rust-sdk
+**Full listing:** https://agentrank-ai.com/tool/modelcontextprotocol--rust-sdk/?utm_source=github_issue&utm_medium=outreach&utm_campaign=maintainer_notify
 
 ### What could improve your score
 
@@ -958,7 +958,7 @@ AgentRank is an open ranking of every MCP server and agent tool on GitHub — sc
 
 ### Claim your listing
 
-You can claim your tool listing at [agentrank-ai.com/claim](https://agentrank-ai.com/claim) to add a description, logo, and links. It's free — we just verify repo ownership.
+You can claim your tool listing at [https://agentrank-ai.com/claim](https://agentrank-ai.com/claim/?utm_source=github_issue&utm_medium=outreach&utm_campaign=maintainer_notify) to add a description, logo, and links. It's free — we just verify repo ownership.
 
 Thanks for building in the MCP ecosystem.
 
@@ -976,7 +976,7 @@ Thanks for building in the MCP ecosystem.
 
 Hi @microsoft team,
 
-I wanted to let you know that **playwright-mcp** is ranked **#25** on [AgentRank](https://agentrank-ai.com) with a score of **66.84/100**.
+I wanted to let you know that **playwright-mcp** is ranked **#25** on [AgentRank](https://agentrank-ai.com?utm_source=github_issue&utm_medium=outreach&utm_campaign=maintainer_notify) with a score of **66.84/100**.
 
 AgentRank is an open ranking of every MCP server and agent tool on GitHub — scored daily across five signals: stars, freshness, issue health, contributors, and dependents. We index 25,000+ tools.
 
@@ -990,7 +990,7 @@ AgentRank is an open ranking of every MCP server and agent tool on GitHub — sc
 | Contributors | healthy (62 contributors) |
 | Dependents | not yet tracked by GitHub dependency graph |
 
-**Full listing:** https://agentrank-ai.com/tools/microsoft--playwright-mcp
+**Full listing:** https://agentrank-ai.com/tool/microsoft--playwright-mcp/?utm_source=github_issue&utm_medium=outreach&utm_campaign=maintainer_notify
 
 ### What could improve your score
 
@@ -998,7 +998,7 @@ AgentRank is an open ranking of every MCP server and agent tool on GitHub — sc
 
 ### Claim your listing
 
-You can claim your tool listing at [agentrank-ai.com/claim](https://agentrank-ai.com/claim) to add a description, logo, and links. It's free — we just verify repo ownership.
+You can claim your tool listing at [https://agentrank-ai.com/claim](https://agentrank-ai.com/claim/?utm_source=github_issue&utm_medium=outreach&utm_campaign=maintainer_notify) to add a description, logo, and links. It's free — we just verify repo ownership.
 
 Thanks for building in the MCP ecosystem.
 
@@ -1016,7 +1016,7 @@ Thanks for building in the MCP ecosystem.
 
 Hi @oraios team,
 
-I wanted to let you know that **serena** is ranked **#26** on [AgentRank](https://agentrank-ai.com) with a score of **66.62/100**.
+I wanted to let you know that **serena** is ranked **#26** on [AgentRank](https://agentrank-ai.com?utm_source=github_issue&utm_medium=outreach&utm_campaign=maintainer_notify) with a score of **66.62/100**.
 
 AgentRank is an open ranking of every MCP server and agent tool on GitHub — scored daily across five signals: stars, freshness, issue health, contributors, and dependents. We index 25,000+ tools.
 
@@ -1030,7 +1030,7 @@ AgentRank is an open ranking of every MCP server and agent tool on GitHub — sc
 | Contributors | thriving (134 contributors) |
 | Dependents | not yet tracked by GitHub dependency graph |
 
-**Full listing:** https://agentrank-ai.com/tools/oraios--serena
+**Full listing:** https://agentrank-ai.com/tool/oraios--serena/?utm_source=github_issue&utm_medium=outreach&utm_campaign=maintainer_notify
 
 ### What could improve your score
 
@@ -1038,7 +1038,7 @@ AgentRank is an open ranking of every MCP server and agent tool on GitHub — sc
 
 ### Claim your listing
 
-You can claim your tool listing at [agentrank-ai.com/claim](https://agentrank-ai.com/claim) to add a description, logo, and links. It's free — we just verify repo ownership.
+You can claim your tool listing at [https://agentrank-ai.com/claim](https://agentrank-ai.com/claim/?utm_source=github_issue&utm_medium=outreach&utm_campaign=maintainer_notify) to add a description, logo, and links. It's free — we just verify repo ownership.
 
 Thanks for building in the MCP ecosystem.
 
@@ -1056,7 +1056,7 @@ Thanks for building in the MCP ecosystem.
 
 Hi @Flux159 team,
 
-I wanted to let you know that **mcp-server-kubernetes** is ranked **#27** on [AgentRank](https://agentrank-ai.com) with a score of **66.07/100**.
+I wanted to let you know that **mcp-server-kubernetes** is ranked **#27** on [AgentRank](https://agentrank-ai.com?utm_source=github_issue&utm_medium=outreach&utm_campaign=maintainer_notify) with a score of **66.07/100**.
 
 AgentRank is an open ranking of every MCP server and agent tool on GitHub — scored daily across five signals: stars, freshness, issue health, contributors, and dependents. We index 25,000+ tools.
 
@@ -1070,7 +1070,7 @@ AgentRank is an open ranking of every MCP server and agent tool on GitHub — sc
 | Contributors | healthy (40 contributors) |
 | Dependents | growing (11 dependents) |
 
-**Full listing:** https://agentrank-ai.com/tools/flux159--mcp-server-kubernetes
+**Full listing:** https://agentrank-ai.com/tool/flux159--mcp-server-kubernetes/?utm_source=github_issue&utm_medium=outreach&utm_campaign=maintainer_notify
 
 ### What could improve your score
 
@@ -1078,7 +1078,7 @@ AgentRank is an open ranking of every MCP server and agent tool on GitHub — sc
 
 ### Claim your listing
 
-You can claim your tool listing at [agentrank-ai.com/claim](https://agentrank-ai.com/claim) to add a description, logo, and links. It's free — we just verify repo ownership.
+You can claim your tool listing at [https://agentrank-ai.com/claim](https://agentrank-ai.com/claim/?utm_source=github_issue&utm_medium=outreach&utm_campaign=maintainer_notify) to add a description, logo, and links. It's free — we just verify repo ownership.
 
 Thanks for building in the MCP ecosystem.
 
@@ -1096,7 +1096,7 @@ Thanks for building in the MCP ecosystem.
 
 Hi @bgauryy team,
 
-I wanted to let you know that **octocode-mcp** is ranked **#28** on [AgentRank](https://agentrank-ai.com) with a score of **65.62/100**.
+I wanted to let you know that **octocode-mcp** is ranked **#28** on [AgentRank](https://agentrank-ai.com?utm_source=github_issue&utm_medium=outreach&utm_campaign=maintainer_notify) with a score of **65.62/100**.
 
 AgentRank is an open ranking of every MCP server and agent tool on GitHub — scored daily across five signals: stars, freshness, issue health, contributors, and dependents. We index 25,000+ tools.
 
@@ -1110,7 +1110,7 @@ AgentRank is an open ranking of every MCP server and agent tool on GitHub — sc
 | Contributors | small team (6 contributors) |
 | Dependents | early (4 dependents) |
 
-**Full listing:** https://agentrank-ai.com/tools/bgauryy--octocode-mcp
+**Full listing:** https://agentrank-ai.com/tool/bgauryy--octocode-mcp/?utm_source=github_issue&utm_medium=outreach&utm_campaign=maintainer_notify
 
 ### What could improve your score
 
@@ -1118,7 +1118,7 @@ AgentRank is an open ranking of every MCP server and agent tool on GitHub — sc
 
 ### Claim your listing
 
-You can claim your tool listing at [agentrank-ai.com/claim](https://agentrank-ai.com/claim) to add a description, logo, and links. It's free — we just verify repo ownership.
+You can claim your tool listing at [https://agentrank-ai.com/claim](https://agentrank-ai.com/claim/?utm_source=github_issue&utm_medium=outreach&utm_campaign=maintainer_notify) to add a description, logo, and links. It's free — we just verify repo ownership.
 
 Thanks for building in the MCP ecosystem.
 
@@ -1136,7 +1136,7 @@ Thanks for building in the MCP ecosystem.
 
 Hi @Pimzino team,
 
-I wanted to let you know that **spec-workflow-mcp** is ranked **#29** on [AgentRank](https://agentrank-ai.com) with a score of **65.57/100**.
+I wanted to let you know that **spec-workflow-mcp** is ranked **#29** on [AgentRank](https://agentrank-ai.com?utm_source=github_issue&utm_medium=outreach&utm_campaign=maintainer_notify) with a score of **65.57/100**.
 
 AgentRank is an open ranking of every MCP server and agent tool on GitHub — scored daily across five signals: stars, freshness, issue health, contributors, and dependents. We index 25,000+ tools.
 
@@ -1150,7 +1150,7 @@ AgentRank is an open ranking of every MCP server and agent tool on GitHub — sc
 | Contributors | healthy (21 contributors) |
 | Dependents | not yet tracked by GitHub dependency graph |
 
-**Full listing:** https://agentrank-ai.com/tools/pimzino--spec-workflow-mcp
+**Full listing:** https://agentrank-ai.com/tool/pimzino--spec-workflow-mcp/?utm_source=github_issue&utm_medium=outreach&utm_campaign=maintainer_notify
 
 ### What could improve your score
 
@@ -1158,7 +1158,7 @@ AgentRank is an open ranking of every MCP server and agent tool on GitHub — sc
 
 ### Claim your listing
 
-You can claim your tool listing at [agentrank-ai.com/claim](https://agentrank-ai.com/claim) to add a description, logo, and links. It's free — we just verify repo ownership.
+You can claim your tool listing at [https://agentrank-ai.com/claim](https://agentrank-ai.com/claim/?utm_source=github_issue&utm_medium=outreach&utm_campaign=maintainer_notify) to add a description, logo, and links. It's free — we just verify repo ownership.
 
 Thanks for building in the MCP ecosystem.
 
@@ -1176,7 +1176,7 @@ Thanks for building in the MCP ecosystem.
 
 Hi @tavily-ai team,
 
-I wanted to let you know that **tavily-mcp** is ranked **#30** on [AgentRank](https://agentrank-ai.com) with a score of **65.46/100**.
+I wanted to let you know that **tavily-mcp** is ranked **#30** on [AgentRank](https://agentrank-ai.com?utm_source=github_issue&utm_medium=outreach&utm_campaign=maintainer_notify) with a score of **65.46/100**.
 
 AgentRank is an open ranking of every MCP server and agent tool on GitHub — scored daily across five signals: stars, freshness, issue health, contributors, and dependents. We index 25,000+ tools.
 
@@ -1190,7 +1190,7 @@ AgentRank is an open ranking of every MCP server and agent tool on GitHub — sc
 | Contributors | small team (14 contributors) |
 | Dependents | growing (27 dependents) |
 
-**Full listing:** https://agentrank-ai.com/tools/tavily-ai--tavily-mcp
+**Full listing:** https://agentrank-ai.com/tool/tavily-ai--tavily-mcp/?utm_source=github_issue&utm_medium=outreach&utm_campaign=maintainer_notify
 
 ### What could improve your score
 
@@ -1198,7 +1198,7 @@ AgentRank is an open ranking of every MCP server and agent tool on GitHub — sc
 
 ### Claim your listing
 
-You can claim your tool listing at [agentrank-ai.com/claim](https://agentrank-ai.com/claim) to add a description, logo, and links. It's free — we just verify repo ownership.
+You can claim your tool listing at [https://agentrank-ai.com/claim](https://agentrank-ai.com/claim/?utm_source=github_issue&utm_medium=outreach&utm_campaign=maintainer_notify) to add a description, logo, and links. It's free — we just verify repo ownership.
 
 Thanks for building in the MCP ecosystem.
 
@@ -1216,7 +1216,7 @@ Thanks for building in the MCP ecosystem.
 
 Hi @microsoft team,
 
-I wanted to let you know that **mcp-for-beginners** is ranked **#31** on [AgentRank](https://agentrank-ai.com) with a score of **65.3/100**.
+I wanted to let you know that **mcp-for-beginners** is ranked **#31** on [AgentRank](https://agentrank-ai.com?utm_source=github_issue&utm_medium=outreach&utm_campaign=maintainer_notify) with a score of **65.3/100**.
 
 AgentRank is an open ranking of every MCP server and agent tool on GitHub — scored daily across five signals: stars, freshness, issue health, contributors, and dependents. We index 25,000+ tools.
 
@@ -1230,7 +1230,7 @@ AgentRank is an open ranking of every MCP server and agent tool on GitHub — sc
 | Contributors | healthy (56 contributors) |
 | Dependents | not yet tracked by GitHub dependency graph |
 
-**Full listing:** https://agentrank-ai.com/tools/microsoft--mcp-for-beginners
+**Full listing:** https://agentrank-ai.com/tool/microsoft--mcp-for-beginners/?utm_source=github_issue&utm_medium=outreach&utm_campaign=maintainer_notify
 
 ### What could improve your score
 
@@ -1238,7 +1238,7 @@ AgentRank is an open ranking of every MCP server and agent tool on GitHub — sc
 
 ### Claim your listing
 
-You can claim your tool listing at [agentrank-ai.com/claim](https://agentrank-ai.com/claim) to add a description, logo, and links. It's free — we just verify repo ownership.
+You can claim your tool listing at [https://agentrank-ai.com/claim](https://agentrank-ai.com/claim/?utm_source=github_issue&utm_medium=outreach&utm_campaign=maintainer_notify) to add a description, logo, and links. It's free — we just verify repo ownership.
 
 Thanks for building in the MCP ecosystem.
 
@@ -1256,7 +1256,7 @@ Thanks for building in the MCP ecosystem.
 
 Hi @microsoft team,
 
-I wanted to let you know that **azure-devops-mcp** is ranked **#32** on [AgentRank](https://agentrank-ai.com) with a score of **65.17/100**.
+I wanted to let you know that **azure-devops-mcp** is ranked **#32** on [AgentRank](https://agentrank-ai.com?utm_source=github_issue&utm_medium=outreach&utm_campaign=maintainer_notify) with a score of **65.17/100**.
 
 AgentRank is an open ranking of every MCP server and agent tool on GitHub — scored daily across five signals: stars, freshness, issue health, contributors, and dependents. We index 25,000+ tools.
 
@@ -1270,7 +1270,7 @@ AgentRank is an open ranking of every MCP server and agent tool on GitHub — sc
 | Contributors | healthy (45 contributors) |
 | Dependents | not yet tracked by GitHub dependency graph |
 
-**Full listing:** https://agentrank-ai.com/tools/microsoft--azure-devops-mcp
+**Full listing:** https://agentrank-ai.com/tool/microsoft--azure-devops-mcp/?utm_source=github_issue&utm_medium=outreach&utm_campaign=maintainer_notify
 
 ### What could improve your score
 
@@ -1278,7 +1278,7 @@ AgentRank is an open ranking of every MCP server and agent tool on GitHub — sc
 
 ### Claim your listing
 
-You can claim your tool listing at [agentrank-ai.com/claim](https://agentrank-ai.com/claim) to add a description, logo, and links. It's free — we just verify repo ownership.
+You can claim your tool listing at [https://agentrank-ai.com/claim](https://agentrank-ai.com/claim/?utm_source=github_issue&utm_medium=outreach&utm_campaign=maintainer_notify) to add a description, logo, and links. It's free — we just verify repo ownership.
 
 Thanks for building in the MCP ecosystem.
 
@@ -1296,7 +1296,7 @@ Thanks for building in the MCP ecosystem.
 
 Hi @maquina-app team,
 
-I wanted to let you know that **rails-mcp-server** is ranked **#33** on [AgentRank](https://agentrank-ai.com) with a score of **64.95/100**.
+I wanted to let you know that **rails-mcp-server** is ranked **#33** on [AgentRank](https://agentrank-ai.com?utm_source=github_issue&utm_medium=outreach&utm_campaign=maintainer_notify) with a score of **64.95/100**.
 
 AgentRank is an open ranking of every MCP server and agent tool on GitHub — scored daily across five signals: stars, freshness, issue health, contributors, and dependents. We index 25,000+ tools.
 
@@ -1310,7 +1310,7 @@ AgentRank is an open ranking of every MCP server and agent tool on GitHub — sc
 | Contributors | small team (9 contributors) |
 | Dependents | growing (12 dependents) |
 
-**Full listing:** https://agentrank-ai.com/tools/maquina-app--rails-mcp-server
+**Full listing:** https://agentrank-ai.com/tool/maquina-app--rails-mcp-server/?utm_source=github_issue&utm_medium=outreach&utm_campaign=maintainer_notify
 
 ### What could improve your score
 
@@ -1318,7 +1318,7 @@ AgentRank is an open ranking of every MCP server and agent tool on GitHub — sc
 
 ### Claim your listing
 
-You can claim your tool listing at [agentrank-ai.com/claim](https://agentrank-ai.com/claim) to add a description, logo, and links. It's free — we just verify repo ownership.
+You can claim your tool listing at [https://agentrank-ai.com/claim](https://agentrank-ai.com/claim/?utm_source=github_issue&utm_medium=outreach&utm_campaign=maintainer_notify) to add a description, logo, and links. It's free — we just verify repo ownership.
 
 Thanks for building in the MCP ecosystem.
 
@@ -1336,7 +1336,7 @@ Thanks for building in the MCP ecosystem.
 
 Hi @mark3labs team,
 
-I wanted to let you know that **mcphost** is ranked **#34** on [AgentRank](https://agentrank-ai.com) with a score of **64.89/100**.
+I wanted to let you know that **mcphost** is ranked **#34** on [AgentRank](https://agentrank-ai.com?utm_source=github_issue&utm_medium=outreach&utm_campaign=maintainer_notify) with a score of **64.89/100**.
 
 AgentRank is an open ranking of every MCP server and agent tool on GitHub — scored daily across five signals: stars, freshness, issue health, contributors, and dependents. We index 25,000+ tools.
 
@@ -1350,7 +1350,7 @@ AgentRank is an open ranking of every MCP server and agent tool on GitHub — sc
 | Contributors | healthy (25 contributors) |
 | Dependents | growing (18 dependents) |
 
-**Full listing:** https://agentrank-ai.com/tools/mark3labs--mcphost
+**Full listing:** https://agentrank-ai.com/tool/mark3labs--mcphost/?utm_source=github_issue&utm_medium=outreach&utm_campaign=maintainer_notify
 
 ### What could improve your score
 
@@ -1358,7 +1358,7 @@ AgentRank is an open ranking of every MCP server and agent tool on GitHub — sc
 
 ### Claim your listing
 
-You can claim your tool listing at [agentrank-ai.com/claim](https://agentrank-ai.com/claim) to add a description, logo, and links. It's free — we just verify repo ownership.
+You can claim your tool listing at [https://agentrank-ai.com/claim](https://agentrank-ai.com/claim/?utm_source=github_issue&utm_medium=outreach&utm_campaign=maintainer_notify) to add a description, logo, and links. It's free — we just verify repo ownership.
 
 Thanks for building in the MCP ecosystem.
 
@@ -1376,7 +1376,7 @@ Thanks for building in the MCP ecosystem.
 
 Hi @korotovsky team,
 
-I wanted to let you know that **slack-mcp-server** is ranked **#35** on [AgentRank](https://agentrank-ai.com) with a score of **64.87/100**.
+I wanted to let you know that **slack-mcp-server** is ranked **#35** on [AgentRank](https://agentrank-ai.com?utm_source=github_issue&utm_medium=outreach&utm_campaign=maintainer_notify) with a score of **64.87/100**.
 
 AgentRank is an open ranking of every MCP server and agent tool on GitHub — scored daily across five signals: stars, freshness, issue health, contributors, and dependents. We index 25,000+ tools.
 
@@ -1390,7 +1390,7 @@ AgentRank is an open ranking of every MCP server and agent tool on GitHub — sc
 | Contributors | healthy (40 contributors) |
 | Dependents | growing (37 dependents) |
 
-**Full listing:** https://agentrank-ai.com/tools/korotovsky--slack-mcp-server
+**Full listing:** https://agentrank-ai.com/tool/korotovsky--slack-mcp-server/?utm_source=github_issue&utm_medium=outreach&utm_campaign=maintainer_notify
 
 ### What could improve your score
 
@@ -1398,7 +1398,7 @@ AgentRank is an open ranking of every MCP server and agent tool on GitHub — sc
 
 ### Claim your listing
 
-You can claim your tool listing at [agentrank-ai.com/claim](https://agentrank-ai.com/claim) to add a description, logo, and links. It's free — we just verify repo ownership.
+You can claim your tool listing at [https://agentrank-ai.com/claim](https://agentrank-ai.com/claim/?utm_source=github_issue&utm_medium=outreach&utm_campaign=maintainer_notify) to add a description, logo, and links. It's free — we just verify repo ownership.
 
 Thanks for building in the MCP ecosystem.
 
@@ -1416,7 +1416,7 @@ Thanks for building in the MCP ecosystem.
 
 Hi @zcaceres team,
 
-I wanted to let you know that **markdownify-mcp** is ranked **#36** on [AgentRank](https://agentrank-ai.com) with a score of **64.63/100**.
+I wanted to let you know that **markdownify-mcp** is ranked **#36** on [AgentRank](https://agentrank-ai.com?utm_source=github_issue&utm_medium=outreach&utm_campaign=maintainer_notify) with a score of **64.63/100**.
 
 AgentRank is an open ranking of every MCP server and agent tool on GitHub — scored daily across five signals: stars, freshness, issue health, contributors, and dependents. We index 25,000+ tools.
 
@@ -1430,7 +1430,7 @@ AgentRank is an open ranking of every MCP server and agent tool on GitHub — sc
 | Contributors | small team (9 contributors) |
 | Dependents | not yet tracked by GitHub dependency graph |
 
-**Full listing:** https://agentrank-ai.com/tools/zcaceres--markdownify-mcp
+**Full listing:** https://agentrank-ai.com/tool/zcaceres--markdownify-mcp/?utm_source=github_issue&utm_medium=outreach&utm_campaign=maintainer_notify
 
 ### What could improve your score
 
@@ -1438,7 +1438,7 @@ AgentRank is an open ranking of every MCP server and agent tool on GitHub — sc
 
 ### Claim your listing
 
-You can claim your tool listing at [agentrank-ai.com/claim](https://agentrank-ai.com/claim) to add a description, logo, and links. It's free — we just verify repo ownership.
+You can claim your tool listing at [https://agentrank-ai.com/claim](https://agentrank-ai.com/claim/?utm_source=github_issue&utm_medium=outreach&utm_campaign=maintainer_notify) to add a description, logo, and links. It's free — we just verify repo ownership.
 
 Thanks for building in the MCP ecosystem.
 
@@ -1456,7 +1456,7 @@ Thanks for building in the MCP ecosystem.
 
 Hi @apify team,
 
-I wanted to let you know that **apify-mcp-server** is ranked **#37** on [AgentRank](https://agentrank-ai.com) with a score of **64.36/100**.
+I wanted to let you know that **apify-mcp-server** is ranked **#37** on [AgentRank](https://agentrank-ai.com?utm_source=github_issue&utm_medium=outreach&utm_campaign=maintainer_notify) with a score of **64.36/100**.
 
 AgentRank is an open ranking of every MCP server and agent tool on GitHub — scored daily across five signals: stars, freshness, issue health, contributors, and dependents. We index 25,000+ tools.
 
@@ -1470,7 +1470,7 @@ AgentRank is an open ranking of every MCP server and agent tool on GitHub — sc
 | Contributors | healthy (25 contributors) |
 | Dependents | early (4 dependents) |
 
-**Full listing:** https://agentrank-ai.com/tools/apify--apify-mcp-server
+**Full listing:** https://agentrank-ai.com/tool/apify--apify-mcp-server/?utm_source=github_issue&utm_medium=outreach&utm_campaign=maintainer_notify
 
 ### What could improve your score
 
@@ -1478,7 +1478,7 @@ AgentRank is an open ranking of every MCP server and agent tool on GitHub — sc
 
 ### Claim your listing
 
-You can claim your tool listing at [agentrank-ai.com/claim](https://agentrank-ai.com/claim) to add a description, logo, and links. It's free — we just verify repo ownership.
+You can claim your tool listing at [https://agentrank-ai.com/claim](https://agentrank-ai.com/claim/?utm_source=github_issue&utm_medium=outreach&utm_campaign=maintainer_notify) to add a description, logo, and links. It's free — we just verify repo ownership.
 
 Thanks for building in the MCP ecosystem.
 
@@ -1496,7 +1496,7 @@ Thanks for building in the MCP ecosystem.
 
 Hi @modelcontextprotocol team,
 
-I wanted to let you know that **php-sdk** is ranked **#38** on [AgentRank](https://agentrank-ai.com) with a score of **64.32/100**.
+I wanted to let you know that **php-sdk** is ranked **#38** on [AgentRank](https://agentrank-ai.com?utm_source=github_issue&utm_medium=outreach&utm_campaign=maintainer_notify) with a score of **64.32/100**.
 
 AgentRank is an open ranking of every MCP server and agent tool on GitHub — scored daily across five signals: stars, freshness, issue health, contributors, and dependents. We index 25,000+ tools.
 
@@ -1510,7 +1510,7 @@ AgentRank is an open ranking of every MCP server and agent tool on GitHub — sc
 | Contributors | healthy (32 contributors) |
 | Dependents | growing (35 dependents) |
 
-**Full listing:** https://agentrank-ai.com/tools/modelcontextprotocol--php-sdk
+**Full listing:** https://agentrank-ai.com/tool/modelcontextprotocol--php-sdk/?utm_source=github_issue&utm_medium=outreach&utm_campaign=maintainer_notify
 
 ### What could improve your score
 
@@ -1518,7 +1518,7 @@ AgentRank is an open ranking of every MCP server and agent tool on GitHub — sc
 
 ### Claim your listing
 
-You can claim your tool listing at [agentrank-ai.com/claim](https://agentrank-ai.com/claim) to add a description, logo, and links. It's free — we just verify repo ownership.
+You can claim your tool listing at [https://agentrank-ai.com/claim](https://agentrank-ai.com/claim/?utm_source=github_issue&utm_medium=outreach&utm_campaign=maintainer_notify) to add a description, logo, and links. It's free — we just verify repo ownership.
 
 Thanks for building in the MCP ecosystem.
 
@@ -1536,7 +1536,7 @@ Thanks for building in the MCP ecosystem.
 
 Hi @perplexityai team,
 
-I wanted to let you know that **modelcontextprotocol** is ranked **#39** on [AgentRank](https://agentrank-ai.com) with a score of **63.9/100**.
+I wanted to let you know that **modelcontextprotocol** is ranked **#39** on [AgentRank](https://agentrank-ai.com?utm_source=github_issue&utm_medium=outreach&utm_campaign=maintainer_notify) with a score of **63.9/100**.
 
 AgentRank is an open ranking of every MCP server and agent tool on GitHub — scored daily across five signals: stars, freshness, issue health, contributors, and dependents. We index 25,000+ tools.
 
@@ -1550,7 +1550,7 @@ AgentRank is an open ranking of every MCP server and agent tool on GitHub — sc
 | Contributors | small team (13 contributors) |
 | Dependents | not yet tracked by GitHub dependency graph |
 
-**Full listing:** https://agentrank-ai.com/tools/perplexityai--modelcontextprotocol
+**Full listing:** https://agentrank-ai.com/tool/perplexityai--modelcontextprotocol/?utm_source=github_issue&utm_medium=outreach&utm_campaign=maintainer_notify
 
 ### What could improve your score
 
@@ -1558,7 +1558,7 @@ AgentRank is an open ranking of every MCP server and agent tool on GitHub — sc
 
 ### Claim your listing
 
-You can claim your tool listing at [agentrank-ai.com/claim](https://agentrank-ai.com/claim) to add a description, logo, and links. It's free — we just verify repo ownership.
+You can claim your tool listing at [https://agentrank-ai.com/claim](https://agentrank-ai.com/claim/?utm_source=github_issue&utm_medium=outreach&utm_campaign=maintainer_notify) to add a description, logo, and links. It's free — we just verify repo ownership.
 
 Thanks for building in the MCP ecosystem.
 
@@ -1576,7 +1576,7 @@ Thanks for building in the MCP ecosystem.
 
 Hi @awslabs team,
 
-I wanted to let you know that **mcp** is ranked **#40** on [AgentRank](https://agentrank-ai.com) with a score of **63.87/100**.
+I wanted to let you know that **mcp** is ranked **#40** on [AgentRank](https://agentrank-ai.com?utm_source=github_issue&utm_medium=outreach&utm_campaign=maintainer_notify) with a score of **63.87/100**.
 
 AgentRank is an open ranking of every MCP server and agent tool on GitHub — scored daily across five signals: stars, freshness, issue health, contributors, and dependents. We index 25,000+ tools.
 
@@ -1590,7 +1590,7 @@ AgentRank is an open ranking of every MCP server and agent tool on GitHub — sc
 | Contributors | thriving (243 contributors) |
 | Dependents | early (4 dependents) |
 
-**Full listing:** https://agentrank-ai.com/tools/awslabs--mcp
+**Full listing:** https://agentrank-ai.com/tool/awslabs--mcp/?utm_source=github_issue&utm_medium=outreach&utm_campaign=maintainer_notify
 
 ### What could improve your score
 
@@ -1598,7 +1598,7 @@ AgentRank is an open ranking of every MCP server and agent tool on GitHub — sc
 
 ### Claim your listing
 
-You can claim your tool listing at [agentrank-ai.com/claim](https://agentrank-ai.com/claim) to add a description, logo, and links. It's free — we just verify repo ownership.
+You can claim your tool listing at [https://agentrank-ai.com/claim](https://agentrank-ai.com/claim/?utm_source=github_issue&utm_medium=outreach&utm_campaign=maintainer_notify) to add a description, logo, and links. It's free — we just verify repo ownership.
 
 Thanks for building in the MCP ecosystem.
 
@@ -1616,7 +1616,7 @@ Thanks for building in the MCP ecosystem.
 
 Hi @IBM team,
 
-I wanted to let you know that **mcp-context-forge** is ranked **#41** on [AgentRank](https://agentrank-ai.com) with a score of **63.87/100**.
+I wanted to let you know that **mcp-context-forge** is ranked **#41** on [AgentRank](https://agentrank-ai.com?utm_source=github_issue&utm_medium=outreach&utm_campaign=maintainer_notify) with a score of **63.87/100**.
 
 AgentRank is an open ranking of every MCP server and agent tool on GitHub — scored daily across five signals: stars, freshness, issue health, contributors, and dependents. We index 25,000+ tools.
 
@@ -1630,7 +1630,7 @@ AgentRank is an open ranking of every MCP server and agent tool on GitHub — sc
 | Contributors | thriving (139 contributors) |
 | Dependents | early (5 dependents) |
 
-**Full listing:** https://agentrank-ai.com/tools/ibm--mcp-context-forge
+**Full listing:** https://agentrank-ai.com/tool/ibm--mcp-context-forge/?utm_source=github_issue&utm_medium=outreach&utm_campaign=maintainer_notify
 
 ### What could improve your score
 
@@ -1638,7 +1638,7 @@ AgentRank is an open ranking of every MCP server and agent tool on GitHub — sc
 
 ### Claim your listing
 
-You can claim your tool listing at [agentrank-ai.com/claim](https://agentrank-ai.com/claim) to add a description, logo, and links. It's free — we just verify repo ownership.
+You can claim your tool listing at [https://agentrank-ai.com/claim](https://agentrank-ai.com/claim/?utm_source=github_issue&utm_medium=outreach&utm_campaign=maintainer_notify) to add a description, logo, and links. It's free — we just verify repo ownership.
 
 Thanks for building in the MCP ecosystem.
 
@@ -1656,7 +1656,7 @@ Thanks for building in the MCP ecosystem.
 
 Hi @googleapis team,
 
-I wanted to let you know that **genai-toolbox** is ranked **#42** on [AgentRank](https://agentrank-ai.com) with a score of **63.78/100**.
+I wanted to let you know that **genai-toolbox** is ranked **#42** on [AgentRank](https://agentrank-ai.com?utm_source=github_issue&utm_medium=outreach&utm_campaign=maintainer_notify) with a score of **63.78/100**.
 
 AgentRank is an open ranking of every MCP server and agent tool on GitHub — scored daily across five signals: stars, freshness, issue health, contributors, and dependents. We index 25,000+ tools.
 
@@ -1670,7 +1670,7 @@ AgentRank is an open ranking of every MCP server and agent tool on GitHub — sc
 | Contributors | thriving (109 contributors) |
 | Dependents | early (2 dependents) |
 
-**Full listing:** https://agentrank-ai.com/tools/googleapis--genai-toolbox
+**Full listing:** https://agentrank-ai.com/tool/googleapis--genai-toolbox/?utm_source=github_issue&utm_medium=outreach&utm_campaign=maintainer_notify
 
 ### What could improve your score
 
@@ -1678,7 +1678,7 @@ AgentRank is an open ranking of every MCP server and agent tool on GitHub — sc
 
 ### Claim your listing
 
-You can claim your tool listing at [agentrank-ai.com/claim](https://agentrank-ai.com/claim) to add a description, logo, and links. It's free — we just verify repo ownership.
+You can claim your tool listing at [https://agentrank-ai.com/claim](https://agentrank-ai.com/claim/?utm_source=github_issue&utm_medium=outreach&utm_campaign=maintainer_notify) to add a description, logo, and links. It's free — we just verify repo ownership.
 
 Thanks for building in the MCP ecosystem.
 
@@ -1696,7 +1696,7 @@ Thanks for building in the MCP ecosystem.
 
 Hi @CoderGamester team,
 
-I wanted to let you know that **mcp-unity** is ranked **#43** on [AgentRank](https://agentrank-ai.com) with a score of **63.58/100**.
+I wanted to let you know that **mcp-unity** is ranked **#43** on [AgentRank](https://agentrank-ai.com?utm_source=github_issue&utm_medium=outreach&utm_campaign=maintainer_notify) with a score of **63.58/100**.
 
 AgentRank is an open ranking of every MCP server and agent tool on GitHub — scored daily across five signals: stars, freshness, issue health, contributors, and dependents. We index 25,000+ tools.
 
@@ -1710,7 +1710,7 @@ AgentRank is an open ranking of every MCP server and agent tool on GitHub — sc
 | Contributors | healthy (20 contributors) |
 | Dependents | not yet tracked by GitHub dependency graph |
 
-**Full listing:** https://agentrank-ai.com/tools/codergamester--mcp-unity
+**Full listing:** https://agentrank-ai.com/tool/codergamester--mcp-unity/?utm_source=github_issue&utm_medium=outreach&utm_campaign=maintainer_notify
 
 ### What could improve your score
 
@@ -1718,7 +1718,7 @@ AgentRank is an open ranking of every MCP server and agent tool on GitHub — sc
 
 ### Claim your listing
 
-You can claim your tool listing at [agentrank-ai.com/claim](https://agentrank-ai.com/claim) to add a description, logo, and links. It's free — we just verify repo ownership.
+You can claim your tool listing at [https://agentrank-ai.com/claim](https://agentrank-ai.com/claim/?utm_source=github_issue&utm_medium=outreach&utm_campaign=maintainer_notify) to add a description, logo, and links. It's free — we just verify repo ownership.
 
 Thanks for building in the MCP ecosystem.
 
@@ -1736,7 +1736,7 @@ Thanks for building in the MCP ecosystem.
 
 Hi @microsoft team,
 
-I wanted to let you know that **mcp** is ranked **#44** on [AgentRank](https://agentrank-ai.com) with a score of **63.41/100**.
+I wanted to let you know that **mcp** is ranked **#44** on [AgentRank](https://agentrank-ai.com?utm_source=github_issue&utm_medium=outreach&utm_campaign=maintainer_notify) with a score of **63.41/100**.
 
 AgentRank is an open ranking of every MCP server and agent tool on GitHub — scored daily across five signals: stars, freshness, issue health, contributors, and dependents. We index 25,000+ tools.
 
@@ -1750,7 +1750,7 @@ AgentRank is an open ranking of every MCP server and agent tool on GitHub — sc
 | Contributors | thriving (133 contributors) |
 | Dependents | early (4 dependents) |
 
-**Full listing:** https://agentrank-ai.com/tools/microsoft--mcp
+**Full listing:** https://agentrank-ai.com/tool/microsoft--mcp/?utm_source=github_issue&utm_medium=outreach&utm_campaign=maintainer_notify
 
 ### What could improve your score
 
@@ -1758,7 +1758,7 @@ AgentRank is an open ranking of every MCP server and agent tool on GitHub — sc
 
 ### Claim your listing
 
-You can claim your tool listing at [agentrank-ai.com/claim](https://agentrank-ai.com/claim) to add a description, logo, and links. It's free — we just verify repo ownership.
+You can claim your tool listing at [https://agentrank-ai.com/claim](https://agentrank-ai.com/claim/?utm_source=github_issue&utm_medium=outreach&utm_campaign=maintainer_notify) to add a description, logo, and links. It's free — we just verify repo ownership.
 
 Thanks for building in the MCP ecosystem.
 
@@ -1776,7 +1776,7 @@ Thanks for building in the MCP ecosystem.
 
 Hi @domdomegg team,
 
-I wanted to let you know that **airtable-mcp-server** is ranked **#45** on [AgentRank](https://agentrank-ai.com) with a score of **63.16/100**.
+I wanted to let you know that **airtable-mcp-server** is ranked **#45** on [AgentRank](https://agentrank-ai.com?utm_source=github_issue&utm_medium=outreach&utm_campaign=maintainer_notify) with a score of **63.16/100**.
 
 AgentRank is an open ranking of every MCP server and agent tool on GitHub — scored daily across five signals: stars, freshness, issue health, contributors, and dependents. We index 25,000+ tools.
 
@@ -1790,7 +1790,7 @@ AgentRank is an open ranking of every MCP server and agent tool on GitHub — sc
 | Contributors | small team (10 contributors) |
 | Dependents | early (5 dependents) |
 
-**Full listing:** https://agentrank-ai.com/tools/domdomegg--airtable-mcp-server
+**Full listing:** https://agentrank-ai.com/tool/domdomegg--airtable-mcp-server/?utm_source=github_issue&utm_medium=outreach&utm_campaign=maintainer_notify
 
 ### What could improve your score
 
@@ -1798,7 +1798,7 @@ AgentRank is an open ranking of every MCP server and agent tool on GitHub — sc
 
 ### Claim your listing
 
-You can claim your tool listing at [agentrank-ai.com/claim](https://agentrank-ai.com/claim) to add a description, logo, and links. It's free — we just verify repo ownership.
+You can claim your tool listing at [https://agentrank-ai.com/claim](https://agentrank-ai.com/claim/?utm_source=github_issue&utm_medium=outreach&utm_campaign=maintainer_notify) to add a description, logo, and links. It's free — we just verify repo ownership.
 
 Thanks for building in the MCP ecosystem.
 
@@ -1816,7 +1816,7 @@ Thanks for building in the MCP ecosystem.
 
 Hi @cloudflare team,
 
-I wanted to let you know that **mcp-server-cloudflare** is ranked **#46** on [AgentRank](https://agentrank-ai.com) with a score of **62.92/100**.
+I wanted to let you know that **mcp-server-cloudflare** is ranked **#46** on [AgentRank](https://agentrank-ai.com?utm_source=github_issue&utm_medium=outreach&utm_campaign=maintainer_notify) with a score of **62.92/100**.
 
 AgentRank is an open ranking of every MCP server and agent tool on GitHub — scored daily across five signals: stars, freshness, issue health, contributors, and dependents. We index 25,000+ tools.
 
@@ -1830,7 +1830,7 @@ AgentRank is an open ranking of every MCP server and agent tool on GitHub — sc
 | Contributors | healthy (36 contributors) |
 | Dependents | growing (10 dependents) |
 
-**Full listing:** https://agentrank-ai.com/tools/cloudflare--mcp-server-cloudflare
+**Full listing:** https://agentrank-ai.com/tool/cloudflare--mcp-server-cloudflare/?utm_source=github_issue&utm_medium=outreach&utm_campaign=maintainer_notify
 
 ### What could improve your score
 
@@ -1838,7 +1838,7 @@ AgentRank is an open ranking of every MCP server and agent tool on GitHub — sc
 
 ### Claim your listing
 
-You can claim your tool listing at [agentrank-ai.com/claim](https://agentrank-ai.com/claim) to add a description, logo, and links. It's free — we just verify repo ownership.
+You can claim your tool listing at [https://agentrank-ai.com/claim](https://agentrank-ai.com/claim/?utm_source=github_issue&utm_medium=outreach&utm_campaign=maintainer_notify) to add a description, logo, and links. It's free — we just verify repo ownership.
 
 Thanks for building in the MCP ecosystem.
 
@@ -1856,7 +1856,7 @@ Thanks for building in the MCP ecosystem.
 
 Hi @vercel team,
 
-I wanted to let you know that **mcp-handler** is ranked **#47** on [AgentRank](https://agentrank-ai.com) with a score of **62.91/100**.
+I wanted to let you know that **mcp-handler** is ranked **#47** on [AgentRank](https://agentrank-ai.com?utm_source=github_issue&utm_medium=outreach&utm_campaign=maintainer_notify) with a score of **62.91/100**.
 
 AgentRank is an open ranking of every MCP server and agent tool on GitHub — scored daily across five signals: stars, freshness, issue health, contributors, and dependents. We index 25,000+ tools.
 
@@ -1870,7 +1870,7 @@ AgentRank is an open ranking of every MCP server and agent tool on GitHub — sc
 | Contributors | healthy (24 contributors) |
 | Dependents | well adopted (228 dependents) |
 
-**Full listing:** https://agentrank-ai.com/tools/vercel--mcp-handler
+**Full listing:** https://agentrank-ai.com/tool/vercel--mcp-handler/?utm_source=github_issue&utm_medium=outreach&utm_campaign=maintainer_notify
 
 ### What could improve your score
 
@@ -1878,7 +1878,7 @@ AgentRank is an open ranking of every MCP server and agent tool on GitHub — sc
 
 ### Claim your listing
 
-You can claim your tool listing at [agentrank-ai.com/claim](https://agentrank-ai.com/claim) to add a description, logo, and links. It's free — we just verify repo ownership.
+You can claim your tool listing at [https://agentrank-ai.com/claim](https://agentrank-ai.com/claim/?utm_source=github_issue&utm_medium=outreach&utm_campaign=maintainer_notify) to add a description, logo, and links. It's free — we just verify repo ownership.
 
 Thanks for building in the MCP ecosystem.
 
@@ -1896,7 +1896,7 @@ Thanks for building in the MCP ecosystem.
 
 Hi @CodeGraphContext team,
 
-I wanted to let you know that **CodeGraphContext** is ranked **#48** on [AgentRank](https://agentrank-ai.com) with a score of **62.82/100**.
+I wanted to let you know that **CodeGraphContext** is ranked **#48** on [AgentRank](https://agentrank-ai.com?utm_source=github_issue&utm_medium=outreach&utm_campaign=maintainer_notify) with a score of **62.82/100**.
 
 AgentRank is an open ranking of every MCP server and agent tool on GitHub — scored daily across five signals: stars, freshness, issue health, contributors, and dependents. We index 25,000+ tools.
 
@@ -1910,7 +1910,7 @@ AgentRank is an open ranking of every MCP server and agent tool on GitHub — sc
 | Contributors | healthy (84 contributors) |
 | Dependents | early (2 dependents) |
 
-**Full listing:** https://agentrank-ai.com/tools/codegraphcontext--codegraphcontext
+**Full listing:** https://agentrank-ai.com/tool/codegraphcontext--codegraphcontext/?utm_source=github_issue&utm_medium=outreach&utm_campaign=maintainer_notify
 
 ### What could improve your score
 
@@ -1918,7 +1918,7 @@ AgentRank is an open ranking of every MCP server and agent tool on GitHub — sc
 
 ### Claim your listing
 
-You can claim your tool listing at [agentrank-ai.com/claim](https://agentrank-ai.com/claim) to add a description, logo, and links. It's free — we just verify repo ownership.
+You can claim your tool listing at [https://agentrank-ai.com/claim](https://agentrank-ai.com/claim/?utm_source=github_issue&utm_medium=outreach&utm_campaign=maintainer_notify) to add a description, logo, and links. It's free — we just verify repo ownership.
 
 Thanks for building in the MCP ecosystem.
 
@@ -1936,7 +1936,7 @@ Thanks for building in the MCP ecosystem.
 
 Hi @ihor-sokoliuk team,
 
-I wanted to let you know that **mcp-searxng** is ranked **#49** on [AgentRank](https://agentrank-ai.com) with a score of **62.76/100**.
+I wanted to let you know that **mcp-searxng** is ranked **#49** on [AgentRank](https://agentrank-ai.com?utm_source=github_issue&utm_medium=outreach&utm_campaign=maintainer_notify) with a score of **62.76/100**.
 
 AgentRank is an open ranking of every MCP server and agent tool on GitHub — scored daily across five signals: stars, freshness, issue health, contributors, and dependents. We index 25,000+ tools.
 
@@ -1950,7 +1950,7 @@ AgentRank is an open ranking of every MCP server and agent tool on GitHub — sc
 | Contributors | small team (15 contributors) |
 | Dependents | early (5 dependents) |
 
-**Full listing:** https://agentrank-ai.com/tools/ihor-sokoliuk--mcp-searxng
+**Full listing:** https://agentrank-ai.com/tool/ihor-sokoliuk--mcp-searxng/?utm_source=github_issue&utm_medium=outreach&utm_campaign=maintainer_notify
 
 ### What could improve your score
 
@@ -1958,7 +1958,7 @@ AgentRank is an open ranking of every MCP server and agent tool on GitHub — sc
 
 ### Claim your listing
 
-You can claim your tool listing at [agentrank-ai.com/claim](https://agentrank-ai.com/claim) to add a description, logo, and links. It's free — we just verify repo ownership.
+You can claim your tool listing at [https://agentrank-ai.com/claim](https://agentrank-ai.com/claim/?utm_source=github_issue&utm_medium=outreach&utm_campaign=maintainer_notify) to add a description, logo, and links. It's free — we just verify repo ownership.
 
 Thanks for building in the MCP ecosystem.
 
@@ -1976,7 +1976,7 @@ Thanks for building in the MCP ecosystem.
 
 Hi @samanhappy team,
 
-I wanted to let you know that **mcphub** is ranked **#50** on [AgentRank](https://agentrank-ai.com) with a score of **62.56/100**.
+I wanted to let you know that **mcphub** is ranked **#50** on [AgentRank](https://agentrank-ai.com?utm_source=github_issue&utm_medium=outreach&utm_campaign=maintainer_notify) with a score of **62.56/100**.
 
 AgentRank is an open ranking of every MCP server and agent tool on GitHub — scored daily across five signals: stars, freshness, issue health, contributors, and dependents. We index 25,000+ tools.
 
@@ -1990,7 +1990,7 @@ AgentRank is an open ranking of every MCP server and agent tool on GitHub — sc
 | Contributors | healthy (23 contributors) |
 | Dependents | not yet tracked by GitHub dependency graph |
 
-**Full listing:** https://agentrank-ai.com/tools/samanhappy--mcphub
+**Full listing:** https://agentrank-ai.com/tool/samanhappy--mcphub/?utm_source=github_issue&utm_medium=outreach&utm_campaign=maintainer_notify
 
 ### What could improve your score
 
@@ -1998,7 +1998,7 @@ AgentRank is an open ranking of every MCP server and agent tool on GitHub — sc
 
 ### Claim your listing
 
-You can claim your tool listing at [agentrank-ai.com/claim](https://agentrank-ai.com/claim) to add a description, logo, and links. It's free — we just verify repo ownership.
+You can claim your tool listing at [https://agentrank-ai.com/claim](https://agentrank-ai.com/claim/?utm_source=github_issue&utm_medium=outreach&utm_campaign=maintainer_notify) to add a description, logo, and links. It's free — we just verify repo ownership.
 
 Thanks for building in the MCP ecosystem.
 

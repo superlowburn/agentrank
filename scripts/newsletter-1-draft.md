@@ -50,18 +50,18 @@ Scores are 0–100. Updated daily.
 
 | Rank | Tool | Score | Stars | Category |
 |------|------|-------|-------|----------|
-| #1 | [unity-mcp](https://agentrank-ai.com/tool/CoplayDev/unity-mcp) | 98.7 | 7.0k | Unity / Game Dev |
-| #2 | [azure-devops-mcp](https://agentrank-ai.com/tool/microsoft/azure-devops-mcp) | 97.2 | 1.4k | DevOps |
-| #3 | [laravel/boost](https://agentrank-ai.com/tool/laravel/boost) | 96.9 | 3.3k | Web Framework |
-| #4 | [mcp-unity](https://agentrank-ai.com/tool/CoderGamester/mcp-unity) | 96.4 | 1.4k | Unity / Game Dev |
-| #5 | [spec-workflow-mcp](https://agentrank-ai.com/tool/Pimzino/spec-workflow-mcp) | 96.4 | 4.0k | Workflow |
-| #6 | [mcp-go](https://agentrank-ai.com/tool/mark3labs/mcp-go) | 96.3 | 8.4k | SDK / Go |
-| #7 | [markdownify-mcp](https://agentrank-ai.com/tool/zcaceres/markdownify-mcp) | 95.1 | 2.4k | Content |
-| #8 | [playwright-mcp](https://agentrank-ai.com/tool/microsoft/playwright-mcp) | 94.8 | 29k | Browser Automation |
-| #9 | [fastmcp](https://agentrank-ai.com/tool/PrefectHQ/fastmcp) | 94.7 | 24k | SDK / Python |
-| #10 | [perplexity MCP](https://agentrank-ai.com/tool/perplexityai/modelcontextprotocol) | 94.6 | 2.0k | Search |
+| #1 | [unity-mcp](https://agentrank-ai.com/tool/CoplayDev/unity-mcp?utm_source=newsletter&utm_medium=email&utm_campaign=newsletter_1) | 98.7 | 7.0k | Unity / Game Dev |
+| #2 | [azure-devops-mcp](https://agentrank-ai.com/tool/microsoft/azure-devops-mcp?utm_source=newsletter&utm_medium=email&utm_campaign=newsletter_1) | 97.2 | 1.4k | DevOps |
+| #3 | [laravel/boost](https://agentrank-ai.com/tool/laravel/boost?utm_source=newsletter&utm_medium=email&utm_campaign=newsletter_1) | 96.9 | 3.3k | Web Framework |
+| #4 | [mcp-unity](https://agentrank-ai.com/tool/CoderGamester/mcp-unity?utm_source=newsletter&utm_medium=email&utm_campaign=newsletter_1) | 96.4 | 1.4k | Unity / Game Dev |
+| #5 | [spec-workflow-mcp](https://agentrank-ai.com/tool/Pimzino/spec-workflow-mcp?utm_source=newsletter&utm_medium=email&utm_campaign=newsletter_1) | 96.4 | 4.0k | Workflow |
+| #6 | [mcp-go](https://agentrank-ai.com/tool/mark3labs/mcp-go?utm_source=newsletter&utm_medium=email&utm_campaign=newsletter_1) | 96.3 | 8.4k | SDK / Go |
+| #7 | [markdownify-mcp](https://agentrank-ai.com/tool/zcaceres/markdownify-mcp?utm_source=newsletter&utm_medium=email&utm_campaign=newsletter_1) | 95.1 | 2.4k | Content |
+| #8 | [playwright-mcp](https://agentrank-ai.com/tool/microsoft/playwright-mcp?utm_source=newsletter&utm_medium=email&utm_campaign=newsletter_1) | 94.8 | 29k | Browser Automation |
+| #9 | [fastmcp](https://agentrank-ai.com/tool/PrefectHQ/fastmcp?utm_source=newsletter&utm_medium=email&utm_campaign=newsletter_1) | 94.7 | 24k | SDK / Python |
+| #10 | [perplexity MCP](https://agentrank-ai.com/tool/perplexityai/modelcontextprotocol?utm_source=newsletter&utm_medium=email&utm_campaign=newsletter_1) | 94.6 | 2.0k | Search |
 
-Full rankings: [agentrank-ai.com](https://agentrank-ai.com)
+Full rankings: [agentrank-ai.com](https://agentrank-ai.com/?utm_source=newsletter&utm_medium=email&utm_campaign=newsletter_1)
 
 ---
 
@@ -89,7 +89,7 @@ The index added several hundred new repos this week. A few that came in with str
 - Repos with 3+ contributors from the start (signal: not a solo project)
 - Tools with meaningful dependents within the first week (signal: someone is already building on it)
 
-Check [agentrank-ai.com](https://agentrank-ai.com) for the current new-entries view.
+Check [agentrank-ai.com](https://agentrank-ai.com/?utm_source=newsletter&utm_medium=email&utm_campaign=newsletter_1) for the current new-entries view.
 
 ---
 

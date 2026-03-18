@@ -27,7 +27,7 @@ Wanted to offer a few things: a free verified badge you can drop in your README,
 
 No strings. Just wanted to let you know where you ranked and say the project is excellent.
 
-— Steve (@comforteagle) | agentrank-ai.com/tool/CoplayDev/unity-mcp
+— Steve (@comforteagle) | agentrank-ai.com/tool/CoplayDev/unity-mcp?utm_source=twitter&utm_medium=social&utm_campaign=partner_tag
 
 ---
 
@@ -44,7 +44,7 @@ A few things I'd like to offer: a free verified publisher badge for your README,
 
 Happy to share the signal breakdown on your score if you're curious.
 
-— Steve (@comforteagle) | agentrank-ai.com/tool/mark3labs/mcp-go
+— Steve (@comforteagle) | agentrank-ai.com/tool/mark3labs/mcp-go?utm_source=twitter&utm_medium=social&utm_campaign=partner_tag
 
 ---
 
@@ -61,7 +61,7 @@ Wanted to reach out with a few things: free verified badge for your README, an e
 
 The issue health signal is what pushed you into the top 5 — your close rate is excellent.
 
-— Steve (@comforteagle) | agentrank-ai.com/tool/Pimzino/spec-workflow-mcp
+— Steve (@comforteagle) | agentrank-ai.com/tool/Pimzino/spec-workflow-mcp?utm_source=twitter&utm_medium=social&utm_campaign=partner_tag
 
 ---
 
@@ -78,7 +78,7 @@ Free offer: verified publisher badge for your README, score embed, early access 
 
 No catch. You built something good and people are using it — wanted to make sure you knew where it ranked.
 
-— Steve (@comforteagle) | agentrank-ai.com/tool/zcaceres/markdownify-mcp
+— Steve (@comforteagle) | agentrank-ai.com/tool/zcaceres/markdownify-mcp?utm_source=twitter&utm_medium=social&utm_campaign=partner_tag
 
 ---
 
@@ -95,7 +95,7 @@ Offering: free verified badge for your README, embeddable score widget, early Pr
 
 The freshness signal is your strongest — you're one of the most actively committed repos in the top 10.
 
-— Steve (@comforteagle) | agentrank-ai.com/tool/PrefectHQ/fastmcp
+— Steve (@comforteagle) | agentrank-ai.com/tool/PrefectHQ/fastmcp?utm_source=twitter&utm_medium=social&utm_campaign=partner_tag
 
 ---
 
@@ -112,7 +112,7 @@ Free offer: verified badge, score embed widget, early Pro API access, and a news
 
 A tool that ranks things should probably be in the index of the tool that ranks things. Happy to add any context to your listing you think is missing.
 
-— Steve (@comforteagle) | agentrank-ai.com/tool/samanhappy/mcphub
+— Steve (@comforteagle) | agentrank-ai.com/tool/samanhappy/mcphub?utm_source=twitter&utm_medium=social&utm_campaign=partner_tag
 
 ---
 
@@ -129,7 +129,7 @@ Offering: verified badge, score embed widget, early Pro API access, and a newsle
 
 The contributor count and dependent signals are both strong on this one. Clearly more than a one-person project.
 
-— Steve (@comforteagle) | agentrank-ai.com/tool/oraios/serena
+— Steve (@comforteagle) | agentrank-ai.com/tool/oraios/serena?utm_source=twitter&utm_medium=social&utm_campaign=partner_tag
 
 ---
 
@@ -144,7 +144,7 @@ Hey — I built AgentRank, a ranked index of MCP servers. mcp-unity ranks #4 wit
 
 Free offer: verified badge for your README, score embed, early Pro API access, and a newsletter feature this week.
 
-— Steve (@comforteagle) | agentrank-ai.com/tool/CoderGamester/mcp-unity
+— Steve (@comforteagle) | agentrank-ai.com/tool/CoderGamester/mcp-unity?utm_source=twitter&utm_medium=social&utm_campaign=partner_tag
 
 ---
 
@@ -159,7 +159,7 @@ Hey — I built AgentRank, a live-scored index of MCP tools. Unity-MCP ranks #14
 
 Free offer: verified badge, score embed widget, early Pro API access, and a newsletter feature this week.
 
-— Steve (@comforteagle) | agentrank-ai.com/tool/IvanMurzak/Unity-MCP
+— Steve (@comforteagle) | agentrank-ai.com/tool/IvanMurzak/Unity-MCP?utm_source=twitter&utm_medium=social&utm_campaign=partner_tag
 
 ---
 
@@ -176,7 +176,7 @@ Free offer: verified badge, score embed, early Pro API access, newsletter featur
 
 Very different use case from most of the top 15. Happy to talk about how we handle category-specific scoring for specialized tools.
 
-— Steve (@comforteagle) | agentrank-ai.com/tool/mixelpixx/KiCAD-MCP-Server
+— Steve (@comforteagle) | agentrank-ai.com/tool/mixelpixx/KiCAD-MCP-Server?utm_source=twitter&utm_medium=social&utm_campaign=partner_tag
 
 ---
 
@@ -191,7 +191,7 @@ Hey team — I built AgentRank, a live-scored index of MCP tools. Laravel Boost 
 
 Free offer: verified publisher badge for your README, embeddable score widget, early Pro API access, and a feature in our newsletter this week.
 
-— Steve (@comforteagle) | agentrank-ai.com/tool/laravel/boost
+— Steve (@comforteagle) | agentrank-ai.com/tool/laravel/boost?utm_source=twitter&utm_medium=social&utm_campaign=partner_tag
 
 ---
 
@@ -210,7 +210,7 @@ Free offer for all three: verified publisher badges, embeddable score widgets, e
 
 Not sure who the right person is across these repos — happy to coordinate however works best for your team.
 
-— Steve (@comforteagle) | agentrank-ai.com
+— Steve (@comforteagle) | agentrank-ai.com/?utm_source=twitter&utm_medium=social&utm_campaign=partner_tag
 
 ---
 
@@ -227,7 +227,7 @@ Free offer: verified badge, score embed widget, early Pro API access, and a news
 
 Would also be curious if there's someone on your team interested in cross-linking AgentRank data into Perplexity's tool coverage. Potentially interesting for both audiences.
 
-— Steve (@comforteagle) | agentrank-ai.com/tool/perplexityai/modelcontextprotocol
+— Steve (@comforteagle) | agentrank-ai.com/tool/perplexityai/modelcontextprotocol?utm_source=twitter&utm_medium=social&utm_campaign=partner_tag
 
 ---
 

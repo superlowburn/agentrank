@@ -54,4 +54,4 @@ curl -o .windsurfrules https://raw.githubusercontent.com/superlowburn/agentrank/
 
 All configs teach your AI assistant to query `https://agentrank-ai.com/api/v1/search` for live tool data instead of guessing from training data. The index covers 25,000+ MCP servers, agent tools, and AI skills, updated nightly.
 
-See [agentrank-ai.com/api-docs](https://agentrank-ai.com/api-docs/) for full API documentation.
+See [agentrank-ai.com/api-docs](https://agentrank-ai.com/api-docs/?utm_source=readme&utm_medium=github&utm_campaign=agentrank_skill) for full API documentation.

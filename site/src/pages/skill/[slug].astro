@@ -112,8 +112,9 @@ const advice = skill.score <= 85 ? getSkillAdvice(skill, repoData) : [];
 const SITE_URL = 'https://agentrank-ai.com';
 const badgeUrl = `${SITE_URL}/api/badge/skill/${slug}`;
 const pageUrl = `${SITE_URL}/skill/${slug}/`;
-const mdSnippet = `[![AgentRank](${badgeUrl})](${pageUrl})`;
-const htmlSnippet = `<a href="${pageUrl}"><img src="${badgeUrl}" alt="AgentRank"></a>`;
+const badgeLinkUrl = `${pageUrl}?utm_source=badge&utm_medium=readme&utm_campaign=agentrank_badge`;
+const mdSnippet = `[![AgentRank](${badgeUrl})](${badgeLinkUrl})`;
+const htmlSnippet = `<a href="${badgeLinkUrl}"><img src="${badgeUrl}" alt="AgentRank"></a>`;
 
 const totalSkills = (await env.DB.prepare('SELECT COUNT(*) as count FROM skills').first())?.count as number || 0;
 const summary = generateSkillSummary({

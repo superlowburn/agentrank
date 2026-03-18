@@ -28,7 +28,7 @@ Widget embed URL (placeholder): `https://agentrank-ai.com/widget/{repo-slug}` �
 
 Hi Tadas and Mike,
 
-I'm Steve, building AgentRank (agentrank-ai.com) — a daily-updating ranked index of 25,000+ MCP servers and agent tools, scored on freshness, issue health, contributor count, and downstream dependents.
+I'm Steve, building AgentRank (agentrank-ai.com/?utm_source=email&utm_medium=partnership&utm_campaign=partner_outreach) — a daily-updating ranked index of 25,000+ MCP servers and agent tools, scored on freshness, issue health, contributor count, and downstream dependents.
 
 You're running the most trusted directory in the ecosystem. We're computing the quality signal that's still missing from most directories. The combination is obvious.
 
@@ -45,7 +45,7 @@ AgentRank currently has 25,632 repos indexed, updated nightly. Happy to share a 
 Worth a call this week?
 
 Steve Mallett
-AgentRank | agentrank-ai.com
+AgentRank | agentrank-ai.com/?utm_source=email&utm_medium=partnership&utm_campaign=partner_outreach
 @comforteagle
 
 ---
@@ -78,7 +78,7 @@ I'd also be open to a data-sharing arrangement — Glama's update frequency give
 Would you be up for a quick chat?
 
 Steve Mallett
-AgentRank | agentrank-ai.com
+AgentRank | agentrank-ai.com/?utm_source=email&utm_medium=partnership&utm_campaign=partner_outreach
 @comforteagle
 
 ---
@@ -94,7 +94,7 @@ AgentRank | agentrank-ai.com
 
 ---
 
-Hey Henry and Arjun — Steve here, building AgentRank (agentrank-ai.com).
+Hey Henry and Arjun — Steve here, building AgentRank (agentrank-ai.com/?utm_source=email&utm_medium=partnership&utm_campaign=partner_outreach).
 
 Quick pitch: AgentRank indexes 25k+ MCP servers with daily-updated quality scores (freshness, issue health, contributors, dependents). Smithery's install analytics tell you what's popular. AgentRank tells you what's maintained.
 
@@ -123,18 +123,18 @@ Steve / AgentRank
 
 Hi,
 
-I'm Steve, building AgentRank (agentrank-ai.com) — a ranked index of 25,000+ MCP servers updated daily. We score on five signals: stars, freshness, issue health, contributors, and downstream dependents.
+I'm Steve, building AgentRank (agentrank-ai.com/?utm_source=email&utm_medium=partnership&utm_campaign=partner_outreach) — a ranked index of 25,000+ MCP servers updated daily. We score on five signals: stars, freshness, issue health, contributors, and downstream dependents.
 
 mcp.so is one of the largest community directories in the ecosystem at 18,665 servers. I'd like to offer a free embed widget so individual server pages on mcp.so can display the AgentRank quality score inline.
 
-It's a small addition that gives your listings a data layer they don't currently have, and makes mcp.so a more complete decision tool for practitioners. I'd ask only for an attribution link back to agentrank-ai.com.
+It's a small addition that gives your listings a data layer they don't currently have, and makes mcp.so a more complete decision tool for practitioners. I'd ask only for an attribution link back to agentrank-ai.com/?utm_source=email&utm_medium=partnership&utm_campaign=partner_outreach.
 
 I can have the embed endpoint ready within a day of you saying yes. Happy to share a technical spec or a sample dataset export.
 
 Want to try it?
 
 Steve Mallett
-AgentRank | agentrank-ai.com
+AgentRank | agentrank-ai.com/?utm_source=email&utm_medium=partnership&utm_campaign=partner_outreach
 @comforteagle
 
 ---
@@ -150,7 +150,7 @@ AgentRank | agentrank-ai.com
 
 ---
 
-Hey Mastra team — Steve at AgentRank (agentrank-ai.com).
+Hey Mastra team — Steve at AgentRank (agentrank-ai.com/?utm_source=email&utm_medium=partnership&utm_campaign=partner_outreach).
 
 Two asks, both fast:
 
@@ -179,7 +179,7 @@ Steve / AgentRank
 
 ---
 
-Hey swyx — Steve here. I built AgentRank (agentrank-ai.com) — a ranked index of 25,000+ MCP servers scored on real signals: freshness, issue health, contributor count, downstream dependents. Updates nightly.
+Hey swyx — Steve here. I built AgentRank (agentrank-ai.com/?utm_source=email&utm_medium=partnership&utm_campaign=partner_outreach) — a ranked index of 25,000+ MCP servers scored on real signals: freshness, issue health, contributor count, downstream dependents. Updates nightly.
 
 The data is interesting. Here's what it says right now:
 
@@ -207,7 +207,7 @@ No expectation — if the data's useful, use it. I'd just appreciate a citation 
 
 ---
 
-Hey Simon — Steve here. You wrote the most clear-eyed analysis of MCP's tradeoffs I've read. I've been building something you might find interesting: AgentRank (agentrank-ai.com) — a daily-updated ranked index of 25,000+ MCP servers.
+Hey Simon — Steve here. You wrote the most clear-eyed analysis of MCP's tradeoffs I've read. I've been building something you might find interesting: AgentRank (agentrank-ai.com/?utm_source=email&utm_medium=partnership&utm_campaign=partner_outreach) — a daily-updated ranked index of 25,000+ MCP servers.
 
 The scoring methodology is deliberate: freshness weighted at 25%, issue health at 25%, dependents at 25%, stars at 15%, contributors at 10%. Opinionated. The point is that a tool with 100 stars and a 60-day-old commit beats a tool with 10,000 stars and a dead repo.
 
@@ -216,7 +216,7 @@ Two things I'd love your input on:
 1. **Does the scoring methodology make sense?** You've built a lot of tools and followed this ecosystem closely. I'd value a skeptical read.
 2. **If you find AgentRank credible, a mention or citation would be huge.** One blog post from you reaches HN. I know that's asking a lot — no pressure.
 
-The data is all public (GitHub API). The methodology is documented at agentrank-ai.com. Happy to share the scoring code too.
+The data is all public (GitHub API). The methodology is documented at agentrank-ai.com/?utm_source=email&utm_medium=partnership&utm_campaign=partner_outreach. Happy to share the scoring code too.
 
 — Steve
 
@@ -233,7 +233,7 @@ The data is all public (GitHub API). The methodology is documented at agentrank-
 
 ---
 
-Hey Mike — Steve at AgentRank (agentrank-ai.com). I index 25,000+ MCP servers with quality scores based on freshness, issue health, contributors, and dependents. Think of it as the reliability signal that Docker's "verified" badge doesn't currently expose.
+Hey Mike — Steve at AgentRank (agentrank-ai.com/?utm_source=email&utm_medium=partnership&utm_campaign=partner_outreach). I index 25,000+ MCP servers with quality scores based on freshness, issue health, contributors, and dependents. Think of it as the reliability signal that Docker's "verified" badge doesn't currently expose.
 
 The intersection is interesting: Docker's catalog has 300+ verified, containerized servers. AgentRank's issue health and freshness scores directly measure the same thing Docker's verification is trying to signal — is this tool actively maintained by a responsive team?
 
@@ -258,7 +258,7 @@ Free to integrate. Happy to talk with whoever owns the catalog product.
 
 ---
 
-Hey LangChain team — Steve at AgentRank (agentrank-ai.com).
+Hey LangChain team — Steve at AgentRank (agentrank-ai.com/?utm_source=email&utm_medium=partnership&utm_campaign=partner_outreach).
 
 LangGraph integrates MCP natively. LangChain developers are picking MCP servers to extend their agents every day. Right now they're sorting by stars on GitHub, which is a rough proxy for quality but misses freshness and maintainability entirely.
 
@@ -288,7 +288,7 @@ Steve / AgentRank
 
 ---
 
-Hey Ben — Steve here. I built AgentRank (agentrank-ai.com) — a ranked index of 25,000+ MCP servers and agent tools, updated daily.
+Hey Ben — Steve here. I built AgentRank (agentrank-ai.com/?utm_source=email&utm_medium=partnership&utm_campaign=partner_outreach) — a ranked index of 25,000+ MCP servers and agent tools, updated daily.
 
 The editorial angle that I think fits Ben's Bites: **the MCP ecosystem quality gap**. There are 25,000 indexed tools. 68% haven't been committed to in 90+ days. The top tools by stars and the top tools by maintainability are almost entirely different lists. Developers who pick by stars are often picking abandoned projects.
 

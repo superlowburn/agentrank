@@ -66,7 +66,9 @@ TOOLS = [
     (50, "samanhappy/mcphub", "https://github.com/samanhappy/mcphub", 62.56, 1876, 31, 228, 23, 0, "TypeScript", "2026-03-13T22:54:27Z"),
 ]
 
-AGENTRANK_BASE = "https://agentrank-ai.com/tools"
+AGENTRANK_BASE = "https://agentrank-ai.com/tool"
+AGENTRANK_HOME = "https://agentrank-ai.com"
+UTM_GITHUB = "?utm_source=github_issue&utm_medium=outreach&utm_campaign=maintainer_notify"
 
 
 def days_since(date_str):
@@ -152,7 +154,8 @@ def github_issue(rank, full_name, url, score, stars, open_issues, closed_issues,
     org = full_name.split("/")[0]
     days = days_since(last_commit_at)
     slug = tool_slug(full_name)
-    agentrank_url = f"{AGENTRANK_BASE}/{slug}"
+    agentrank_url = f"{AGENTRANK_BASE}/{slug}/{UTM_GITHUB}"
+    claim_url = f"{AGENTRANK_HOME}/claim/{UTM_GITHUB}"
 
     tips = improvement_tips(rank, full_name, score, stars, open_issues, closed_issues, contributors, dependents, days)
     tips_md = "\n".join(f"- {t}" for t in tips)
@@ -168,7 +171,7 @@ def github_issue(rank, full_name, url, score, stars, open_issues, closed_issues,
 
 Hi @{org} team,
 
-I wanted to let you know that **{name}** is ranked **#{rank}** on [AgentRank](https://agentrank-ai.com) with a score of **{score}/100**.
+I wanted to let you know that **{name}** is ranked **#{rank}** on [AgentRank]({AGENTRANK_HOME}{UTM_GITHUB}) with a score of **{score}/100**.
 
 AgentRank is an open ranking of every MCP server and agent tool on GitHub — scored daily across five signals: stars, freshness, issue health, contributors, and dependents. We index 25,000+ tools.
 
@@ -190,7 +193,7 @@ AgentRank is an open ranking of every MCP server and agent tool on GitHub — sc
 
 ### Claim your listing
 
-You can claim your tool listing at [agentrank-ai.com/claim](https://agentrank-ai.com/claim) to add a description, logo, and links. It's free — we just verify repo ownership.
+You can claim your tool listing at [{AGENTRANK_HOME}/claim]({claim_url}) to add a description, logo, and links. It's free — we just verify repo ownership.
 
 Thanks for building in the MCP ecosystem.
 
@@ -200,11 +203,14 @@ Thanks for building in the MCP ecosystem.
 """
 
 
+UTM_TWITTER = "?utm_source=twitter&utm_medium=social&utm_campaign=maintainer_tag"
+
+
 def tweet(rank, full_name, url, score, stars, open_issues, closed_issues, contributors, dependents, language, last_commit_at):
     name = full_name.split("/")[1]
     org = full_name.split("/")[0]
     slug = tool_slug(full_name)
-    agentrank_url = f"{AGENTRANK_BASE}/{slug}"
+    agentrank_url = f"{AGENTRANK_BASE}/{slug}/{UTM_TWITTER}"
 
     # Short punchy tweet under 280 chars
     # Format: "#{rank} on AgentRank: [name] ({score}/100) — {quick_fact} {url}"

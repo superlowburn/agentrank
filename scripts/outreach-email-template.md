@@ -15,7 +15,7 @@
 
 Hi [Name / team],
 
-Quick note from AgentRank (agentrank-ai.com) — we're the ranked index that developers check when evaluating MCP servers and agent tools.
+Quick note from AgentRank (agentrank-ai.com/?utm_source=email&utm_medium=outreach&utm_campaign=sponsored_listing) — we're the ranked index that developers check when evaluating MCP servers and agent tools.
 
 **[Company]'s MCP server currently [ranks #X / isn't indexed yet] on AgentRank** — [and gets approximately X views/month from developers actively evaluating tools in your category].
 
@@ -25,6 +25,8 @@ A sponsored listing gives you:
 - **Analytics dashboard** — see exactly how many developers are evaluating your tool
 
 Pricing: $299/month. Annual option available (2 months free).
+
+See your listing: https://agentrank-ai.com/tool/[tool-slug]/?utm_source=email&utm_medium=outreach&utm_campaign=sponsored_listing
 
 If the timing is off, I'm happy to revisit — but given [recent funding / competitor activity], now is when the [category] category placement matters most.
 

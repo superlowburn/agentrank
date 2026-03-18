@@ -101,7 +101,7 @@ Add to your Claude Desktop config (`~/Library/Application Support/Claude/claude_
 }
 ```
 
-See [agentrank-ai.com/integrations](https://agentrank-ai.com/integrations/) for full platform guides including rules files for non-MCP editors.
+See [agentrank-ai.com/integrations](https://agentrank-ai.com/integrations/?utm_source=readme&utm_medium=npm&utm_campaign=mcp_server) for full platform guides including rules files for non-MCP editors.
 
 ## Tools
 
@@ -138,10 +138,10 @@ Every agent that queries AgentRank makes the index smarter. More queries surface
 
 ## How It Works
 
-Thin MCP wrapper over the [AgentRank API](https://agentrank-ai.com/api-docs/). Proxies requests to the live index, so results always reflect the latest nightly crawl. No local database, no configuration, no API key.
+Thin MCP wrapper over the [AgentRank API](https://agentrank-ai.com/api-docs/?utm_source=readme&utm_medium=npm&utm_campaign=mcp_server). Proxies requests to the live index, so results always reflect the latest nightly crawl. No local database, no configuration, no API key.
 
 ## Links
 
-- [AgentRank](https://agentrank-ai.com) — Browse the index
-- [API Docs](https://agentrank-ai.com/api-docs/) — Use the API directly
+- [AgentRank](https://agentrank-ai.com/?utm_source=readme&utm_medium=npm&utm_campaign=mcp_server) — Browse the index
+- [API Docs](https://agentrank-ai.com/api-docs/?utm_source=readme&utm_medium=npm&utm_campaign=mcp_server) — Use the API directly
 - [GitHub](https://github.com/superlowburn/agentrank) — Source code

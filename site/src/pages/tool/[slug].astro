@@ -201,11 +201,12 @@ const licenseClass = getLicenseClass(tool.license);
 const SITE_URL = 'https://agentrank-ai.com';
 const badgeUrl = `${SITE_URL}/api/badge/tool/${slug}`;
 const pageUrl = `${SITE_URL}/tool/${slug}/`;
-const mdSnippet = `[![AgentRank](${badgeUrl})](${pageUrl})`;
-const htmlSnippet = `<a href="${pageUrl}"><img src="${badgeUrl}" alt="AgentRank"></a>`;
+const badgeLinkUrl = `${pageUrl}?utm_source=badge&utm_medium=readme&utm_campaign=agentrank_badge`;
+const mdSnippet = `[![AgentRank](${badgeUrl})](${badgeLinkUrl})`;
+const htmlSnippet = `<a href="${badgeLinkUrl}"><img src="${badgeUrl}" alt="AgentRank"></a>`;
 const widgetIframeSnippet = `<iframe src="${SITE_URL}/api/embed/${slug}.html" width="340" height="170" frameborder="0" style="border-radius:6px;border:none;overflow:hidden;"></iframe>`;
 const widgetScriptSnippet = `<script src="${SITE_URL}/embed.js" data-tool="${tool.full_name}"><\/script>`;
-const widgetSvgSnippet = `[![AgentRank](${SITE_URL}/api/embed/${slug}.svg)](${pageUrl}/)`;
+const widgetSvgSnippet = `[![AgentRank](${SITE_URL}/api/embed/${slug}.svg)](${badgeLinkUrl})`;
 
 const jsonLd = generateToolJsonLd({ ...tool, github_topics: githubTopics }, pageUrl);
 const keywordsStr = [...new Set([...tool.matched_queries, ...githubTopics])].join(', ');
