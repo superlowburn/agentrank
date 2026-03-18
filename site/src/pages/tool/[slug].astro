@@ -1,5 +1,6 @@
 ---
 import Base from '../../layouts/Base.astro';
+import BlogSubscribeCTA from '../../components/BlogSubscribeCTA.astro';
 import { toSlug, formatStars, relativeTime, scoreColor, type Tool } from '../../data/tools';
 import { getAdvice } from '../../data/advice';
 import { generateToolSummary, generateContextSentences, getLicenseClass, generateToolJsonLd } from '../../data/content-gen';
@@ -158,6 +159,32 @@ const mdSnippet = `[![AgentRank](${badgeUrl})](${pageUrl})`;
 const htmlSnippet = `<a href="${pageUrl}"><img src="${badgeUrl}" alt="AgentRank"></a>`;
 const jsonLd = generateToolJsonLd({ ...tool, github_topics: githubTopics }, pageUrl);
 const keywordsStr = [...new Set([...tool.matched_queries, ...githubTopics])].join(', ');
+
+// Category-to-blog mapping for contextual cross-links
+const toolCategory = row.category as string | null;
+const CATEGORY_BLOG_MAP: Record<string, { href: string; title: string }[]> = {
+  database: [
+    { href: '/blog/best-mcp-servers-database/', title: 'Best MCP Servers for Database' },
+    { href: '/blog/how-to-choose-an-mcp-server/', title: 'How to Choose an MCP Server in 2026' },
+  ],
+  deployment: [
+    { href: '/blog/best-mcp-servers-devops/', title: 'Best MCP Servers for DevOps & Infrastructure' },
+    { href: '/blog/how-to-choose-an-mcp-server/', title: 'How to Choose an MCP Server in 2026' },
+  ],
+  'ai-models': [
+    { href: '/blog/best-mcp-servers-ai-ml/', title: 'Best MCP Servers for AI & Machine Learning' },
+    { href: '/blog/how-to-choose-an-mcp-server/', title: 'How to Choose an MCP Server in 2026' },
+  ],
+  communication: [
+    { href: '/blog/best-mcp-servers-productivity/', title: 'Best MCP Servers for Productivity' },
+    { href: '/blog/how-to-choose-an-mcp-server/', title: 'How to Choose an MCP Server in 2026' },
+  ],
+};
+const relatedBlogPosts = toolCategory ? (CATEGORY_BLOG_MAP[toolCategory] ?? [
+  { href: '/blog/how-to-choose-an-mcp-server/', title: 'How to Choose an MCP Server in 2026' },
+]) : [
+  { href: '/blog/how-to-choose-an-mcp-server/', title: 'How to Choose an MCP Server in 2026' },
+];
 
 // Try to find related tools by category (matched queries), fall back to top-scored
 const primaryQuery = tool.matched_queries[0] || null;
@@ -380,6 +407,16 @@ if (relatedTools.length < 3) {
     </section>
   )}
 
+  <section class="tool-nav-links">
+    {toolCategory && (
+      <a href={`/category/${toolCategory}/`} class="nav-link">Browse {toolCategory} category &rarr;</a>
+    )}
+    <a href="/compare/" class="nav-link">Compare tools &rarr;</a>
+    {relatedBlogPosts.map((post) => (
+      <a href={post.href} class="nav-link">{post.title} &rarr;</a>
+    ))}
+  </section>
+
   <div class="github-link">
     <a href={tool.url} target="_blank" rel="noopener noreferrer">View on GitHub &rarr;</a>
   </div>
@@ -408,6 +445,8 @@ if (relatedTools.length < 3) {
       </div>
     </section>
   )}
+
+  <BlogSubscribeCTA source="tool" />
 
   <script>
     document.querySelectorAll('.copy-btn').forEach(btn => {
@@ -639,6 +678,28 @@ if (relatedTools.length < 3) {
     border-radius: 3px;
     font-size: 0.75rem;
     color: var(--text-muted);
+  }
+
+  .tool-nav-links {
+    margin: 1.5rem 0;
+    padding: 0.875rem 1rem;
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+
+  .nav-link {
+    font-size: 0.82rem;
+    color: var(--accent);
+    text-decoration: none;
+    font-weight: 500;
+  }
+
+  .nav-link:hover {
+    text-decoration: underline;
   }
 
   .github-link {

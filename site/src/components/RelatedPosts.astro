@@ -1,0 +1,57 @@
+---
+interface Post {
+  href: string;
+  title: string;
+}
+
+interface Props {
+  posts: Post[];
+}
+
+const { posts } = Astro.props;
+---
+
+<section class="related-posts">
+  <h3 class="related-heading">Related</h3>
+  <div class="related-list">
+    {posts.map((post) => (
+      <a href={post.href} class="related-link">{post.title}</a>
+    ))}
+  </div>
+</section>
+
+<style>
+  .related-posts {
+    margin: 1.5rem 0;
+    padding: 1rem 1.25rem;
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+  }
+
+  .related-heading {
+    font-size: 0.72rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-muted);
+    margin-bottom: 0.65rem;
+  }
+
+  .related-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+  }
+
+  .related-link {
+    font-size: 0.85rem;
+    color: var(--accent);
+    text-decoration: none;
+    font-weight: 500;
+  }
+
+  .related-link:hover {
+    text-decoration: underline;
+  }
+</style>

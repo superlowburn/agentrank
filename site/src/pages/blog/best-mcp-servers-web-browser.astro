@@ -1,0 +1,596 @@
+---
+export const prerender = true;
+
+import Base from '../../layouts/Base.astro';
+import BlogSubscribeCTA from '../../components/BlogSubscribeCTA.astro';
+import RelatedPosts from '../../components/RelatedPosts.astro';
+
+const relatedPosts = [
+  { href: '/blog/how-to-choose-an-mcp-server/', title: 'How to Choose an MCP Server in 2026' },
+  { href: '/blog/mcp-server-landscape-q1-2026/', title: 'The MCP Server Landscape: Q1 2026' },
+  { href: '/blog/mcp-server-comparison-top-10/', title: 'MCP Server Comparison: Top 10 Head-to-Head' },
+];
+
+const publishDate = '2026-03-18';
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: 'Best MCP Servers for Web Scraping & Browser Automation in 2026',
+  description: 'Top-ranked MCP servers for web scraping, browser automation, Playwright, Puppeteer, and content extraction. Scored by real quality signals from the AgentRank index.',
+  datePublished: publishDate,
+  dateModified: publishDate,
+  author: {
+    '@type': 'Organization',
+    name: 'AgentRank',
+    url: 'https://agentrank-ai.com',
+  },
+  publisher: {
+    '@type': 'Organization',
+    name: 'AgentRank',
+    url: 'https://agentrank-ai.com',
+    logo: {
+      '@type': 'ImageObject',
+      url: 'https://agentrank-ai.com/og-image.png',
+    },
+  },
+  mainEntityOfPage: {
+    '@type': 'WebPage',
+    '@id': 'https://agentrank-ai.com/blog/best-mcp-servers-web-browser/',
+  },
+  image: 'https://agentrank-ai.com/og-image.png',
+  keywords: 'best MCP servers web scraping, browser automation MCP, Playwright MCP server, Puppeteer MCP, web scraping AI agent, Firecrawl MCP, Chrome DevTools MCP 2026',
+};
+
+const tools = [
+  {
+    rank: 1,
+    name: 'microsoft/playwright-mcp',
+    slug: 'microsoft--playwright-mcp',
+    score: 85.0,
+    stars: 28849,
+    lang: 'TypeScript',
+    contributors: 52,
+    lastCommit: '2026-03-14',
+    desc: 'Official Microsoft Playwright MCP server — browser automation via accessibility tree, not pixel screenshots',
+    useCase: 'Browser Automation',
+    highlight: '28,849 stars. Microsoft-maintained. Uses Playwright accessibility tree for reliable, vision-free browser control.',
+  },
+  {
+    rank: 2,
+    name: 'ChromeDevTools/devtools-mcp',
+    slug: 'ChromeDevTools--devtools-mcp',
+    score: 69.2,
+    stars: 3807,
+    lang: 'TypeScript',
+    contributors: 24,
+    lastCommit: '2026-03-14',
+    desc: 'Official Chrome DevTools MCP — control and inspect a live Chrome browser via the DevTools Protocol',
+    useCase: 'Browser Inspection / CDP',
+    highlight: 'Maintained by the Chrome DevTools team. Exposes the full Chrome DevTools Protocol to AI agents.',
+  },
+  {
+    rank: 3,
+    name: 'apify/apify-mcp-server',
+    slug: 'apify--apify-mcp-server',
+    score: 64.4,
+    stars: 899,
+    lang: 'TypeScript',
+    contributors: 14,
+    lastCommit: '2026-03-13',
+    desc: 'Official Apify MCP server — access 19,000+ pre-built scrapers and data extraction Actors from agents',
+    useCase: 'Data Extraction / Actors',
+    highlight: 'One MCP server for 19,000+ ready-to-run scrapers. Social media, e-commerce, maps, job boards — all covered.',
+  },
+  {
+    rank: 4,
+    name: 'browserbase/mcp-server-browserbase',
+    slug: 'browserbase--mcp-server-browserbase',
+    score: 47.9,
+    stars: 3189,
+    lang: 'TypeScript',
+    contributors: 11,
+    lastCommit: '2026-02-27',
+    desc: 'Official Browserbase MCP server — cloud browser infrastructure with Stagehand for AI-native web automation',
+    useCase: 'Cloud Browser',
+    highlight: 'Serverless browser infrastructure. Handles anti-bot, proxies, and session persistence — no local browser needed.',
+  },
+  {
+    rank: 5,
+    name: 'firecrawl/firecrawl-mcp-server',
+    slug: 'firecrawl--firecrawl-mcp-server',
+    score: 47.7,
+    stars: 5759,
+    lang: 'JavaScript',
+    contributors: 16,
+    lastCommit: '2026-03-13',
+    desc: 'Official Firecrawl MCP server — web scraping and full-site crawling with clean markdown output',
+    useCase: 'Web Scraping / Crawling',
+    highlight: '5,759 stars. Turn any URL into clean markdown. Handles JS rendering, rate limiting, and full-site crawls.',
+  },
+  {
+    rank: 6,
+    name: 'jae-jae/fetcher-mcp',
+    slug: 'jae-jae--fetcher-mcp',
+    score: 43.9,
+    stars: 1008,
+    lang: 'TypeScript',
+    contributors: 5,
+    lastCommit: '2026-01-14',
+    desc: 'Lightweight MCP server for fetching web page content via Playwright headless browser',
+    useCase: 'Page Fetch / Extraction',
+    highlight: 'Over 1,000 stars. Simple and reliable — fetch a URL, get clean content back. Playwright handles JS-heavy pages.',
+  },
+  {
+    rank: 7,
+    name: 'docentovich/chrometools-mcp',
+    slug: 'docentovich--chrometools-mcp',
+    score: 39.9,
+    stars: 8,
+    lang: 'JavaScript',
+    contributors: 3,
+    lastCommit: '2026-02-16',
+    desc: 'Puppeteer-based Chrome MCP server with persistent sessions — navigate, click, fill forms, extract content',
+    useCase: 'Puppeteer Automation',
+    highlight: 'Puppeteer alternative to Playwright-MCP. Persistent session support — useful for multi-step form automation.',
+  },
+];
+
+const stats = {
+  totalWebTools: 1340,
+  avgWebScore: 35.8,
+  topScore: 85.0,
+};
+---
+
+<Base
+  title="Best MCP Servers for Web Scraping & Browser Automation in 2026 — AgentRank"
+  description="Top-ranked MCP servers for web scraping, browser automation, Playwright, Puppeteer, and content extraction. Firecrawl, Browserbase, Apify, and more — scored by real signals."
+  activeTab="blog"
+  keywords="best MCP servers web scraping, browser automation MCP, Playwright MCP server, Puppeteer MCP 2026, Firecrawl MCP, web scraping AI agent, Chrome DevTools MCP"
+  canonicalUrl="https://agentrank-ai.com/blog/best-mcp-servers-web-browser/"
+  jsonLd={jsonLd}
+>
+  <article class="blog-post">
+    <header class="post-header">
+      <div class="breadcrumb"><a href="/blog/">Blog</a> <span>/</span></div>
+      <h1>Best MCP Servers for Web Scraping &amp; Browser Automation in 2026</h1>
+      <div class="post-meta">
+        <time datetime={publishDate}>March 18, 2026</time>
+        <span class="sep">&middot;</span>
+        <span>6 min read</span>
+        <span class="sep">&middot;</span>
+        <span>AgentRank Index</span>
+      </div>
+      <p class="lede">
+        The AgentRank index tracks <strong>{stats.totalWebTools} web and browser-category tools</strong> —
+        Playwright wrappers, headless Chrome servers, scraping APIs, content extractors, and cloud browser
+        infrastructure. This is the most star-concentrated category in the index: the top tool alone
+        (Microsoft's Playwright MCP) has more stars than the entire database category combined.
+        Here are the tools that actually deliver across different use cases.
+      </p>
+    </header>
+
+    <nav class="toc">
+      <strong>Contents</strong>
+      <ol>
+        <li><a href="#rankings">Rankings by score</a></li>
+        <li><a href="#by-use-case">Choosing by use case</a></li>
+        <li><a href="#what-to-watch">What to watch for</a></li>
+        <li><a href="#methodology">Methodology</a></li>
+      </ol>
+    </nav>
+
+    <section id="rankings">
+      <h2>Top web scraping &amp; browser MCP servers</h2>
+      <p>
+        Ranked by the composite AgentRank score — a weighted blend of stars (15%), freshness (25%),
+        issue health (25%), contributors (10%), and inbound dependents (25%).
+        Average score across all {stats.totalWebTools} web/browser tools is <strong>{stats.avgWebScore}</strong>.
+        The tools below are the category leaders.
+      </p>
+
+      <table class="data-table top-table">
+        <thead>
+          <tr>
+            <th class="num">#</th>
+            <th>Repository</th>
+            <th class="num">Score</th>
+            <th class="num">Stars</th>
+            <th>Use Case</th>
+            <th>Lang</th>
+          </tr>
+        </thead>
+        <tbody>
+          {tools.map((tool) => (
+            <tr>
+              <td class="num rank-num">{tool.rank}</td>
+              <td class="tool-cell">
+                <a href={`/tool/${tool.slug}/`} class="tool-link">{tool.name}</a>
+                <span class="tool-desc">{tool.desc}</span>
+              </td>
+              <td class="num score-cell">{tool.score}</td>
+              <td class="num">{tool.stars.toLocaleString('en-US')}</td>
+              <td class="use-case">{tool.useCase}</td>
+              <td class="lang-badge">{tool.lang}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </section>
+
+    <section id="by-use-case">
+      <h2>Choosing by use case</h2>
+
+      <h3>General browser automation</h3>
+      <p>
+        <a href="/tool/microsoft--playwright-mcp/" class="inline-link">microsoft/playwright-mcp</a> is the
+        dominant browser automation MCP at <strong>85.0</strong> — the highest score in the web/browser
+        category and one of the highest across the entire index. The key design decision: it uses
+        Playwright's accessibility tree to interact with pages rather than pixel-level screenshots.
+        This means agents can click, fill forms, and navigate without requiring vision capabilities.
+        52 contributors, Microsoft-maintained, updated weekly. The default choice for any agent that
+        needs to interact with web interfaces.
+      </p>
+
+      <h3>Browser inspection and DevTools</h3>
+      <p>
+        <a href="/tool/ChromeDevTools--devtools-mcp/" class="inline-link">ChromeDevTools/devtools-mcp</a>
+        scores <strong>69.2</strong> with 3,807 stars. Where Playwright-MCP is optimized for automation
+        (click, fill, navigate), the Chrome DevTools MCP exposes the full DevTools Protocol — network
+        inspection, JavaScript execution, performance profiling, DOM manipulation. Use it when you need
+        an agent to debug, inspect, or profile a live browser session rather than just automate it.
+        Maintained by the Chrome DevTools team.
+      </p>
+
+      <h3>Pre-built scraping at scale (Apify)</h3>
+      <p>
+        <a href="/tool/apify--apify-mcp-server/" class="inline-link">apify/apify-mcp-server</a> at
+        <strong>64.4</strong> solves a different problem than Playwright or DevTools. Instead of building
+        a scraper from scratch, it gives agents access to 19,000+ pre-built Actors — scrapers for
+        Instagram, Amazon, Google Maps, LinkedIn, and essentially every major site. When you need data
+        from a well-known source and don't want to build or maintain a custom scraper, Apify's MCP
+        turns that into a one-line agent call.
+      </p>
+
+      <h3>Cloud browser infrastructure (Browserbase)</h3>
+      <p>
+        <a href="/tool/browserbase--mcp-server-browserbase/" class="inline-link">browserbase/mcp-server-browserbase</a>
+        scores <strong>47.9</strong> with 3,189 stars. The distinction from Playwright-MCP: Browserbase runs
+        the browser in the cloud. No local browser required. It handles anti-bot fingerprinting, residential
+        proxy rotation, and CAPTCHA solving infrastructure. The <a href="https://github.com/browserbasehq/stagehand" class="inline-link" target="_blank" rel="noopener noreferrer">Stagehand</a>
+        layer on top adds AI-native selectors — instruct by description, not CSS path.
+        For production scraping at scale, this is the operationally cleanest path.
+      </p>
+
+      <h3>Full-site crawling (Firecrawl)</h3>
+      <p>
+        <a href="/tool/firecrawl--firecrawl-mcp-server/" class="inline-link">firecrawl/firecrawl-mcp-server</a>
+        at <strong>47.7</strong> focuses on extraction quality. It crawls an entire site or single URL and
+        returns clean markdown — stripping ads, navigation, and boilerplate. Handles JavaScript rendering.
+        Supports structured data extraction with schemas. With 5,759 stars, it has the strongest community
+        signal in the scraping subcategory. Use it when you need readable content output rather than raw
+        HTML or browser control.
+      </p>
+
+      <h3>Simple page fetching</h3>
+      <p>
+        <a href="/tool/jae-jae--fetcher-mcp/" class="inline-link">jae-jae/fetcher-mcp</a> at
+        <strong>43.9</strong> is the lightweight option with 1,008 stars. It runs a Playwright headless
+        browser under the hood but exposes a simple fetch interface — give it a URL, get back clean
+        content. No orchestration layer, no cloud infrastructure. Use it when you need occasional page
+        fetches in an agent workflow without the overhead of the full Playwright-MCP setup.
+      </p>
+
+      <h3>Puppeteer-based automation</h3>
+      <p>
+        <a href="/tool/docentovich--chrometools-mcp/" class="inline-link">docentovich/chrometools-mcp</a>
+        at <strong>39.9</strong> is the Puppeteer alternative to Playwright-MCP. The key difference:
+        persistent session support. Playwright-MCP creates fresh browser contexts by default;
+        chrometools-mcp maintains state across agent calls. Useful for multi-step workflows where the
+        agent needs to stay logged in, navigate through paginated results, or maintain form state across turns.
+      </p>
+    </section>
+
+    <section id="what-to-watch">
+      <h2>What to watch for</h2>
+
+      <h3>Playwright vs Puppeteer: the practical choice</h3>
+      <p>
+        Both Playwright and Puppeteer control Chromium via the DevTools Protocol. Playwright also supports
+        Firefox and WebKit and has better built-in test infrastructure. For MCP use cases in 2026, Playwright
+        is the clear default — <code>microsoft/playwright-mcp</code> at 28,849 stars versus fragmented
+        Puppeteer MCP options. The exception: if your workflow depends on specific Puppeteer plugins or
+        existing Puppeteer scripts, the chrometools-mcp preserves that compatibility.
+      </p>
+
+      <h3>Build vs buy for scraping</h3>
+      <p>
+        The MCP ecosystem offers a clear ladder: for one-off page reads, use fetcher-mcp. For structured
+        data extraction from known sites, Apify saves weeks of scraper maintenance. For custom, complex
+        workflows against arbitrary sites, Playwright-MCP gives you full control. For production at scale
+        without infrastructure headaches, Browserbase handles the hard parts. Match the tool to the
+        operational complexity you're willing to manage.
+      </p>
+
+      <h3>Anti-bot and legal considerations</h3>
+      <p>
+        Web scraping at agent speeds triggers anti-bot protection on most commercial sites. Playwright-MCP
+        and DevTools-MCP expose raw browser automation without anti-detection measures — expect CAPTCHAs
+        and blocks on anything with aggressive bot detection. Browserbase includes anti-bot infrastructure
+        by design. Regardless of tooling, scraping must comply with a site's Terms of Service and
+        applicable law; the presence of an MCP server does not change the legal analysis.
+      </p>
+
+      <div class="cta-box">
+        <p>
+          <strong>Browse the full web/browser category:</strong> <a href="/category/browser/">All browser automation MCP servers ranked</a> —
+          {stats.totalWebTools} tools indexed, updated daily.
+        </p>
+        <p>
+          <strong>Compare any two tools:</strong> <a href="/compare/">Tool comparison widget</a> — side-by-side signal breakdown.
+        </p>
+        <p>
+          <strong>Building a web scraping MCP server?</strong> <a href="/submit/">Submit it</a> to get indexed and scored.
+        </p>
+      </div>
+    </section>
+
+    <RelatedPosts posts={relatedPosts} />
+    <BlogSubscribeCTA source="blog" />
+    <footer class="post-footer">
+      <p class="methodology">
+        <strong>Methodology:</strong> Data from the AgentRank index crawled March 2026.
+        Scores computed using: stars 15%, freshness 25%, issue health 25%, contributors 10%, inbound dependents 25%.
+        Tools classified as "web/browser" via keyword matching on description, topics, and repo name.
+        Only non-archived repositories included.
+      </p>
+      <p class="share-line">
+        Found this useful? <a href="https://x.com/AgentRank_ai" target="_blank" rel="noopener noreferrer">Follow @AgentRank_ai</a> for
+        weekly ecosystem updates, biggest movers, and new tool spotlights.
+      </p>
+    </footer>
+  </article>
+
+  <style>
+    .blog-post {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 2rem 0 3rem;
+    }
+
+    .breadcrumb {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      margin-bottom: 0.75rem;
+    }
+
+    .breadcrumb span {
+      margin: 0 0.25rem;
+      opacity: 0.5;
+    }
+
+    .post-header {
+      margin-bottom: 2rem;
+      padding-bottom: 1.5rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .post-header h1 {
+      font-size: 1.6rem;
+      font-weight: 700;
+      line-height: 1.3;
+      margin-bottom: 0.75rem;
+    }
+
+    .post-meta {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      flex-wrap: wrap;
+      margin-bottom: 1rem;
+    }
+
+    .sep {
+      opacity: 0.4;
+    }
+
+    .lede {
+      font-size: 1rem;
+      line-height: 1.7;
+      color: var(--text);
+      opacity: 0.9;
+    }
+
+    .toc {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 1rem 1.25rem;
+      margin-bottom: 2.5rem;
+      font-size: 0.82rem;
+    }
+
+    .toc strong {
+      display: block;
+      margin-bottom: 0.6rem;
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+    }
+
+    .toc ol {
+      margin: 0;
+      padding-left: 1.2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+    }
+
+    .toc a {
+      color: var(--text-muted);
+    }
+
+    .toc a:hover {
+      color: var(--accent);
+    }
+
+    section {
+      margin-bottom: 3rem;
+    }
+
+    section h2 {
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin-bottom: 0.75rem;
+      padding-bottom: 0.4rem;
+      border-bottom: 2px solid var(--accent);
+      display: inline-block;
+    }
+
+    section h3 {
+      font-size: 0.95rem;
+      font-weight: 700;
+      margin: 1.5rem 0 0.5rem;
+      color: var(--text);
+    }
+
+    section p {
+      font-size: 0.9rem;
+      line-height: 1.75;
+      color: var(--text);
+      opacity: 0.9;
+      margin-bottom: 0.9rem;
+    }
+
+    .inline-link {
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.82rem;
+      margin: 1rem 0 1.25rem;
+    }
+
+    .data-table th {
+      text-align: left;
+      font-weight: 600;
+      color: var(--text-muted);
+      border-bottom: 1px solid var(--border);
+      padding: 0.4rem 0.75rem 0.4rem 0;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+
+    .data-table td {
+      padding: 0.45rem 0.75rem 0.45rem 0;
+      border-bottom: 1px solid var(--border);
+      color: var(--text);
+      vertical-align: top;
+    }
+
+    .data-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .num {
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .rank-num {
+      color: var(--text-muted);
+      font-weight: 700;
+    }
+
+    .top-table .tool-cell {
+      display: flex;
+      flex-direction: column;
+      gap: 0.2rem;
+    }
+
+    .tool-link {
+      font-weight: 600;
+      color: var(--accent);
+      font-size: 0.82rem;
+    }
+
+    .tool-desc {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      font-weight: 400;
+    }
+
+    .score-cell {
+      color: var(--accent);
+      font-weight: 700;
+    }
+
+    .use-case {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      white-space: nowrap;
+    }
+
+    .lang-badge {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      white-space: nowrap;
+    }
+
+    .cta-box {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      border-radius: 4px;
+      padding: 1rem 1.25rem;
+      margin-top: 1.5rem;
+    }
+
+    .cta-box p {
+      margin-bottom: 0.5rem;
+    }
+
+    .cta-box p:last-child {
+      margin-bottom: 0;
+    }
+
+    .post-footer {
+      margin-top: 3rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--border);
+    }
+
+    .methodology {
+      font-size: 0.75rem !important;
+      color: var(--text-muted) !important;
+      opacity: 1 !important;
+    }
+
+    .share-line {
+      font-size: 0.82rem !important;
+      margin-top: 0.75rem;
+    }
+
+    @media (max-width: 640px) {
+      .post-header h1 {
+        font-size: 1.3rem;
+      }
+
+      .data-table {
+        font-size: 0.75rem;
+      }
+
+      .use-case {
+        display: none;
+      }
+    }
+  </style>
+</Base>

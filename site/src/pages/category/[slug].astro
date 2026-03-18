@@ -8,6 +8,42 @@ import { toSlug, formatStars, relativeTime, scoreColor } from '../../data/tools'
 import { toSkillSlug, formatInstalls, sourceLabel } from '../../data/skills';
 import { CATEGORIES, CATEGORY_CONTENT } from '../../data/content-gen';
 
+const CATEGORY_BLOG_LINKS: Record<string, { href: string; title: string }[]> = {
+  database: [
+    { href: '/blog/best-mcp-servers-database/', title: 'Best MCP Servers for Database' },
+    { href: '/blog/how-to-choose-an-mcp-server/', title: 'How to Choose an MCP Server in 2026' },
+    { href: '/blog/mcp-server-landscape-q1-2026/', title: 'The MCP Server Landscape: Q1 2026' },
+  ],
+  deployment: [
+    { href: '/blog/best-mcp-servers-devops/', title: 'Best MCP Servers for DevOps & Infrastructure' },
+    { href: '/blog/how-to-choose-an-mcp-server/', title: 'How to Choose an MCP Server in 2026' },
+    { href: '/blog/mcp-server-landscape-q1-2026/', title: 'The MCP Server Landscape: Q1 2026' },
+  ],
+  'ai-models': [
+    { href: '/blog/best-mcp-servers-ai-ml/', title: 'Best MCP Servers for AI & Machine Learning' },
+    { href: '/blog/how-to-choose-an-mcp-server/', title: 'How to Choose an MCP Server in 2026' },
+    { href: '/blog/mcp-server-landscape-q1-2026/', title: 'The MCP Server Landscape: Q1 2026' },
+  ],
+  communication: [
+    { href: '/blog/best-mcp-servers-productivity/', title: 'Best MCP Servers for Productivity' },
+    { href: '/blog/how-to-choose-an-mcp-server/', title: 'How to Choose an MCP Server in 2026' },
+    { href: '/blog/mcp-server-landscape-q1-2026/', title: 'The MCP Server Landscape: Q1 2026' },
+  ],
+  'mcp-server': [
+    { href: '/blog/how-to-choose-an-mcp-server/', title: 'How to Choose an MCP Server in 2026' },
+    { href: '/blog/mcp-server-comparison-top-10/', title: 'MCP Server Comparison: Top 10 Head-to-Head' },
+    { href: '/blog/mcp-server-landscape-q1-2026/', title: 'The MCP Server Landscape: Q1 2026' },
+  ],
+  'browser-automation': [
+    { href: '/blog/how-to-choose-an-mcp-server/', title: 'How to Choose an MCP Server in 2026' },
+    { href: '/blog/mcp-server-landscape-q1-2026/', title: 'The MCP Server Landscape: Q1 2026' },
+  ],
+  search: [
+    { href: '/blog/how-to-choose-an-mcp-server/', title: 'How to Choose an MCP Server in 2026' },
+    { href: '/blog/mcp-server-landscape-q1-2026/', title: 'The MCP Server Landscape: Q1 2026' },
+  ],
+};
+
 // Language-based virtual categories
 const LANGUAGE_CATEGORIES: Record<string, string> = {
   python: 'Python',
@@ -243,6 +279,18 @@ const jsonLd = categoryItemListJsonLd
       </div>
     </section>
   )}
+
+  {CATEGORY_BLOG_LINKS[slug!] && (
+    <section class="blog-links-section">
+      <h3 class="section-heading">Related Reading</h3>
+      <div class="blog-links-list">
+        {CATEGORY_BLOG_LINKS[slug!].map((post) => (
+          <a href={post.href} class="blog-link-item">{post.title}</a>
+        ))}
+        <a href="/methodology/" class="blog-link-item">How AgentRank Scores Work</a>
+      </div>
+    </section>
+  )}
 </Base>
 
 <style>
@@ -424,5 +472,26 @@ const jsonLd = categoryItemListJsonLd
     .related-grid {
       flex-direction: column;
     }
+  }
+
+  .blog-links-section {
+    margin-bottom: 3rem;
+  }
+
+  .blog-links-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+  }
+
+  .blog-link-item {
+    font-size: 0.85rem;
+    color: var(--accent);
+    text-decoration: none;
+    font-weight: 500;
+  }
+
+  .blog-link-item:hover {
+    text-decoration: underline;
   }
 </style>

@@ -1,0 +1,592 @@
+---
+export const prerender = true;
+
+import Base from '../../layouts/Base.astro';
+import BlogSubscribeCTA from '../../components/BlogSubscribeCTA.astro';
+import RelatedPosts from '../../components/RelatedPosts.astro';
+
+const relatedPosts = [
+  { href: '/blog/best-mcp-servers-productivity/', title: 'Best MCP Servers for Productivity' },
+  { href: '/blog/how-to-choose-an-mcp-server/', title: 'How to Choose an MCP Server in 2026' },
+  { href: '/blog/mcp-server-landscape-q1-2026/', title: 'The MCP Server Landscape: Q1 2026' },
+];
+
+const publishDate = '2026-03-18';
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: 'Best MCP Servers for Communication in 2026',
+  description: 'Top-ranked MCP servers for Slack, Discord, email, messaging, and notifications. Scored by real quality signals from the AgentRank index.',
+  datePublished: publishDate,
+  dateModified: publishDate,
+  author: {
+    '@type': 'Organization',
+    name: 'AgentRank',
+    url: 'https://agentrank-ai.com',
+  },
+  publisher: {
+    '@type': 'Organization',
+    name: 'AgentRank',
+    url: 'https://agentrank-ai.com',
+    logo: {
+      '@type': 'ImageObject',
+      url: 'https://agentrank-ai.com/og-image.png',
+    },
+  },
+  mainEntityOfPage: {
+    '@type': 'WebPage',
+    '@id': 'https://agentrank-ai.com/blog/best-mcp-servers-communication/',
+  },
+  image: 'https://agentrank-ai.com/og-image.png',
+  keywords: 'best MCP servers communication, Slack MCP server, Discord MCP server, email MCP server, messaging MCP, notifications MCP 2026',
+};
+
+const tools = [
+  {
+    rank: 1,
+    name: 'korotovsky/slack-mcp-server',
+    slug: 'korotovsky--slack-mcp-server',
+    score: 64.9,
+    stars: 1448,
+    lang: 'Go',
+    contributors: 8,
+    lastCommit: '2026-03-12',
+    desc: 'Full-featured Slack MCP server — no permission requirements, Apps, DMs, GovSlack, and smart history fetch',
+    useCase: 'Slack Messaging',
+    highlight: 'Highest-starred Slack MCP in the index. Covers all Slack surfaces without requiring elevated OAuth scopes.',
+  },
+  {
+    rank: 2,
+    name: 'resend/mcp-send-email',
+    slug: 'resend--mcp-send-email',
+    score: 61.3,
+    stars: 470,
+    lang: 'TypeScript',
+    contributors: 12,
+    lastCommit: '2026-03-13',
+    desc: 'Official Resend MCP server — send transactional and marketing emails from any AI agent',
+    useCase: 'Email Sending',
+    highlight: 'Official Resend server. Integrates with Resend\'s deliverability infrastructure — no SMTP config required.',
+  },
+  {
+    rank: 3,
+    name: 'ai-zerolab/mcp-email-server',
+    slug: 'ai-zerolab--mcp-email-server',
+    score: 52.0,
+    stars: 191,
+    lang: 'Python',
+    contributors: 5,
+    lastCommit: '2026-03-13',
+    desc: 'IMAP and SMTP MCP server — read, search, and send email from any provider via standard protocols',
+    useCase: 'Email (IMAP/SMTP)',
+    highlight: 'Protocol-first email server. Works with Gmail, Outlook, Fastmail, and any IMAP provider.',
+  },
+  {
+    rank: 4,
+    name: 'wyattjoh/jmap-mcp',
+    slug: 'wyattjoh--jmap-mcp',
+    score: 48.3,
+    stars: 166,
+    lang: 'TypeScript',
+    contributors: 4,
+    lastCommit: '2026-02-09',
+    desc: 'JMAP MCP server — modern JSON-based email and calendar protocol for agents',
+    useCase: 'Email (JMAP)',
+    highlight: 'JMAP is the successor to IMAP — faster batch operations, push notifications, and atomic updates.',
+  },
+  {
+    rank: 5,
+    name: 'InditexTech/mcp-teams-server',
+    slug: 'InditexTech--mcp-teams-server',
+    score: 45.8,
+    stars: 358,
+    lang: 'Python',
+    contributors: 9,
+    lastCommit: '2026-03-09',
+    desc: 'Microsoft Teams MCP server — send messages, manage channels, and access meeting transcripts',
+    useCase: 'Microsoft Teams',
+    highlight: '358 stars and active maintenance from a major enterprise contributor. Best Teams MCP in the index.',
+  },
+  {
+    rank: 6,
+    name: 'forgeai-dev/ForgeAI',
+    slug: 'forgeai-dev--ForgeAI',
+    score: 45.4,
+    stars: 9,
+    lang: 'TypeScript',
+    contributors: 3,
+    lastCommit: '2026-03-14',
+    desc: 'Self-hosted AI gateway — connects agents to WhatsApp, Telegram, Discord, Slack, and more from one server',
+    useCase: 'Multi-Platform Gateway',
+    highlight: 'Single MCP server for all major messaging platforms. Self-hosted, so your credentials stay local.',
+  },
+  {
+    rank: 7,
+    name: 'Microck/discord.py-self-mcp',
+    slug: 'Microck--discord.py-self-mcp',
+    score: 42.3,
+    stars: 20,
+    lang: 'Python',
+    contributors: 2,
+    lastCommit: '2026-03-08',
+    desc: 'Discord MCP server using discord.py-self — read messages, send to channels, manage server interactions',
+    useCase: 'Discord Messaging',
+    highlight: 'Comprehensive Discord coverage via discord.py-self. Supports DMs, guilds, and channel operations.',
+  },
+];
+
+const stats = {
+  totalCommunicationTools: 892,
+  avgCommunicationScore: 34.2,
+  topScore: 64.9,
+};
+---
+
+<Base
+  title="Best MCP Servers for Communication in 2026 — AgentRank"
+  description="Top-ranked MCP servers for Slack, Discord, email, messaging, and notifications. Real scores from the AgentRank index — March 2026 data."
+  activeTab="blog"
+  keywords="best MCP servers communication, Slack MCP server 2026, Discord MCP server, email MCP server, messaging MCP, IMAP SMTP MCP, Teams MCP agent"
+  canonicalUrl="https://agentrank-ai.com/blog/best-mcp-servers-communication/"
+  jsonLd={jsonLd}
+>
+  <article class="blog-post">
+    <header class="post-header">
+      <div class="breadcrumb"><a href="/blog/">Blog</a> <span>/</span></div>
+      <h1>Best MCP Servers for Communication in 2026</h1>
+      <div class="post-meta">
+        <time datetime={publishDate}>March 18, 2026</time>
+        <span class="sep">&middot;</span>
+        <span>6 min read</span>
+        <span class="sep">&middot;</span>
+        <span>AgentRank Index</span>
+      </div>
+      <p class="lede">
+        The AgentRank index tracks <strong>{stats.totalCommunicationTools} communication-category tools</strong> —
+        Slack servers, email clients, Discord bots, Teams integrations, and multi-platform messaging gateways.
+        Communication is one of the fastest-growing MCP categories but still maturing: most servers here are
+        community-built rather than official vendor releases, which shows in the scores. The top score is
+        <strong>{stats.topScore}</strong> versus 87+ in more established categories. What follows are the
+        tools worth depending on today.
+      </p>
+    </header>
+
+    <nav class="toc">
+      <strong>Contents</strong>
+      <ol>
+        <li><a href="#rankings">Rankings by score</a></li>
+        <li><a href="#by-platform">Choosing by platform</a></li>
+        <li><a href="#what-to-watch">What to watch for</a></li>
+        <li><a href="#methodology">Methodology</a></li>
+      </ol>
+    </nav>
+
+    <section id="rankings">
+      <h2>Top communication MCP servers</h2>
+      <p>
+        Ranked by the composite AgentRank score — a weighted blend of stars (15%), freshness (25%),
+        issue health (25%), contributors (10%), and inbound dependents (25%).
+        Average score across all {stats.totalCommunicationTools} communication tools is <strong>{stats.avgCommunicationScore}</strong>.
+        The tools below are the category leaders.
+      </p>
+
+      <table class="data-table top-table">
+        <thead>
+          <tr>
+            <th class="num">#</th>
+            <th>Repository</th>
+            <th class="num">Score</th>
+            <th class="num">Stars</th>
+            <th>Use Case</th>
+            <th>Lang</th>
+          </tr>
+        </thead>
+        <tbody>
+          {tools.map((tool) => (
+            <tr>
+              <td class="num rank-num">{tool.rank}</td>
+              <td class="tool-cell">
+                <a href={`/tool/${tool.slug}/`} class="tool-link">{tool.name}</a>
+                <span class="tool-desc">{tool.desc}</span>
+              </td>
+              <td class="num score-cell">{tool.score}</td>
+              <td class="num">{tool.stars.toLocaleString('en-US')}</td>
+              <td class="use-case">{tool.useCase}</td>
+              <td class="lang-badge">{tool.lang}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </section>
+
+    <section id="by-platform">
+      <h2>Choosing by platform</h2>
+
+      <h3>Slack</h3>
+      <p>
+        <a href="/tool/korotovsky--slack-mcp-server/" class="inline-link">korotovsky/slack-mcp-server</a> leads
+        the category at <strong>64.9</strong> with 1,448 stars. The key differentiator: it requires no
+        elevated OAuth permissions. Most Slack MCP servers require Workspace Admin approval for
+        <code>channels:history</code> or similar scopes. This one routes around the permission wall by using
+        the Slack Apps API directly. Covers DMs, group DMs, GovSlack workspaces, and implements smart
+        history fetch logic that avoids hitting rate limits. Written in Go — fast and low on dependencies.
+      </p>
+
+      <h3>Email sending (transactional)</h3>
+      <p>
+        <a href="/tool/resend--mcp-send-email/" class="inline-link">resend/mcp-send-email</a> scores
+        <strong>61.3</strong> with 470 stars. If your use case is sending email from an agent workflow —
+        notifications, confirmations, summaries — Resend's MCP is the cleanest path. It abstracts away
+        SMTP configuration entirely and routes through Resend's sending infrastructure, which handles
+        deliverability, DKIM, and bounce management. The tradeoff is Resend account dependency, but for
+        most teams already using Resend that's a non-issue.
+      </p>
+
+      <h3>Email reading and sending (IMAP/SMTP)</h3>
+      <p>
+        <a href="/tool/ai-zerolab--mcp-email-server/" class="inline-link">ai-zerolab/mcp-email-server</a>
+        at <strong>52.0</strong> is the top protocol-native email server. Works with any IMAP/SMTP provider —
+        Gmail, Outlook, Fastmail, self-hosted Postfix. Read threads, search inbox, draft and send messages.
+        Active development (last commit March 2026) and 191 stars signal a healthy maintenance cadence.
+        Use this when you need email access without routing through a SaaS vendor.
+      </p>
+
+      <h3>Email (modern JMAP protocol)</h3>
+      <p>
+        <a href="/tool/wyattjoh--jmap-mcp/" class="inline-link">wyattjoh/jmap-mcp</a> at
+        <strong>48.3</strong> is worth attention if you're on a JMAP-capable provider (Fastmail, Cyrus IMAP).
+        JMAP (JSON Meta Application Protocol, RFC 8620) is the successor to IMAP — it uses batch HTTP
+        requests instead of binary commands, supports push notifications, and handles email and calendar
+        in the same protocol. Lower stars (166) reflect niche deployment, not quality.
+      </p>
+
+      <h3>Microsoft Teams</h3>
+      <p>
+        <a href="/tool/InditexTech--mcp-teams-server/" class="inline-link">InditexTech/mcp-teams-server</a>
+        scores <strong>45.8</strong> with 358 stars from a large enterprise contributor (Inditex, the
+        company behind Zara). The server handles sending messages, listing channels, accessing meeting
+        transcripts, and querying team membership. If your organization runs Teams, this is the most
+        battle-tested MCP option available. Python implementation uses the Microsoft Graph API under the hood.
+      </p>
+
+      <h3>Multi-platform messaging gateway</h3>
+      <p>
+        <a href="/tool/forgeai-dev--ForgeAI/" class="inline-link">forgeai-dev/ForgeAI</a> at
+        <strong>45.4</strong> takes a different approach: one self-hosted server that routes to WhatsApp,
+        Telegram, Discord, Slack, and more. Early project (9 stars) but the architecture is compelling for
+        teams that need cross-platform agent messaging without managing separate MCP servers for each platform.
+        Self-hosted means credentials never leave your infrastructure.
+      </p>
+
+      <h3>Discord</h3>
+      <p>
+        <a href="/tool/Microck--discord.py-self-mcp/" class="inline-link">Microck/discord.py-self-mcp</a>
+        scores <strong>42.3</strong>. The Discord MCP ecosystem is fragmented — there's no dominant server
+        with significant star momentum. This one uses <code>discord.py-self</code> to access DMs, guilds,
+        and channels comprehensively. Note that self-bots operate in a gray area of Discord's ToS; use
+        with a dedicated bot account rather than a personal account.
+      </p>
+    </section>
+
+    <section id="what-to-watch">
+      <h2>What to watch for</h2>
+
+      <h3>Why scores are lower in this category</h3>
+      <p>
+        Communication tools top out at 64.9 in the AgentRank index versus 85+ for developer tools and
+        80+ for database/infrastructure. The reason: most communication MCP servers are community projects,
+        not official vendor releases. Official servers from Slack, Discord, or Microsoft would likely score
+        in the 80s. Track this category — as vendors build official integrations (as Slack has begun with
+        <code>slackapi/slack-mcp-plugin</code>), scores will rise and options will improve.
+      </p>
+
+      <h3>OAuth and data sensitivity</h3>
+      <p>
+        Communication tools handle the most sensitive data in your agent stack — email threads, Slack
+        messages, internal discussions. Every server in this list uses OAuth or API keys for auth.
+        Before deploying, review what scopes you're granting and whether the server stores tokens at rest.
+        The korotovsky Slack server's no-elevated-permissions design is genuinely meaningful security-wise:
+        you're not handing an agent read access to every channel in your workspace.
+      </p>
+
+      <h3>Rate limits and API quotas</h3>
+      <p>
+        Slack's API enforces per-minute and per-day request limits. Gmail/IMAP providers enforce
+        concurrent connection limits. Agents that loop on messaging APIs in tight cycles will hit
+        these limits quickly. Design workflows with explicit delays between message reads, or use
+        webhook-based triggers (when supported) rather than polling.
+      </p>
+
+      <div class="cta-box">
+        <p>
+          <strong>Browse the full communication category:</strong> <a href="/category/communication/">All communication MCP servers ranked</a> —
+          {stats.totalCommunicationTools} tools indexed, updated daily.
+        </p>
+        <p>
+          <strong>Compare any two tools:</strong> <a href="/compare/">Tool comparison widget</a> — side-by-side signal breakdown.
+        </p>
+        <p>
+          <strong>Building a communication MCP server?</strong> <a href="/submit/">Submit it</a> to get indexed and scored.
+        </p>
+      </div>
+    </section>
+
+    <RelatedPosts posts={relatedPosts} />
+    <BlogSubscribeCTA source="blog" />
+    <footer class="post-footer">
+      <p class="methodology">
+        <strong>Methodology:</strong> Data from the AgentRank index crawled March 2026.
+        Scores computed using: stars 15%, freshness 25%, issue health 25%, contributors 10%, inbound dependents 25%.
+        Tools classified as "communication" via keyword matching on description, topics, and repo name.
+        Only non-archived repositories included.
+      </p>
+      <p class="share-line">
+        Found this useful? <a href="https://x.com/AgentRank_ai" target="_blank" rel="noopener noreferrer">Follow @AgentRank_ai</a> for
+        weekly ecosystem updates, biggest movers, and new tool spotlights.
+      </p>
+    </footer>
+  </article>
+
+  <style>
+    .blog-post {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 2rem 0 3rem;
+    }
+
+    .breadcrumb {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      margin-bottom: 0.75rem;
+    }
+
+    .breadcrumb span {
+      margin: 0 0.25rem;
+      opacity: 0.5;
+    }
+
+    .post-header {
+      margin-bottom: 2rem;
+      padding-bottom: 1.5rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .post-header h1 {
+      font-size: 1.6rem;
+      font-weight: 700;
+      line-height: 1.3;
+      margin-bottom: 0.75rem;
+    }
+
+    .post-meta {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      flex-wrap: wrap;
+      margin-bottom: 1rem;
+    }
+
+    .sep {
+      opacity: 0.4;
+    }
+
+    .lede {
+      font-size: 1rem;
+      line-height: 1.7;
+      color: var(--text);
+      opacity: 0.9;
+    }
+
+    .toc {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 1rem 1.25rem;
+      margin-bottom: 2.5rem;
+      font-size: 0.82rem;
+    }
+
+    .toc strong {
+      display: block;
+      margin-bottom: 0.6rem;
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+    }
+
+    .toc ol {
+      margin: 0;
+      padding-left: 1.2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+    }
+
+    .toc a {
+      color: var(--text-muted);
+    }
+
+    .toc a:hover {
+      color: var(--accent);
+    }
+
+    section {
+      margin-bottom: 3rem;
+    }
+
+    section h2 {
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin-bottom: 0.75rem;
+      padding-bottom: 0.4rem;
+      border-bottom: 2px solid var(--accent);
+      display: inline-block;
+    }
+
+    section h3 {
+      font-size: 0.95rem;
+      font-weight: 700;
+      margin: 1.5rem 0 0.5rem;
+      color: var(--text);
+    }
+
+    section p {
+      font-size: 0.9rem;
+      line-height: 1.75;
+      color: var(--text);
+      opacity: 0.9;
+      margin-bottom: 0.9rem;
+    }
+
+    .inline-link {
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.82rem;
+      margin: 1rem 0 1.25rem;
+    }
+
+    .data-table th {
+      text-align: left;
+      font-weight: 600;
+      color: var(--text-muted);
+      border-bottom: 1px solid var(--border);
+      padding: 0.4rem 0.75rem 0.4rem 0;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+
+    .data-table td {
+      padding: 0.45rem 0.75rem 0.45rem 0;
+      border-bottom: 1px solid var(--border);
+      color: var(--text);
+      vertical-align: top;
+    }
+
+    .data-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .num {
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .rank-num {
+      color: var(--text-muted);
+      font-weight: 700;
+    }
+
+    .top-table .tool-cell {
+      display: flex;
+      flex-direction: column;
+      gap: 0.2rem;
+    }
+
+    .tool-link {
+      font-weight: 600;
+      color: var(--accent);
+      font-size: 0.82rem;
+    }
+
+    .tool-desc {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      font-weight: 400;
+    }
+
+    .score-cell {
+      color: var(--accent);
+      font-weight: 700;
+    }
+
+    .use-case {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      white-space: nowrap;
+    }
+
+    .lang-badge {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      white-space: nowrap;
+    }
+
+    .cta-box {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      border-radius: 4px;
+      padding: 1rem 1.25rem;
+      margin-top: 1.5rem;
+    }
+
+    .cta-box p {
+      margin-bottom: 0.5rem;
+    }
+
+    .cta-box p:last-child {
+      margin-bottom: 0;
+    }
+
+    .post-footer {
+      margin-top: 3rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--border);
+    }
+
+    .methodology {
+      font-size: 0.75rem !important;
+      color: var(--text-muted) !important;
+      opacity: 1 !important;
+    }
+
+    .share-line {
+      font-size: 0.82rem !important;
+      margin-top: 0.75rem;
+    }
+
+    @media (max-width: 640px) {
+      .post-header h1 {
+        font-size: 1.3rem;
+      }
+
+      .data-table {
+        font-size: 0.75rem;
+      }
+
+      .use-case {
+        display: none;
+      }
+    }
+  </style>
+</Base>
