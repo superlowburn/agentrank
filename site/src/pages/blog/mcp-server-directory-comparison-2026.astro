@@ -1,0 +1,1077 @@
+---
+export const prerender = true;
+
+import Base from '../../layouts/Base.astro';
+import BlogSubscribeCTA from '../../components/BlogSubscribeCTA.astro';
+import RelatedPosts from '../../components/RelatedPosts.astro';
+
+const relatedPosts = [
+  { href: '/blog/mcp-server-directory-comparison/', title: 'MCP Server Discovery Tools Compared (2026)' },
+  { href: '/blog/how-to-choose-an-mcp-server/', title: 'How to Choose an MCP Server in 2026' },
+  { href: '/blog/mcp-server-comparison-top-10/', title: 'MCP Server Comparison: Top 10 Head-to-Head' },
+  { href: '/blog/top-mcp-servers-2026/', title: 'Top 10 MCP Servers for AI Agents in 2026' },
+  { href: '/blog/mcp-server-landscape-q1-2026/', title: 'The MCP Server Landscape: Q1 2026' },
+];
+
+const publishDate = '2026-03-18';
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: 'AgentRank vs Smithery vs Glama vs MCP.so: Comparing Every MCP Directory (2026)',
+  description: 'A data-driven comparison of the six major MCP server directories: AgentRank, Smithery.ai, Glama.ai, MCP.so, mcp-get.com, and the official MCP registry. Coverage, ranking methodology, API availability, and which one to use.',
+  datePublished: publishDate,
+  dateModified: publishDate,
+  author: {
+    '@type': 'Organization',
+    name: 'AgentRank',
+    url: 'https://agentrank-ai.com',
+  },
+  publisher: {
+    '@type': 'Organization',
+    name: 'AgentRank',
+    url: 'https://agentrank-ai.com',
+    logo: {
+      '@type': 'ImageObject',
+      url: 'https://agentrank-ai.com/og-image.png',
+    },
+  },
+  mainEntityOfPage: {
+    '@type': 'WebPage',
+    '@id': 'https://agentrank-ai.com/blog/mcp-server-directory-comparison-2026/',
+  },
+  image: 'https://agentrank-ai.com/og-image.png',
+  keywords: 'best mcp server directory, mcp server registry comparison, where to find mcp servers, smithery vs agentrank, glama mcp, mcp.so review, mcp-get, mcp directory 2026',
+};
+
+const platforms = [
+  {
+    name: 'AgentRank',
+    url: 'agentrank-ai.com',
+    coverage: '25,000+',
+    updateFreq: 'Nightly',
+    scoring: 'Composite (5 signals)',
+    api: true,
+    openData: true,
+    bestFor: 'Quality-filtered discovery, agent integrations',
+  },
+  {
+    name: 'Smithery.ai',
+    url: 'smithery.ai',
+    coverage: '4,000+',
+    updateFreq: 'Continuous',
+    scoring: 'Usage-based',
+    api: true,
+    openData: false,
+    bestFor: 'Hosted deployment and one-click install',
+  },
+  {
+    name: 'Glama.ai',
+    url: 'glama.ai',
+    coverage: 'Curated subset',
+    updateFreq: 'As reviewed',
+    scoring: 'Manual review + security scan',
+    api: true,
+    openData: false,
+    bestFor: 'Security-sensitive environments',
+  },
+  {
+    name: 'MCP.so',
+    url: 'mcp.so',
+    coverage: '3,000+',
+    updateFreq: 'Community-driven',
+    scoring: 'None (alphabetical)',
+    api: false,
+    openData: false,
+    bestFor: 'Basic browsing and community submissions',
+  },
+  {
+    name: 'mcp-get.com',
+    url: 'mcp-get.com',
+    coverage: '~200 curated',
+    updateFreq: 'Manual PR process',
+    scoring: 'None (flat list)',
+    api: false,
+    openData: true,
+    bestFor: 'CLI-first installation workflow',
+  },
+  {
+    name: 'Official MCP Registry',
+    url: 'registry.modelcontextprotocol.io',
+    coverage: '~87',
+    updateFreq: 'Manual additions',
+    scoring: 'None (curated)',
+    api: false,
+    openData: false,
+    bestFor: 'Vendors seeking official certification',
+  },
+];
+
+const faqJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: [
+    {
+      '@type': 'Question',
+      name: 'What is the best MCP server directory in 2026?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'It depends on your use case. AgentRank is best for finding quality-ranked, actively maintained servers across 25,000+ repositories with transparent scoring. Smithery.ai is best if you want hosted deployment and one-click install. Glama.ai is best for security-sensitive environments needing vetted tools. For the widest coverage with quality signals, AgentRank is the most comprehensive option.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'How does Smithery.ai compare to AgentRank?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Smithery.ai focuses on hosted deployment and one-click installation of MCP servers, with around 4,000+ servers listed. AgentRank indexes 25,000+ repositories with a transparent composite quality score (freshness, issue health, dependents, stars, contributors) updated nightly. AgentRank has broader coverage and objective quality signals; Smithery is better if you need managed hosting.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Does Glama.ai have an API for MCP server discovery?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Yes, Glama.ai offers an API for accessing its curated directory of security-reviewed MCP servers. However, coverage is limited to manually reviewed tools, which is a small subset of the full ecosystem. AgentRank also offers a public REST API with access to 25,000+ scored repositories.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'What is the difference between MCP.so and the official MCP registry?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'MCP.so (now redirecting to registry.mcp.so) is a community-driven directory for browsing MCP servers. The official MCP registry at registry.modelcontextprotocol.io is a selective certification list maintained by the MCP team — currently under 100 entries. MCP.so has broader community coverage; the official registry has stricter quality requirements.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'What is mcp-get and how does it compare to other MCP directories?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'mcp-get.com is a CLI package manager for MCP servers — think npm for MCP. You install servers with a single command rather than browsing a website. It maintains a curated list of around 200 servers. It lacks a browsing UI, quality scoring, or discovery features. It is complementary to directories like AgentRank: find the server with AgentRank, install it with mcp-get.',
+      },
+    },
+  ],
+};
+---
+
+<Base
+  title="AgentRank vs Smithery vs Glama vs MCP.so: MCP Directory Comparison 2026 — AgentRank"
+  description="Which MCP server directory should you use? We compare AgentRank, Smithery.ai, Glama.ai, MCP.so, mcp-get.com, and the official MCP registry on coverage, scoring methodology, API availability, and use case fit."
+  activeTab="blog"
+  keywords="best mcp server directory, mcp server registry comparison, where to find mcp servers, smithery vs agentrank, glama mcp directory, mcp.so, mcp-get, mcp registry 2026"
+  canonicalUrl="https://agentrank-ai.com/blog/mcp-server-directory-comparison-2026/"
+  jsonLd={[jsonLd, faqJsonLd]}
+  ogImage="/og-image.png"
+>
+  <article class="blog-post">
+    <header class="post-header">
+      <div class="breadcrumb"><a href="/blog/">Blog</a> <span>/</span></div>
+      <h1>AgentRank vs Smithery vs Glama vs MCP.so: Comparing Every MCP Directory (2026)</h1>
+      <div class="post-meta">
+        <time datetime={publishDate}>March 18, 2026</time>
+        <span class="sep">&middot;</span>
+        <span>9 min read</span>
+        <span class="sep">&middot;</span>
+        <span>Ecosystem Analysis</span>
+      </div>
+      <p class="lede">
+        There are now six major places to find MCP servers. They differ dramatically in
+        coverage, ranking methodology, API access, and what they're actually for. This is
+        a direct, data-driven comparison of AgentRank, Smithery.ai, Glama.ai, MCP.so,
+        mcp-get.com, and the official MCP registry — what each does well, what it doesn't,
+        and which one to use for what.
+      </p>
+    </header>
+
+    <nav class="toc">
+      <strong>Contents</strong>
+      <ol>
+        <li><a href="#overview">Side-by-side comparison</a></li>
+        <li><a href="#coverage">Coverage and completeness</a></li>
+        <li><a href="#scoring">Scoring and ranking methodology</a></li>
+        <li><a href="#api">API availability</a></li>
+        <li><a href="#deep-dives">Platform deep dives</a></li>
+        <li><a href="#verdict">The verdict: which to use</a></li>
+      </ol>
+    </nav>
+
+    <section id="overview">
+      <h2>Side-by-side comparison</h2>
+      <p>
+        The table below covers the six platforms across five dimensions. "Scored" means the
+        platform publishes a composite quality score per tool — not just a view count or star count.
+        "Open data" means the underlying index or scoring methodology is publicly documented.
+      </p>
+
+      <div class="table-wrapper">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Platform</th>
+              <th class="num">Coverage</th>
+              <th>Update freq.</th>
+              <th>Scoring</th>
+              <th class="center">API?</th>
+              <th class="center">Open data?</th>
+            </tr>
+          </thead>
+          <tbody>
+            {platforms.map((p) => (
+              <tr class={p.name === 'AgentRank' ? 'highlight-row' : ''}>
+                <td class="platform-cell">
+                  <span class="platform-name">{p.name}</span>
+                  <span class="platform-url">{p.url}</span>
+                </td>
+                <td class="num">{p.coverage}</td>
+                <td class="freshness-cell">{p.updateFreq}</td>
+                <td class="ranking-cell">{p.scoring}</td>
+                <td class="center">
+                  {p.api
+                    ? <span class="yes-badge">Yes</span>
+                    : <span class="no-badge">No</span>}
+                </td>
+                <td class="center">
+                  {p.openData
+                    ? <span class="yes-badge">Yes</span>
+                    : <span class="no-badge">No</span>}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <p class="table-note">Coverage figures as of March 2026. "Scored" = platform publishes a composite quality metric beyond raw popularity.</p>
+    </section>
+
+    <section id="coverage">
+      <h2>Coverage and completeness</h2>
+      <p>
+        The coverage gap between the largest and smallest platforms is roughly 300x. AgentRank
+        indexes 25,000+ repositories. The official MCP Registry lists around 87. These numbers
+        reflect fundamentally different philosophies, not one platform being lazy.
+      </p>
+      <p>
+        <strong>Breadth matters when you're exploring.</strong> If you're building an agent workflow
+        and want to know whether an MCP server exists for a particular tool or API, a 25,000-repo
+        index will find things a curated list of 200 will miss. The tradeoff is signal-to-noise:
+        broad indexes need better ranking to stay useful.
+      </p>
+      <p>
+        <strong>Curation matters when you're deploying.</strong> If you're selecting a server for a
+        production workflow, evidence of review — security scanning, code inspection, human judgment —
+        has real value even if the list is shorter.
+      </p>
+      <p>
+        Most developers need both. A broad index for initial discovery, followed by quality signals
+        to filter the candidates down.
+      </p>
+    </section>
+
+    <section id="scoring">
+      <h2>Scoring and ranking methodology</h2>
+
+      <h3>Composite quality score (AgentRank)</h3>
+      <p>
+        AgentRank is the only platform in this comparison that computes a transparent composite
+        quality score per tool. Five GitHub signals are weighted and combined into a 0–100 number:
+        freshness (25%), issue health (25%), inbound dependents (25%), stars (15%), and
+        contributors (10%).
+      </p>
+      <p>
+        The weights reflect a specific opinion: maintenance signals (freshness, issue health) should
+        outweigh popularity signals (stars) because they predict future reliability better than
+        historical fame. A server with 50 stars and a 95% issue close rate and weekly commits scores
+        higher than a 3,000-star repo that hasn't been touched in 14 months.
+      </p>
+      <p>
+        The methodology is publicly documented. The weights are transparent. Every tool in the index
+        is scored by the same formula — no editorial exceptions.
+      </p>
+
+      <h3>Usage-based ranking (Smithery.ai)</h3>
+      <p>
+        Smithery surfaces tools by installation and usage signals — how many times a server has
+        been deployed or run through its platform. This is a reasonable proxy for real-world
+        adoption, but it measures Smithery-specific usage, not ecosystem-wide usage. A server
+        with high GitHub activity and widespread real-world use but low Smithery install counts
+        will rank poorly. The feedback loop amplifies tools that are already popular on the
+        platform.
+      </p>
+
+      <h3>Manual review + security scan (Glama.ai)</h3>
+      <p>
+        Glama applies a different filter: human review and automated security scanning before
+        inclusion. What the platform provides is a security clearance signal, not a quality
+        comparison. All tools in Glama's list passed the security bar; there's no composite
+        score for comparing two tools that both passed.
+      </p>
+
+      <h3>No ranking (MCP.so, mcp-get.com, Official Registry)</h3>
+      <p>
+        MCP.so, mcp-get.com, and the official MCP Registry provide flat lists organized by
+        category or alphabetically. There is no signal for comparing two tools within a category.
+        The choice falls entirely on the developer.
+      </p>
+    </section>
+
+    <section id="api">
+      <h2>API availability</h2>
+      <p>
+        As AI agents themselves become the primary consumers of tool directories, API access
+        becomes critical. An agent that needs to select an MCP server should be able to query
+        a directory programmatically, not scrape a webpage.
+      </p>
+
+      <div class="api-grid">
+        <div class="api-card api-card--yes">
+          <h3>AgentRank API</h3>
+          <p>
+            REST API providing access to the full scored index. Query by name, category, score
+            threshold, or keyword. Returns rank, score breakdown, GitHub metadata, and last-crawled
+            data. Suitable for automated tool selection in agentic workflows.
+          </p>
+          <p class="api-detail">Public REST API &middot; JSON responses &middot; No key required for basic access</p>
+        </div>
+
+        <div class="api-card api-card--yes">
+          <h3>Smithery.ai API</h3>
+          <p>
+            Smithery provides an API for accessing its server registry, primarily oriented toward
+            deployment operations rather than discovery. The API supports listing, searching, and
+            triggering hosted server runs. Requires authentication.
+          </p>
+          <p class="api-detail">REST API &middot; Auth required &middot; Deployment-focused</p>
+        </div>
+
+        <div class="api-card api-card--yes">
+          <h3>Glama.ai API</h3>
+          <p>
+            Glama offers API access to its curated directory. Coverage is limited to the manually
+            reviewed subset, but tools returned have passed security vetting. Useful as a secondary
+            validation layer after initial discovery via a broader index.
+          </p>
+          <p class="api-detail">REST API &middot; Auth required &middot; Curated subset only</p>
+        </div>
+
+        <div class="api-card api-card--no">
+          <h3>MCP.so — No public API</h3>
+          <p>
+            MCP.so is a web directory only. There is no documented public API. Discovery must
+            happen through the browser interface or by scraping. Not viable for agentic workflows.
+          </p>
+          <p class="api-detail">No API &middot; Browse-only</p>
+        </div>
+
+        <div class="api-card api-card--no">
+          <h3>mcp-get.com — CLI only</h3>
+          <p>
+            mcp-get is a command-line package manager. It provides programmatic installation via
+            CLI, not a browseable API. The underlying package list is a JSON file in a public
+            GitHub repository — queryable but not structured for discovery queries.
+          </p>
+          <p class="api-detail">CLI interface &middot; No REST API &middot; JSON package list on GitHub</p>
+        </div>
+
+        <div class="api-card api-card--no">
+          <h3>Official Registry — No public API</h3>
+          <p>
+            The official MCP Registry at registry.modelcontextprotocol.io does not publish a
+            documented REST API for third-party consumption. The registry is designed for vendors
+            seeking official listing, not for developer discovery queries.
+          </p>
+          <p class="api-detail">No API &middot; Vendor submission process only</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="deep-dives">
+      <h2>Platform deep dives</h2>
+
+      <div class="platform-card platform-card--highlight">
+        <div class="platform-header">
+          <h3>AgentRank</h3>
+          <span class="platform-tag">25,000+ tools &middot; Nightly scoring &middot; API</span>
+        </div>
+        <p>
+          AgentRank indexes the full GitHub ecosystem nightly and scores every tool on five
+          transparent signals. The goal is to answer the question a developer actually has:
+          "Among the dozen MCP servers that do X, which one is most likely to still be
+          maintained six months from now?"
+        </p>
+        <p>
+          The score is designed to surface active projects over historically popular ones.
+          Freshness (25%) and issue health (25%) together account for half the score — the same
+          signals that predict whether you'll get a response if you file a bug. Inbound dependents
+          (25%) measure real ecosystem adoption, not just interest. Stars (15%) and contributors
+          (10%) fill out the rest.
+        </p>
+        <p>
+          The index is fully open: score methodology is documented, signal weights are public,
+          and the REST API is accessible without authentication for basic queries. Tools can also
+          claim their listing and add context to their entry.
+        </p>
+        <ul class="feature-list">
+          <li>Largest coverage in the category: 25,000+ repositories</li>
+          <li>Transparent composite quality score (0–100)</li>
+          <li>Nightly crawl — scores reflect commits from yesterday, not last year</li>
+          <li>Public REST API for agentic tool selection</li>
+          <li>Score methodology documented and reproducible</li>
+        </ul>
+        <p class="verdict">
+          <strong>Limitations:</strong> GitHub-only signals for now. npm, PyPI, and Docker Hub
+          adoption data are not yet incorporated. Tools not on GitHub (private/proprietary) are
+          not indexed.
+        </p>
+      </div>
+
+      <div class="platform-card">
+        <div class="platform-header">
+          <h3>Smithery.ai</h3>
+          <span class="platform-tag">4,000+ tools &middot; Hosted deployment &middot; API</span>
+        </div>
+        <p>
+          Smithery occupies a distinct niche: it's not just a directory, it's a hosting platform.
+          You can deploy and run MCP servers directly through Smithery without managing your own
+          infrastructure. For developers who want zero-configuration MCP access, this is a
+          significant differentiator.
+        </p>
+        <p>
+          The directory is a byproduct of the hosting business: Smithery lists servers that can be
+          deployed on its platform. Coverage (4,000+) is solid for the most popular servers but
+          incomplete relative to the full ecosystem. Ranking is based on Smithery-platform usage
+          signals — servers with more Smithery installs rank higher, regardless of quality or
+          maintenance outside the platform.
+        </p>
+        <ul class="feature-list">
+          <li>Hosted server deployment — run MCP servers without infrastructure</li>
+          <li>One-click install into compatible clients</li>
+          <li>API for programmatic access to the registry</li>
+          <li>Growing ecosystem of platform-specific tooling</li>
+        </ul>
+        <p class="verdict">
+          <strong>Limitations:</strong> Coverage limited to Smithery-compatible deployments. Ranking
+          reflects platform usage, not objective quality signals. Maintenance activity and issue
+          health are not factored into visibility.
+        </p>
+      </div>
+
+      <div class="platform-card">
+        <div class="platform-header">
+          <h3>Glama.ai</h3>
+          <span class="platform-tag">Curated &middot; Security-reviewed &middot; API</span>
+        </div>
+        <p>
+          Glama applies security scanning and manual review before listing any server. For
+          organizations with strict security requirements — enterprises, regulated industries,
+          teams where installing an unvetted tool is a compliance issue — this is genuinely
+          valuable. It means every listed tool has been looked at by a human and run through
+          automated security checks.
+        </p>
+        <p>
+          The limitation is inherent to the model: manual review doesn't scale to the speed at
+          which the MCP ecosystem grows. Hundreds of new repositories appear each week; Glama's
+          reviewed list will always represent a small fraction of what's available.
+        </p>
+        <ul class="feature-list">
+          <li>Security scanning and manual review for every listed tool</li>
+          <li>API access to the curated directory</li>
+          <li>Strong signal for security-sensitive selection decisions</li>
+        </ul>
+        <p class="verdict">
+          <strong>Limitations:</strong> Coverage is limited by manual review capacity. No composite
+          quality score for comparing tools within the vetted set. Ecosystem coverage will always
+          lag broad automated indexes.
+        </p>
+      </div>
+
+      <div class="platform-card">
+        <div class="platform-header">
+          <h3>MCP.so</h3>
+          <span class="platform-tag">3,000+ tools &middot; Community directory</span>
+        </div>
+        <p>
+          MCP.so is a community-run web directory for browsing MCP servers by category.
+          The site aggregates submissions from the community and provides a reasonable
+          browsing interface. There is no composite quality score, no freshness indicator per
+          tool, and no programmatic API. It functions as a search-and-browse tool, not a
+          ranked index.
+        </p>
+        <p>
+          Coverage at 3,000+ is meaningful but incomplete. MCP.so captures many mainstream
+          servers but misses a large portion of the ecosystem that hasn't been manually submitted.
+          Community-driven means coverage depends on who happens to submit their server.
+        </p>
+        <ul class="feature-list">
+          <li>Clean browsing interface organized by category</li>
+          <li>Community submissions keep popular servers visible</li>
+          <li>No login required for browsing</li>
+        </ul>
+        <p class="verdict">
+          <strong>Limitations:</strong> No quality scoring. No freshness signals. No API. Coverage
+          depends on manual community submissions rather than automated crawling. Not viable for
+          agentic or programmatic use cases.
+        </p>
+      </div>
+
+      <div class="platform-card">
+        <div class="platform-header">
+          <h3>mcp-get.com</h3>
+          <span class="platform-tag">~200 curated &middot; CLI package manager</span>
+        </div>
+        <p>
+          mcp-get is a different product category entirely — it's a package manager, not a
+          discovery tool. The command-line interface lets you install MCP servers directly into
+          Claude Desktop and other compatible clients with a single command:
+        </p>
+        <pre><code>npx @michaellatman/mcp-get@latest install @modelcontextprotocol/server-github</code></pre>
+        <p>
+          The underlying registry is a curated JSON file (~200 entries) maintained via GitHub PRs.
+          There is no quality scoring, no freshness data, and no discovery UI. mcp-get is most
+          useful as an installation mechanism after you've already decided which server to use.
+        </p>
+        <ul class="feature-list">
+          <li>One-command installation into Claude Desktop and compatible clients</li>
+          <li>Open source package list (JSON on GitHub)</li>
+          <li>No manual configuration file editing required</li>
+        </ul>
+        <p class="verdict">
+          <strong>Limitations:</strong> Not a discovery tool. 200-entry curated list misses the vast
+          majority of the ecosystem. No scoring, no API, no freshness signals. Intended to complement
+          directories, not replace them.
+        </p>
+      </div>
+
+      <div class="platform-card">
+        <div class="platform-header">
+          <h3>Official MCP Registry</h3>
+          <span class="platform-tag">~87 tools &middot; Certification layer</span>
+        </div>
+        <p>
+          The official registry at registry.modelcontextprotocol.io is not a developer discovery
+          tool. It's a certification layer — vendors submit MCP servers for official recognition
+          by the MCP team, and the list is curated by Anthropic. At ~87 entries, it covers a
+          tiny fraction of the ecosystem.
+        </p>
+        <p>
+          What it does represent is a credibility floor. Anything listed here has explicit
+          endorsement from the team that maintains the MCP protocol. For vendors building
+          commercial MCP servers, official listing is a meaningful signal. For developers
+          searching for tools, this list alone will rarely be sufficient.
+        </p>
+        <ul class="feature-list">
+          <li>Official Anthropic endorsement for listed tools</li>
+          <li>High bar for inclusion — meaningful credibility signal</li>
+          <li>Best starting point for understanding the reference implementation landscape</li>
+        </ul>
+        <p class="verdict">
+          <strong>Limitations:</strong> ~87 entries. No quality scoring within the set. No API for
+          programmatic access. Designed for vendor certification, not developer discovery.
+        </p>
+      </div>
+    </section>
+
+    <section id="verdict">
+      <h2>The verdict: which to use</h2>
+
+      <div class="use-case-list">
+        <div class="use-case">
+          <h3>"Does an MCP server exist for X?" — Broad discovery</h3>
+          <p>
+            Use <strong>AgentRank</strong> first. 25,000+ indexed repos means you'll find niche
+            tools that smaller directories miss. The quality score helps filter results immediately.
+            Smithery.ai is a reasonable secondary option with a polished UI if you're also open to
+            hosted deployment.
+          </p>
+        </div>
+
+        <div class="use-case">
+          <h3>"Which of these five candidates is the best?" — Quality comparison</h3>
+          <p>
+            Use <strong>AgentRank</strong>. It's the only platform with a transparent composite
+            score across all candidates. Sorting by score and examining the signal breakdown
+            (freshness, issue health, dependents) surfaces which tool will likely still be
+            maintained when you need support. No other platform in this comparison provides
+            this signal.
+          </p>
+        </div>
+
+        <div class="use-case">
+          <h3>"I need a vetted, security-reviewed option" — Enterprise/regulated</h3>
+          <p>
+            Filter through <strong>Glama.ai</strong> as a secondary step. Discover candidates with
+            AgentRank's broad index, then cross-check against Glama's reviewed list. Anything that
+            appears in both has both quality signals and security vetting — the strongest possible
+            filter for production selection.
+          </p>
+        </div>
+
+        <div class="use-case">
+          <h3>"I want to install a server without editing config files" — Friction-free setup</h3>
+          <p>
+            Use <strong>mcp-get.com</strong> for installation after you've selected a tool.
+            Find the server you want via AgentRank or another directory, then use mcp-get to
+            install it into Claude Desktop in one command. The two tools are complementary.
+          </p>
+        </div>
+
+        <div class="use-case">
+          <h3>"I'm building an agent that selects MCP tools programmatically" — Agentic use</h3>
+          <p>
+            Use the <strong>AgentRank API</strong>. It's the only platform in this comparison
+            offering open REST access to a scored, 25,000-repository index without requiring
+            authentication for basic queries. Smithery's API covers its subset but is
+            deployment-oriented rather than discovery-oriented.
+          </p>
+        </div>
+
+        <div class="use-case">
+          <h3>"I'm building an MCP server and want maximum visibility" — Submitters</h3>
+          <p>
+            Target multiple platforms. Submit to the <strong>official MCP Registry</strong> for
+            credibility. List on <strong>Smithery.ai</strong> for deployment reach. Claim your
+            listing on <strong>AgentRank</strong> so your tool appears in the scored index with
+            the description and context you want. All three together maximize your discovery
+            surface across different developer segments.
+          </p>
+        </div>
+      </div>
+
+      <div class="cta-box">
+        <p>
+          <strong>Browse the AgentRank index:</strong> <a href="/">25,000+ MCP servers ranked by composite quality score</a> — updated nightly.
+        </p>
+        <p>
+          <strong>API access:</strong> Query the index programmatically for agentic tool selection.
+          Full score breakdowns, metadata, and category filtering. <a href="/docs/">See the API docs.</a>
+        </p>
+        <p>
+          <strong>Methodology:</strong> Freshness 25%, issue health 25%, inbound dependents 25%, stars 15%, contributors 10%.
+          <a href="/methodology/">Full methodology documented here.</a>
+        </p>
+      </div>
+    </section>
+
+    <RelatedPosts posts={relatedPosts} />
+    <BlogSubscribeCTA source="blog" />
+    <footer class="post-footer">
+      <p class="methodology">
+        <strong>Methodology:</strong> Coverage figures estimated from publicly available platform data as of March 2026.
+        Platform features based on publicly documented behavior and direct observation. AgentRank index figures from
+        nightly crawl of GitHub repositories matching MCP server and agent tool patterns. Competitor descriptions
+        reflect publicly available information — contact us if any figures are out of date.
+      </p>
+      <p class="share-line">
+        Found this useful? <a href="https://x.com/AgentRank_ai" target="_blank" rel="noopener noreferrer">Follow @AgentRank_ai</a> for
+        weekly ecosystem updates, biggest movers, and new tool spotlights.
+      </p>
+    </footer>
+  </article>
+
+  <style>
+    .blog-post {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 2rem 0 3rem;
+    }
+
+    .breadcrumb {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      margin-bottom: 0.75rem;
+    }
+
+    .breadcrumb span {
+      margin: 0 0.25rem;
+      opacity: 0.5;
+    }
+
+    .post-header {
+      margin-bottom: 2rem;
+      padding-bottom: 1.5rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .post-header h1 {
+      font-size: 1.6rem;
+      font-weight: 700;
+      line-height: 1.3;
+      margin-bottom: 0.75rem;
+    }
+
+    .post-meta {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      flex-wrap: wrap;
+      margin-bottom: 1rem;
+    }
+
+    .sep {
+      opacity: 0.4;
+    }
+
+    .lede {
+      font-size: 1rem;
+      line-height: 1.7;
+      color: var(--text);
+      opacity: 0.9;
+    }
+
+    .toc {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 1rem 1.25rem;
+      margin-bottom: 2.5rem;
+      font-size: 0.82rem;
+    }
+
+    .toc strong {
+      display: block;
+      margin-bottom: 0.6rem;
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+    }
+
+    .toc ol {
+      margin: 0;
+      padding-left: 1.2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+    }
+
+    .toc a {
+      color: var(--text-muted);
+    }
+
+    .toc a:hover {
+      color: var(--accent);
+    }
+
+    section {
+      margin-bottom: 3rem;
+    }
+
+    section h2 {
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin-bottom: 0.75rem;
+      padding-bottom: 0.4rem;
+      border-bottom: 2px solid var(--accent);
+      display: inline-block;
+    }
+
+    section h3 {
+      font-size: 0.95rem;
+      font-weight: 700;
+      margin: 1.5rem 0 0.5rem;
+      color: var(--text);
+    }
+
+    section p {
+      font-size: 0.9rem;
+      line-height: 1.75;
+      color: var(--text);
+      opacity: 0.9;
+      margin-bottom: 0.9rem;
+    }
+
+    section pre {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 0.75rem 1rem;
+      overflow-x: auto;
+      margin: 0.75rem 0;
+    }
+
+    section pre code {
+      font-size: 0.78rem;
+      color: var(--text);
+      font-family: 'JetBrains Mono', 'Fira Code', monospace;
+    }
+
+    /* Overview table */
+    .table-wrapper {
+      overflow-x: auto;
+      margin: 1rem 0 0.5rem;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.82rem;
+    }
+
+    .data-table th {
+      text-align: left;
+      font-weight: 600;
+      color: var(--text-muted);
+      border-bottom: 1px solid var(--border);
+      padding: 0.4rem 0.75rem 0.4rem 0;
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      white-space: nowrap;
+    }
+
+    .data-table td {
+      padding: 0.5rem 0.75rem 0.5rem 0;
+      border-bottom: 1px solid var(--border);
+      color: var(--text);
+      vertical-align: top;
+    }
+
+    .data-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .highlight-row td {
+      background: rgba(0, 255, 148, 0.04);
+    }
+
+    .num {
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .center {
+      text-align: center;
+    }
+
+    .platform-cell {
+      display: flex;
+      flex-direction: column;
+      gap: 0.15rem;
+    }
+
+    .platform-name {
+      font-weight: 600;
+      font-size: 0.82rem;
+    }
+
+    .platform-url {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+    }
+
+    .ranking-cell {
+      font-size: 0.8rem;
+      max-width: 180px;
+    }
+
+    .freshness-cell {
+      font-size: 0.8rem;
+      white-space: nowrap;
+    }
+
+    .yes-badge {
+      display: inline-block;
+      background: rgba(0, 255, 148, 0.12);
+      color: #00d68a;
+      font-size: 0.7rem;
+      font-weight: 700;
+      padding: 0.1rem 0.4rem;
+      border-radius: 3px;
+    }
+
+    .no-badge {
+      display: inline-block;
+      background: var(--bg-surface);
+      color: var(--text-muted);
+      font-size: 0.7rem;
+      font-weight: 600;
+      padding: 0.1rem 0.4rem;
+      border-radius: 3px;
+    }
+
+    .table-note {
+      font-size: 0.75rem !important;
+      color: var(--text-muted) !important;
+      margin-top: 0.5rem !important;
+    }
+
+    /* API grid */
+    .api-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.75rem;
+      margin-top: 1rem;
+    }
+
+    .api-card {
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 0.875rem 1rem;
+    }
+
+    .api-card--yes {
+      border-top: 2px solid #00d68a;
+    }
+
+    .api-card--no {
+      border-top: 2px solid var(--border);
+      opacity: 0.8;
+    }
+
+    .api-card h3 {
+      font-size: 0.85rem !important;
+      font-weight: 700;
+      margin: 0 0 0.4rem 0 !important;
+    }
+
+    .api-card p {
+      font-size: 0.82rem !important;
+      margin-bottom: 0.4rem !important;
+    }
+
+    .api-detail {
+      font-size: 0.72rem !important;
+      color: var(--text-muted) !important;
+      margin-bottom: 0 !important;
+    }
+
+    /* Feature lists */
+    .feature-list {
+      margin: 0.75rem 0;
+      padding-left: 1.25rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+
+    .feature-list li {
+      font-size: 0.85rem;
+      color: var(--text);
+      opacity: 0.9;
+      line-height: 1.5;
+    }
+
+    /* Platform cards */
+    .platform-card {
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 1rem 1.25rem;
+      margin-bottom: 1rem;
+    }
+
+    .platform-card--highlight {
+      border-color: var(--accent);
+      border-left: 3px solid var(--accent);
+    }
+
+    .platform-header {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .platform-header h3 {
+      margin: 0 !important;
+      font-size: 1rem !important;
+    }
+
+    .platform-tag {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .verdict {
+      font-size: 0.82rem !important;
+      color: var(--text-muted) !important;
+      margin-bottom: 0 !important;
+      border-top: 1px solid var(--border);
+      padding-top: 0.6rem;
+      margin-top: 0.5rem;
+    }
+
+    /* Use cases */
+    .use-case-list {
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+      margin-top: 1rem;
+    }
+
+    .use-case {
+      border-left: 3px solid var(--accent);
+      padding: 0.75rem 0 0.75rem 1rem;
+    }
+
+    .use-case h3 {
+      margin-top: 0 !important;
+      margin-bottom: 0.4rem !important;
+      font-size: 0.88rem !important;
+    }
+
+    .use-case p {
+      margin-bottom: 0 !important;
+      font-size: 0.85rem !important;
+    }
+
+    .cta-box {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      border-radius: 4px;
+      padding: 1rem 1.25rem;
+      margin-top: 1.5rem;
+    }
+
+    .cta-box p {
+      margin-bottom: 0.5rem;
+      font-size: 0.88rem !important;
+    }
+
+    .cta-box p:last-child {
+      margin-bottom: 0;
+    }
+
+    .post-footer {
+      margin-top: 3rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--border);
+    }
+
+    .methodology {
+      font-size: 0.75rem !important;
+      color: var(--text-muted) !important;
+      opacity: 1 !important;
+    }
+
+    .share-line {
+      font-size: 0.82rem !important;
+      margin-top: 0.75rem;
+    }
+
+    @media (max-width: 640px) {
+      .post-header h1 {
+        font-size: 1.3rem;
+      }
+
+      .api-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .platform-header {
+        flex-direction: column;
+        gap: 0.25rem;
+      }
+
+      .ranking-cell {
+        max-width: none;
+      }
+    }
+  </style>
+</Base>
