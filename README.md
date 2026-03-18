@@ -8,6 +8,8 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
 [![Last commit](https://img.shields.io/github/last-commit/superlowburn/agentrank)](https://github.com/superlowburn/agentrank/commits/main)
 
+[![AgentRank MCP server](https://glama.ai/mcp/servers/superlowburn/agentrank/badges/card.svg)](https://glama.ai/mcp/servers/superlowburn/agentrank)
+
 ---
 
 ## Install in 3 Steps
