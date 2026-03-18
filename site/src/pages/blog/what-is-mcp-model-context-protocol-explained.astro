@@ -1,0 +1,950 @@
+---
+export const prerender = true;
+
+import Base from '../../layouts/Base.astro';
+import BlogSubscribeCTA from '../../components/BlogSubscribeCTA.astro';
+import RelatedPosts from '../../components/RelatedPosts.astro';
+
+const relatedPosts = [
+  { href: '/blog/how-to-build-an-mcp-server/', title: 'How to Build an MCP Server in 2026' },
+  { href: '/blog/mcp-server-vs-rest-api/', title: 'MCP Server vs REST API: When to Use Each' },
+  { href: '/blog/mcp-server-landscape-q1-2026/', title: 'The MCP Server Landscape: Q1 2026' },
+];
+
+const publishDate = '2026-03-18';
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: 'What is MCP? Model Context Protocol Explained for Developers',
+  description: 'A beginner-friendly explanation of the Model Context Protocol (MCP) — what it is, how it works, why it exists, and how developers are using it to connect AI agents to real-world data and tools.',
+  datePublished: publishDate,
+  dateModified: publishDate,
+  author: {
+    '@type': 'Organization',
+    name: 'AgentRank',
+    url: 'https://agentrank-ai.com',
+  },
+  publisher: {
+    '@type': 'Organization',
+    name: 'AgentRank',
+    url: 'https://agentrank-ai.com',
+    logo: {
+      '@type': 'ImageObject',
+      url: 'https://agentrank-ai.com/og-image.png',
+    },
+  },
+  mainEntityOfPage: {
+    '@type': 'WebPage',
+    '@id': 'https://agentrank-ai.com/blog/what-is-mcp-model-context-protocol-explained/',
+  },
+  image: 'https://agentrank-ai.com/og-image.png',
+  keywords: 'what is MCP, model context protocol explained, MCP beginner guide, MCP for developers, MCP vs plugins, model context protocol tutorial',
+};
+
+const comparisons = [
+  {
+    approach: 'Plugins (ChatGPT era)',
+    howItWorked: 'Vendor-specific manifests, custom OAuth, one-off integrations per plugin store',
+    limitation: 'Locked to a single platform. Slack plugin only worked in ChatGPT. Your agent had to re-implement everything for every client.',
+  },
+  {
+    approach: 'Function calling',
+    howItWorked: 'LLM generates a JSON payload; your code runs a function; result goes back to LLM',
+    limitation: 'Works within one model\'s API. No standard schema, no cross-client reuse. Every agent framework invents its own format.',
+  },
+  {
+    approach: 'Direct API calls',
+    howItWorked: 'Agent generates code or HTTP requests to call REST APIs directly',
+    limitation: 'Tight coupling. Brittle. Agent must know the full API surface. Rate limits, auth flows, and error handling all manual.',
+  },
+  {
+    approach: 'MCP',
+    howItWorked: 'Standardized protocol. Server exposes tools with JSON Schema definitions. Any MCP client connects, discovers tools, and calls them.',
+    limitation: 'Still maturing — auth story improving, ecosystem growing fast.',
+  },
+];
+
+const capabilities = [
+  {
+    type: 'Tools',
+    description: 'Functions the agent can call. A tool has a name, description, input schema, and returns structured output. Example: search_web, create_issue, query_database.',
+    example: '"create_github_issue" — takes title, body, and repo. Returns the new issue URL.',
+  },
+  {
+    type: 'Resources',
+    description: 'Read-only data the agent can fetch. Think of it as file system access — documents, database tables, configuration files.',
+    example: '"file://project/README.md" — returns the raw contents of a file in your project.',
+  },
+  {
+    type: 'Prompts',
+    description: 'Pre-built prompt templates that agents can invoke by name. Useful for complex workflows that always start the same way.',
+    example: '"code_review" — a parameterized prompt template that takes a diff and produces a structured review.',
+  },
+];
+---
+
+<Base
+  title="What is MCP? Model Context Protocol Explained for Developers — AgentRank"
+  description="A beginner-friendly explanation of MCP (Model Context Protocol) — what it is, how the host-client-server architecture works, and why it's becoming the standard for connecting AI agents to tools and data."
+  activeTab="blog"
+  keywords="what is MCP, model context protocol explained, MCP for developers, MCP beginner guide, model context protocol tutorial, MCP vs plugins, what is model context protocol"
+  canonicalUrl="https://agentrank-ai.com/blog/what-is-mcp-model-context-protocol-explained/"
+  jsonLd={jsonLd}
+>
+  <article class="blog-post">
+    <header class="post-header">
+      <div class="breadcrumb"><a href="/blog/">Blog</a> <span>/</span></div>
+      <h1>What is MCP? Model Context Protocol Explained for Developers</h1>
+      <div class="post-meta">
+        <time datetime={publishDate}>March 18, 2026</time>
+        <span class="sep">&middot;</span>
+        <span>10 min read</span>
+        <span class="sep">&middot;</span>
+        <span>Beginner guide</span>
+      </div>
+      <p class="lede">
+        MCP — the Model Context Protocol — is the standard that lets AI agents connect to external tools
+        and data sources. If you've heard the term but still aren't sure what it actually is or why
+        everyone is building MCP servers, this is the explanation you need.
+      </p>
+    </header>
+
+    <nav class="toc">
+      <strong>Contents</strong>
+      <ol>
+        <li><a href="#the-problem">The problem MCP solves</a></li>
+        <li><a href="#mcp-in-one-sentence">MCP in one sentence</a></li>
+        <li><a href="#how-it-works">How MCP works: host, client, server</a></li>
+        <li><a href="#what-servers-can-do">What MCP servers can do</a></li>
+        <li><a href="#mcp-vs-alternatives">MCP vs plugins, function calling, and APIs</a></li>
+        <li><a href="#who-uses-mcp">Who's using MCP in 2026</a></li>
+        <li><a href="#real-world-examples">Real-world examples</a></li>
+        <li><a href="#get-started">How to get started</a></li>
+      </ol>
+    </nav>
+
+    <section id="the-problem">
+      <h2>The problem MCP solves</h2>
+      <p>
+        AI assistants like Claude, GPT-4, and Gemini are trained on static snapshots of the world.
+        Their knowledge has a cutoff date. They have no idea what's in your database, your codebase,
+        your Slack messages, or your Jira board. Every time you want an AI agent to work with your
+        actual data, you have to paste it in manually — and hope it fits in the context window.
+      </p>
+      <p>
+        This isn't just inconvenient. It's a fundamental architectural limit. The AI can reason about
+        information you give it, but it cannot reach out and get information itself. It cannot take
+        actions in the world — create a ticket, run a query, deploy a service — unless someone builds
+        a custom integration from scratch.
+      </p>
+      <p>
+        Before MCP, every team building AI agents solved this problem differently. Some teams used
+        function calling with custom JSON schemas. Some built plugins. Some wrote LangChain chains
+        that called REST APIs. None of it was portable. An integration built for Claude wouldn't work
+        in Cursor. A plugin written for ChatGPT was useless in Copilot. Every integration was an
+        island.
+      </p>
+      <p>
+        MCP exists to fix this. It's a standard protocol that defines how AI agents connect to
+        external tools and data. Build one MCP server, and it works with every MCP-compatible
+        client — Claude, Cursor, Copilot, Cline, VS Code, Windsurf, and every other AI tool that
+        adopts the spec.
+      </p>
+    </section>
+
+    <section id="mcp-in-one-sentence">
+      <h2>MCP in one sentence</h2>
+      <p>
+        <strong>MCP is a USB-C port for AI tools.</strong>
+      </p>
+      <p>
+        Before USB-C, every device had a different connector. Micro-USB, Lightning, proprietary
+        laptop chargers — each device required its own cable. USB-C standardized the physical interface
+        so that one cable connects to anything: phones, laptops, monitors, cameras, hard drives.
+      </p>
+      <p>
+        MCP does the same thing for AI agent integrations. Before MCP, every AI client had a
+        proprietary plugin format or function-calling schema. You had to rebuild your integration for
+        every platform. MCP standardizes the interface so one server connects to any client. Build
+        once, connect everywhere.
+      </p>
+      <p>
+        The full name is Model Context Protocol. The "model" is the LLM (Claude, GPT-4, Gemini).
+        The "context" is the data and capabilities the model needs to do useful work. The "protocol"
+        is the standardized way of delivering that context. Anthropic published the spec in November
+        2024. By March 2026, the AgentRank index tracks over 25,000 MCP server repositories on GitHub.
+      </p>
+    </section>
+
+    <section id="how-it-works">
+      <h2>How MCP works: host, client, server</h2>
+      <p>
+        MCP has three components: a <strong>host</strong>, a <strong>client</strong>, and a <strong>server</strong>.
+        Understanding the distinction between them makes the rest of the protocol clear.
+      </p>
+
+      <div class="arch-diagram">
+        <div class="arch-row">
+          <div class="arch-box host-box">
+            <div class="arch-label">Host</div>
+            <div class="arch-desc">Claude Desktop, Cursor, VS Code, Cline</div>
+            <div class="arch-note">The AI application the user runs</div>
+          </div>
+        </div>
+        <div class="arch-arrow">&darr; contains &darr;</div>
+        <div class="arch-row">
+          <div class="arch-box client-box">
+            <div class="arch-label">Client</div>
+            <div class="arch-desc">MCP client (built into the host)</div>
+            <div class="arch-note">Manages connections to one or more MCP servers</div>
+          </div>
+        </div>
+        <div class="arch-arrow">&darr; connects to &darr;</div>
+        <div class="arch-row servers-row">
+          <div class="arch-box server-box">
+            <div class="arch-label">Server A</div>
+            <div class="arch-desc">GitHub MCP server</div>
+          </div>
+          <div class="arch-box server-box">
+            <div class="arch-label">Server B</div>
+            <div class="arch-desc">Postgres MCP server</div>
+          </div>
+          <div class="arch-box server-box">
+            <div class="arch-label">Server C</div>
+            <div class="arch-desc">Slack MCP server</div>
+          </div>
+        </div>
+        <div class="arch-arrow">&darr; accesses &darr;</div>
+        <div class="arch-row">
+          <div class="arch-box data-box">
+            <div class="arch-label">Data &amp; Services</div>
+            <div class="arch-desc">GitHub repos, databases, APIs, files, external services</div>
+          </div>
+        </div>
+      </div>
+
+      <h3>The host</h3>
+      <p>
+        The host is the AI application you're running: Claude Desktop, Cursor, VS Code with the
+        Copilot extension, Cline, Windsurf. The host is responsible for the user experience — it
+        runs the LLM, manages conversations, and decides which MCP servers to connect to based
+        on the user's configuration.
+      </p>
+
+      <h3>The client</h3>
+      <p>
+        Inside every MCP-compatible host is a client. The client manages the connection to MCP
+        servers. It handles the protocol handshake, capability negotiation, and message routing.
+        When the LLM decides it wants to call a tool, it's the client that actually sends that
+        request to the right server and returns the result. As a developer, you rarely interact
+        with the client directly — it's an internal component of the host application.
+      </p>
+
+      <h3>The server</h3>
+      <p>
+        This is what you build and what most of the ecosystem is building. An MCP server is a
+        process that exposes capabilities — tools, resources, and prompts — through the MCP
+        protocol. The server runs as a separate process from the host. It can run locally on
+        the user's machine (connected via stdio) or remotely over the network (connected via HTTP).
+      </p>
+      <p>
+        When the host starts, it launches or connects to the configured MCP servers. Each server
+        reports its capabilities: "I have these tools, these resources, these prompts." The host
+        makes that list available to the LLM. When the LLM needs to use a capability, it calls
+        the tool, the client routes the request to the right server, and the server executes it.
+      </p>
+
+      <h3>Communication: stdio and HTTP</h3>
+      <p>
+        MCP supports two transport mechanisms. <strong>stdio</strong> is the default for local
+        servers: the host launches your server as a subprocess and communicates over stdin/stdout.
+        It's simple, secure, and requires no network configuration. <strong>HTTP (with Server-Sent Events)</strong>
+        is for remote servers: your server runs as a web service and the client connects over
+        HTTPS. Remote servers are useful for shared infrastructure — a team database proxy,
+        a hosted API integration, a cloud service.
+      </p>
+    </section>
+
+    <section id="what-servers-can-do">
+      <h2>What MCP servers can do</h2>
+      <p>
+        MCP servers expose three types of capabilities. Each type serves a different purpose
+        in the agent workflow.
+      </p>
+
+      <table class="data-table cap-table">
+        <thead>
+          <tr>
+            <th>Capability</th>
+            <th>What it is</th>
+            <th>Example</th>
+          </tr>
+        </thead>
+        <tbody>
+          {capabilities.map((cap) => (
+            <tr>
+              <td class="cap-type">{cap.type}</td>
+              <td>{cap.description}</td>
+              <td class="cap-example">{cap.example}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+
+      <p>
+        In practice, tools are the most commonly implemented capability — they're what most people
+        mean when they say "MCP server." A server that gives Claude access to your GitHub account
+        exposes tools like <code>list_repos</code>, <code>create_pull_request</code>,
+        <code>search_code</code>. The agent calls these tools the same way a human would use
+        the GitHub UI, but programmatically and as part of a longer reasoning chain.
+      </p>
+      <p>
+        Resources are useful for giving agents read access to large or dynamic data — a directory
+        of project files, a database schema, a configuration manifest. Rather than pasting the
+        data into the conversation, you expose it as a resource and the agent fetches it when needed.
+      </p>
+    </section>
+
+    <section id="mcp-vs-alternatives">
+      <h2>MCP vs plugins, function calling, and APIs</h2>
+      <p>
+        MCP didn't appear in a vacuum. Developers have been giving AI agents external capabilities
+        since ChatGPT launched plugins in 2023. Here's how the approaches compare and why MCP
+        has emerged as the standard.
+      </p>
+
+      <table class="data-table compare-table">
+        <thead>
+          <tr>
+            <th>Approach</th>
+            <th>How it worked</th>
+            <th>Core limitation</th>
+          </tr>
+        </thead>
+        <tbody>
+          {comparisons.map((row) => (
+            <tr>
+              <td class="approach-cell">{row.approach}</td>
+              <td>{row.howItWorked}</td>
+              <td class="limitation-cell">{row.limitation}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+
+      <h3>Why MCP wins over plugins</h3>
+      <p>
+        ChatGPT plugins were platform-locked. Building a plugin for ChatGPT meant writing a manifest
+        in OpenAI's format, setting up OAuth in OpenAI's system, and distributing through OpenAI's
+        store. None of that worked in any other AI client. When Claude or Cursor wanted the same
+        integration, you built it again from scratch in a different format.
+      </p>
+      <p>
+        MCP is platform-neutral. Anthropic published the spec as an open standard and every major
+        AI tool has adopted or announced support for it. One MCP server works in all of them.
+        The plugin approach fragmented the ecosystem; MCP unifies it.
+      </p>
+
+      <h3>Why MCP wins over function calling</h3>
+      <p>
+        Function calling is a feature of specific LLM APIs — OpenAI, Anthropic, Google. You define
+        functions in your API call, the model returns a JSON payload saying which function to call,
+        and you execute it in your application code. It works, but it's tightly coupled to a single
+        model API and requires your application to handle all the orchestration.
+      </p>
+      <p>
+        MCP separates the tool definition from the orchestration. An MCP server defines tools once
+        using the standard JSON Schema format. Any MCP client — regardless of which underlying LLM
+        it uses — can discover and call those tools. The server doesn't know or care whether it's
+        Claude, GPT-4, or any other model on the other end. See the detailed comparison in
+        <a href="/blog/mcp-server-vs-rest-api/" class="inline-link">MCP Server vs REST API: When to Use Each</a>.
+      </p>
+
+      <h3>How MCP and REST APIs relate</h3>
+      <p>
+        MCP servers and REST APIs aren't competitors — they're different surfaces for different
+        consumers. REST APIs are designed for developers writing code. MCP servers are designed
+        for AI agents running at runtime. A well-designed service ships both: a REST API for
+        traditional integrations and an MCP server for AI agent access. Redis, MongoDB, Stripe,
+        and GitHub have all taken this approach.
+      </p>
+    </section>
+
+    <section id="who-uses-mcp">
+      <h2>Who's using MCP in 2026</h2>
+      <p>
+        MCP has moved from Anthropic research project to industry standard in under 18 months.
+        The ecosystem adoption tells the story clearly.
+      </p>
+
+      <h3>AI clients that support MCP natively</h3>
+      <ul>
+        <li><strong>Claude Desktop</strong> — Anthropic's first-party client. MCP support was the killer feature of the initial release.</li>
+        <li><strong>Cursor</strong> — The leading AI code editor. MCP support added in early 2025; now one of the primary reasons developers adopt it.</li>
+        <li><strong>GitHub Copilot</strong> — Microsoft added MCP support to VS Code's Copilot extension in 2025. Azure MCP server ships inside Visual Studio 2026.</li>
+        <li><strong>Cline</strong> — Open source AI coding assistant, MCP-first architecture.</li>
+        <li><strong>Windsurf</strong> — Codeium's AI IDE, full MCP support as of late 2025.</li>
+        <li><strong>Claude Code</strong> — Anthropic's terminal-based coding agent, built on MCP for all external capabilities.</li>
+      </ul>
+
+      <h3>Companies shipping official MCP servers</h3>
+      <p>
+        By March 2026, official MCP servers exist for most major developer tools and cloud providers:
+      </p>
+      <ul>
+        <li><strong>Stripe</strong> — Official MCP server for payments and financial operations</li>
+        <li><strong>Docker</strong> — Docker MCP Gateway for container operations</li>
+        <li><strong>AWS</strong> — 60+ official MCP servers for AWS services</li>
+        <li><strong>Microsoft Azure</strong> — Azure MCP included in Visual Studio 2026</li>
+        <li><strong>Redis</strong>, <strong>MongoDB</strong>, <strong>Neon</strong> — Official database MCP servers</li>
+        <li><strong>Linear</strong>, <strong>Notion</strong>, <strong>Slack</strong>, <strong>GitHub</strong> — Productivity and collaboration tools</li>
+      </ul>
+      <p>
+        The vendor adoption pattern is the strongest signal that MCP is the standard. When companies
+        like AWS and Stripe ship official MCP servers, it means their enterprise customers are
+        demanding AI agent access to their services.
+      </p>
+
+      <h3>The open source community</h3>
+      <p>
+        Beyond official servers, the open source community has built thousands more. The AgentRank
+        index tracks 25,632 MCP-related repositories on GitHub as of March 2026. The categories
+        span everything from database access and DevOps tooling to game development and scientific
+        computing. New repos enter the index daily.
+      </p>
+    </section>
+
+    <section id="real-world-examples">
+      <h2>Real-world examples</h2>
+      <p>
+        Abstract protocol descriptions only go so far. Here's what MCP actually looks like in practice.
+      </p>
+
+      <h3>Example 1: AI coding agent with GitHub access</h3>
+      <p>
+        You're using Cursor to work on a codebase. You want Claude to review your pull request
+        against the existing issues in your GitHub project — not the abstract problem, but the
+        actual tickets with their descriptions and comments.
+      </p>
+      <p>
+        Without MCP: you'd open GitHub, copy the issue text, paste it into the conversation, then
+        ask Claude to review the PR. Manual, slow, no ongoing context.
+      </p>
+      <p>
+        With MCP: you configure the GitHub MCP server in Cursor once. Claude can now call
+        <code>list_issues</code> to pull the relevant tickets, <code>get_pull_request</code>
+        to read the diff, and <code>create_review_comment</code> to post feedback — all within
+        a single conversation, without you copying anything.
+      </p>
+
+      <h3>Example 2: Data analysis with live database access</h3>
+      <p>
+        You want Claude to analyze trends in your product analytics — actual data, not a CSV you
+        exported last week.
+      </p>
+      <p>
+        With a Postgres MCP server configured, Claude can call <code>execute_query</code> directly
+        against your database. It can run the SQL itself, inspect the results, run follow-up queries
+        based on what it finds, and produce analysis grounded in live data. The database MCP server
+        handles connection pooling, query safety, and result serialization. Claude handles the reasoning.
+      </p>
+
+      <h3>Example 3: Autonomous agent workflows</h3>
+      <p>
+        You want an agent to monitor your production systems and automatically create Jira tickets
+        when anomalies appear.
+      </p>
+      <p>
+        A headless agent connects to a Datadog MCP server (for metrics), a Jira MCP server (for
+        issue creation), and a Slack MCP server (for notifications). It polls metrics, detects
+        anomalies using its reasoning capabilities, creates structured Jira issues with all the
+        relevant context, and posts a Slack notification — all without a human in the loop.
+      </p>
+      <p>
+        This is the long-term direction of MCP: not just human-in-the-loop tool use, but fully
+        autonomous agent workflows that chain multiple external systems.
+      </p>
+    </section>
+
+    <section id="get-started">
+      <h2>How to get started</h2>
+
+      <h3>If you want to use MCP servers (not build them)</h3>
+      <p>
+        The fastest path: install Claude Desktop or Cursor, then add MCP servers to your config.
+        Both applications use a JSON configuration file where you list the servers you want to use.
+        The server process starts automatically when the client launches.
+      </p>
+      <p>
+        Most popular MCP servers install with a single <code>npx</code> or <code>uvx</code> command.
+        You don't need to clone repositories or manage dependencies manually. The config entry
+        looks like this:
+      </p>
+      <pre class="code-block"><code>{`{
+  "mcpServers": {
+    "github": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-github"],
+      "env": {
+        "GITHUB_PERSONAL_ACCESS_TOKEN": "your-token-here"
+      }
+    }
+  }
+}`}</code></pre>
+      <p>
+        The AgentRank leaderboard ranks the most reliable and actively maintained MCP servers across
+        every category. Start there to find the servers worth adding to your setup:
+      </p>
+      <div class="cta-inline">
+        <a href="/tools/" class="cta-link">Browse 25,000+ MCP servers ranked by real quality signals &rarr;</a>
+      </div>
+
+      <h3>If you want to build an MCP server</h3>
+      <p>
+        The fastest way to build an MCP server is with <a href="/tools/fastmcp/" class="inline-link">FastMCP</a>
+        (Python) or the official TypeScript SDK. FastMCP is the most popular framework in the
+        ecosystem — it handles the protocol implementation so you can focus on writing tool
+        functions:
+      </p>
+      <pre class="code-block"><code>{`from fastmcp import FastMCP
+
+mcp = FastMCP("My Server")
+
+@mcp.tool()
+def search_products(query: str, limit: int = 10) -> list[dict]:
+    """Search the product catalog. Returns matching products with name, price, and ID."""
+    return db.search(query, limit=limit)
+
+if __name__ == "__main__":
+    mcp.run()`}</code></pre>
+      <p>
+        That's a complete, functional MCP server. The <code>@mcp.tool()</code> decorator
+        automatically generates the JSON Schema for the tool from the function signature and
+        docstring. The LLM reads the schema to understand what the tool does and how to call it.
+      </p>
+      <p>
+        For a full walkthrough of building, testing, and deploying an MCP server, see
+        <a href="/blog/how-to-build-an-mcp-server/" class="inline-link">How to Build an MCP Server in 2026</a>.
+      </p>
+
+      <h3>Understanding the ecosystem</h3>
+      <p>
+        One of the easiest ways to understand what MCP can do is to browse the existing server
+        ecosystem. The 25,632 repositories in the AgentRank index cover every major category:
+        database access, DevOps tooling, code generation, browser automation, communication
+        platforms, cloud providers, and dozens of specialized niches.
+      </p>
+      <p>
+        AgentRank ranks every server by five real signals: stars, freshness, issue health,
+        contributor count, and inbound dependents. The composite score tells you not just which
+        servers are popular, but which are actively maintained and production-ready.
+      </p>
+
+      <div class="cta-box">
+        <p>
+          <strong>Explore the leaderboard:</strong> <a href="/tools/">Browse all 25,000+ MCP servers</a> — sorted by AgentRank score, filterable by category.
+        </p>
+        <p>
+          <strong>Build your first server:</strong> <a href="/blog/how-to-build-an-mcp-server/">Step-by-step MCP server tutorial</a> — from zero to a working server connected to Claude Desktop.
+        </p>
+        <p>
+          <strong>Compare implementations:</strong> <a href="/blog/mcp-server-vs-rest-api/">MCP vs REST API</a> — when to use each and how to build both.
+        </p>
+      </div>
+    </section>
+
+    <RelatedPosts posts={relatedPosts} />
+    <BlogSubscribeCTA source="blog" />
+    <footer class="post-footer">
+      <p class="methodology">
+        <strong>Methodology:</strong> Ecosystem data from the AgentRank index crawled March 2026.
+        25,632 repositories indexed from GitHub via keyword search on MCP-related terms.
+        AgentRank scores computed from stars, freshness, issue health, contributor count, and
+        inbound dependents — updated nightly.
+      </p>
+      <p class="share-line">
+        Found this useful? <a href="https://x.com/AgentRank_ai" target="_blank" rel="noopener noreferrer">Follow @AgentRank_ai</a> for
+        weekly ecosystem updates, biggest movers, and new tool spotlights.
+      </p>
+    </footer>
+  </article>
+
+  <style>
+    .blog-post {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 2rem 0 3rem;
+    }
+
+    .breadcrumb {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      margin-bottom: 0.75rem;
+    }
+
+    .breadcrumb span {
+      margin: 0 0.25rem;
+      opacity: 0.5;
+    }
+
+    .post-header {
+      margin-bottom: 2rem;
+      padding-bottom: 1.5rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .post-header h1 {
+      font-size: 1.6rem;
+      font-weight: 700;
+      line-height: 1.3;
+      margin-bottom: 0.75rem;
+    }
+
+    .post-meta {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      flex-wrap: wrap;
+      margin-bottom: 1rem;
+    }
+
+    .sep {
+      opacity: 0.4;
+    }
+
+    .lede {
+      font-size: 1rem;
+      line-height: 1.7;
+      color: var(--text);
+      opacity: 0.9;
+    }
+
+    .toc {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 1rem 1.25rem;
+      margin-bottom: 2.5rem;
+      font-size: 0.82rem;
+    }
+
+    .toc strong {
+      display: block;
+      margin-bottom: 0.6rem;
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+    }
+
+    .toc ol {
+      margin: 0;
+      padding-left: 1.2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+    }
+
+    .toc a {
+      color: var(--text-muted);
+    }
+
+    .toc a:hover {
+      color: var(--accent);
+    }
+
+    section {
+      margin-bottom: 3rem;
+    }
+
+    section h2 {
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin-bottom: 0.75rem;
+      padding-bottom: 0.4rem;
+      border-bottom: 2px solid var(--accent);
+      display: inline-block;
+    }
+
+    section h3 {
+      font-size: 0.95rem;
+      font-weight: 700;
+      margin: 1.5rem 0 0.5rem;
+      color: var(--text);
+    }
+
+    section p {
+      font-size: 0.9rem;
+      line-height: 1.75;
+      color: var(--text);
+      opacity: 0.9;
+      margin-bottom: 0.9rem;
+    }
+
+    section ul,
+    section ol {
+      font-size: 0.9rem;
+      line-height: 1.75;
+      color: var(--text);
+      opacity: 0.9;
+      margin: 0.5rem 0 0.9rem;
+      padding-left: 1.4rem;
+    }
+
+    section ul li,
+    section ol li {
+      margin-bottom: 0.4rem;
+    }
+
+    .inline-link {
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    /* Architecture diagram */
+    .arch-diagram {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 1.5rem;
+      margin: 1.25rem 0 1.5rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.25rem;
+    }
+
+    .arch-row {
+      display: flex;
+      gap: 0.75rem;
+      justify-content: center;
+      width: 100%;
+    }
+
+    .servers-row {
+      flex-wrap: wrap;
+    }
+
+    .arch-box {
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 0.6rem 1rem;
+      text-align: center;
+      min-width: 140px;
+    }
+
+    .host-box {
+      border-color: var(--accent);
+      background: color-mix(in srgb, var(--accent) 8%, var(--bg-surface));
+      width: 280px;
+    }
+
+    .client-box {
+      border-color: var(--border);
+      width: 280px;
+    }
+
+    .server-box {
+      width: 130px;
+      font-size: 0.78rem;
+    }
+
+    .data-box {
+      width: 350px;
+    }
+
+    .arch-label {
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--text-muted);
+      margin-bottom: 0.2rem;
+    }
+
+    .arch-desc {
+      font-size: 0.8rem;
+      color: var(--text);
+      font-weight: 500;
+    }
+
+    .arch-note {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      margin-top: 0.2rem;
+    }
+
+    .arch-arrow {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      padding: 0.1rem 0;
+    }
+
+    /* Tables */
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.82rem;
+      margin: 1rem 0 1.25rem;
+    }
+
+    .data-table th {
+      text-align: left;
+      font-weight: 600;
+      color: var(--text-muted);
+      border-bottom: 1px solid var(--border);
+      padding: 0.4rem 0.75rem 0.4rem 0;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+
+    .data-table td {
+      padding: 0.5rem 0.75rem 0.5rem 0;
+      border-bottom: 1px solid var(--border);
+      color: var(--text);
+      vertical-align: top;
+      font-size: 0.82rem;
+      line-height: 1.5;
+    }
+
+    .data-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .cap-type {
+      font-weight: 700;
+      color: var(--accent);
+      width: 12%;
+      white-space: nowrap;
+    }
+
+    .cap-example {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      width: 30%;
+    }
+
+    .approach-cell {
+      font-weight: 600;
+      width: 18%;
+      white-space: nowrap;
+    }
+
+    .limitation-cell {
+      color: var(--text-muted);
+    }
+
+    /* Code blocks */
+    .code-block {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 1rem 1.25rem;
+      overflow-x: auto;
+      margin: 0.75rem 0 1rem;
+    }
+
+    .code-block code {
+      font-size: 0.78rem;
+      line-height: 1.65;
+      color: var(--text);
+      font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
+    }
+
+    /* CTA elements */
+    .cta-inline {
+      margin: 0.75rem 0 1.25rem;
+    }
+
+    .cta-link {
+      display: inline-block;
+      background: var(--accent);
+      color: #fff;
+      font-size: 0.85rem;
+      font-weight: 600;
+      padding: 0.5rem 1rem;
+      border-radius: 4px;
+      text-decoration: none;
+    }
+
+    .cta-link:hover {
+      opacity: 0.9;
+    }
+
+    .cta-box {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      border-radius: 4px;
+      padding: 1rem 1.25rem;
+      margin-top: 1.5rem;
+    }
+
+    .cta-box p {
+      font-size: 0.9rem;
+      line-height: 1.75;
+      color: var(--text);
+      opacity: 0.9;
+      margin-bottom: 0.5rem;
+    }
+
+    .cta-box p:last-child {
+      margin-bottom: 0;
+    }
+
+    .cta-box a {
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    .post-footer {
+      margin-top: 3rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--border);
+    }
+
+    .methodology {
+      font-size: 0.75rem !important;
+      color: var(--text-muted) !important;
+      opacity: 1 !important;
+    }
+
+    .share-line {
+      font-size: 0.82rem !important;
+      margin-top: 0.75rem;
+    }
+
+    @media (max-width: 640px) {
+      .post-header h1 {
+        font-size: 1.3rem;
+      }
+
+      .data-table {
+        font-size: 0.75rem;
+      }
+
+      .approach-cell {
+        white-space: normal;
+      }
+
+      .arch-box {
+        min-width: 100px;
+        padding: 0.5rem 0.6rem;
+      }
+
+      .host-box,
+      .client-box,
+      .data-box {
+        width: 100%;
+      }
+
+      .server-box {
+        width: 90px;
+      }
+    }
+  </style>
+</Base>

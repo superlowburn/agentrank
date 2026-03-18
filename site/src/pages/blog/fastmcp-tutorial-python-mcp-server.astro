@@ -1,0 +1,1228 @@
+---
+export const prerender = true;
+
+import Base from '../../layouts/Base.astro';
+import BlogSubscribeCTA from '../../components/BlogSubscribeCTA.astro';
+import RelatedPosts from '../../components/RelatedPosts.astro';
+
+const relatedPosts = [
+  { href: '/blog/best-python-mcp-libraries/', title: 'Best Python Libraries for Building MCP Servers in 2026' },
+  { href: '/blog/how-to-build-an-mcp-server/', title: 'How to Build an MCP Server in 2026' },
+  { href: '/compare/mcp-sdks/', title: 'MCP SDK Comparison: Python vs TypeScript vs Go vs Rust' },
+];
+
+const publishDate = '2026-03-18';
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'TechArticle',
+  headline: 'FastMCP Tutorial: Build a Python MCP Server in 20 Minutes',
+  description: 'Step-by-step FastMCP 3.0 tutorial. Build a working Python MCP server from scratch — tools, resources, prompts, MCP Inspector testing, and Cloudflare Workers deployment. Covers composability, OpenAPI mounting, and proxy mode.',
+  datePublished: publishDate,
+  dateModified: publishDate,
+  author: {
+    '@type': 'Organization',
+    name: 'AgentRank',
+    url: 'https://agentrank-ai.com',
+  },
+  publisher: {
+    '@type': 'Organization',
+    name: 'AgentRank',
+    logo: {
+      '@type': 'ImageObject',
+      url: 'https://agentrank-ai.com/og-image.png',
+    },
+  },
+  mainEntityOfPage: {
+    '@type': 'WebPage',
+    '@id': 'https://agentrank-ai.com/blog/fastmcp-tutorial-python-mcp-server/',
+  },
+  image: 'https://agentrank-ai.com/og-image.png',
+  keywords: 'fastmcp tutorial, python mcp server, build mcp server python, fastmcp 3.0, mcp python sdk, fastmcp example, fastmcp composability, fastmcp openapi, mcp server tutorial 2026',
+  proficiencyLevel: 'Beginner',
+  dependencies: 'Python 3.10+, uv or pip',
+};
+---
+
+<Base
+  title="FastMCP Tutorial: Build a Python MCP Server in 20 Minutes — AgentRank"
+  description="Step-by-step FastMCP 3.0 tutorial: build a working Python MCP server from scratch. Tools, resources, prompts, MCP Inspector, Cloudflare deployment. Covers FastMCP 3.0 composability, OpenAPI mounting, and proxy mode."
+  activeTab="blog"
+  keywords="fastmcp tutorial, python mcp server, build mcp server python, fastmcp 3.0, fastmcp example, fastmcp composability, mcp python sdk, mcp server tutorial"
+  canonicalUrl="https://agentrank-ai.com/blog/fastmcp-tutorial-python-mcp-server/"
+  jsonLd={jsonLd}
+>
+  <article class="blog-post">
+    <header class="post-header">
+      <div class="breadcrumb"><a href="/blog/">Blog</a> <span>/</span></div>
+      <h1>FastMCP Tutorial: Build a Python MCP Server in 20 Minutes</h1>
+      <div class="post-meta">
+        <time datetime={publishDate}>March 18, 2026</time>
+        <span class="sep">&middot;</span>
+        <span>12 min read</span>
+        <span class="sep">&middot;</span>
+        <span>FastMCP 3.0</span>
+      </div>
+      <p class="lede">
+        FastMCP is the fastest way to build a Python MCP server.
+        It downloads <strong>over 1 million times per day</strong>,
+        powers roughly 70% of all Python MCP servers in production,
+        and reaches a working server in under 10 lines of code.
+        FastMCP 3.0, released January 2026, added composability, OpenAPI mounting, and proxy mode.
+        This tutorial builds a real, functional server from scratch — tools, resources, prompts,
+        testing, and deployment included.
+      </p>
+    </header>
+
+    <nav class="toc">
+      <strong>Contents</strong>
+      <ol>
+        <li><a href="#what-is-fastmcp">What is FastMCP?</a></li>
+        <li><a href="#what-we-build">What we'll build</a></li>
+        <li><a href="#install">Installation</a></li>
+        <li><a href="#first-tool">Step 1 — Your first tool</a></li>
+        <li><a href="#resources">Step 2 — Resources</a></li>
+        <li><a href="#prompts">Step 3 — Prompts</a></li>
+        <li><a href="#inspector">Step 4 — Test with MCP Inspector</a></li>
+        <li><a href="#claude-desktop">Step 5 — Connect to Claude Desktop</a></li>
+        <li><a href="#deploy">Step 6 — Deploy to Cloudflare Workers</a></li>
+        <li><a href="#fastmcp-3">FastMCP 3.0 features: composability, OpenAPI, proxy</a></li>
+        <li><a href="#whats-next">What's next</a></li>
+      </ol>
+    </nav>
+
+    <section id="what-is-fastmcp">
+      <h2>What is FastMCP?</h2>
+
+      <p>
+        FastMCP is a high-level Python framework for building MCP (Model Context Protocol) servers
+        and clients. It wraps the official <a href="/tool/modelcontextprotocol--python-sdk/" class="inline-link">modelcontextprotocol/python-sdk</a>
+        with a FastAPI-inspired decorator API that eliminates the protocol boilerplate:
+        no manual JSON schema definitions, no transport setup, no capability negotiation.
+        You write Python functions; FastMCP builds the MCP server.
+      </p>
+
+      <p>
+        The <a href="/tool/PrefectHQ--fastmcp/" class="inline-link">PrefectHQ/fastmcp</a> repository
+        currently holds an <strong>AgentRank score of 90.7</strong> — the highest of any Python MCP
+        library in the index. 23,659 stars, 208 contributors, 83% issue close rate. It is the
+        library the Python MCP ecosystem converged on.
+      </p>
+
+      <div class="info-box">
+        <strong>FastMCP version history</strong>
+        <p>
+          The original <code>jlowin/fastmcp</code> (v1) introduced the decorator pattern.
+          PrefectHQ acquired and rebuilt it as <code>PrefectHQ/fastmcp</code> (v2).
+          FastMCP 3.0, released January 2026, is the current version — installed as
+          <code>pip install fastmcp</code> or <code>uv add fastmcp</code>.
+        </p>
+      </div>
+    </section>
+
+    <section id="what-we-build">
+      <h2>What we'll build</h2>
+
+      <p>
+        We'll build an <strong>AgentRank query server</strong> — an MCP server that lets Claude
+        (or any MCP client) query the AgentRank index for tool rankings and ecosystem stats.
+        By the end of this tutorial the server will expose:
+      </p>
+
+      <ul class="feature-list">
+        <li><strong>Tools</strong> — <code>search_tools</code>, <code>get_tool_score</code>, <code>get_top_tools</code></li>
+        <li><strong>Resources</strong> — <code>agentrank://stats</code> (live index statistics)</li>
+        <li><strong>Prompts</strong> — <code>find_best_tool</code> (guided tool recommendation prompt)</li>
+      </ul>
+
+      <p>
+        The server will run locally for development, connect to Claude Desktop for testing,
+        and deploy to Cloudflare Workers via the Streamable HTTP transport for production.
+      </p>
+    </section>
+
+    <section id="install">
+      <h2>Installation</h2>
+
+      <p>
+        FastMCP requires Python 3.10+. The recommended install path uses
+        <a href="https://docs.astral.sh/uv/" target="_blank" rel="noopener noreferrer" class="inline-link">uv</a>,
+        Astral's fast Python package manager. If you're not on uv yet, <code>pip install fastmcp</code>
+        works identically.
+      </p>
+
+      <div class="code-block">
+        <div class="code-label">Create project</div>
+        <pre><code>uv init agentrank-mcp
+cd agentrank-mcp
+uv add fastmcp</code></pre>
+      </div>
+
+      <div class="code-block">
+        <div class="code-label">Or with pip</div>
+        <pre><code>mkdir agentrank-mcp && cd agentrank-mcp
+python -m venv .venv && source .venv/bin/activate
+pip install fastmcp</code></pre>
+      </div>
+
+      <p>
+        Verify the install:
+      </p>
+
+      <div class="code-block">
+        <div class="code-label">Verify</div>
+        <pre><code>python -c "import fastmcp; print(fastmcp.__version__)"
+# 3.x.x</code></pre>
+      </div>
+    </section>
+
+    <section id="first-tool">
+      <h2>Step 1 — Your first tool</h2>
+
+      <p>
+        Create <code>server.py</code>. A FastMCP server starts with three lines:
+        import, instantiate, run. Every tool you add uses the <code>@mcp.tool()</code> decorator.
+      </p>
+
+      <div class="code-block">
+        <div class="code-label">server.py — minimal server</div>
+        <pre><code>from fastmcp import FastMCP
+
+mcp = FastMCP("agentrank")
+
+@mcp.tool()
+def get_top_tools(category: str = "all", limit: int = 10) -> list[dict]:
+    """Get the top-ranked MCP tools from the AgentRank index.
+
+    Args:
+        category: Filter by category. Options: all, python, typescript, devops, ai-ml.
+        limit: Number of results to return. Max 50.
+    """
+    # Replace with real DB query in production
+    return [
+        &#123;"rank": 1, "name": "PrefectHQ/fastmcp", "score": 90.7, "category": "python"&#125;,
+        &#123;"rank": 2, "name": "oraios/serena", "score": 66.6, "category": "python"&#125;,
+        &#123;"rank": 3, "name": "modelcontextprotocol/python-sdk", "score": 62.3, "category": "python"&#125;,
+    ][:limit]
+
+if __name__ == "__main__":
+    mcp.run()</code></pre>
+      </div>
+
+      <p>
+        Run it:
+      </p>
+
+      <div class="code-block">
+        <div class="code-label">Run</div>
+        <pre><code>python server.py</code></pre>
+      </div>
+
+      <p>
+        The server starts over stdio — the default transport for local development and Claude Desktop.
+        No output means it's waiting for MCP client connections. That's correct behavior.
+      </p>
+
+      <h3>How FastMCP builds the schema</h3>
+
+      <p>
+        FastMCP reads your function signature and docstring and automatically generates the
+        MCP tool definition — name, description, and JSON schema for the input arguments.
+        The <code>category: str = "all"</code> annotation becomes a string property with a default.
+        The <code>limit: int = 10</code> becomes an integer property with a default.
+        You never write a JSON schema by hand.
+      </p>
+
+      <p>
+        Add a second tool — one that takes a required argument:
+      </p>
+
+      <div class="code-block">
+        <div class="code-label">server.py — add get_tool_score</div>
+        <pre><code>@mcp.tool()
+def get_tool_score(repo: str) -> dict:
+    """Get the AgentRank score and signals for a specific GitHub repository.
+
+    Args:
+        repo: GitHub repository in owner/name format. Example: PrefectHQ/fastmcp
+    """
+    # Stub — replace with real lookup
+    scores = &#123;
+        "PrefectHQ/fastmcp": &#123;"score": 90.7, "stars": 23659, "issue_close_pct": 83&#125;,
+        "modelcontextprotocol/python-sdk": &#123;"score": 62.3, "stars": 22124, "issue_close_pct": 65&#125;,
+    &#125;
+    result = scores.get(repo)
+    if not result:
+        return &#123;"error": f"&#123;repo&#125; not found in index"&#125;
+    return &#123;"repo": repo, **result&#125;</code></pre>
+      </div>
+
+      <h3>Type annotations FastMCP understands</h3>
+
+      <p>
+        FastMCP maps Python types directly to JSON Schema:
+      </p>
+
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Python type</th>
+            <th>JSON Schema type</th>
+            <th>Notes</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>str</code></td>
+            <td>string</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td><code>int</code></td>
+            <td>integer</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td><code>float</code></td>
+            <td>number</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td><code>bool</code></td>
+            <td>boolean</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td><code>list[str]</code></td>
+            <td>array of strings</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td><code>dict</code></td>
+            <td>object</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td><code>Optional[str]</code></td>
+            <td>string or null</td>
+            <td>Makes parameter optional</td>
+          </tr>
+          <tr>
+            <td>Pydantic model</td>
+            <td>object with properties</td>
+            <td>Full schema from model fields</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p>
+        For complex inputs, use Pydantic models as argument types — FastMCP generates the full
+        JSON schema from the model's field definitions and validators.
+      </p>
+    </section>
+
+    <section id="resources">
+      <h2>Step 2 — Resources</h2>
+
+      <p>
+        Resources expose read-only data to MCP clients via URIs. They're not function calls —
+        they're data sources the client can read at any time, like files or database views.
+        The <code>@mcp.resource()</code> decorator maps a URI pattern to a Python function.
+      </p>
+
+      <div class="code-block">
+        <div class="code-label">server.py — add resource</div>
+        <pre><code>@mcp.resource("agentrank://stats")
+def get_index_stats() -> dict:
+    """Live statistics about the AgentRank index."""
+    return &#123;
+        "total_tools": 25632,
+        "updated_at": "2026-03-18T00:00:00Z",
+        "top_language": "TypeScript",
+        "python_repos": 9869,
+        "avg_score": 31.4,
+        "active_maintainers": 14721,
+    &#125;</code></pre>
+      </div>
+
+      <p>
+        Resources also support URI templates — dynamic URIs where part of the path becomes
+        a function argument:
+      </p>
+
+      <div class="code-block">
+        <div class="code-label">server.py — resource with URI template</div>
+        <pre><code>@mcp.resource("agentrank://tool/&#123;owner&#125;/&#123;repo&#125;")
+def get_tool_resource(owner: str, repo: str) -> dict:
+    """Full profile for a specific tool in the AgentRank index.
+
+    URI: agentrank://tool/PrefectHQ/fastmcp
+    """
+    return &#123;
+        "repo": f"&#123;owner&#125;/&#123;repo&#125;",
+        "url": f"https://github.com/&#123;owner&#125;/&#123;repo&#125;",
+        "indexed": True,
+    &#125;</code></pre>
+      </div>
+
+      <p>
+        When a client requests <code>agentrank://tool/PrefectHQ/fastmcp</code>, FastMCP extracts
+        <code>owner="PrefectHQ"</code> and <code>repo="fastmcp"</code> from the URI and passes them
+        to the function. This pattern is identical to path parameters in FastAPI or Flask.
+      </p>
+
+      <h3>Resources vs tools: the distinction</h3>
+
+      <p>
+        Use a <strong>resource</strong> for data that already exists and can be read without side effects —
+        a config value, a database record, a file. Use a <strong>tool</strong> for operations that
+        take action, have side effects, or require dynamic parameters. Most MCP servers need both.
+      </p>
+    </section>
+
+    <section id="prompts">
+      <h2>Step 3 — Prompts</h2>
+
+      <p>
+        Prompts are reusable message templates that MCP clients expose to users as slash commands
+        or suggested actions. They return a list of messages — typically a user turn followed by
+        optional context. The <code>@mcp.prompt()</code> decorator defines them.
+      </p>
+
+      <div class="code-block">
+        <div class="code-label">server.py — add prompt</div>
+        <pre><code>from fastmcp.prompts import Message
+
+@mcp.prompt()
+def find_best_tool(use_case: str, language: str = "any") -> list[Message]:
+    """Generate a prompt to find the best MCP tool for a use case.
+
+    Args:
+        use_case: What you want to accomplish. Example: web scraping, database queries.
+        language: Preferred programming language. Default: any.
+    """
+    context = f"Language preference: &#123;language&#125;" if language != "any" else "No language preference."
+    return [
+        Message(
+            role="user",
+            content=f"""I need to find the best MCP server for: &#123;use_case&#125;
+
+&#123;context&#125;
+
+Search the AgentRank index using get_top_tools, then use get_tool_score to compare
+the top candidates. Recommend the single best option with a brief explanation of why
+it ranks highest for this use case."""
+        )
+    ]</code></pre>
+      </div>
+
+      <p>
+        In Claude Desktop, prompts appear in the slash command menu as <code>/find_best_tool</code>.
+        The user fills in the arguments and Claude executes the prompt — which then calls your
+        tools automatically.
+      </p>
+    </section>
+
+    <section id="inspector">
+      <h2>Step 4 — Test with MCP Inspector</h2>
+
+      <p>
+        MCP Inspector is the official debugging tool for MCP servers. It runs a local web UI
+        that lets you call your server's tools and resources directly, without a full MCP client.
+        It ships with FastMCP — no separate install needed.
+      </p>
+
+      <div class="code-block">
+        <div class="code-label">Launch MCP Inspector</div>
+        <pre><code>fastmcp dev server.py</code></pre>
+      </div>
+
+      <p>
+        This starts your server in development mode and opens the MCP Inspector UI at
+        <code>http://localhost:5173</code>. You'll see three tabs: <strong>Tools</strong>,
+        <strong>Resources</strong>, and <strong>Prompts</strong>.
+      </p>
+
+      <div class="step-list">
+        <div class="step-item">
+          <span class="step-num">1</span>
+          <div>
+            <strong>Test a tool</strong> — Click <em>Tools</em>, select <code>get_top_tools</code>,
+            set <code>category: python</code>, and click <em>Execute</em>. You should see the
+            stubbed response returned as JSON.
+          </div>
+        </div>
+        <div class="step-item">
+          <span class="step-num">2</span>
+          <div>
+            <strong>Test a resource</strong> — Click <em>Resources</em>, select
+            <code>agentrank://stats</code>, and click <em>Read</em>. The index stats object
+            should appear.
+          </div>
+        </div>
+        <div class="step-item">
+          <span class="step-num">3</span>
+          <div>
+            <strong>Test a prompt</strong> — Click <em>Prompts</em>, select <code>find_best_tool</code>,
+            set <code>use_case: web scraping</code>, and click <em>Get Prompt</em>.
+            The rendered message template appears.
+          </div>
+        </div>
+      </div>
+
+      <p>
+        If a tool call throws an exception, Inspector shows the full traceback. The most
+        common errors at this stage: missing imports, JSON serialization failures (return
+        a dict or list, not a custom class), and type mismatches (return what the annotation says).
+      </p>
+
+      <h3>Running tests against your server</h3>
+
+      <p>
+        For automated testing, FastMCP ships a <code>Client</code> that connects to your server
+        in-process. You can use it in pytest without starting a real subprocess:
+      </p>
+
+      <div class="code-block">
+        <div class="code-label">test_server.py</div>
+        <pre><code>import pytest
+from fastmcp import Client
+from server import mcp
+
+@pytest.mark.anyio
+async def test_get_top_tools():
+    async with Client(mcp) as client:
+        result = await client.call_tool("get_top_tools", &#123;"limit": 2&#125;)
+        assert len(result) == 2
+        assert result[0]["rank"] == 1
+
+@pytest.mark.anyio
+async def test_get_index_stats():
+    async with Client(mcp) as client:
+        resource = await client.read_resource("agentrank://stats")
+        assert resource["total_tools"] > 0</code></pre>
+      </div>
+
+      <div class="code-block">
+        <div class="code-label">Run tests</div>
+        <pre><code>uv add pytest anyio pytest-anyio
+pytest test_server.py -v</code></pre>
+      </div>
+    </section>
+
+    <section id="claude-desktop">
+      <h2>Step 5 — Connect to Claude Desktop</h2>
+
+      <p>
+        Once the server passes Inspector testing, connect it to Claude Desktop. You'll add
+        an entry to <code>claude_desktop_config.json</code> that tells Claude how to launch
+        your server process.
+      </p>
+
+      <p>
+        First, install the server to make it runnable via the <code>fastmcp</code> CLI entry point:
+      </p>
+
+      <div class="code-block">
+        <div class="code-label">Install to Claude Desktop (automated)</div>
+        <pre><code>fastmcp install server.py --name "AgentRank"</code></pre>
+      </div>
+
+      <p>
+        This writes the config entry automatically. If you prefer to do it manually, the
+        <code>claude_desktop_config.json</code> path is:
+      </p>
+
+      <ul class="path-list">
+        <li><strong>macOS:</strong> <code>~/Library/Application Support/Claude/claude_desktop_config.json</code></li>
+        <li><strong>Windows:</strong> <code>%APPDATA%\Claude\claude_desktop_config.json</code></li>
+        <li><strong>Linux:</strong> <code>~/.config/Claude/claude_desktop_config.json</code></li>
+      </ul>
+
+      <div class="code-block">
+        <div class="code-label">claude_desktop_config.json</div>
+        <pre><code>&#123;
+  "mcpServers": &#123;
+    "agentrank": &#123;
+      "command": "python",
+      "args": ["/absolute/path/to/agentrank-mcp/server.py"],
+      "env": &#123;&#125;
+    &#125;
+  &#125;
+&#125;</code></pre>
+      </div>
+
+      <p>
+        Restart Claude Desktop after saving the config. In a new conversation, you should see
+        a hammer icon in the toolbar indicating MCP tools are available. Type
+        <code>/find_best_tool</code> to test the prompt, or ask Claude to "get the top Python
+        MCP tools from AgentRank" to trigger the tool call directly.
+      </p>
+
+      <div class="info-box">
+        <strong>Common connection errors</strong>
+        <ul>
+          <li><strong>Server not appearing:</strong> Restart Claude Desktop. The config is read on launch.</li>
+          <li><strong>Tool calls failing:</strong> Check that the <code>python</code> command points to the right interpreter (use absolute path to the venv python if needed).</li>
+          <li><strong>stdout corruption:</strong> Your server must not print anything to stdout during normal operation — stdout is the MCP transport channel. Use <code>sys.stderr</code> or Python's <code>logging</code> module for debug output.</li>
+        </ul>
+      </div>
+    </section>
+
+    <section id="deploy">
+      <h2>Step 6 — Deploy to Cloudflare Workers</h2>
+
+      <p>
+        For production, you want the server accessible over HTTP rather than running as a
+        local subprocess. FastMCP 3.0 supports the Streamable HTTP transport, which runs
+        the server as a standard ASGI application — deployable anywhere ASGI runs:
+        Cloudflare Workers, Fly.io, Railway, or any container platform.
+      </p>
+
+      <p>
+        Switch the transport in <code>server.py</code>:
+      </p>
+
+      <div class="code-block">
+        <div class="code-label">server.py — HTTP transport</div>
+        <pre><code>if __name__ == "__main__":
+    # stdio for local Claude Desktop
+    # mcp.run()
+
+    # HTTP for production deployment
+    mcp.run(transport="streamable-http", host="0.0.0.0", port=8000)</code></pre>
+      </div>
+
+      <p>
+        Or run it directly with <code>fastmcp run</code>:
+      </p>
+
+      <div class="code-block">
+        <div class="code-label">Start HTTP server</div>
+        <pre><code>fastmcp run server.py --transport streamable-http --port 8000</code></pre>
+      </div>
+
+      <p>
+        For Cloudflare Workers, FastMCP integrates with Wrangler. Add a <code>wrangler.toml</code>:
+      </p>
+
+      <div class="code-block">
+        <div class="code-label">wrangler.toml</div>
+        <pre><code>name = "agentrank-mcp"
+compatibility_date = "2026-01-01"
+main = "server.py"
+
+[build]
+command = "pip install fastmcp -t ."</code></pre>
+      </div>
+
+      <div class="code-block">
+        <div class="code-label">Deploy</div>
+        <pre><code>wrangler deploy</code></pre>
+      </div>
+
+      <p>
+        Once deployed, the MCP endpoint is at <code>https://agentrank-mcp.your-subdomain.workers.dev/mcp</code>.
+        Configure this URL in Claude Desktop or any MCP client that supports HTTP transport:
+      </p>
+
+      <div class="code-block">
+        <div class="code-label">claude_desktop_config.json — remote server</div>
+        <pre><code>&#123;
+  "mcpServers": &#123;
+    "agentrank-remote": &#123;
+      "url": "https://agentrank-mcp.your-subdomain.workers.dev/mcp"
+    &#125;
+  &#125;
+&#125;</code></pre>
+      </div>
+    </section>
+
+    <section id="fastmcp-3">
+      <h2>FastMCP 3.0 features: composability, OpenAPI, proxy</h2>
+
+      <p>
+        FastMCP 3.0, released January 2026, introduced three architectural features that
+        go beyond the basic decorator pattern. These are for when your server grows beyond
+        a single file.
+      </p>
+
+      <h3>Composability: mount servers together</h3>
+
+      <p>
+        Large MCP servers split into modules. FastMCP lets you build each module as an
+        independent <code>FastMCP</code> instance and mount them into a parent server.
+        Routes, tools, resources, and prompts are all scoped by prefix automatically.
+      </p>
+
+      <div class="code-block">
+        <div class="code-label">Composing sub-servers</div>
+        <pre><code>from fastmcp import FastMCP
+
+# Module servers
+tools_mcp = FastMCP("tools")
+stats_mcp = FastMCP("stats")
+
+@tools_mcp.tool()
+def search_tools(query: str) -> list[dict]:
+    """Search the AgentRank tool index."""
+    return []
+
+@stats_mcp.resource("stats://index")
+def get_stats() -> dict:
+    """Current index statistics."""
+    return &#123;"total": 25632&#125;
+
+# Parent server — mounts both
+app = FastMCP("agentrank")
+app.mount("tools", tools_mcp)
+app.mount("stats", stats_mcp)
+
+# Tools are now accessible as:
+# - tools_search_tools (tool)
+# - stats://index (resource, prefixed by mount key)</code></pre>
+      </div>
+
+      <p>
+        This pattern mirrors how Flask Blueprints or FastAPI routers work. Build and test
+        each module independently; assemble them in the main application. For a server
+        with dozens of tools, composability keeps the codebase navigable.
+      </p>
+
+      <h3>OpenAPI mounting: turn any HTTP API into an MCP server</h3>
+
+      <p>
+        FastMCP 3.0 can read an OpenAPI spec and automatically generate MCP tools for
+        every endpoint — one tool per operation. This is the fastest way to expose an
+        existing REST API to MCP clients.
+      </p>
+
+      <div class="code-block">
+        <div class="code-label">Mount from OpenAPI spec URL</div>
+        <pre><code>from fastmcp import FastMCP
+from fastmcp.contrib.openapi import mount_openapi
+
+mcp = FastMCP("agentrank-api")
+
+# Generates one MCP tool per OpenAPI operation
+await mount_openapi(
+    mcp,
+    spec_url="https://api.agentrank-ai.com/openapi.json",
+    base_url="https://api.agentrank-ai.com",
+)</code></pre>
+      </div>
+
+      <div class="code-block">
+        <div class="code-label">Mount from local spec file</div>
+        <pre><code>import json
+from fastmcp.contrib.openapi import mount_openapi_from_spec
+
+with open("openapi.json") as f:
+    spec = json.load(f)
+
+await mount_openapi_from_spec(mcp, spec, base_url="https://api.example.com")</code></pre>
+      </div>
+
+      <p>
+        Each OpenAPI operation becomes an <code>@mcp.tool()</code> with the operation's
+        summary as the description and the request body / query parameters as tool arguments.
+        For APIs with dozens of endpoints, this can generate a complete MCP server in seconds
+        with no manual tool definitions.
+      </p>
+
+      <h3>Proxy mode: wrap any MCP server</h3>
+
+      <p>
+        FastMCP 3.0 proxy mode creates a FastMCP wrapper around any existing MCP server.
+        This is useful for adding middleware (auth, logging, rate limiting) to a server
+        you didn't build, or for aggregating multiple upstream servers behind a single endpoint.
+      </p>
+
+      <div class="code-block">
+        <div class="code-label">Proxy an existing MCP server</div>
+        <pre><code>from fastmcp import FastMCP
+from fastmcp.proxy import MCPProxy
+
+# Proxy a server running at a remote URL
+proxy = await MCPProxy.from_url("https://upstream.example.com/mcp")
+
+# Or proxy a local stdio server
+proxy = await MCPProxy.from_command(["python", "upstream_server.py"])
+
+# Wrap it in FastMCP to add tools/middleware
+mcp = FastMCP("my-proxy")
+mcp.mount("upstream", proxy.as_fastmcp())
+
+# Add your own tools on top
+@mcp.tool()
+def custom_tool() -> str:
+    """A tool added on top of the proxied server."""
+    return "custom response"</code></pre>
+      </div>
+
+      <p>
+        Proxy mode is how
+        <a href="/tool/punkpeye--mcp-proxy/" class="inline-link">punkpeye/mcp-proxy</a>
+        — the #2 human traffic tool on AgentRank — solves the problem of aggregating
+        multiple MCP servers behind a single stdio connection for clients that only
+        support one server at a time.
+      </p>
+
+      <h3>Component versioning</h3>
+
+      <p>
+        FastMCP 3.0 adds a <code>version</code> parameter to tools, resources, and prompts.
+        When a client caches tool definitions, the version field signals when the schema
+        has changed and the cache should be invalidated. Set it on any tool that has
+        a stable, public interface:
+      </p>
+
+      <div class="code-block">
+        <div class="code-label">Versioned tool</div>
+        <pre><code>@mcp.tool(version="1.2.0")
+def get_tool_score(repo: str) -> dict:
+    """Get the AgentRank score for a repository."""
+    ...</code></pre>
+      </div>
+
+      <h3>OAuth 2.1 authentication</h3>
+
+      <p>
+        FastMCP 3.0 implements the MCP OAuth 2.1 spec that became mandatory for production
+        servers in June 2025. For HTTP transport servers, you can add auth in a few lines:
+      </p>
+
+      <div class="code-block">
+        <div class="code-label">OAuth 2.1 — bearer token validation</div>
+        <pre><code>from fastmcp import FastMCP
+from fastmcp.auth import BearerAuthProvider
+
+auth = BearerAuthProvider(
+    jwks_url="https://your-auth-provider/.well-known/jwks.json",
+    audience="agentrank-mcp",
+    issuer="https://your-auth-provider",
+)
+
+mcp = FastMCP("agentrank", auth=auth)
+
+@mcp.tool()
+def get_top_tools(limit: int = 10) -> list[dict]:
+    """Returns top tools. Requires authenticated session."""
+    ...</code></pre>
+      </div>
+
+      <h3>OpenTelemetry tracing</h3>
+
+      <p>
+        FastMCP 3.0 ships built-in OpenTelemetry instrumentation. Enable it by providing
+        an OTLP endpoint at startup:
+      </p>
+
+      <div class="code-block">
+        <div class="code-label">Enable OpenTelemetry</div>
+        <pre><code>import os
+os.environ["OTEL_EXPORTER_OTLP_ENDPOINT"] = "http://localhost:4318"
+os.environ["OTEL_SERVICE_NAME"] = "agentrank-mcp"
+
+from fastmcp import FastMCP
+mcp = FastMCP("agentrank", enable_otel=True)
+
+# Every tool call now emits a span with:
+# - tool name, arguments, result size
+# - error status and exception details
+# - latency histogram</code></pre>
+      </div>
+    </section>
+
+    <section id="whats-next">
+      <h2>What's next</h2>
+
+      <p>
+        The server you've built covers the full FastMCP primitive set: tools, resources, prompts,
+        testing, Claude Desktop integration, HTTP deployment, and FastMCP 3.0 architectural features.
+        The stub implementations work — replace them with real database queries or API calls
+        to get a production-ready server.
+      </p>
+
+      <p>
+        A few directions from here:
+      </p>
+
+      <ul class="feature-list">
+        <li>
+          <strong>See how fastmcp ranks in the index:</strong>
+          <a href="/tool/PrefectHQ--fastmcp/" class="inline-link">PrefectHQ/fastmcp tool page</a> —
+          score breakdown, signal history, and ecosystem position.
+        </li>
+        <li>
+          <strong>Compare Python vs TypeScript for your next server:</strong>
+          <a href="/compare/mcp-sdks/" class="inline-link">MCP SDK comparison</a>
+          covers Python, TypeScript, Go, and Rust side by side with a language decision framework.
+        </li>
+        <li>
+          <strong>Read the full Python MCP library landscape:</strong>
+          <a href="/blog/best-python-mcp-libraries/" class="inline-link">Best Python MCP Libraries in 2026</a>
+          covers FastMCP vs the official SDK vs mcp-agent.
+        </li>
+        <li>
+          <strong>Submit your server:</strong> Once it's live, <a href="/submit/" class="inline-link">submit it to AgentRank</a>
+          to get indexed, scored, and listed alongside 25,000+ other MCP tools.
+        </li>
+      </ul>
+
+      <div class="cta-box">
+        <p>
+          <strong>Browse all Python MCP tools:</strong>
+          <a href="/tools/?language=python">9,869 Python repos in the AgentRank index</a> — scored daily.
+          Find MCP servers that use FastMCP as a dependency and see what patterns they use in production.
+        </p>
+      </div>
+    </section>
+
+    <RelatedPosts posts={relatedPosts} />
+    <BlogSubscribeCTA source="blog" />
+    <footer class="post-footer">
+      <p class="methodology">
+        <strong>About this tutorial:</strong> Code examples are based on FastMCP 3.x (PrefectHQ/fastmcp,
+        installed as <code>pip install fastmcp</code>). FastMCP 3.0 released January 2026.
+        AgentRank scores cited are from the March 2026 index snapshot. Score methodology:
+        stars 15%, freshness 25%, issue health 25%, contributors 10%, inbound dependents 25%.
+      </p>
+      <p class="share-line">
+        Built something with FastMCP? <a href="https://x.com/AgentRank_ai" target="_blank" rel="noopener noreferrer">Tag @AgentRank_ai</a> —
+        we spotlight new tools on the leaderboard.
+      </p>
+    </footer>
+  </article>
+
+  <style>
+    .blog-post {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 2rem 0 3rem;
+    }
+
+    .breadcrumb {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      margin-bottom: 0.75rem;
+    }
+
+    .breadcrumb span {
+      margin: 0 0.25rem;
+      opacity: 0.5;
+    }
+
+    .post-header {
+      margin-bottom: 2rem;
+      padding-bottom: 1.5rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .post-header h1 {
+      font-size: 1.6rem;
+      font-weight: 700;
+      line-height: 1.3;
+      margin-bottom: 0.75rem;
+    }
+
+    .post-meta {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      flex-wrap: wrap;
+      margin-bottom: 1rem;
+    }
+
+    .sep {
+      opacity: 0.4;
+    }
+
+    .lede {
+      font-size: 1rem;
+      line-height: 1.7;
+      color: var(--text);
+      opacity: 0.9;
+    }
+
+    .toc {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 1rem 1.25rem;
+      margin-bottom: 2.5rem;
+      font-size: 0.82rem;
+    }
+
+    .toc strong {
+      display: block;
+      margin-bottom: 0.6rem;
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+    }
+
+    .toc ol {
+      margin: 0;
+      padding-left: 1.2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+    }
+
+    .toc a {
+      color: var(--text-muted);
+    }
+
+    .toc a:hover {
+      color: var(--accent);
+    }
+
+    section {
+      margin-bottom: 3rem;
+    }
+
+    section h2 {
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin-bottom: 0.75rem;
+      padding-bottom: 0.4rem;
+      border-bottom: 2px solid var(--accent);
+      display: inline-block;
+    }
+
+    section h3 {
+      font-size: 0.95rem;
+      font-weight: 700;
+      margin: 1.5rem 0 0.5rem;
+      color: var(--text);
+    }
+
+    section p {
+      font-size: 0.9rem;
+      line-height: 1.75;
+      color: var(--text);
+      opacity: 0.9;
+      margin-bottom: 0.9rem;
+    }
+
+    section ul,
+    section ol {
+      font-size: 0.9rem;
+      line-height: 1.75;
+      margin-bottom: 0.9rem;
+      padding-left: 1.5rem;
+    }
+
+    section li {
+      margin-bottom: 0.3rem;
+    }
+
+    .inline-link {
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    code {
+      font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+      font-size: 0.82em;
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      padding: 0.1em 0.35em;
+    }
+
+    .code-block {
+      margin: 1rem 0 1.25rem;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .code-label {
+      background: var(--bg-surface);
+      border-bottom: 1px solid var(--border);
+      padding: 0.4rem 0.75rem;
+      font-size: 0.72rem;
+      font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .code-block pre {
+      margin: 0;
+      padding: 1rem 0.875rem;
+      overflow-x: auto;
+      background: transparent;
+    }
+
+    .code-block pre code {
+      font-size: 0.78rem;
+      background: none;
+      border: none;
+      padding: 0;
+      line-height: 1.6;
+      color: var(--text);
+      white-space: pre;
+    }
+
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.82rem;
+      margin: 1rem 0 1.25rem;
+    }
+
+    .data-table th {
+      text-align: left;
+      font-weight: 600;
+      color: var(--text-muted);
+      border-bottom: 1px solid var(--border);
+      padding: 0.4rem 0.75rem 0.4rem 0;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+
+    .data-table td {
+      padding: 0.45rem 0.75rem 0.45rem 0;
+      border-bottom: 1px solid var(--border);
+      color: var(--text);
+      vertical-align: top;
+    }
+
+    .data-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .feature-list {
+      padding-left: 0;
+      list-style: none;
+    }
+
+    .feature-list li {
+      padding: 0.4rem 0 0.4rem 1rem;
+      border-left: 2px solid var(--border);
+      margin-bottom: 0.5rem;
+      font-size: 0.9rem;
+      line-height: 1.6;
+    }
+
+    .path-list {
+      list-style: none;
+      padding: 0;
+    }
+
+    .path-list li {
+      padding: 0.25rem 0;
+      font-size: 0.88rem;
+    }
+
+    .info-box {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--text-muted);
+      border-radius: 4px;
+      padding: 0.875rem 1.25rem;
+      margin: 1rem 0 1.25rem;
+      font-size: 0.85rem;
+    }
+
+    .info-box strong {
+      display: block;
+      margin-bottom: 0.4rem;
+      font-size: 0.82rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--text-muted);
+    }
+
+    .info-box p,
+    .info-box ul {
+      font-size: 0.85rem;
+      margin-bottom: 0.4rem;
+    }
+
+    .info-box li {
+      margin-bottom: 0.3rem;
+    }
+
+    .step-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      margin: 1rem 0;
+    }
+
+    .step-item {
+      display: flex;
+      gap: 0.875rem;
+      align-items: flex-start;
+      font-size: 0.9rem;
+      line-height: 1.65;
+    }
+
+    .step-num {
+      flex-shrink: 0;
+      width: 1.5rem;
+      height: 1.5rem;
+      background: var(--accent);
+      color: var(--bg);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.72rem;
+      font-weight: 700;
+      margin-top: 0.1rem;
+    }
+
+    .cta-box {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      border-radius: 4px;
+      padding: 1rem 1.25rem;
+      margin-top: 1.5rem;
+    }
+
+    .cta-box p {
+      margin-bottom: 0.5rem;
+    }
+
+    .cta-box p:last-child {
+      margin-bottom: 0;
+    }
+
+    .post-footer {
+      margin-top: 3rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--border);
+    }
+
+    .methodology {
+      font-size: 0.75rem !important;
+      color: var(--text-muted) !important;
+      opacity: 1 !important;
+    }
+
+    .share-line {
+      font-size: 0.82rem !important;
+      margin-top: 0.75rem;
+    }
+
+    @media (max-width: 640px) {
+      .post-header h1 {
+        font-size: 1.3rem;
+      }
+
+      .data-table {
+        font-size: 0.75rem;
+      }
+    }
+  </style>
+</Base>

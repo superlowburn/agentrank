@@ -1,0 +1,1049 @@
+---
+export const prerender = true;
+
+import Base from '../../layouts/Base.astro';
+import BlogSubscribeCTA from '../../components/BlogSubscribeCTA.astro';
+import RelatedPosts from '../../components/RelatedPosts.astro';
+
+const relatedPosts = [
+  { href: '/blog/how-to-choose-an-mcp-server/', title: 'How to Choose an MCP Server in 2026' },
+  { href: '/blog/how-to-build-an-mcp-server/', title: 'How to Build an MCP Server in 2026' },
+  { href: '/blog/mcp-server-landscape-q1-2026/', title: 'The MCP Server Landscape: Q1 2026' },
+];
+
+const publishDate = '2026-03-18';
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: 'How to Set Up MCP Servers in Claude Desktop, Cursor, and Windsurf',
+  description: 'Step-by-step guide to installing MCP servers in Claude Desktop, Cursor, Windsurf, and VS Code. JSON config examples, common errors and fixes, and the top servers to install first.',
+  datePublished: publishDate,
+  dateModified: publishDate,
+  author: {
+    '@type': 'Organization',
+    name: 'AgentRank',
+    url: 'https://agentrank-ai.com',
+  },
+  publisher: {
+    '@type': 'Organization',
+    name: 'AgentRank',
+    url: 'https://agentrank-ai.com',
+    logo: {
+      '@type': 'ImageObject',
+      url: 'https://agentrank-ai.com/og-image.png',
+    },
+  },
+  mainEntityOfPage: {
+    '@type': 'WebPage',
+    '@id': 'https://agentrank-ai.com/blog/mcp-setup-guide-claude-cursor-windsurf/',
+  },
+  image: 'https://agentrank-ai.com/og-image.png',
+  keywords: 'claude desktop mcp setup, mcp server install, cursor mcp, windsurf mcp setup, add mcp server, mcp configuration, mcp setup guide 2026, vs code mcp',
+};
+
+const starterServers = [
+  {
+    rank: 1,
+    name: 'jlowin/fastmcp',
+    slug: 'jlowin--fastmcp',
+    score: 89.44,
+    stars: 6734,
+    desc: 'High-level Python framework for building MCP servers with minimal boilerplate',
+    why: 'Best starting point if you want to expose your own scripts, APIs, or data to AI',
+  },
+  {
+    rank: 2,
+    name: 'oraios/serena',
+    slug: 'oraios--serena',
+    score: 66.6,
+    stars: 21474,
+    desc: 'Semantic code retrieval and editing toolkit for coding agents',
+    why: 'Most-starred MCP server. Gives any AI client deep, symbol-aware access to your codebase.',
+  },
+  {
+    rank: 3,
+    name: 'MCPJam/inspector',
+    slug: 'MCPJam--inspector',
+    score: 62.0,
+    stars: 1798,
+    desc: 'Interactive GUI for testing and debugging any MCP server',
+    why: 'Verify your setup works before adding more servers. Essential debugging tool.',
+  },
+  {
+    rank: 4,
+    name: 'microsoft/azure-devops-mcp',
+    slug: 'microsoft--azure-devops-mcp',
+    score: 65.2,
+    stars: 1406,
+    desc: 'Official MCP server for Azure DevOps — work items, PRs, pipelines, and repos',
+    why: 'Official Microsoft integration. If your team uses Azure DevOps, start here.',
+  },
+  {
+    rank: 5,
+    name: 'modelcontextprotocol/python-sdk',
+    slug: 'modelcontextprotocol--python-sdk',
+    score: 92.14,
+    stars: 4821,
+    desc: 'Official Python SDK — includes the reference filesystem, git, and github servers',
+    why: 'The official Anthropic SDK ships bundled servers for filesystem access, Git, and GitHub.',
+  },
+];
+---
+
+<Base
+  title="How to Set Up MCP Servers in Claude Desktop, Cursor, and Windsurf — AgentRank"
+  description="Step-by-step guide to installing MCP servers in Claude Desktop, Cursor, Windsurf, and VS Code. JSON config examples, common errors and fixes, and the top-rated servers to install first."
+  activeTab="blog"
+  keywords="claude desktop mcp setup, mcp server install, cursor mcp, windsurf mcp setup, add mcp server, mcp configuration guide 2026, vs code mcp copilot"
+  canonicalUrl="https://agentrank-ai.com/blog/mcp-setup-guide-claude-cursor-windsurf/"
+  jsonLd={jsonLd}
+>
+  <article class="blog-post">
+    <header class="post-header">
+      <div class="breadcrumb"><a href="/blog/">Blog</a> <span>/</span></div>
+      <h1>How to Set Up MCP Servers in Claude Desktop, Cursor, and Windsurf</h1>
+      <div class="post-meta">
+        <time datetime={publishDate}>March 18, 2026</time>
+        <span class="sep">&middot;</span>
+        <span>10 min read</span>
+        <span class="sep">&middot;</span>
+        <span>AgentRank Index</span>
+      </div>
+      <p class="lede">
+        MCP servers extend your AI client with real capabilities — file access, web search, database queries,
+        code execution, and anything else you can write a function for. This guide walks through the exact
+        config files and JSON format for every major client: Claude Desktop, Cursor, Windsurf, and VS Code
+        with Copilot.
+      </p>
+    </header>
+
+    <nav class="toc">
+      <strong>Contents</strong>
+      <ol>
+        <li><a href="#what-is-mcp">What an MCP server actually does</a></li>
+        <li><a href="#prerequisites">Prerequisites</a></li>
+        <li><a href="#claude-desktop">Claude Desktop</a></li>
+        <li><a href="#cursor">Cursor</a></li>
+        <li><a href="#windsurf">Windsurf</a></li>
+        <li><a href="#vscode">VS Code with Copilot</a></li>
+        <li><a href="#errors">Common errors and fixes</a></li>
+        <li><a href="#starter-servers">5 servers to install first</a></li>
+        <li><a href="#find-more">Finding more servers</a></li>
+      </ol>
+    </nav>
+
+    <section id="what-is-mcp">
+      <h2>What an MCP server actually does</h2>
+      <p>
+        By default, Claude, Cursor, and Windsurf can only work with text you paste into the chat. An MCP
+        server punches a hole in that limitation — it lets the AI call functions on your behalf, reading from
+        and writing to systems outside the conversation window.
+      </p>
+      <p>
+        A filesystem MCP server lets the AI read and write local files. A GitHub MCP server lets it open PRs
+        and search your repos. A database MCP server lets it run SQL queries against your live data. Each
+        server exposes a set of <strong>tools</strong> — named functions the AI can call when it decides they're
+        relevant. You configure which servers are active; the AI decides when and how to use them.
+      </p>
+      <p>
+        All four major AI clients (Claude Desktop, Cursor, Windsurf, VS Code Copilot) support MCP. The
+        protocol is standardized, but the config file location and format differ slightly across clients.
+        This guide covers all of them.
+      </p>
+    </section>
+
+    <section id="prerequisites">
+      <h2>Prerequisites</h2>
+      <p>Before adding your first MCP server, make sure you have:</p>
+      <ul>
+        <li>
+          <strong>Node.js 18+ or Python 3.10+</strong> — most MCP servers are distributed as npm or pip
+          packages. Run <code>node --version</code> or <code>python3 --version</code> to check.
+          Install from <a href="https://nodejs.org" target="_blank" rel="noopener noreferrer">nodejs.org</a> or
+          <a href="https://python.org" target="_blank" rel="noopener noreferrer">python.org</a> if needed.
+        </li>
+        <li>
+          <strong>Your AI client installed and signed in</strong> — Claude Desktop, Cursor, Windsurf, or
+          VS Code with the GitHub Copilot extension.
+        </li>
+        <li>
+          <strong>A text editor</strong> — you'll be editing JSON config files. Any editor works.
+        </li>
+      </ul>
+      <p>
+        Most servers install with a single <code>npx</code> or <code>uvx</code> command, no global install
+        required. The config file tells your AI client how to launch the server process — typically a command
+        and a list of arguments.
+      </p>
+    </section>
+
+    <section id="claude-desktop">
+      <h2>Claude Desktop</h2>
+      <p>
+        Claude Desktop is the simplest client to configure. MCP servers are defined in a single JSON file.
+        The file may not exist yet — you'll create it the first time.
+      </p>
+
+      <h3>Step 1: Find your config file</h3>
+      <p>The config file lives at a fixed OS path:</p>
+
+      <div class="config-paths">
+        <div class="config-path-row">
+          <span class="os-label">macOS</span>
+          <code>~/Library/Application Support/Claude/claude_desktop_config.json</code>
+        </div>
+        <div class="config-path-row">
+          <span class="os-label">Windows</span>
+          <code>%APPDATA%\Claude\claude_desktop_config.json</code>
+        </div>
+        <div class="config-path-row">
+          <span class="os-label">Linux</span>
+          <code>~/.config/Claude/claude_desktop_config.json</code>
+        </div>
+      </div>
+
+      <p>
+        On macOS, you can open it directly from Terminal:
+      </p>
+
+      <div class="code-block">
+        <div class="code-label">Terminal — macOS</div>
+        <pre><code>open -a "TextEdit" ~/Library/Application\ Support/Claude/claude_desktop_config.json</code></pre>
+      </div>
+
+      <p>
+        Or open the directory in Finder: <code>open ~/Library/Application\ Support/Claude/</code>
+      </p>
+
+      <h3>Step 2: Add the mcpServers block</h3>
+      <p>
+        The config file is a JSON object with an <code>mcpServers</code> key. Each entry is a named server
+        with a <code>command</code>, <code>args</code>, and optional <code>env</code> object:
+      </p>
+
+      <div class="code-block">
+        <div class="code-label">claude_desktop_config.json — full example</div>
+        <pre><code>&#123;
+  "mcpServers": &#123;
+    "filesystem": &#123;
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-filesystem",
+        "/Users/yourname/Documents",
+        "/Users/yourname/Desktop"
+      ]
+    &#125;,
+    "github": &#123;
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-github"],
+      "env": &#123;
+        "GITHUB_PERSONAL_ACCESS_TOKEN": "your_token_here"
+      &#125;
+    &#125;
+  &#125;
+&#125;</code></pre>
+      </div>
+
+      <p>
+        The key under <code>mcpServers</code> (e.g., <code>"filesystem"</code>) is the name you'll see in
+        Claude's interface. The <code>command</code> is the executable to run. The <code>args</code> array
+        contains arguments passed to that command. The <code>env</code> object sets environment variables —
+        use this for API keys and secrets instead of hardcoding them in args.
+      </p>
+
+      <h3>Step 3: Restart Claude Desktop</h3>
+      <p>
+        Config changes are not picked up while Claude Desktop is running. Quit the app completely (not just
+        close the window — on macOS, right-click the Dock icon and choose Quit) and relaunch it.
+      </p>
+
+      <h3>Step 4: Verify the server is active</h3>
+      <p>
+        After restarting, open a new conversation. You should see a hammer icon or a tools indicator in the
+        input area. Click it to see which MCP servers are connected and what tools they expose. If you don't
+        see it, open the developer console (<code>Help &rarr; Developer Tools</code>) and look for error messages
+        related to MCP server startup.
+      </p>
+    </section>
+
+    <section id="cursor">
+      <h2>Cursor</h2>
+      <p>
+        Cursor supports MCP servers in both Composer (Agent mode) and Chat. You can configure servers
+        globally via a JSON file or per-project via a project-level file.
+      </p>
+
+      <h3>Method 1: Global config file</h3>
+      <p>The global MCP config lives at:</p>
+
+      <div class="config-paths">
+        <div class="config-path-row">
+          <span class="os-label">macOS / Linux</span>
+          <code>~/.cursor/mcp.json</code>
+        </div>
+        <div class="config-path-row">
+          <span class="os-label">Windows</span>
+          <code>%USERPROFILE%\.cursor\mcp.json</code>
+        </div>
+      </div>
+
+      <p>
+        The format is identical to Claude Desktop — an <code>mcpServers</code> object with named server
+        entries:
+      </p>
+
+      <div class="code-block">
+        <div class="code-label">~/.cursor/mcp.json</div>
+        <pre><code>&#123;
+  "mcpServers": &#123;
+    "filesystem": &#123;
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-filesystem",
+        "/Users/yourname/projects"
+      ]
+    &#125;,
+    "brave-search": &#123;
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-brave-search"],
+      "env": &#123;
+        "BRAVE_API_KEY": "your_brave_api_key"
+      &#125;
+    &#125;
+  &#125;
+&#125;</code></pre>
+      </div>
+
+      <h3>Method 2: Cursor Settings UI</h3>
+      <p>
+        Open Cursor Settings (<code>Cmd+,</code> on macOS, <code>Ctrl+,</code> on Windows), navigate to
+        <strong>Features &rarr; MCP Servers</strong>, and click <strong>Add new MCP server</strong>. This
+        writes to the same <code>~/.cursor/mcp.json</code> file — both methods modify the same config.
+      </p>
+
+      <h3>Project-level config</h3>
+      <p>
+        For project-specific servers, create a <code>.cursor/mcp.json</code> file in your project root.
+        Cursor merges global and project configs, with project-level entries taking precedence on name
+        conflicts.
+      </p>
+
+      <div class="code-block">
+        <div class="code-label">.cursor/mcp.json — project-level</div>
+        <pre><code>&#123;
+  "mcpServers": &#123;
+    "sqlite": &#123;
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-sqlite",
+        "./data/project.db"
+      ]
+    &#125;
+  &#125;
+&#125;</code></pre>
+      </div>
+
+      <h3>Verify in Cursor</h3>
+      <p>
+        Reload the window (<code>Cmd+Shift+P &rarr; Developer: Reload Window</code>). In Composer (Agent
+        mode), you should see MCP tool calls appearing when the agent decides to use them. In the settings UI,
+        connected servers show a green dot next to their name.
+      </p>
+    </section>
+
+    <section id="windsurf">
+      <h2>Windsurf</h2>
+      <p>
+        Windsurf uses the Cascade panel for AI interactions, and MCP servers integrate directly into it.
+        Configuration is similar to Cursor.
+      </p>
+
+      <h3>Config file location</h3>
+
+      <div class="config-paths">
+        <div class="config-path-row">
+          <span class="os-label">macOS / Linux</span>
+          <code>~/.codeium/windsurf/mcp_config.json</code>
+        </div>
+        <div class="config-path-row">
+          <span class="os-label">Windows</span>
+          <code>%USERPROFILE%\.codeium\windsurf\mcp_config.json</code>
+        </div>
+      </div>
+
+      <div class="code-block">
+        <div class="code-label">~/.codeium/windsurf/mcp_config.json</div>
+        <pre><code>&#123;
+  "mcpServers": &#123;
+    "filesystem": &#123;
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-filesystem",
+        "/Users/yourname/projects"
+      ]
+    &#125;,
+    "fetch": &#123;
+      "command": "uvx",
+      "args": ["mcp-server-fetch"]
+    &#125;
+  &#125;
+&#125;</code></pre>
+      </div>
+
+      <p>
+        Note the <code>fetch</code> server example using <code>uvx</code> — Windsurf works with both
+        npm-based servers (using <code>npx</code>) and Python-based servers (using <code>uvx</code>, the
+        uv package runner). Make sure <code>uvx</code> is installed if you use Python servers:
+        <code>pip install uv</code>.
+      </p>
+
+      <h3>Adding servers via the Cascade panel</h3>
+      <p>
+        Windsurf also offers a UI path. Open the Cascade panel, click the plug icon in the top-right, and
+        select <strong>Configure MCP</strong>. This opens the config file in the editor. After saving,
+        click <strong>Refresh</strong> in the Cascade panel — no full restart required for config changes.
+      </p>
+
+      <h3>Verify in Windsurf</h3>
+      <p>
+        After adding servers, look for the MCP tools indicator in the Cascade panel footer. Cascade will
+        automatically call available tools when relevant — you'll see tool call output inline in the
+        conversation.
+      </p>
+    </section>
+
+    <section id="vscode">
+      <h2>VS Code with Copilot</h2>
+      <p>
+        VS Code supports MCP through the GitHub Copilot extension in <strong>Agent mode</strong>. You need
+        VS Code 1.99+ and the Copilot extension.
+      </p>
+
+      <h3>Workspace-level config</h3>
+      <p>
+        Create a <code>.vscode/mcp.json</code> file in your project root. This is committed with the project
+        and shared with your team:
+      </p>
+
+      <div class="code-block">
+        <div class="code-label">.vscode/mcp.json</div>
+        <pre><code>&#123;
+  "servers": &#123;
+    "filesystem": &#123;
+      "type": "stdio",
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-filesystem",
+        "$&#123;workspaceFolder&#125;"
+      ]
+    &#125;,
+    "github": &#123;
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-github"],
+      "env": &#123;
+        "GITHUB_PERSONAL_ACCESS_TOKEN": "$&#123;env:GITHUB_TOKEN&#125;"
+      &#125;
+    &#125;
+  &#125;
+&#125;</code></pre>
+      </div>
+
+      <p>
+        VS Code's format uses <code>"servers"</code> (not <code>"mcpServers"</code>) and requires an explicit
+        <code>"type": "stdio"</code> field. The <code>$&#123;workspaceFolder&#125;</code> and
+        <code>$&#123;env:VARIABLE_NAME&#125;</code> placeholders expand at runtime.
+      </p>
+
+      <h3>User-level config</h3>
+      <p>
+        For servers you want available in all projects, add them to your VS Code user settings
+        (<code>Cmd+Shift+P &rarr; Preferences: Open User Settings (JSON)</code>):
+      </p>
+
+      <div class="code-block">
+        <div class="code-label">settings.json (user)</div>
+        <pre><code>"github.copilot.chat.mcp.enabled": true,
+"mcp": &#123;
+  "servers": &#123;
+    "filesystem": &#123;
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-filesystem", "/Users/yourname"]
+    &#125;
+  &#125;
+&#125;</code></pre>
+      </div>
+
+      <h3>Enable Agent mode</h3>
+      <p>
+        MCP tools are only available in <strong>Agent mode</strong> — not in Ask or Edit modes. Switch to
+        Agent mode using the dropdown in the Copilot Chat panel. You'll see a tools indicator showing
+        connected MCP servers once Agent mode is active.
+      </p>
+    </section>
+
+    <section id="errors">
+      <h2>Common errors and fixes</h2>
+
+      <h3>spawn ENOENT: command not found</h3>
+      <p>
+        The most common error. It means the <code>command</code> in your config isn't on the PATH when the
+        AI client launches. Fix it by using the full absolute path to the command:
+      </p>
+      <div class="code-block">
+        <div class="code-label">Find the full path — macOS / Linux</div>
+        <pre><code>which npx       # → /usr/local/bin/npx
+which node      # → /usr/local/bin/node
+which uvx       # → /Users/yourname/.local/bin/uvx</code></pre>
+      </div>
+      <div class="code-block">
+        <div class="code-label">Use full path in config</div>
+        <pre><code>&#123;
+  "mcpServers": &#123;
+    "filesystem": &#123;
+      "command": "/usr/local/bin/npx",
+      "args": ["-y", "@modelcontextprotocol/server-filesystem", "/Users/yourname"]
+    &#125;
+  &#125;
+&#125;</code></pre>
+      </div>
+      <p>
+        This is especially common on macOS when using nvm, asdf, or Homebrew-managed Node installations,
+        since GUI apps launched from the Dock don't inherit your shell's PATH.
+      </p>
+
+      <h3>Server not appearing after config change</h3>
+      <p>
+        Claude Desktop and Cursor require a full restart after config changes — closing and reopening a
+        window is not enough. On macOS, right-click the Dock icon and choose <strong>Quit</strong>, then
+        relaunch. In Windsurf, use the Cascade panel's Refresh button instead.
+      </p>
+
+      <h3>JSON syntax error: invalid config</h3>
+      <p>
+        Standard JSON does not allow trailing commas. This is the most common syntax mistake. A trailing
+        comma after the last item in an object or array will silently fail on some clients:
+      </p>
+      <div class="code-block">
+        <div class="code-label">Invalid — trailing comma</div>
+        <pre><code>&#123;
+  "mcpServers": &#123;
+    "filesystem": &#123; "command": "npx", "args": [] &#125;,   ← remove this comma
+  &#125;
+&#125;</code></pre>
+      </div>
+      <p>
+        Validate your JSON at <a href="https://jsonlint.com" target="_blank" rel="noopener noreferrer">jsonlint.com</a>
+        or run <code>cat your-config.json | python3 -m json.tool</code> before restarting.
+      </p>
+
+      <h3>Permission denied on file paths</h3>
+      <p>
+        On macOS 13+, filesystem access is governed by TCC (Transparency, Consent, Control). If a server
+        tries to read a directory your AI client hasn't been granted permission for, it will fail silently
+        or return an empty result. Fix it via <strong>System Settings &rarr; Privacy &amp; Security &rarr;
+        Full Disk Access</strong>, and add your AI client app to the list.
+      </p>
+
+      <h3>Server keeps disconnecting</h3>
+      <p>
+        Intermittent disconnects usually mean the server process is crashing. Check the developer console
+        in Claude Desktop (<code>Help &rarr; Developer Tools &rarr; Console</code>) for server crash logs.
+        Common causes: missing environment variables (API key not set), wrong package name (typo in args),
+        or a Node.js version incompatibility. Run the server command manually in your terminal to see the
+        raw error output:
+      </p>
+      <div class="code-block">
+        <div class="code-label">Debug: run server manually</div>
+        <pre><code>npx -y @modelcontextprotocol/server-github
+# Look for startup errors before the process exits</code></pre>
+      </div>
+
+      <h3>stdio vs HTTP transport mismatch</h3>
+      <p>
+        Most published MCP servers use stdio transport — they run as a subprocess of your AI client. Some
+        servers offer HTTP+SSE transport for remote access. If you're connecting to a remote MCP server,
+        use <code>"url"</code> instead of <code>"command"</code> in your config:
+      </p>
+      <div class="code-block">
+        <div class="code-label">Remote HTTP server config (Claude Desktop)</div>
+        <pre><code>&#123;
+  "mcpServers": &#123;
+    "remote-server": &#123;
+      "url": "https://your-server.example.com/mcp",
+      "headers": &#123;
+        "Authorization": "Bearer your_api_key"
+      &#125;
+    &#125;
+  &#125;
+&#125;</code></pre>
+      </div>
+    </section>
+
+    <section id="starter-servers">
+      <h2>5 servers to install first</h2>
+      <p>
+        With 25,000+ MCP servers indexed on AgentRank, starting from scratch is overwhelming. These five
+        are the highest-signal entry points — well-maintained, genuinely useful, and straightforward to
+        configure. Scores from the AgentRank index, March 2026.
+      </p>
+
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th class="num">#</th>
+            <th>Server</th>
+            <th class="num">Score</th>
+            <th class="num">Stars</th>
+            <th>Why start here</th>
+          </tr>
+        </thead>
+        <tbody>
+          {starterServers.map((s) => (
+            <tr>
+              <td class="num rank-num">{s.rank}</td>
+              <td class="tool-cell">
+                <a href={`/tool/${s.slug}/`} class="tool-link">{s.name}</a>
+                <span class="tool-desc">{s.desc}</span>
+              </td>
+              <td class="num score-cell">{s.score}</td>
+              <td class="num">{s.stars.toLocaleString('en-US')}</td>
+              <td class="why-cell">{s.why}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+
+      <p>
+        The official reference servers from Anthropic (<code>@modelcontextprotocol/server-filesystem</code>,
+        <code>@modelcontextprotocol/server-github</code>, <code>@modelcontextprotocol/server-sqlite</code>,
+        and others) are bundled in the Python SDK repo and published separately on npm. They're the safest
+        starting point — actively maintained, well-documented, and designed exactly for this use case.
+      </p>
+
+      <div class="install-tip">
+        <strong>Install the filesystem server in 30 seconds:</strong>
+        <p>
+          No global install needed — <code>npx</code> downloads and runs it on demand. Add this to your
+          config, replace the path with a directory you want Claude to access, and restart:
+        </p>
+        <div class="code-block">
+          <div class="code-label">Add filesystem access to any client</div>
+          <pre><code>"filesystem": &#123;
+  "command": "npx",
+  "args": [
+    "-y",
+    "@modelcontextprotocol/server-filesystem",
+    "/path/to/your/projects"
+  ]
+&#125;</code></pre>
+        </div>
+      </div>
+    </section>
+
+    <section id="find-more">
+      <h2>Finding more servers</h2>
+      <p>
+        The AgentRank leaderboard ranks every MCP server by a composite quality signal: stars, freshness,
+        issue health, contributor count, and inbound dependents. It's updated nightly from 25,000+ GitHub
+        repositories.
+      </p>
+      <p>
+        Browse by category to find servers relevant to your stack — database, DevOps, communication,
+        productivity, security, AI/ML, and more:
+      </p>
+
+      <div class="cta-box">
+        <p>
+          <strong>Browse the leaderboard:</strong> <a href="/tools/">Explore 25,000+ ranked MCP servers</a>
+          — sorted by real quality signals, not just stars.
+        </p>
+        <p>
+          <strong>Compare servers head-to-head:</strong> <a href="/compare/">Tool comparison widget</a>
+          — see full signal breakdowns side by side before you install.
+        </p>
+        <p>
+          <strong>Not sure what to pick?</strong> <a href="/blog/how-to-choose-an-mcp-server/">How to
+          choose an MCP server</a> — a decision framework using the five quality signals.
+        </p>
+      </div>
+    </section>
+
+    <RelatedPosts posts={relatedPosts} />
+    <BlogSubscribeCTA source="blog" />
+    <footer class="post-footer">
+      <p class="methodology">
+        <strong>Methodology:</strong> Server scores from the AgentRank index crawled March 2026.
+        Scores computed using: stars 15%, freshness 25%, issue health 25%, contributors 10%, inbound dependents 25%.
+        Only non-archived repositories included.
+      </p>
+      <p class="share-line">
+        Found this useful? <a href="https://x.com/AgentRank_ai" target="_blank" rel="noopener noreferrer">Follow @AgentRank_ai</a> for
+        weekly ecosystem updates, biggest movers, and new tool spotlights.
+      </p>
+    </footer>
+  </article>
+
+  <style>
+    .blog-post {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 2rem 0 3rem;
+    }
+
+    .breadcrumb {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      margin-bottom: 0.75rem;
+    }
+
+    .breadcrumb span {
+      margin: 0 0.25rem;
+      opacity: 0.5;
+    }
+
+    .post-header {
+      margin-bottom: 2rem;
+      padding-bottom: 1.5rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .post-header h1 {
+      font-size: 1.6rem;
+      font-weight: 700;
+      line-height: 1.3;
+      margin-bottom: 0.75rem;
+    }
+
+    .post-meta {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      flex-wrap: wrap;
+      margin-bottom: 1rem;
+    }
+
+    .sep {
+      opacity: 0.4;
+    }
+
+    .lede {
+      font-size: 1rem;
+      line-height: 1.7;
+      color: var(--text);
+      opacity: 0.9;
+    }
+
+    .toc {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 1rem 1.25rem;
+      margin-bottom: 2.5rem;
+      font-size: 0.82rem;
+    }
+
+    .toc strong {
+      display: block;
+      margin-bottom: 0.6rem;
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+    }
+
+    .toc ol {
+      margin: 0;
+      padding-left: 1.2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+    }
+
+    .toc a {
+      color: var(--text-muted);
+    }
+
+    .toc a:hover {
+      color: var(--accent);
+    }
+
+    section {
+      margin-bottom: 3rem;
+    }
+
+    section h2 {
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin-bottom: 0.75rem;
+      padding-bottom: 0.4rem;
+      border-bottom: 2px solid var(--accent);
+      display: inline-block;
+    }
+
+    section h3 {
+      font-size: 0.95rem;
+      font-weight: 700;
+      margin: 1.5rem 0 0.5rem;
+      color: var(--text);
+    }
+
+    section p {
+      font-size: 0.9rem;
+      line-height: 1.75;
+      color: var(--text);
+      opacity: 0.9;
+      margin-bottom: 0.9rem;
+    }
+
+    section ul, section ol {
+      font-size: 0.9rem;
+      line-height: 1.75;
+      color: var(--text);
+      opacity: 0.9;
+      margin: 0.5rem 0 0.9rem;
+      padding-left: 1.4rem;
+    }
+
+    section ul li, section ol li {
+      margin-bottom: 0.5rem;
+    }
+
+    section code {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      padding: 0.1em 0.35em;
+      font-size: 0.82em;
+      font-family: 'JetBrains Mono', 'Fira Code', monospace;
+    }
+
+    .config-paths {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 0.75rem 1rem;
+      margin: 0.75rem 0 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .config-path-row {
+      display: flex;
+      align-items: baseline;
+      gap: 0.75rem;
+      font-size: 0.82rem;
+    }
+
+    .os-label {
+      font-weight: 700;
+      color: var(--text-muted);
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      min-width: 100px;
+      flex-shrink: 0;
+    }
+
+    .config-path-row code {
+      background: none;
+      border: none;
+      padding: 0;
+      font-size: 0.8rem;
+      word-break: break-all;
+    }
+
+    .code-block {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      margin: 1rem 0 1.25rem;
+      overflow: hidden;
+    }
+
+    .code-label {
+      padding: 0.4rem 0.9rem;
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .code-block pre {
+      margin: 0;
+      padding: 0.9rem;
+      overflow-x: auto;
+    }
+
+    .code-block code {
+      font-size: 0.78rem;
+      line-height: 1.6;
+      font-family: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace;
+      color: var(--text);
+      background: none;
+      border: none;
+      padding: 0;
+    }
+
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.82rem;
+      margin: 1rem 0 1.25rem;
+    }
+
+    .data-table th {
+      text-align: left;
+      font-weight: 600;
+      color: var(--text-muted);
+      border-bottom: 1px solid var(--border);
+      padding: 0.4rem 0.75rem 0.4rem 0;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+
+    .data-table td {
+      padding: 0.55rem 0.75rem 0.55rem 0;
+      border-bottom: 1px solid var(--border);
+      color: var(--text);
+      vertical-align: top;
+    }
+
+    .data-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .num {
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .rank-num {
+      color: var(--text-muted);
+      font-weight: 700;
+    }
+
+    .tool-cell {
+      display: flex;
+      flex-direction: column;
+      gap: 0.2rem;
+    }
+
+    .tool-link {
+      font-weight: 600;
+      color: var(--accent);
+      font-size: 0.82rem;
+    }
+
+    .tool-desc {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    .score-cell {
+      color: var(--accent);
+      font-weight: 700;
+    }
+
+    .why-cell {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    .install-tip {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      border-radius: 4px;
+      padding: 1rem 1.25rem;
+      margin-top: 1.5rem;
+      font-size: 0.88rem;
+    }
+
+    .install-tip strong {
+      display: block;
+      margin-bottom: 0.5rem;
+    }
+
+    .install-tip p {
+      font-size: 0.85rem !important;
+      margin-bottom: 0.75rem;
+    }
+
+    .cta-box {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      border-radius: 4px;
+      padding: 1rem 1.25rem;
+      margin-top: 1.5rem;
+    }
+
+    .cta-box p {
+      margin-bottom: 0.5rem;
+    }
+
+    .cta-box p:last-child {
+      margin-bottom: 0;
+    }
+
+    .cta-box a {
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    .post-footer {
+      margin-top: 3rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--border);
+    }
+
+    .methodology {
+      font-size: 0.75rem !important;
+      color: var(--text-muted) !important;
+      opacity: 1 !important;
+    }
+
+    .share-line {
+      font-size: 0.82rem !important;
+      margin-top: 0.75rem;
+    }
+
+    @media (max-width: 640px) {
+      .post-header h1 {
+        font-size: 1.3rem;
+      }
+
+      .data-table {
+        font-size: 0.75rem;
+      }
+
+      .why-cell {
+        display: none;
+      }
+
+      .config-path-row {
+        flex-direction: column;
+        gap: 0.2rem;
+      }
+
+      .os-label {
+        min-width: unset;
+      }
+    }
+  </style>
+</Base>

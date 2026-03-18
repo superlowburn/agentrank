@@ -1,0 +1,728 @@
+---
+export const prerender = true;
+
+import Base from '../../layouts/Base.astro';
+import BlogSubscribeCTA from '../../components/BlogSubscribeCTA.astro';
+import RelatedPosts from '../../components/RelatedPosts.astro';
+
+const relatedPosts = [
+  { href: '/blog/how-to-build-an-mcp-server/', title: 'How to Build an MCP Server in 2026' },
+  { href: '/blog/best-mcp-servers-code-generation/', title: 'Best MCP Servers for Code Generation in 2026' },
+  { href: '/blog/mcp-server-landscape-q1-2026/', title: 'The MCP Server Landscape: Q1 2026' },
+];
+
+const publishDate = '2026-03-18';
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: 'Best Python Libraries for Building MCP Servers in 2026',
+  description: 'The top Python libraries for building MCP servers — FastMCP, the official Python SDK, and the leading Python MCP frameworks. Scored by real signals from the AgentRank index. Includes code examples and a decision framework.',
+  datePublished: publishDate,
+  dateModified: publishDate,
+  author: {
+    '@type': 'Organization',
+    name: 'AgentRank',
+    url: 'https://agentrank-ai.com',
+  },
+  publisher: {
+    '@type': 'Organization',
+    name: 'AgentRank',
+    logo: {
+      '@type': 'ImageObject',
+      url: 'https://agentrank-ai.com/og-image.png',
+    },
+  },
+  mainEntityOfPage: {
+    '@type': 'WebPage',
+    '@id': 'https://agentrank-ai.com/blog/best-python-mcp-libraries/',
+  },
+  image: 'https://agentrank-ai.com/og-image.png',
+  keywords: 'python mcp server, fastmcp, best python mcp library, mcp python sdk, build mcp server python, python mcp framework 2026, fastmcp vs python sdk',
+};
+
+const tools = [
+  {
+    rank: 1,
+    name: 'PrefectHQ/fastmcp',
+    slug: 'PrefectHQ--fastmcp',
+    score: 90.7,
+    stars: 23659,
+    lang: 'Python',
+    contributors: 208,
+    issueClosePct: 83,
+    lastCommit: '2026-03-14',
+    desc: 'The fast, Pythonic way to build MCP servers and clients',
+    role: 'High-level server framework',
+    highlight: 'Highest-scored Python MCP library in the index. Decorator-based API, minimal boilerplate — a working server in under 10 lines.',
+  },
+  {
+    rank: 2,
+    name: 'oraios/serena',
+    slug: 'oraios--serena',
+    score: 66.6,
+    stars: 21474,
+    lang: 'Python',
+    contributors: 134,
+    issueClosePct: 85,
+    lastCommit: '2026-03-14',
+    desc: 'Semantic code retrieval and editing toolkit built as a Python MCP server',
+    role: 'Production Python MCP server',
+    highlight: '85% issue close rate. Demonstrates what a mature, production-grade Python MCP server looks like in practice.',
+  },
+  {
+    rank: 3,
+    name: 'modelcontextprotocol/python-sdk',
+    slug: 'modelcontextprotocol--python-sdk',
+    score: 62.3,
+    stars: 22124,
+    lang: 'Python',
+    contributors: 181,
+    issueClosePct: 65,
+    lastCommit: '2026-03-14',
+    desc: 'Official Python SDK — the authoritative low-level implementation',
+    role: 'Official SDK / Low-level',
+    highlight: 'Maintained by Anthropic. Full spec coverage. The foundation that FastMCP and every other Python MCP library builds on.',
+  },
+  {
+    rank: 4,
+    name: 'lastmile-ai/mcp-agent',
+    slug: 'lastmile-ai--mcp-agent',
+    score: 58.7,
+    stars: 8099,
+    lang: 'Python',
+    contributors: 60,
+    issueClosePct: 48,
+    lastCommit: '2026-02-18',
+    desc: 'Python framework for building agents that use MCP as their tool interface',
+    role: 'MCP agent client framework',
+    highlight: '8K stars for a relatively focused library. Best choice when you are building an agent that consumes MCP servers rather than building a server itself.',
+  },
+];
+
+const stats = {
+  totalPythonRepos: 9869,
+  pythonSharePct: 38.5,
+  topScore: 90.7,
+  avgPythonScore: 36.2,
+};
+---
+
+<Base
+  title="Best Python Libraries for Building MCP Servers in 2026 — AgentRank"
+  description="The top Python libraries for MCP server development: FastMCP, the official Python SDK, and leading frameworks. Code examples, pros/cons, and a decision framework. Scored by real signals — March 2026."
+  activeTab="blog"
+  keywords="python mcp server, fastmcp python, best python mcp library, mcp python sdk, build mcp server python, fastmcp tutorial, python mcp framework 2026"
+  canonicalUrl="https://agentrank-ai.com/blog/best-python-mcp-libraries/"
+  jsonLd={jsonLd}
+>
+  <article class="blog-post">
+    <header class="post-header">
+      <div class="breadcrumb"><a href="/blog/">Blog</a> <span>/</span></div>
+      <h1>Best Python Libraries for Building MCP Servers in 2026</h1>
+      <div class="post-meta">
+        <time datetime={publishDate}>March 18, 2026</time>
+        <span class="sep">&middot;</span>
+        <span>7 min read</span>
+        <span class="sep">&middot;</span>
+        <span>AgentRank Index</span>
+      </div>
+      <p class="lede">
+        Python has <strong>{stats.totalPythonRepos.toLocaleString('en-US')} MCP repositories</strong> in
+        the AgentRank index — {stats.pythonSharePct}% of the entire ecosystem. The language's dominance in
+        ML and scripting means Python developers were first to build production MCP servers at scale.
+        These are the libraries that matter.
+      </p>
+    </header>
+
+    <nav class="toc">
+      <strong>Contents</strong>
+      <ol>
+        <li><a href="#rankings">Rankings by score</a></li>
+        <li><a href="#fastmcp">FastMCP — the fast way</a></li>
+        <li><a href="#official-sdk">Official Python SDK — full control</a></li>
+        <li><a href="#agent-framework">Python MCP agent framework</a></li>
+        <li><a href="#decision">FastMCP vs SDK: when to use each</a></li>
+        <li><a href="#methodology">Methodology</a></li>
+      </ol>
+    </nav>
+
+    <section id="rankings">
+      <h2>Top Python MCP libraries by score</h2>
+      <p>
+        Ranked by the composite AgentRank score — stars (15%), freshness (25%), issue health (25%),
+        contributors (10%), inbound dependents (25%). Average score across Python MCP repos
+        is <strong>{stats.avgPythonScore}</strong>. The libraries below are clustered at the top of the distribution.
+      </p>
+
+      <table class="data-table top-table">
+        <thead>
+          <tr>
+            <th class="num">#</th>
+            <th>Repository</th>
+            <th class="num">Score</th>
+            <th class="num">Stars</th>
+            <th>Role</th>
+            <th class="num">Issues closed</th>
+          </tr>
+        </thead>
+        <tbody>
+          {tools.map((tool) => (
+            <tr>
+              <td class="num rank-num">{tool.rank}</td>
+              <td class="tool-cell">
+                <a href={`/tool/${tool.slug}/`} class="tool-link">{tool.name}</a>
+                <span class="tool-desc">{tool.desc}</span>
+              </td>
+              <td class="num score-cell">{tool.score}</td>
+              <td class="num">{tool.stars.toLocaleString('en-US')}</td>
+              <td class="use-case">{tool.role}</td>
+              <td class="num close-pct">{tool.issueClosePct}%</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </section>
+
+    <section id="fastmcp">
+      <h2>FastMCP — the fastest way to build a Python MCP server</h2>
+
+      <p>
+        <a href="/tool/PrefectHQ--fastmcp/" class="inline-link">PrefectHQ/fastmcp</a> scores
+        <strong>90.7</strong> — the highest of any Python MCP library in the index. It's the result
+        of FastAPI-inspired thinking applied to MCP: use decorators, let the framework handle
+        the protocol plumbing, ship a working server in under 10 lines.
+      </p>
+
+      <p>
+        23,659 stars and 208 contributors signal broad community adoption. A <strong>83% issue close
+        rate</strong> (1,153 of 1,388) signals an active maintainer team that ships fixes. Last commit
+        was 4 days ago. This is the library to reach for when you have a Python function and want
+        to expose it to Claude or any other MCP-compatible agent.
+      </p>
+
+      <div class="code-block">
+        <div class="code-label">FastMCP — minimal server</div>
+        <pre><code>pip install fastmcp</code></pre>
+      </div>
+
+      <div class="code-block">
+        <div class="code-label">server.py</div>
+        <pre><code>from fastmcp import FastMCP
+
+mcp = FastMCP("weather")
+
+@mcp.tool()
+def get_weather(city: str) -> str:
+    """Get current weather for a city."""
+    # your implementation here
+    return f"72°F and sunny in &#123;city&#125;"
+
+@mcp.resource("config://settings")
+def get_settings() -> str:
+    """Return server configuration."""
+    return "&#123;\"units\": \"imperial\"&#125;"
+
+if __name__ == "__main__":
+    mcp.run()  # stdio by default; mcp.run(transport="sse") for HTTP</code></pre>
+      </div>
+
+      <p>
+        The decorator API is deliberately minimal: <code>@mcp.tool()</code> for tools,
+        <code>@mcp.resource()</code> for resources, <code>@mcp.prompt()</code> for prompts.
+        FastMCP infers the JSON schema from Python type annotations. You write functions;
+        the framework builds the protocol.
+      </p>
+
+      <p>
+        FastMCP also ships a client library. If you need to both build a server and programmatically
+        test or call it in Python, the same package covers both ends of the connection.
+      </p>
+
+      <div class="code-block">
+        <div class="code-label">FastMCP — calling a tool from Python</div>
+        <pre><code>from fastmcp import Client
+
+async def main():
+    async with Client("server.py") as client:
+        result = await client.call_tool("get_weather", &#123;"city": "Austin"&#125;)
+        print(result)  # "72°F and sunny in Austin"
+
+import asyncio
+asyncio.run(main())</code></pre>
+      </div>
+    </section>
+
+    <section id="official-sdk">
+      <h2>Official Python SDK — when you need full protocol control</h2>
+
+      <p>
+        <a href="/tool/modelcontextprotocol--python-sdk/" class="inline-link">modelcontextprotocol/python-sdk</a>
+        scores <strong>62.3</strong> with 22,124 stars and 181 contributors. It is maintained by
+        Anthropic and has full Model Context Protocol spec coverage — every primitive, every
+        transport, every capability flag.
+      </p>
+
+      <p>
+        The SDK's lower score relative to FastMCP reflects its maintenance signal, not its quality.
+        A <strong>65% issue close rate</strong> (787 of 1,204) lags behind FastMCP's 83%, and more
+        open issues signal a higher volume of edge case requests that come with being the authoritative
+        reference implementation. The last commit was 4 days ago — actively maintained.
+      </p>
+
+      <div class="code-block">
+        <div class="code-label">Official Python SDK — minimal server</div>
+        <pre><code>pip install mcp</code></pre>
+      </div>
+
+      <div class="code-block">
+        <div class="code-label">server.py</div>
+        <pre><code>import asyncio
+from mcp.server import Server
+from mcp.server.stdio import stdio_server
+import mcp.types as types
+
+app = Server("weather")
+
+@app.list_tools()
+async def list_tools() -> list[types.Tool]:
+    return [
+        types.Tool(
+            name="get_weather",
+            description="Get current weather for a city",
+            inputSchema=&#123;
+                "type": "object",
+                "properties": &#123;"city": &#123;"type": "string"&#125;&#125;,
+                "required": ["city"],
+            &#125;,
+        )
+    ]
+
+@app.call_tool()
+async def call_tool(name: str, arguments: dict):
+    if name == "get_weather":
+        city = arguments["city"]
+        return [types.TextContent(type="text", text=f"72°F and sunny in &#123;city&#125;")]
+    raise ValueError(f"Unknown tool: &#123;name&#125;")
+
+async def main():
+    async with stdio_server() as (r, w):
+        await app.run(r, w, app.create_initialization_options())
+
+asyncio.run(main())</code></pre>
+      </div>
+
+      <p>
+        The verbosity is the point. You define the JSON schema explicitly, handle each tool name
+        in a conditional, and manage transport directly. That explicitness is a liability when
+        prototyping but an asset in production: every behavior is visible and auditable. The SDK
+        also exposes the full lifecycle — initialization, capability negotiation, request routing —
+        which you cannot access through FastMCP's abstraction layer.
+      </p>
+
+      <p>
+        FastMCP v2 (the PrefectHQ version) is built on top of this SDK. If you hit an edge case in
+        FastMCP that you cannot resolve, the underlying SDK behavior is documented here.
+      </p>
+    </section>
+
+    <section id="agent-framework">
+      <h2>lastmile-ai/mcp-agent — Python framework for MCP agent workflows</h2>
+
+      <p>
+        <a href="/tool/lastmile-ai--mcp-agent/" class="inline-link">lastmile-ai/mcp-agent</a> scores
+        <strong>58.7</strong> with 8,099 stars and 60 contributors. It covers a different half of the
+        MCP problem: not building a server that exposes tools, but building an agent that
+        <em>uses</em> MCP servers as its tool interface.
+      </p>
+
+      <p>
+        If your use case is orchestrating multiple MCP servers in a single Python agent workflow —
+        routing calls between a file-system server, a GitHub server, and a database server — this
+        is the right layer. The library implements MCP client logic, session management, and
+        multi-server coordination. The last commit was roughly one month ago; activity is moderate
+        but the project is under active development.
+      </p>
+
+      <div class="code-block">
+        <div class="code-label">mcp-agent — orchestrating multiple servers</div>
+        <pre><code>from mcp_agent.app import MCPApp
+from mcp_agent.agents.agent import Agent
+from mcp_agent.workflows.llm.augmented_llm_anthropic import AnthropicAugmentedLLM
+
+app = MCPApp(name="my_agent")
+
+async def main():
+    async with app.run() as agent_app:
+        agent = Agent(
+            name="researcher",
+            instruction="You are a research assistant with tool access.",
+            server_names=["fetch", "filesystem"],
+        )
+        async with agent as a:
+            llm = await a.attach_llm(AnthropicAugmentedLLM)
+            result = await llm.generate_str("Summarize the README at https://example.com")
+            print(result)</code></pre>
+      </div>
+
+      <p>
+        The 48% issue close rate is the weakest signal in this set. That reflects the library's
+        scope — multi-server orchestration produces a long tail of edge cases. If you are building
+        a single-purpose agent that wraps one server, FastMCP's client library is simpler.
+        If you are building an orchestration layer that routes across many servers, mcp-agent
+        is purpose-built for the problem.
+      </p>
+    </section>
+
+    <section id="decision">
+      <h2>FastMCP vs official SDK: when to use each</h2>
+
+      <h3>Use FastMCP when</h3>
+      <p>
+        You want to expose Python functions as MCP tools quickly. Your team is familiar with
+        FastAPI or Flask decorator patterns. You want a library that ships both a server and a
+        test client. You are building a server, not studying the protocol. FastMCP's 90.7 score,
+        23,659 stars, and 208 contributors make it the most-validated choice in the ecosystem.
+        Start here unless you have a specific reason not to.
+      </p>
+
+      <h3>Use the official Python SDK when</h3>
+      <p>
+        You need access to MCP primitives that FastMCP's abstraction layer doesn't expose.
+        You are building infrastructure that implements the MCP spec itself — not just using
+        it. You need to handle custom transport layers, implement capability negotiation manually,
+        or debug protocol-level behavior. The official SDK gives you every knob; FastMCP gives
+        you the defaults that are right for most cases.
+      </p>
+
+      <h3>Use mcp-agent when</h3>
+      <p>
+        You are building an agent that consumes multiple MCP servers and need session management,
+        multi-server routing, and LLM integration in one Python package. This library is not for
+        building servers — it is for orchestrating agents that use servers.
+      </p>
+
+      <h3>The score gap explains the hierarchy</h3>
+      <p>
+        FastMCP scores 90.7 vs the official SDK's 62.3 — a 28-point gap that reflects maintenance
+        velocity and dependency adoption, not technical quality. The official SDK has a higher open
+        issue count because it receives every edge-case bug report in the Python MCP ecosystem.
+        FastMCP has fewer open issues because most of those edge cases never reach it — FastMCP
+        handles them by calling the underlying SDK. Both are production-ready. The score gap
+        reflects who catches the long tail, not which is better built.
+      </p>
+
+      <div class="cta-box">
+        <p>
+          <strong>Browse Python MCP servers:</strong> <a href="/tools/">Full AgentRank index</a> —
+          {stats.totalPythonRepos.toLocaleString('en-US')} Python MCP repositories scored, updated daily.
+        </p>
+        <p>
+          <strong>Built a Python MCP server?</strong> <a href="/submit/">Submit it</a> to get indexed
+          and scored alongside PrefectHQ/fastmcp and the official SDK.
+        </p>
+      </div>
+    </section>
+
+    <RelatedPosts posts={relatedPosts} />
+    <BlogSubscribeCTA source="blog" />
+    <footer class="post-footer">
+      <p class="methodology">
+        <strong>Methodology:</strong> Data from the AgentRank index crawled March 2026.
+        Scores computed using: stars 15%, freshness 25%, issue health 25%, contributors 10%, inbound dependents 25%.
+        Python repositories identified by primary language field from GitHub API.
+        Only non-archived repositories with at least one MCP-related topic or keyword included.
+      </p>
+      <p class="share-line">
+        Found this useful? <a href="https://x.com/AgentRank_ai" target="_blank" rel="noopener noreferrer">Follow @AgentRank_ai</a> for
+        weekly ecosystem updates, biggest movers, and new tool spotlights.
+      </p>
+    </footer>
+  </article>
+
+  <style>
+    .blog-post {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 2rem 0 3rem;
+    }
+
+    .breadcrumb {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      margin-bottom: 0.75rem;
+    }
+
+    .breadcrumb span {
+      margin: 0 0.25rem;
+      opacity: 0.5;
+    }
+
+    .post-header {
+      margin-bottom: 2rem;
+      padding-bottom: 1.5rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .post-header h1 {
+      font-size: 1.6rem;
+      font-weight: 700;
+      line-height: 1.3;
+      margin-bottom: 0.75rem;
+    }
+
+    .post-meta {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      flex-wrap: wrap;
+      margin-bottom: 1rem;
+    }
+
+    .sep {
+      opacity: 0.4;
+    }
+
+    .lede {
+      font-size: 1rem;
+      line-height: 1.7;
+      color: var(--text);
+      opacity: 0.9;
+    }
+
+    .toc {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 1rem 1.25rem;
+      margin-bottom: 2.5rem;
+      font-size: 0.82rem;
+    }
+
+    .toc strong {
+      display: block;
+      margin-bottom: 0.6rem;
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+    }
+
+    .toc ol {
+      margin: 0;
+      padding-left: 1.2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+    }
+
+    .toc a {
+      color: var(--text-muted);
+    }
+
+    .toc a:hover {
+      color: var(--accent);
+    }
+
+    section {
+      margin-bottom: 3rem;
+    }
+
+    section h2 {
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin-bottom: 0.75rem;
+      padding-bottom: 0.4rem;
+      border-bottom: 2px solid var(--accent);
+      display: inline-block;
+    }
+
+    section h3 {
+      font-size: 0.95rem;
+      font-weight: 700;
+      margin: 1.5rem 0 0.5rem;
+      color: var(--text);
+    }
+
+    section p {
+      font-size: 0.9rem;
+      line-height: 1.75;
+      color: var(--text);
+      opacity: 0.9;
+      margin-bottom: 0.9rem;
+    }
+
+    .inline-link {
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    code {
+      font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+      font-size: 0.82em;
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      padding: 0.1em 0.35em;
+    }
+
+    .code-block {
+      margin: 1rem 0 1.25rem;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .code-label {
+      background: var(--bg-surface);
+      border-bottom: 1px solid var(--border);
+      padding: 0.4rem 0.75rem;
+      font-size: 0.72rem;
+      font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .code-block pre {
+      margin: 0;
+      padding: 1rem 0.875rem;
+      overflow-x: auto;
+      background: transparent;
+    }
+
+    .code-block pre code {
+      font-size: 0.78rem;
+      background: none;
+      border: none;
+      padding: 0;
+      line-height: 1.6;
+      color: var(--text);
+      white-space: pre;
+    }
+
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.82rem;
+      margin: 1rem 0 1.25rem;
+    }
+
+    .data-table th {
+      text-align: left;
+      font-weight: 600;
+      color: var(--text-muted);
+      border-bottom: 1px solid var(--border);
+      padding: 0.4rem 0.75rem 0.4rem 0;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+
+    .data-table td {
+      padding: 0.45rem 0.75rem 0.45rem 0;
+      border-bottom: 1px solid var(--border);
+      color: var(--text);
+      vertical-align: top;
+    }
+
+    .data-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .num {
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .rank-num {
+      color: var(--text-muted);
+      font-weight: 700;
+    }
+
+    .top-table .tool-cell {
+      display: flex;
+      flex-direction: column;
+      gap: 0.2rem;
+    }
+
+    .tool-link {
+      font-weight: 600;
+      color: var(--accent);
+      font-size: 0.82rem;
+    }
+
+    .tool-desc {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      font-weight: 400;
+    }
+
+    .score-cell {
+      color: var(--accent);
+      font-weight: 700;
+    }
+
+    .use-case {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      white-space: nowrap;
+    }
+
+    .close-pct {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    .cta-box {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      border-radius: 4px;
+      padding: 1rem 1.25rem;
+      margin-top: 1.5rem;
+    }
+
+    .cta-box p {
+      margin-bottom: 0.5rem;
+    }
+
+    .cta-box p:last-child {
+      margin-bottom: 0;
+    }
+
+    .post-footer {
+      margin-top: 3rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--border);
+    }
+
+    .methodology {
+      font-size: 0.75rem !important;
+      color: var(--text-muted) !important;
+      opacity: 1 !important;
+    }
+
+    .share-line {
+      font-size: 0.82rem !important;
+      margin-top: 0.75rem;
+    }
+
+    @media (max-width: 640px) {
+      .post-header h1 {
+        font-size: 1.3rem;
+      }
+
+      .data-table {
+        font-size: 0.75rem;
+      }
+
+      .use-case,
+      .close-pct {
+        display: none;
+      }
+    }
+  </style>
+</Base>

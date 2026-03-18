@@ -1,0 +1,788 @@
+---
+export const prerender = true;
+
+import Base from '../../layouts/Base.astro';
+import BlogSubscribeCTA from '../../components/BlogSubscribeCTA.astro';
+import RelatedPosts from '../../components/RelatedPosts.astro';
+
+const relatedPosts = [
+  { href: '/blog/how-to-choose-an-mcp-server/', title: 'How to Choose an MCP Server in 2026' },
+  { href: '/blog/best-mcp-servers-code-generation/', title: 'Best MCP Servers for Code Generation in 2026' },
+  { href: '/blog/mcp-server-landscape-q1-2026/', title: 'The MCP Server Landscape: Q1 2026' },
+];
+
+const publishDate = '2026-03-18';
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: 'Top 10 MCP Servers for AI Agents in 2026 (Ranked by Real Data)',
+  description: 'The 10 highest-scoring MCP servers across 25,000+ in the AgentRank index. Ranked by composite signal score — stars, freshness, issue health, contributors, and dependents. Updated March 2026.',
+  datePublished: publishDate,
+  dateModified: publishDate,
+  author: {
+    '@type': 'Organization',
+    name: 'AgentRank',
+    url: 'https://agentrank-ai.com',
+  },
+  publisher: {
+    '@type': 'Organization',
+    name: 'AgentRank',
+    url: 'https://agentrank-ai.com',
+    logo: {
+      '@type': 'ImageObject',
+      url: 'https://agentrank-ai.com/og-image.png',
+    },
+  },
+  mainEntityOfPage: {
+    '@type': 'WebPage',
+    '@id': 'https://agentrank-ai.com/blog/top-mcp-servers-2026/',
+  },
+  image: 'https://agentrank-ai.com/og-image.png',
+  keywords: 'top MCP servers 2026, best MCP servers for AI agents, MCP server ranking, highest scored MCP servers, best model context protocol servers, MCP server list 2026',
+};
+
+const tools = [
+  {
+    rank: 1,
+    name: 'CoplayDev/unity-mcp',
+    slug: 'CoplayDev--unity-mcp',
+    score: 98.67,
+    stars: 7003,
+    lang: 'C#',
+    contributors: 43,
+    lastCommit: '2026-03-12',
+    issueCloseRate: 95.7,
+    dependents: 0,
+    category: 'Game Dev / IDE',
+    desc: 'Direct AI control over Unity Editor — assets, scenes, scripts, and automation',
+    highlight: 'Highest-scoring MCP server in the entire index. 95.7% issue close rate across 369 issues.',
+  },
+  {
+    rank: 2,
+    name: 'microsoft/azure-devops-mcp',
+    slug: 'microsoft--azure-devops-mcp',
+    score: 97.17,
+    stars: 1406,
+    lang: 'TypeScript',
+    contributors: 45,
+    lastCommit: '2026-03-12',
+    issueCloseRate: 96.8,
+    dependents: 0,
+    category: 'DevOps / Cloud',
+    desc: 'Official Microsoft MCP server for Azure DevOps — work items, PRs, pipelines, repos',
+    highlight: 'Official Microsoft server. 96.8% issue close rate (425/439). Maintained by the Azure DevOps team.',
+  },
+  {
+    rank: 3,
+    name: 'laravel/boost',
+    slug: 'laravel--boost',
+    score: 96.94,
+    stars: 3333,
+    lang: 'PHP',
+    contributors: 76,
+    lastCommit: '2026-03-13',
+    issueCloseRate: 92.7,
+    dependents: 1032,
+    category: 'Web Dev / PHP',
+    desc: 'AI-augmented local development for Laravel applications',
+    highlight: '1,032 dependent repos — the 3rd-highest dependency count in the top 10. 76 contributors.',
+  },
+  {
+    rank: 4,
+    name: 'Pimzino/spec-workflow-mcp',
+    slug: 'Pimzino--spec-workflow-mcp',
+    score: 96.02,
+    stars: 3999,
+    lang: 'TypeScript',
+    contributors: 21,
+    lastCommit: '2026-03-07',
+    issueCloseRate: 97.7,
+    dependents: 0,
+    category: 'Dev Workflow',
+    desc: 'Spec-driven AI development workflow with real-time dashboard and VSCode extension',
+    highlight: 'Best issue close rate in the top 10 at 97.7% (130/133). Almost zero open issues.',
+  },
+  {
+    rank: 5,
+    name: 'zcaceres/markdownify-mcp',
+    slug: 'zcaceres--markdownify-mcp',
+    score: 94.73,
+    stars: 2449,
+    lang: 'TypeScript',
+    contributors: 9,
+    lastCommit: '2026-03-09',
+    issueCloseRate: 100.0,
+    dependents: 0,
+    category: 'Content / Utilities',
+    desc: 'Convert almost anything to clean Markdown — PDFs, URLs, files, and more',
+    highlight: '100% issue close rate. Zero open issues. The best-maintained utility server in the index.',
+  },
+  {
+    rank: 6,
+    name: 'samanhappy/mcphub',
+    slug: 'samanhappy--mcphub',
+    score: 94.47,
+    stars: 1876,
+    lang: 'TypeScript',
+    contributors: 23,
+    lastCommit: '2026-03-13',
+    issueCloseRate: 88.0,
+    dependents: 0,
+    category: 'Orchestration',
+    desc: 'Unified hub for managing and routing multiple MCP servers with flexible strategies',
+    highlight: 'Only dedicated orchestration server in the top 10. Solves the multi-server complexity problem.',
+  },
+  {
+    rank: 7,
+    name: 'perplexityai/modelcontextprotocol',
+    slug: 'perplexityai--modelcontextprotocol',
+    score: 94.27,
+    stars: 2016,
+    lang: 'TypeScript',
+    contributors: 13,
+    lastCommit: '2026-03-06',
+    issueCloseRate: 97.7,
+    dependents: 0,
+    category: 'Search / AI',
+    desc: 'Official Perplexity AI MCP server — real-time web search for agents',
+    highlight: 'Official Perplexity backing. 97.7% issue close rate. Gives agents live internet knowledge.',
+  },
+  {
+    rank: 8,
+    name: 'microsoft/playwright-mcp',
+    slug: 'microsoft--playwright-mcp',
+    score: 94.26,
+    stars: 28849,
+    lang: 'TypeScript',
+    contributors: 62,
+    lastCommit: '2026-03-14',
+    issueCloseRate: 97.1,
+    dependents: 0,
+    category: 'Browser Automation',
+    desc: 'Microsoft\'s official Playwright MCP server for browser automation and testing',
+    highlight: 'Most-starred tool in the top 10 at 28,849. Official Microsoft. 97.1% issue close rate.',
+  },
+  {
+    rank: 9,
+    name: 'oraios/serena',
+    slug: 'oraios--serena',
+    score: 93.61,
+    stars: 21474,
+    lang: 'Python',
+    contributors: 134,
+    lastCommit: '2026-03-13',
+    issueCloseRate: 85.2,
+    dependents: 0,
+    category: 'Coding Agents',
+    desc: 'Semantic code retrieval and editing toolkit for coding agents via MCP',
+    highlight: '134 contributors — most in the top 10. Second-highest star count. The standard coding agent toolkit.',
+  },
+  {
+    rank: 10,
+    name: 'mcp-use/mcp-use',
+    slug: 'mcp-use--mcp-use',
+    score: 93.1,
+    stars: 9434,
+    lang: 'TypeScript',
+    contributors: 36,
+    lastCommit: '2026-03-13',
+    issueCloseRate: 76.0,
+    dependents: 377,
+    category: 'Frameworks',
+    desc: 'Full-stack MCP framework connecting any LLM to any MCP server',
+    highlight: '377 dependent repos. 9,434 stars. The glue layer that makes multi-model, multi-server setups work.',
+  },
+];
+
+const stats = {
+  totalTools: 25632,
+  avgScore: 29.6,
+  topScore: 98.67,
+};
+---
+
+<Base
+  title="Top 10 MCP Servers for AI Agents in 2026 (Ranked by Real Data) — AgentRank"
+  description="The 10 highest-scoring MCP servers from 25,000+ in the AgentRank index. Ranked by composite signal: stars, freshness, issue health, contributors, and dependents. Updated March 2026."
+  activeTab="blog"
+  keywords="top MCP servers 2026, best MCP servers for AI agents, MCP server ranking, highest scored MCP servers, best model context protocol servers, MCP server list 2026, CoplayDev unity-mcp, playwright MCP, serena MCP"
+  canonicalUrl="https://agentrank-ai.com/blog/top-mcp-servers-2026/"
+  jsonLd={jsonLd}
+>
+  <article class="blog-post">
+    <header class="post-header">
+      <div class="breadcrumb"><a href="/blog/">Blog</a> <span>/</span></div>
+      <h1>Top 10 MCP Servers for AI Agents in 2026 (Ranked by Real Data)</h1>
+      <div class="post-meta">
+        <time datetime={publishDate}>March 18, 2026</time>
+        <span class="sep">&middot;</span>
+        <span>10 min read</span>
+        <span class="sep">&middot;</span>
+        <span>AgentRank Index</span>
+      </div>
+      <p class="lede">
+        The AgentRank index now tracks <strong>{stats.totalTools.toLocaleString('en-US')} MCP servers and agent tools</strong>.
+        Average score: <strong>{stats.avgScore}</strong>. The tools below are the top 10 across the entire
+        index — not sorted by GitHub stars, not by recent hype, but by a composite signal of five real quality
+        indicators scored daily. This is what the data says.
+      </p>
+    </header>
+
+    <nav class="toc">
+      <strong>Contents</strong>
+      <ol>
+        <li><a href="#rankings">The top 10 by score</a></li>
+        <li><a href="#deep-dives">Deep dives</a></li>
+        <li><a href="#patterns">What the top 10 have in common</a></li>
+        <li><a href="#methodology">How the score works</a></li>
+      </ol>
+    </nav>
+
+    <section id="rankings">
+      <h2>The top 10 MCP servers</h2>
+      <p>
+        Scored by the AgentRank composite: stars (15%), freshness (25%), issue health (25%),
+        contributors (10%), inbound dependents (25%). Average score across all {stats.totalTools.toLocaleString('en-US')} indexed
+        tools is <strong>{stats.avgScore}</strong>. These ten sit at the top of the distribution. All were
+        last updated within the past two weeks.
+      </p>
+
+      <table class="data-table top-table">
+        <thead>
+          <tr>
+            <th class="num">#</th>
+            <th>Repository</th>
+            <th class="num">Score</th>
+            <th class="num">Stars</th>
+            <th class="num">Close%</th>
+            <th>Category</th>
+            <th>Lang</th>
+          </tr>
+        </thead>
+        <tbody>
+          {tools.map((tool) => (
+            <tr>
+              <td class="num rank-num">{tool.rank}</td>
+              <td class="tool-cell">
+                <a href={`/tool/${tool.slug}/`} class="tool-link">{tool.name}</a>
+                <span class="tool-desc">{tool.desc}</span>
+              </td>
+              <td class="num score-cell">{tool.score}</td>
+              <td class="num">{tool.stars.toLocaleString('en-US')}</td>
+              <td class="num">{tool.issueCloseRate}%</td>
+              <td class="use-case">{tool.category}</td>
+              <td class="lang-badge">{tool.lang}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+
+      <p>
+        All data reflects the AgentRank crawler run from March 2026.
+        <a href="/methodology/" class="inline-link">Full scoring methodology here</a>.
+      </p>
+    </section>
+
+    <section id="deep-dives">
+      <h2>Deep dives</h2>
+
+      <h3>#1 — CoplayDev/unity-mcp (98.67)</h3>
+      <p>
+        <a href="/tool/CoplayDev--unity-mcp/" class="inline-link">CoplayDev/unity-mcp</a> is the
+        highest-scoring MCP server in the entire index at <strong>98.67</strong>. It bridges AI assistants —
+        Claude, Cursor, Copilot — directly to the Unity Editor. An agent can manage assets, create and
+        modify scenes, edit C# scripts, and automate game development tasks entirely through MCP calls.
+      </p>
+      <p>
+        The numbers behind the score: 7,003 stars, 43 contributors, last commit March 12 — three days
+        before this snapshot. Issue close rate is 95.7% (353 closed, 16 open). That combination of
+        recency, responsiveness, and adoption is what drives the top score. It's not just popular — it's
+        actively maintained with a disciplined issue queue.
+      </p>
+      <p>
+        Why Unity MCP specifically? Game development has a massive surface area of repetitive tasks —
+        scripting prefabs, tweaking scene hierarchies, generating boilerplate. An agent with direct
+        Editor access handles these faster than a human can navigate the UI. The high star count tells
+        you Unity developers recognized that value immediately.
+      </p>
+
+      <h3>#2 — microsoft/azure-devops-mcp (97.17)</h3>
+      <p>
+        <a href="/tool/microsoft--azure-devops-mcp/" class="inline-link">microsoft/azure-devops-mcp</a> is
+        the official Microsoft MCP server for Azure DevOps at <strong>97.17</strong>. It exposes work items,
+        pull requests, pipelines, repositories, and test plans as MCP tools — meaning an agent on Claude
+        or Copilot can create issues, query build statuses, review PRs, and trigger deployments without
+        leaving the conversation.
+      </p>
+      <p>
+        The score is driven by exceptional issue health: 96.8% close rate (425 closed, 14 open). For a
+        tool with 45 contributors and direct Microsoft backing, that responsiveness is consistent and
+        predictable. Teams running Azure DevOps can integrate this into existing sprint workflows and
+        trust that it'll track the Azure DevOps API accurately as it evolves.
+      </p>
+
+      <h3>#3 — laravel/boost (96.94)</h3>
+      <p>
+        <a href="/tool/laravel--boost/" class="inline-link">laravel/boost</a> is the official Laravel
+        MCP server for AI-augmented local development at <strong>96.94</strong>. It connects AI assistants
+        to a Laravel project's artisan commands, routes, models, and database schema — giving agents
+        context about the application structure that's otherwise locked inside the codebase.
+      </p>
+      <p>
+        What makes this stand out in the rankings: <strong>1,032 dependent repos</strong>. In the AgentRank
+        scoring model, inbound dependents carry 25% weight because they signal real-world adoption beyond
+        starred interest. 76 contributors and active weekly commits complete the picture. The Laravel
+        ecosystem is large and the community moved quickly to adopt the official server once it landed.
+      </p>
+
+      <h3>#4 — Pimzino/spec-workflow-mcp (96.02)</h3>
+      <p>
+        <a href="/tool/Pimzino--spec-workflow-mcp/" class="inline-link">Pimzino/spec-workflow-mcp</a>
+        scores <strong>96.02</strong> with the highest issue close rate in the top 10: 97.7% (130 closed,
+        3 open). It provides structured, spec-driven development workflow tools for AI-assisted software
+        development — complete with a real-time web dashboard and VSCode extension to monitor agent progress.
+      </p>
+      <p>
+        The core workflow: an agent reads a spec, breaks it into tasks, executes them, and updates
+        the dashboard. Humans monitor via the VSCode extension. This is an early implementation of the
+        "agentic development loop" that most agent frameworks describe but few ship as a ready-to-use
+        MCP server. 3,999 stars with essentially no open issues is a strong credibility signal for a
+        single-maintainer project.
+      </p>
+
+      <h3>#5 — zcaceres/markdownify-mcp (94.73)</h3>
+      <p>
+        <a href="/tool/zcaceres--markdownify-mcp/" class="inline-link">zcaceres/markdownify-mcp</a>
+        scores <strong>94.73</strong> and has a unique distinction: <strong>100% issue close rate</strong>
+        across 25 issues — not a single open issue at time of snapshot. It converts almost anything to
+        Markdown: URLs, PDFs, Word documents, HTML, plain text.
+      </p>
+      <p>
+        For AI agents, Markdown is the universal input format. Raw HTML and PDFs are noisy and token-heavy.
+        Markdownify-mcp serves as the preprocessing layer that strips structure down to clean, agent-readable
+        text. The 2,449 star count is modest relative to the other top-10 tools, but the maintenance
+        discipline is exceptional. An agent retrieval pipeline that includes Markdownify consistently
+        outperforms ones that parse raw web content.
+      </p>
+
+      <h3>#6 — samanhappy/mcphub (94.47)</h3>
+      <p>
+        <a href="/tool/samanhappy--mcphub/" class="inline-link">samanhappy/mcphub</a> scores
+        <strong>94.47</strong> and solves a problem that grows proportionally with the size of your
+        MCP stack: orchestration. It's a unified hub that centrally manages multiple MCP servers and
+        routes requests between them with flexible strategies — load balancing, failover, endpoint isolation.
+      </p>
+      <p>
+        As MCP adoption increases, most production agent deployments will run several servers simultaneously:
+        a GitHub server, a database server, a search server, a code execution server. Without an
+        orchestration layer, each gets configured separately and managed independently. MCPHub provides
+        the central configuration plane. The 88% issue close rate and 23 contributors signal active
+        community development, not a one-person side project.
+      </p>
+
+      <h3>#7 — perplexityai/modelcontextprotocol (94.27)</h3>
+      <p>
+        <a href="/tool/perplexityai--modelcontextprotocol/" class="inline-link">perplexityai/modelcontextprotocol</a>
+        scores <strong>94.27</strong>. It's the official Perplexity AI MCP server — giving any MCP-connected
+        agent access to Perplexity's real-time web search. An agent that only has access to its training
+        data is epistemically bounded. An agent with Perplexity access can answer questions about things
+        that happened last week.
+      </p>
+      <p>
+        The 97.7% issue close rate (42 closed, 1 open) reflects direct Perplexity engineering ownership.
+        Official backing here matters: when Perplexity updates their API, this server tracks it. Community
+        wrappers for the Perplexity API will lag. 2,016 stars in a competitive search-MCP category
+        confirms adoption, but it's the maintenance signals that put it in the top 10.
+      </p>
+
+      <h3>#8 — microsoft/playwright-mcp (94.26)</h3>
+      <p>
+        <a href="/tool/microsoft--playwright-mcp/" class="inline-link">microsoft/playwright-mcp</a>
+        scores <strong>94.26</strong> and is the most-starred tool in this list at <strong>28,849 stars</strong>.
+        It's the official Playwright MCP server from Microsoft — browser automation, UI testing, and
+        web scraping exposed as MCP tools.
+      </p>
+      <p>
+        For agents that need to navigate the web, fill forms, screenshot pages, or run end-to-end tests,
+        Playwright MCP is the standard. The 97.1% issue close rate (743/765) across 62 contributors
+        and active weekly commits makes it the most battle-tested browser automation server in the index.
+        The only reason it ranks 8th rather than 1st: dependents are not tracked for Go and TypeScript
+        tool binaries the same way npm packages are, which suppresses the dependent signal despite actual
+        widespread adoption.
+      </p>
+
+      <h3>#9 — oraios/serena (93.61)</h3>
+      <p>
+        <a href="/tool/oraios--serena/" class="inline-link">oraios/serena</a> scores <strong>93.61</strong>
+        with the most contributors in the top 10: <strong>134</strong>. It's a coding agent toolkit that
+        provides semantic code retrieval and editing via MCP — not file reads, but language-server-level
+        symbol navigation, definition jumps, and semantic search.
+      </p>
+      <p>
+        21,474 stars place it second only to Playwright in raw star count. The breadth of contributor
+        base signals this has moved beyond a single team's project — it's become the de facto semantic
+        code MCP for the broader agent development community. Agents using Serena can navigate large
+        codebases efficiently without loading entire files into context, which compounds cost savings
+        at scale.
+      </p>
+
+      <h3>#10 — mcp-use/mcp-use (93.1)</h3>
+      <p>
+        <a href="/tool/mcp-use--mcp-use/" class="inline-link">mcp-use/mcp-use</a> scores
+        <strong>93.1</strong> and occupies a different niche than the other nine: it's the framework layer
+        that connects any LLM — not just Claude — to any MCP server. 9,434 stars and <strong>377 dependent
+        repos</strong> signal that developers are building on top of it, not just using it directly.
+      </p>
+      <p>
+        The 76.0% issue close rate is the lowest in the top 10, which reflects a more open issue queue
+        typical of infrastructure-layer projects with broad scope. The dependent count matters more
+        here: 377 repos that depend on mcp-use means it's embedded in other tools and workflows.
+        For teams building multi-model setups — running Claude for reasoning, a smaller model for
+        classification — mcp-use is the connection layer that makes that work with MCP servers built
+        for any specific model.
+      </p>
+    </section>
+
+    <section id="patterns">
+      <h2>What the top 10 have in common</h2>
+
+      <h3>Issue close rate above 85% is table stakes</h3>
+      <p>
+        Nine of the ten tools have issue close rates above 85%. The one exception — mcp-use at 76% —
+        compensates with 377 dependent repos and 9,434 stars. Issue health is the single most predictive
+        signal in the AgentRank model for whether a tool will be usable in production six months from now.
+        A server with 200 open issues and no activity is a maintenance burden waiting to happen.
+      </p>
+
+      <h3>Official backing dominates the top half</h3>
+      <p>
+        Five of the top 10 — Microsoft Azure DevOps, laravel/boost, Perplexity AI, and Microsoft Playwright —
+        are officially maintained by the organization that owns the underlying platform. Official servers
+        track API changes faster and ship fixes when the underlying API breaks. Community forks lag.
+        For production agent deployments with uptime requirements, official backing reduces risk.
+      </p>
+
+      <h3>Stars alone do not predict rank</h3>
+      <p>
+        <a href="/tool/microsoft--playwright-mcp/" class="inline-link">microsoft/playwright-mcp</a> has
+        28,849 stars and ranks 8th. <a href="/tool/CoplayDev--unity-mcp/" class="inline-link">CoplayDev/unity-mcp</a>
+        has 7,003 stars and ranks 1st. Stars capture awareness. AgentRank captures quality. The gap between
+        the two is maintenance discipline, freshness, and ecosystem adoption — things that don't show up
+        in a star count but matter enormously when you're shipping production agents.
+      </p>
+
+      <h3>Category diversity at the top</h3>
+      <p>
+        The top 10 spans game dev, DevOps, web frameworks, workflow tooling, content processing,
+        orchestration, search, browser automation, coding, and LLM connectivity. There's no single
+        dominant category. The best MCP servers solve focused problems extremely well — they don't try
+        to be everything. A mature agent stack probably touches at least three or four categories from
+        this list.
+      </p>
+
+      <div class="cta-box">
+        <p>
+          <strong>Browse the full index:</strong> <a href="/tools/">agentrank-ai.com/tools</a> —
+          {stats.totalTools.toLocaleString('en-US')} tools scored, updated daily.
+        </p>
+        <p>
+          <strong>Maintain an MCP server?</strong> <a href="/claim/">Claim your listing</a> to add context,
+          links, and documentation to your entry.
+        </p>
+      </div>
+    </section>
+
+    <section id="methodology">
+      <h2>How the score works</h2>
+      <p>
+        AgentRank computes a composite score for every indexed tool from five signals:
+      </p>
+      <ul>
+        <li><strong>Stars (15%)</strong> — raw popularity signal, normalized across the index</li>
+        <li><strong>Freshness (25%)</strong> — days since last commit; scores decay past 90 days</li>
+        <li><strong>Issue health (25%)</strong> — closed issues divided by total issues; higher is more responsive</li>
+        <li><strong>Contributors (10%)</strong> — bus factor proxy; more contributors reduces single-maintainer risk</li>
+        <li><strong>Inbound dependents (25%)</strong> — how many repos depend on this one; the strongest adoption signal</li>
+      </ul>
+      <p>
+        The composite is scaled 0–100. Average across all {stats.totalTools.toLocaleString('en-US')} indexed tools is <strong>{stats.avgScore}</strong>.
+        The top 10 here range from 93.1 to 98.67. That's what genuine outlier quality looks like in the distribution.
+        Full methodology at <a href="/methodology/" class="inline-link">/methodology</a>.
+      </p>
+    </section>
+
+    <RelatedPosts posts={relatedPosts} />
+    <BlogSubscribeCTA source="blog" />
+    <footer class="post-footer">
+      <p class="methodology">
+        <strong>Methodology:</strong> Data from the AgentRank index crawled March 2026.
+        Scores computed using: stars 15%, freshness 25%, issue health 25%, contributors 10%, inbound dependents 25%.
+        {stats.totalTools.toLocaleString('en-US')} total repositories indexed; only non-archived repositories included.
+      </p>
+      <p class="share-line">
+        Found this useful? <a href="https://x.com/AgentRank_ai" target="_blank" rel="noopener noreferrer">Follow @AgentRank_ai</a> for
+        weekly ecosystem updates, biggest movers, and new tool spotlights.
+      </p>
+    </footer>
+  </article>
+
+  <style>
+    .blog-post {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 2rem 0 3rem;
+    }
+
+    .breadcrumb {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      margin-bottom: 0.75rem;
+    }
+
+    .breadcrumb span {
+      margin: 0 0.25rem;
+      opacity: 0.5;
+    }
+
+    .post-header {
+      margin-bottom: 2rem;
+      padding-bottom: 1.5rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .post-header h1 {
+      font-size: 1.6rem;
+      font-weight: 700;
+      line-height: 1.3;
+      margin-bottom: 0.75rem;
+    }
+
+    .post-meta {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      flex-wrap: wrap;
+      margin-bottom: 1rem;
+    }
+
+    .sep {
+      opacity: 0.4;
+    }
+
+    .lede {
+      font-size: 1rem;
+      line-height: 1.7;
+      color: var(--text);
+      opacity: 0.9;
+    }
+
+    .toc {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 1rem 1.25rem;
+      margin-bottom: 2.5rem;
+      font-size: 0.82rem;
+    }
+
+    .toc strong {
+      display: block;
+      margin-bottom: 0.6rem;
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+    }
+
+    .toc ol {
+      margin: 0;
+      padding-left: 1.2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+    }
+
+    .toc a {
+      color: var(--text-muted);
+    }
+
+    .toc a:hover {
+      color: var(--accent);
+    }
+
+    section {
+      margin-bottom: 3rem;
+    }
+
+    section h2 {
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin-bottom: 0.75rem;
+      padding-bottom: 0.4rem;
+      border-bottom: 2px solid var(--accent);
+      display: inline-block;
+    }
+
+    section h3 {
+      font-size: 0.95rem;
+      font-weight: 700;
+      margin: 1.5rem 0 0.5rem;
+      color: var(--text);
+    }
+
+    section p {
+      font-size: 0.9rem;
+      line-height: 1.75;
+      color: var(--text);
+      opacity: 0.9;
+      margin-bottom: 0.9rem;
+    }
+
+    section ul {
+      font-size: 0.9rem;
+      line-height: 1.75;
+      color: var(--text);
+      opacity: 0.9;
+      padding-left: 1.4rem;
+      margin-bottom: 0.9rem;
+    }
+
+    section ul li {
+      margin-bottom: 0.35rem;
+    }
+
+    .inline-link {
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.82rem;
+      margin: 1rem 0 1.25rem;
+    }
+
+    .data-table th {
+      text-align: left;
+      font-weight: 600;
+      color: var(--text-muted);
+      border-bottom: 1px solid var(--border);
+      padding: 0.4rem 0.75rem 0.4rem 0;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+
+    .data-table td {
+      padding: 0.45rem 0.75rem 0.45rem 0;
+      border-bottom: 1px solid var(--border);
+      color: var(--text);
+      vertical-align: top;
+    }
+
+    .data-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .num {
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .rank-num {
+      color: var(--text-muted);
+      font-weight: 700;
+    }
+
+    .top-table .tool-cell {
+      display: flex;
+      flex-direction: column;
+      gap: 0.2rem;
+    }
+
+    .tool-link {
+      font-weight: 600;
+      color: var(--accent);
+      font-size: 0.82rem;
+    }
+
+    .tool-desc {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      font-weight: 400;
+    }
+
+    .score-cell {
+      color: var(--accent);
+      font-weight: 700;
+    }
+
+    .use-case {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      white-space: nowrap;
+    }
+
+    .lang-badge {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      white-space: nowrap;
+    }
+
+    .cta-box {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      border-radius: 4px;
+      padding: 1rem 1.25rem;
+      margin-top: 1.5rem;
+    }
+
+    .cta-box p {
+      margin-bottom: 0.5rem;
+    }
+
+    .cta-box p:last-child {
+      margin-bottom: 0;
+    }
+
+    .post-footer {
+      margin-top: 3rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--border);
+    }
+
+    .methodology {
+      font-size: 0.75rem !important;
+      color: var(--text-muted) !important;
+      opacity: 1 !important;
+    }
+
+    .share-line {
+      font-size: 0.82rem !important;
+      margin-top: 0.75rem;
+    }
+
+    @media (max-width: 640px) {
+      .post-header h1 {
+        font-size: 1.3rem;
+      }
+
+      .data-table {
+        font-size: 0.75rem;
+      }
+
+      .use-case {
+        display: none;
+      }
+
+      .lang-badge {
+        display: none;
+      }
+    }
+  </style>
+</Base>
