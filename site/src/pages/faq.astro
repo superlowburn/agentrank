@@ -1,0 +1,311 @@
+---
+export const prerender = true;
+import Base from '../layouts/Base.astro';
+
+const faqs = [
+  {
+    id: 'what-is-agentrank',
+    q: 'What is AgentRank?',
+    a: 'AgentRank is a ranked index of MCP servers and agent tools. It crawls GitHub daily, scores every tool on eight real quality signals, and publishes the results as a live leaderboard at <a href="/">agentrank-ai.com</a>. Think of it as Google PageRank for AI agents — a score that reflects not just popularity, but whether a tool is actively maintained and production-ready.',
+  },
+  {
+    id: 'how-is-score-calculated',
+    q: 'How is the AgentRank score calculated?',
+    a: 'The AgentRank score (0–100) is a weighted composite of eight GitHub signals: freshness (20% — days since last commit), issue health (25% — closed/total issues ratio), inbound dependents (25% — how many other repos depend on this one), stars (15% — normalized popularity), contributor count (10% — bus factor), and three minor signals for license quality, documentation, and release cadence. Full details on the <a href="/methodology/">methodology page</a>.',
+  },
+  {
+    id: 'how-often-updated',
+    q: 'How often is the data updated?',
+    a: 'AgentRank re-crawls indexed repositories every night and recomputes all scores. New repositories matching MCP-related search terms are discovered and added continuously. Score changes from a commit you push today will typically be reflected in rankings within 24 hours. Verified Publisher subscribers get priority indexing with commits reflected within 24h guaranteed.',
+  },
+  {
+    id: 'submit-tool',
+    q: 'How do I submit my MCP server or agent tool to AgentRank?',
+    a: 'Go to the <a href="/submit/">Submit page</a> and enter your GitHub repository URL. AgentRank will crawl it on the next nightly run and add it to the index. There\'s no approval queue — if your repo matches the indexing criteria (MCP server, agent tool, or AI SDK), it gets scored and listed. The <a href="/submit/">submission form</a> also lets you suggest a category.',
+  },
+  {
+    id: 'claim-listing',
+    q: 'How do I claim my tool listing?',
+    a: 'Claiming is available on the <a href="/pricing/">Verified Publisher plan ($24/mo billed annually)</a>. After subscribing, you verify ownership of the repository via a GitHub token or a small commit. Once verified, you unlock an enhanced listing: custom logo, description, documentation and Discord links, monthly analytics, and a Verified Publisher badge visible to developers browsing the index.',
+  },
+  {
+    id: 'what-is-api',
+    q: 'What is the AgentRank API?',
+    a: 'The AgentRank API provides programmatic access to the full ranked index. Endpoints include <code>/tools</code> (paginated leaderboard), <code>/search</code> (keyword and semantic search), <code>/categories</code> (tools filtered by category), and <code>/skills</code>. Responses include complete score breakdowns, GitHub signals, and metadata. API access requires the <a href="/pricing/">Pro API plan ($41/mo billed annually)</a>. Full documentation at <a href="/docs/">the API docs</a>.',
+  },
+  {
+    id: 'badge',
+    q: 'How do I add an AgentRank badge to my README?',
+    a: 'Visit <a href="/badges/">agentrank-ai.com/badges</a> and enter your GitHub repository slug. The page generates a Markdown snippet with a live badge that displays your current AgentRank score. The badge updates nightly as your score changes. Example: <code>[![AgentRank](https://agentrank-ai.com/api/badge/owner--repo)](https://agentrank-ai.com/tools/owner--repo/)</code>',
+  },
+  {
+    id: 'categories',
+    q: 'What categories does AgentRank track?',
+    a: 'AgentRank tracks MCP servers and agent tools across a broad set of categories including: Database &amp; Data Access, DevOps &amp; Infrastructure, Code Generation, Browser Automation, Communication &amp; Collaboration, Productivity, AI/ML, Security, Data Science, API Integration, and more. Browse all categories at <a href="/category/">agentrank-ai.com/category</a>. Categories are assigned based on repository metadata and commit analysis.',
+  },
+  {
+    id: 'is-free',
+    q: 'Is AgentRank free?',
+    a: 'Browsing the leaderboard, reading tool pages, and accessing rankings is completely free. There are three paid tiers for builders and maintainers: <a href="/pricing/">Verified Publisher ($24/mo)</a> for claiming and enhancing your listing, <a href="/pricing/">Pro API ($41/mo)</a> for programmatic access to the full index, and Sponsored Listings for featured category placement. The underlying infrastructure costs are covered by these tiers.',
+  },
+  {
+    id: 'what-is-mcp',
+    q: 'What is MCP (Model Context Protocol)?',
+    a: 'MCP is an open standard published by Anthropic in November 2024 that defines how AI agents connect to external tools and data sources. An MCP server exposes capabilities — tools, resources, and prompts — that AI clients like Claude Desktop, Cursor, and GitHub Copilot can discover and call at runtime. Build one MCP server and it works with every MCP-compatible client. See the full explanation in <a href="/blog/what-is-mcp-model-context-protocol-explained/">What is MCP? Model Context Protocol Explained</a>.',
+  },
+  {
+    id: 'how-many-indexed',
+    q: 'How many MCP servers does AgentRank index?',
+    a: 'AgentRank indexes over 25,000 MCP-related repositories on GitHub as of March 2026, growing by thousands each month. The ecosystem launched in November 2024 with roughly 200 repositories and has expanded 100x in 16 months. Only public repositories are indexed.',
+  },
+  {
+    id: 'score-change',
+    q: 'Why did my tool\'s score change?',
+    a: 'AgentRank scores update nightly based on live GitHub data. Common reasons for score changes: a period without commits reduces the freshness signal (20% of score); a backlog of open unresponded issues lowers issue health (25%); gaining or losing dependent repos affects the dependents signal (25%); and star growth or decay affects the stars signal (15%). Check the <a href="/methodology/">Methodology page</a> for the full signal definitions and decay curves.',
+  },
+  {
+    id: 'improve-score',
+    q: 'How can I improve my tool\'s AgentRank score?',
+    a: 'The highest-impact actions: (1) commit regularly — freshness decays sharply after 90 days; (2) close or respond to open issues — issue health (closed/total ratio) accounts for 25% of the score; (3) write good documentation so other projects depend on yours — inbound dependents are the strongest signal at 25%; (4) add type definitions and a comprehensive README. Stars matter less than the other signals and are difficult to game meaningfully.',
+  },
+  {
+    id: 'skills-tools-agents',
+    q: 'What\'s the difference between Skills, Tools, and Agents on AgentRank?',
+    a: '<strong>Skills</strong> are reusable capability modules that AI agents can invoke — typically prompt templates or pre-packaged workflows (shown on the <a href="/">home page</a>). <strong>Tools</strong> are MCP servers and function-calling integrations that expose external services to AI agents (see <a href="/tools/">Tools</a>). <strong>Agents</strong> are complete autonomous AI systems that orchestrate tools and skills to accomplish goals (see <a href="/agents/">Agents</a>, currently in beta). All three are scored by the same AgentRank signal methodology.',
+  },
+  {
+    id: 'embed-widget',
+    q: 'How do I use the AgentRank embed widget?',
+    a: 'The embed widget lets you display a live AgentRank leaderboard on your own site or docs. Add a single <code>&lt;script&gt;</code> tag with your configuration and the widget renders an inline ranked list. See <a href="/docs/embed/">the embed documentation</a> for configuration options, including category filtering, custom limits, and dark/light theme support.',
+  },
+  {
+    id: 'open-source',
+    q: 'Is AgentRank open source?',
+    a: 'Yes — the core AgentRank infrastructure (crawler, scoring engine, and website) is open source at <a href="https://github.com/superlowburn/agentrank" target="_blank" rel="noopener noreferrer">github.com/superlowburn/agentrank</a>. The scoring weights and methodology are documented publicly on the <a href="/methodology/">Methodology page</a>. There are no black boxes in how scores are computed.',
+  },
+  {
+    id: 'mcp-server',
+    q: 'Does AgentRank have an MCP server?',
+    a: 'Yes. The AgentRank MCP server lets AI agents query the full ranked index programmatically. Your agent can call tools like <code>search_tools</code>, <code>get_top_tools</code>, and <code>get_tool_score</code> directly from Claude Desktop, Cursor, or any MCP-compatible client. Install it via <code>npx -y agentrank-mcp</code>. See the <a href="/docs/">API documentation</a> for available tools and parameters.',
+  },
+  {
+    id: 'npm-pypi',
+    q: 'Does AgentRank track npm, PyPI, and Docker Hub packages?',
+    a: 'Currently AgentRank indexes GitHub repositories as its primary data source. npm download counts and PyPI stats are used as supplementary signals where available but are not yet primary ranking inputs. Docker Hub, registry.mcp.so, and other distribution channels are on the roadmap. GitHub alone covers the vast majority of the MCP ecosystem since almost all servers are open source.',
+  },
+  {
+    id: 'verified-publisher',
+    q: 'What is the Verified Publisher badge?',
+    a: 'The Verified Publisher badge is a trust signal displayed on your AgentRank listing after you verify ownership of the repository and subscribe to the <a href="/pricing/">Verified Publisher plan</a>. It tells developers that the listing is maintained by the actual authors of the tool. Verified listings also unlock enhanced features: custom logo, long description, documentation and community links, monthly traffic analytics, and email alerts on significant score changes.',
+  },
+  {
+    id: 'historical-data',
+    q: 'Can I see the historical score for my tool?',
+    a: 'Historical score data (30-day rolling window) is available on the <a href="/pricing/">Pro API plan</a>. The public tool pages show current scores and last-updated timestamps. Maintainers on the Verified Publisher plan receive email alerts when scores change by 10 or more points, providing a practical change log without needing API access.',
+  },
+];
+
+const faqJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faqs.map((faq) => ({
+    '@type': 'Question',
+    name: faq.q,
+    acceptedAnswer: {
+      '@type': 'Answer',
+      text: faq.a.replace(/<[^>]+>/g, ''),
+    },
+  })),
+};
+---
+
+<Base
+  title="Frequently Asked Questions — AgentRank"
+  description="Answers to common questions about AgentRank: how the scoring works, how to submit your MCP server, how to claim your listing, how the API works, and more."
+  keywords="AgentRank FAQ, how does AgentRank work, MCP server index FAQ, AgentRank score explained, claim MCP listing, AgentRank API"
+  canonicalUrl="https://agentrank-ai.com/faq/"
+  jsonLd={faqJsonLd}
+>
+  <div class="faq-page">
+    <div class="page-header">
+      <h1>Frequently Asked Questions</h1>
+      <p class="subtitle">Everything you need to know about AgentRank — how it works, how to use it, and how to get your tool listed.</p>
+    </div>
+
+    <div class="faq-list">
+      {faqs.map((faq) => (
+        <details class="faq-item" id={faq.id}>
+          <summary class="faq-question">
+            <span class="q-text">{faq.q}</span>
+            <span class="q-icon" aria-hidden="true"></span>
+          </summary>
+          <div class="faq-answer" set:html={faq.a} />
+        </details>
+      ))}
+    </div>
+
+    <div class="faq-footer">
+      <p>Still have questions? Reach out on <a href="https://x.com/AgentRank_ai" target="_blank" rel="noopener noreferrer">X @AgentRank_ai</a> or open an issue at <a href="https://github.com/superlowburn/agentrank" target="_blank" rel="noopener noreferrer">github.com/superlowburn/agentrank</a>.</p>
+    </div>
+  </div>
+
+  <style>
+    .faq-page {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 2rem 0 3rem;
+    }
+
+    .page-header {
+      margin-bottom: 2rem;
+      padding-bottom: 1.5rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .page-header h1 {
+      font-size: 1.6rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+    }
+
+    .subtitle {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+
+    .faq-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    .faq-item {
+      border-bottom: 1px solid var(--border);
+    }
+
+    .faq-item:first-child {
+      border-top: 1px solid var(--border);
+    }
+
+    .faq-question {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      padding: 1rem 0;
+      cursor: pointer;
+      list-style: none;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--text);
+      user-select: none;
+    }
+
+    .faq-question::-webkit-details-marker {
+      display: none;
+    }
+
+    .faq-question::marker {
+      display: none;
+    }
+
+    .q-text {
+      flex: 1;
+      line-height: 1.4;
+    }
+
+    .q-icon {
+      flex-shrink: 0;
+      width: 16px;
+      height: 16px;
+      position: relative;
+      color: var(--text-muted);
+    }
+
+    .q-icon::before,
+    .q-icon::after {
+      content: '';
+      position: absolute;
+      background: currentColor;
+      border-radius: 1px;
+      transition: transform 0.2s ease, opacity 0.2s ease;
+    }
+
+    .q-icon::before {
+      width: 10px;
+      height: 2px;
+      top: 7px;
+      left: 3px;
+    }
+
+    .q-icon::after {
+      width: 2px;
+      height: 10px;
+      top: 3px;
+      left: 7px;
+    }
+
+    details[open] .q-icon::after {
+      transform: rotate(90deg);
+      opacity: 0;
+    }
+
+    details[open] .faq-question {
+      color: var(--accent);
+    }
+
+    .faq-answer {
+      font-size: 0.875rem;
+      line-height: 1.75;
+      color: var(--text);
+      opacity: 0.9;
+      padding: 0 0 1.25rem;
+    }
+
+    .faq-answer a {
+      color: var(--accent);
+      text-decoration: underline;
+    }
+
+    .faq-answer a:hover {
+      text-decoration: none;
+    }
+
+    .faq-answer code {
+      font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
+      font-size: 0.78rem;
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      padding: 0.1rem 0.35rem;
+    }
+
+    .faq-answer strong {
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .faq-footer {
+      margin-top: 2.5rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--border);
+      font-size: 0.82rem;
+      color: var(--text-muted);
+    }
+
+    .faq-footer a {
+      color: var(--accent);
+    }
+
+    @media (max-width: 640px) {
+      .page-header h1 {
+        font-size: 1.3rem;
+      }
+
+      .faq-question {
+        font-size: 0.85rem;
+      }
+    }
+  </style>
+</Base>

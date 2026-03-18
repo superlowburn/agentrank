@@ -44,6 +44,45 @@ const jsonLd = {
   proficiencyLevel: 'Beginner',
   dependencies: 'Python 3.10+, uv or pip',
 };
+
+const faqJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: [
+    {
+      '@type': 'Question',
+      name: 'What is FastMCP?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'FastMCP is the most popular Python framework for building MCP servers, with over 6,700 stars on GitHub. It uses decorators similar to FastAPI to define tools, resources, and prompts with minimal boilerplate. FastMCP 3.0 includes composability, OpenAPI mounting, and proxy mode.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'How long does it take to build an MCP server with FastMCP?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'A basic working MCP server with FastMCP can be built in under 20 minutes. The @mcp.tool() decorator auto-generates JSON Schema from your function signature and docstring — no manual schema writing required.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'How do I install FastMCP?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Run pip install fastmcp or uv add fastmcp. FastMCP requires Python 3.10 or higher. You can then run your server with mcp.run() or connect it directly to Claude Desktop via stdio configuration.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'What is FastMCP composability?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'FastMCP 3.0 lets you compose multiple MCP servers into a single server using mcp.include(). You can also mount existing OpenAPI/REST APIs as MCP tools directly, or use proxy mode to expose a remote MCP server locally.',
+      },
+    },
+  ],
+};
 ---
 
 <Base
@@ -52,7 +91,7 @@ const jsonLd = {
   activeTab="blog"
   keywords="fastmcp tutorial, python mcp server, build mcp server python, fastmcp 3.0, fastmcp example, fastmcp composability, mcp python sdk, mcp server tutorial"
   canonicalUrl="https://agentrank-ai.com/blog/fastmcp-tutorial-python-mcp-server/"
-  jsonLd={jsonLd}
+  jsonLd={[jsonLd, faqJsonLd]}
 
   ogImage="/og/fastmcp-tutorial-python-mcp-server.png"
 >

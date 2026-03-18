@@ -132,6 +132,36 @@ const languageTrend = [
   { lang: 'Go', q4Pct: 3.9, q1Pct: 4.8, delta: '+0.9pp', trend: 'up' },
   { lang: 'Rust', q4Pct: 2.4, q1Pct: 2.6, delta: '+0.2pp', trend: 'up' },
 ];
+const faqJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: [
+    {
+      '@type': 'Question',
+      name: 'How many MCP servers exist as of Q1 2026?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'The AgentRank index tracks over 25,600 MCP-related repositories on GitHub as of Q1 2026, with new repositories entering the index continuously.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'How fast has the MCP ecosystem grown?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'MCP launched in November 2024 with roughly 200 repositories. By Q1 2026 the index tracks over 25,000 — approximately 100x growth in 16 months, with over 6,000 new repositories per quarter.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'What are the most popular MCP server categories?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'DevOps and infrastructure, database access, code generation, and productivity tools are the largest categories. Developer tooling accounts for roughly 40% of indexed repositories.',
+      },
+    },
+  ],
+};
 ---
 
 <Base
@@ -140,7 +170,7 @@ const languageTrend = [
   activeTab="blog"
   keywords="MCP server landscape Q1 2026, MCP ecosystem report, MCP server growth 2026, biggest MCP servers 2026, model context protocol trends Q1"
   canonicalUrl="https://agentrank-ai.com/blog/mcp-server-landscape-q1-2026/"
-  jsonLd={jsonLd}
+  jsonLd={[jsonLd, faqJsonLd]}
 
   ogImage="/og/mcp-server-landscape-q1-2026.png"
 >

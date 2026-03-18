@@ -143,6 +143,36 @@ const stats = {
   avgSecurityScore: 38.7,
   topScore: 87.23,
 };
+const faqJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: [
+    {
+      '@type': 'Question',
+      name: 'What are the best MCP servers for security tooling?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'The top security MCP servers in the AgentRank index connect agents to vulnerability scanners, SAST/DAST tools, secrets management services, and security intelligence APIs. They let AI agents assist with security audits and threat analysis.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Can AI agents use MCP to run security scans?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Yes. Security MCP servers expose tools like run_dependency_audit(), check_cve(), and scan_secrets() that agents can call as part of a security review workflow. The agent interprets results and suggests remediation.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'How do I secure an MCP server that handles sensitive data?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Use TLS for all remote transports, gate tool calls behind authentication, validate all inputs, run the process as non-root, and never expose secrets in tool output. See the MCP Server Security Best Practices guide for a full security checklist.',
+      },
+    },
+  ],
+};
 ---
 
 <Base
@@ -151,7 +181,7 @@ const stats = {
   activeTab="blog"
   keywords="best MCP servers security, security MCP server 2026, vulnerability scanning MCP, Snyk MCP, Vault MCP server, Trivy MCP, Semgrep MCP, cloud security MCP agent"
   canonicalUrl="https://agentrank-ai.com/blog/best-mcp-servers-security/"
-  jsonLd={jsonLd}
+  jsonLd={[jsonLd, faqJsonLd]}
 
   ogImage="/og/best-mcp-servers-security.png"
 >

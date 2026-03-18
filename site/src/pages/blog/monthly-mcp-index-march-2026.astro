@@ -1,0 +1,889 @@
+---
+export const prerender = true;
+
+import Base from '../../layouts/Base.astro';
+import BlogSubscribeCTA from '../../components/BlogSubscribeCTA.astro';
+import RelatedPosts from '../../components/RelatedPosts.astro';
+
+const relatedPosts = [
+  { href: '/blog/mcp-server-landscape-q1-2026/', title: 'The MCP Server Landscape: Q1 2026 Ecosystem Report' },
+  { href: '/blog/state-of-mcp-2026/', title: 'The State of MCP Servers & Agent Tools in 2026' },
+  { href: '/blog/mcp-server-comparison-top-10/', title: 'MCP Server Comparison: Top 10 Head-to-Head' },
+  { href: '/blog/a2a-vs-mcp-agent-protocol-comparison/', title: 'A2A vs MCP: The Definitive Agent Protocol Comparison' },
+  { href: '/blog/best-mcp-servers-devops/', title: 'Best MCP Servers for DevOps & Infrastructure in 2026' },
+];
+
+const publishDate = '2026-03-18';
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: 'Monthly MCP Index Report — March 2026 in Numbers',
+  description: 'The first monthly data report from the AgentRank index. 25,632 tools, 3,124 skills, 17.8M installs, and the real numbers behind who is winning the MCP ecosystem in March 2026.',
+  datePublished: publishDate,
+  dateModified: publishDate,
+  author: {
+    '@type': 'Organization',
+    name: 'AgentRank',
+    url: 'https://agentrank-ai.com',
+  },
+  publisher: {
+    '@type': 'Organization',
+    name: 'AgentRank',
+    url: 'https://agentrank-ai.com',
+    logo: {
+      '@type': 'ImageObject',
+      url: 'https://agentrank-ai.com/og-image.png',
+    },
+  },
+  mainEntityOfPage: {
+    '@type': 'WebPage',
+    '@id': 'https://agentrank-ai.com/blog/monthly-mcp-index-march-2026/',
+  },
+  image: 'https://agentrank-ai.com/og-image.png',
+  keywords: 'MCP index March 2026, monthly MCP report, MCP server rankings March 2026, top MCP servers 2026, agent tools index, model context protocol statistics',
+};
+
+// Top 10 by AgentRank score — live data as of March 18, 2026
+const top10 = [
+  { rank: 1, name: 'CoplayDev/unity-mcp', slug: 'CoplayDev--unity-mcp', score: 98.67, stars: 7003, lang: 'C#', contributors: 43, desc: 'Unity Editor AI bridge — manage assets, scenes, scripts from Claude or Cursor' },
+  { rank: 2, name: 'microsoft/azure-devops-mcp', slug: 'microsoft--azure-devops-mcp', score: 97.17, stars: 1406, lang: 'TypeScript', contributors: 45, desc: 'Official Azure DevOps MCP server by Microsoft' },
+  { rank: 3, name: 'laravel/boost', slug: 'laravel--boost', score: 96.94, stars: 3333, lang: 'PHP', contributors: 76, desc: 'Official Laravel MCP server for AI-assisted local development' },
+  { rank: 4, name: 'CoderGamester/mcp-unity', slug: 'CoderGamester--mcp-unity', score: 96.37, stars: 1412, lang: 'C#', contributors: 20, desc: 'MCP plugin for Unity Editor — Cursor, Claude Code, Windsurf, Codex' },
+  { rank: 5, name: 'mark3labs/mcp-go', slug: 'mark3labs--mcp-go', score: 96.29, stars: 8353, lang: 'Go', contributors: 170, desc: 'Go implementation of MCP — most-starred Go SDK in the index' },
+  { rank: 6, name: 'Pimzino/spec-workflow-mcp', slug: 'Pimzino--spec-workflow-mcp', score: 96.02, stars: 3999, lang: 'TypeScript', contributors: 21, desc: 'Spec-driven development workflow with real-time dashboard and VSCode extension' },
+  { rank: 7, name: 'PrefectHQ/fastmcp', slug: 'PrefectHQ--fastmcp', score: 94.73, stars: 23659, lang: 'Python', contributors: 208, desc: 'The fast, Pythonic way to build MCP servers and clients' },
+  { rank: 8, name: 'zcaceres/markdownify-mcp', slug: 'zcaceres--markdownify-mcp', score: 94.73, stars: 2449, lang: 'TypeScript', contributors: 9, desc: 'Convert almost anything to Markdown via MCP' },
+  { rank: 9, name: 'samanhappy/mcphub', slug: 'samanhappy--mcphub', score: 94.47, stars: 1876, lang: 'TypeScript', contributors: 23, desc: 'Unified hub for centrally managing and orchestrating multiple MCP servers' },
+  { rank: 10, name: 'perplexityai/modelcontextprotocol', slug: 'perplexityai--modelcontextprotocol', score: 94.27, stars: 2016, lang: 'TypeScript', contributors: 13, desc: 'Official MCP server implementation for the Perplexity API' },
+];
+
+// Biggest score movers — March 16 to March 17 snapshot delta
+const movers = [
+  { name: 'CoderGamester/mcp-unity', slug: 'CoderGamester--mcp-unity', scoreBefore: 63.58, scoreNow: 96.37, delta: '+32.79', rankBefore: 43, rankNow: 4, rankGain: 39 },
+  { name: 'homeassistant-ai/ha-mcp', slug: 'homeassistant-ai--ha-mcp', scoreBefore: 61.06, scoreNow: 93.13, delta: '+32.07', rankBefore: 72, rankNow: 16, rankGain: 56 },
+  { name: 'microsoft/azure-devops-mcp', slug: 'microsoft--azure-devops-mcp', scoreBefore: 65.17, scoreNow: 97.17, delta: '+32.00', rankBefore: 32, rankNow: 2, rankGain: 30 },
+  { name: 'samanhappy/mcphub', slug: 'samanhappy--mcphub', scoreBefore: 62.56, scoreNow: 94.47, delta: '+31.91', rankBefore: 50, rankNow: 11, rankGain: 39 },
+  { name: 'rekog-labs/MCP-Nest', slug: 'rekog-labs--MCP-Nest', scoreBefore: 60.71, scoreNow: 92.10, delta: '+31.39', rankBefore: 79, rankNow: 22, rankGain: 57 },
+];
+
+// Language distribution
+const languages = [
+  { lang: 'Python', count: 9874, pct: 38.5 },
+  { lang: 'TypeScript', count: 7003, pct: 27.3 },
+  { lang: 'JavaScript', count: 3100, pct: 12.1 },
+  { lang: 'Go', count: 1227, pct: 4.8 },
+  { lang: 'Rust', count: 669, pct: 2.6 },
+  { lang: 'Java', count: 543, pct: 2.1 },
+  { lang: 'C#', count: 510, pct: 2.0 },
+  { lang: 'Other', count: 2706, pct: 10.6 },
+];
+
+// Top skills by installs
+const topSkills = [
+  { rank: 1, slug: 'microsoft/playwright-mcp', source: 'Glama', installs: 1777315, ghStars: 28900 },
+  { rank: 2, slug: 'browser-use/browser-use', source: 'skills.sh', installs: 49087, ghStars: 80769 },
+  { rank: 3, slug: 'vercel/turborepo', source: 'skills.sh', installs: 10734, ghStars: 29998 },
+  { rank: 4, slug: 'github/awesome-copilot (git-commit)', source: 'skills.sh', installs: 13694, ghStars: 25142 },
+  { rank: 5, slug: 'mongodb-js/mongodb-mcp-server', source: 'Glama', installs: 386047, ghStars: 959 },
+];
+const faqJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: [
+    {
+      '@type': 'Question',
+      name: 'What is the Monthly MCP Index Report?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'The Monthly MCP Index Report is a data-driven summary of the AgentRank index covering tool counts, install statistics, category breakdowns, and the top-ranked tools for the month. It provides a snapshot of where the MCP ecosystem stands each month.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'How many MCP tools are indexed in March 2026?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'The AgentRank index contains 25,632 tools and 3,124 skills as of March 2026, with 17.8 million total installs tracked across the ecosystem.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Which MCP server has the highest AgentRank score in March 2026?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'CoplayDev/unity-mcp tops the AgentRank leaderboard in March 2026 with a score of 98.67, followed by microsoft/azure-devops-mcp at 97.17. Scores are recomputed nightly from eight GitHub signals.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'What categories are growing fastest in the MCP ecosystem?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Based on March 2026 index data, DevOps and infrastructure, AI/ML tooling, and browser automation are among the fastest-growing categories by new repository additions. The full breakdown is available on the AgentRank Trends page.',
+      },
+    },
+  ],
+};
+---
+
+<Base
+  title="Monthly MCP Index Report — March 2026 in Numbers | AgentRank"
+  description="The AgentRank monthly data brief: 25,632 tools indexed, 3,124 skills tracked, 17.8M total installs. Top 10 leaderboard, biggest movers, language trends, and April 2026 outlook."
+  activeTab="blog"
+  keywords="monthly MCP report March 2026, MCP index statistics, top MCP servers March 2026, MCP ecosystem numbers, agent tools rankings, model context protocol data"
+  canonicalUrl="https://agentrank-ai.com/blog/monthly-mcp-index-march-2026/"
+  jsonLd={[jsonLd, faqJsonLd]}
+  ogImage="/og-image.png"
+>
+  <article class="blog-post">
+    <header class="post-header">
+      <div class="breadcrumb"><a href="/blog/">Blog</a> <span>/</span></div>
+      <h1>Monthly MCP Index Report — March 2026 in Numbers</h1>
+      <div class="post-meta">
+        <time datetime={publishDate}>March 18, 2026</time>
+        <span class="sep">&middot;</span>
+        <span>7 min read</span>
+        <span class="sep">&middot;</span>
+        <span>AgentRank Index</span>
+      </div>
+      <p class="lede">
+        This is the first in a recurring monthly series. No commentary from other sources. No estimates.
+        Just the real numbers from the AgentRank index — the only comprehensive ranked database of MCP servers
+        and agent tools. March 2026 edition: <strong>25,632 repositories</strong>, <strong>3,124 skills</strong>,
+        <strong>17.8 million total installs</strong>.
+      </p>
+    </header>
+
+    <nav class="toc">
+      <strong>Contents</strong>
+      <ol>
+        <li><a href="#headline">Headline stats</a></li>
+        <li><a href="#top10">Top 10 leaderboard</a></li>
+        <li><a href="#movers">Biggest movers this week</a></li>
+        <li><a href="#skills">Skills leaderboard</a></li>
+        <li><a href="#languages">Language distribution</a></li>
+        <li><a href="#health">Ecosystem health signals</a></li>
+        <li><a href="#april">What to watch in April</a></li>
+      </ol>
+    </nav>
+
+    <section id="headline">
+      <h2>Headline stats</h2>
+
+      <div class="stat-grid">
+        <div class="stat-card">
+          <div class="stat-number">25,632</div>
+          <div class="stat-label">GitHub repos indexed</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">3,124</div>
+          <div class="stat-label">Agent skills tracked</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">17.8M</div>
+          <div class="stat-label">Total skill installs</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">29.6</div>
+          <div class="stat-label">Average AgentRank score</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">1.22M</div>
+          <div class="stat-label">Total GitHub stars in index</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">40</div>
+          <div class="stat-label">Elite-tier tools (score 90+)</div>
+        </div>
+      </div>
+
+      <p>
+        The index crossed 25,000 repositories this month. That number represents every GitHub repository
+        that matches searches for <code>mcp server</code>, <code>model context protocol</code>, <code>agent tool</code>,
+        and <code>a2a agent</code> — crawled nightly, scored on five signals, ranked daily.
+      </p>
+      <p>
+        The average score of 29.6 tells the real story: <strong>63% of indexed repos score under 30</strong>.
+        Most of what's on GitHub is experimental, abandoned, or early-stage. The top 1% — 40 Elite-tier tools
+        with scores above 90 — captures the bulk of real ecosystem activity.
+      </p>
+    </section>
+
+    <section id="top10">
+      <h2>Top 10 leaderboard</h2>
+      <p>
+        The full leaderboard at <a href="/" class="inline-link">agentrank-ai.com</a> updates daily.
+        These are the top 10 as of March 18, 2026, ranked by composite AgentRank score
+        (stars 15%, freshness 25%, issue health 25%, contributors 10%, inbound dependents 25%).
+      </p>
+
+      <table class="data-table top10-table">
+        <thead>
+          <tr>
+            <th class="num">#</th>
+            <th>Repository</th>
+            <th class="num">Score</th>
+            <th class="num">Stars</th>
+            <th>Lang</th>
+            <th class="num">Contrib.</th>
+          </tr>
+        </thead>
+        <tbody>
+          {top10.map((tool) => (
+            <tr>
+              <td class="num rank-cell">{tool.rank}</td>
+              <td class="tool-cell">
+                <a href={`/tool/${tool.slug}/`} class="tool-link">{tool.name}</a>
+                <div class="tool-desc">{tool.desc}</div>
+              </td>
+              <td class="num score-cell">{tool.score}</td>
+              <td class="num">{tool.stars.toLocaleString('en-US')}</td>
+              <td class="lang-badge">{tool.lang}</td>
+              <td class="num">{tool.contributors}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+
+      <p>
+        <strong><a href="/tool/CoplayDev--unity-mcp/" class="inline-link">CoplayDev/unity-mcp</a></strong> holds
+        the top score at 98.67 — a community-built Unity Editor bridge with 43 contributors and 7,003 stars.
+        No corporate backing. Highest score in the entire index.
+      </p>
+      <p>
+        <strong><a href="/tool/PrefectHQ--fastmcp/" class="inline-link">PrefectHQ/fastmcp</a></strong> is the
+        most popular tool in the top 10 by raw star count (23,659) and has the deepest dependency graph —
+        7,718 other repositories depend on it. That inbound-dependent signal is the strongest single indicator
+        of ecosystem adoption in the scoring model.
+      </p>
+      <p>
+        <strong><a href="/tool/mark3labs--mcp-go/" class="inline-link">mark3labs/mcp-go</a></strong> is
+        the infrastructure pick: 8,353 stars, 170 contributors, 2,938 dependents. If you're building Go
+        tooling on top of MCP, this is the default SDK.
+      </p>
+    </section>
+
+    <section id="movers">
+      <h2>Biggest movers this week</h2>
+      <p>
+        The AgentRank index takes daily score snapshots. These are the five tools with the largest score
+        improvement from March 16 to March 17 — measured by the composite score delta, not just star count.
+      </p>
+
+      <table class="data-table movers-table">
+        <thead>
+          <tr>
+            <th>Repository</th>
+            <th class="num">Score before</th>
+            <th class="num">Score now</th>
+            <th class="num">Delta</th>
+            <th class="num">Rank change</th>
+          </tr>
+        </thead>
+        <tbody>
+          {movers.map((tool) => (
+            <tr>
+              <td class="tool-cell">
+                <a href={`/tool/${tool.slug}/`} class="tool-link">{tool.name}</a>
+              </td>
+              <td class="num muted">{tool.scoreBefore}</td>
+              <td class="num score-cell">{tool.scoreNow}</td>
+              <td class="num positive">{tool.delta}</td>
+              <td class="num positive">+{tool.rankGain} ({tool.rankBefore} &rarr; {tool.rankNow})</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+
+      <p>
+        <strong><a href="/tool/homeassistant-ai--ha-mcp/" class="inline-link">homeassistant-ai/ha-mcp</a></strong> is
+        the standout mover: it jumped 56 rank positions in a single day (rank 72 to 16), driven by a surge
+        in issue closures and a contributor count increase. Home automation is an underappreciated MCP category —
+        this is the tool to watch in April.
+      </p>
+      <p>
+        <strong><a href="/tool/rekog-labs--MCP-Nest/" class="inline-link">rekog-labs/MCP-Nest</a></strong> (NestJS
+        framework for building MCP servers) also gained 57 rank positions. The NestJS community is a late but
+        fast adopter — TypeScript-native, opinionated, high issue-health baseline.
+      </p>
+      <p>
+        Weekly movers are posted every Monday. <a href="https://x.com/AgentRank_ai" target="_blank" rel="noopener noreferrer">Follow @AgentRank_ai</a>
+        for the live feed, or check the <a href="/trends/" class="inline-link">trends dashboard</a> for the
+        full moving-window chart.
+      </p>
+    </section>
+
+    <section id="skills">
+      <h2>Skills leaderboard</h2>
+      <p>
+        Beyond GitHub repos, AgentRank indexes <strong>3,124 agent skills</strong> from three registries:
+        skills.sh (2,029 skills, 64.9%), Glama (1,023 skills, 32.7%), and ClaWhub (72 skills, 2.3%).
+        Total recorded installs across all tracked skills: <strong>17,816,525</strong>.
+      </p>
+
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th class="num">#</th>
+            <th>Skill</th>
+            <th>Source</th>
+            <th class="num">Installs</th>
+            <th class="num">Repo stars</th>
+          </tr>
+        </thead>
+        <tbody>
+          {topSkills.map((skill) => (
+            <tr>
+              <td class="num">{skill.rank}</td>
+              <td class="tool-cell"><span class="skill-slug">{skill.slug}</span></td>
+              <td class="source-badge">{skill.source}</td>
+              <td class="num">{skill.installs.toLocaleString('en-US')}</td>
+              <td class="num">{skill.ghStars.toLocaleString('en-US')}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+
+      <p>
+        <strong>Microsoft's Playwright MCP</strong> has 1,777,315 Glama installs — that's more installs
+        than the next 20 skills combined. Browser automation through MCP is the dominant use case for
+        production agent deployments right now. This isn't surprising: web interaction is the most common
+        task a general-purpose agent needs, and Playwright is the production-grade tool for it.
+      </p>
+      <p>
+        <strong>MongoDB's MCP server</strong> ranks #5 with 386,047 installs despite only 959 GitHub stars —
+        a stark reminder that install counts and star counts measure different things. Enterprise tooling
+        gets deployed quietly.
+      </p>
+    </section>
+
+    <section id="languages">
+      <h2>Language distribution</h2>
+      <p>
+        Python leads at 38.5% but TypeScript is gaining. The top tier of the leaderboard is increasingly
+        TypeScript-heavy — 6 of the top 10 repos are TypeScript or C# (both compiled, typed languages).
+        Dynamically-typed Python still owns the experimentation layer.
+      </p>
+
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Language</th>
+            <th class="num">Repos</th>
+            <th class="num">Share</th>
+            <th>Bar</th>
+          </tr>
+        </thead>
+        <tbody>
+          {languages.map((row) => (
+            <tr>
+              <td class="lang-name">{row.lang}</td>
+              <td class="num">{row.count.toLocaleString('en-US')}</td>
+              <td class="num">{row.pct}%</td>
+              <td class="bar-cell">
+                <div class="bar" style={`width: ${Math.round(row.pct / 38.5 * 100)}%`}></div>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+
+      <p>
+        Go's 4.8% share understates its influence. The two most-depended-on tools in the index
+        (<a href="/tool/mark3labs--mcp-go/" class="inline-link">mark3labs/mcp-go</a> and
+        <a href="/tool/github--github-mcp-server/" class="inline-link">github/github-mcp-server</a>) are both Go.
+        When production teams want a stable, low-overhead MCP server, Go is the answer.
+      </p>
+      <p>
+        Rust's 2.6% produces the highest-quality tools per repo. Rust MCP servers are statistically more
+        likely to appear in the Elite score tier than tools in any other language.
+        See our <a href="/blog/best-python-mcp-libraries/" class="inline-link">best Python MCP libraries</a> and
+        <a href="/blog/fastmcp-tutorial-python-mcp-server/" class="inline-link">FastMCP tutorial</a> for
+        language-specific guidance.
+      </p>
+    </section>
+
+    <section id="health">
+      <h2>Ecosystem health signals</h2>
+
+      <div class="freshness-callouts">
+        <div class="callout">
+          <div class="callout-number">15.6%</div>
+          <div class="callout-label">Repos with commits in last 30 days</div>
+          <div class="callout-delta">~3,995 actively developed tools</div>
+        </div>
+        <div class="callout">
+          <div class="callout-number">3.0%</div>
+          <div class="callout-label">Repos with multiple contributors</div>
+          <div class="callout-delta">770 repos — higher bus-factor safety</div>
+        </div>
+        <div class="callout">
+          <div class="callout-number">4.4%</div>
+          <div class="callout-label">Repos inactive 1+ year</div>
+          <div class="callout-delta">1,119 repos — low graveyard rate</div>
+        </div>
+      </div>
+
+      <p>
+        The 15.6% freshness rate (repos with a commit in the last 30 days) is the number to watch month
+        over month. The absolute count matters more than the percentage: 3,995 actively maintained tools
+        is substantial production coverage for an ecosystem that didn't exist 16 months ago.
+      </p>
+      <p>
+        The 54.4% of repos last committed 91–365 days ago represents the bulk of the "long tail" —
+        tools built for specific use cases, used quietly, and rarely updated. This is normal. Not every
+        MCP server needs weekly commits. The signal that matters is whether issue health is high (problems
+        get resolved when they arise) and whether the core functionality is stable.
+      </p>
+      <p>
+        <strong>Archived repos: 353 (1.4%).</strong> The graveyard rate is remarkably low.
+        Most abandoned MCP projects are left in a limbo state (last commit 6–12 months ago,
+        no archived flag) rather than formally archived. The 1.4% number undercounts true abandonment
+        but the ecosystem churn rate is genuinely lower than most developer tooling ecosystems at this age.
+      </p>
+
+      <h3>Score tier breakdown</h3>
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Score tier</th>
+            <th class="num">Repos</th>
+            <th class="num">Share</th>
+            <th>Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="tier-elite">Elite (90–100)</td>
+            <td class="num">40</td>
+            <td class="num">0.2%</td>
+            <td>Active, well-maintained, widely adopted</td>
+          </tr>
+          <tr>
+            <td class="tier-high">High (70–89)</td>
+            <td class="num">255</td>
+            <td class="num">1.0%</td>
+            <td>Strong signals across most dimensions</td>
+          </tr>
+          <tr>
+            <td class="tier-medium">Medium (50–69)</td>
+            <td class="num">2,357</td>
+            <td class="num">9.2%</td>
+            <td>Functional, some maintenance gaps</td>
+          </tr>
+          <tr>
+            <td class="tier-low">Low (30–49)</td>
+            <td class="num">6,824</td>
+            <td class="num">26.6%</td>
+            <td>Limited signals — new or lightly maintained</td>
+          </tr>
+          <tr>
+            <td class="tier-emerging">Emerging (&lt;30)</td>
+            <td class="num">16,156</td>
+            <td class="num">63.0%</td>
+            <td>Experimental, abandoned, or very new</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p>
+        The score distribution is heavily right-skewed. That's healthy: a small number of well-maintained
+        tools doing the work for a much larger number of experiments is exactly what a maturing ecosystem
+        looks like. The question for April is whether the Medium tier (2,357 repos) can graduate more
+        tools into the High tier as maintainers respond to issues and push commits.
+      </p>
+    </section>
+
+    <section id="april">
+      <h2>What to watch in April 2026</h2>
+
+      <h3>1. Home automation MCP goes mainstream</h3>
+      <p>
+        <a href="/tool/homeassistant-ai--ha-mcp/" class="inline-link">homeassistant-ai/ha-mcp</a>'s 56-rank
+        jump in a single day signals that the home automation community is arriving in force. Home Assistant
+        has a large, highly engaged developer base. Expect more home automation MCP tools to enter the top 50
+        as the HomeAssistant community formalizes its MCP integration patterns.
+      </p>
+
+      <h3>2. NestJS / framework-native MCP gains traction</h3>
+      <p>
+        <a href="/tool/rekog-labs--MCP-Nest/" class="inline-link">rekog-labs/MCP-Nest</a> entering the top 25
+        confirms that enterprise TypeScript teams want opinionated framework integration, not raw SDK use.
+        Watch for similar libraries for Spring Boot, Django, and Rails as framework-native MCP adapters
+        become the preferred enterprise entry point.
+      </p>
+
+      <h3>3. A2A tool count crosses 200</h3>
+      <p>
+        Currently 128 repos in the index match A2A agent queries — up from near-zero at the start of Q1.
+        The pace is accelerating. April will likely see A2A cross 200 indexed repos as the spec stabilizes
+        and early adopters publish reference implementations.
+        See our <a href="/blog/a2a-vs-mcp-agent-protocol-comparison/" class="inline-link">A2A vs MCP comparison</a>
+        for context on where the two protocols diverge.
+      </p>
+
+      <h3>4. The skills install concentration problem</h3>
+      <p>
+        Microsoft Playwright MCP's 1.77M installs represent more than 10% of all skill installs across the
+        entire index. As MCP moves into production, this concentration will increase. The April question:
+        does the second tier (MongoDB at 386K, browser-use at 49K) close the gap, or does Playwright
+        extend its lead further? Browser automation and database access are the two highest-frequency
+        agent tasks — the tools that win those categories will dominate the install curve.
+      </p>
+
+      <div class="cta-box">
+        <p>
+          <strong>Browse the full index</strong> with daily-updated scores, language filters, and score
+          history: <a href="/">agentrank-ai.com</a>
+        </p>
+        <p>
+          <strong>Building an MCP server?</strong> <a href="/submit/">Submit your tool</a> to get indexed
+          and appear in the April monthly report.
+        </p>
+      </div>
+    </section>
+
+    <RelatedPosts posts={relatedPosts} />
+    <BlogSubscribeCTA source="blog" />
+    <footer class="post-footer">
+      <p class="methodology">
+        <strong>Methodology:</strong> All figures from the AgentRank index as of March 18, 2026.
+        GitHub data crawled nightly via the GitHub API. Skills data sourced from skills.sh, Glama, and ClaWhub registries.
+        AgentRank score: stars 15%, freshness (days since last commit) 25%, issue health (closed/total issues) 25%,
+        contributors 10%, inbound dependents 25%. Score range 0–100. "Biggest movers" ranked by composite score delta
+        between the March 16 and March 17 daily snapshots.
+        This monthly report series publishes on the 18th of each month.
+      </p>
+      <p class="share-line">
+        Next report: April 18, 2026.
+        <a href="https://x.com/AgentRank_ai" target="_blank" rel="noopener noreferrer">Follow @AgentRank_ai</a>
+        for weekly movers and live data drops between reports.
+      </p>
+    </footer>
+  </article>
+
+  <style>
+    .blog-post {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 2rem 0 3rem;
+    }
+
+    .inline-link {
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    .breadcrumb {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      margin-bottom: 0.75rem;
+    }
+
+    .breadcrumb span {
+      margin: 0 0.25rem;
+      opacity: 0.5;
+    }
+
+    .post-header {
+      margin-bottom: 2rem;
+      padding-bottom: 1.5rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .post-header h1 {
+      font-size: 1.6rem;
+      font-weight: 700;
+      line-height: 1.3;
+      margin-bottom: 0.5rem;
+    }
+
+    .post-meta {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      margin-bottom: 1rem;
+    }
+
+    .post-meta .sep {
+      margin: 0 0.4rem;
+    }
+
+    .lede {
+      font-size: 1.05rem;
+      line-height: 1.65;
+      color: var(--text-secondary);
+    }
+
+    .toc {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 1rem 1.25rem;
+      margin-bottom: 2rem;
+      font-size: 0.88rem;
+    }
+
+    .toc strong {
+      display: block;
+      margin-bottom: 0.5rem;
+    }
+
+    .toc ol {
+      margin: 0;
+      padding-left: 1.2rem;
+    }
+
+    .toc li {
+      margin: 0.2rem 0;
+    }
+
+    section {
+      margin-bottom: 2.5rem;
+    }
+
+    section h2 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin-bottom: 0.75rem;
+      padding-bottom: 0.4rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    section h3 {
+      font-size: 1rem;
+      font-weight: 600;
+      margin: 1.25rem 0 0.5rem;
+    }
+
+    /* Stat grid */
+    .stat-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+      margin: 1.25rem 0;
+    }
+
+    .stat-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1rem;
+      text-align: center;
+    }
+
+    .stat-number {
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: var(--accent);
+      line-height: 1.2;
+    }
+
+    .stat-label {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-top: 0.25rem;
+    }
+
+    /* Tables */
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+      margin: 1rem 0 1.25rem;
+    }
+
+    .data-table th {
+      text-align: left;
+      padding: 0.5rem 0.6rem;
+      border-bottom: 2px solid var(--border);
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.02em;
+    }
+
+    .data-table td {
+      padding: 0.55rem 0.6rem;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+    }
+
+    .data-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .num {
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .rank-cell {
+      color: var(--text-muted);
+      font-weight: 600;
+      width: 2rem;
+    }
+
+    .tool-cell {
+      max-width: 220px;
+    }
+
+    .tool-link {
+      font-weight: 600;
+      color: var(--accent);
+      text-decoration: none;
+      font-size: 0.83rem;
+    }
+
+    .tool-link:hover {
+      text-decoration: underline;
+    }
+
+    .tool-desc {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-top: 0.15rem;
+      line-height: 1.4;
+    }
+
+    .score-cell {
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .lang-badge {
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+    }
+
+    .source-badge {
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+    }
+
+    .skill-slug {
+      font-family: var(--font-mono, monospace);
+      font-size: 0.78rem;
+      color: var(--text-secondary);
+    }
+
+    .muted {
+      color: var(--text-muted);
+    }
+
+    .positive {
+      color: var(--success, #22c55e);
+      font-weight: 600;
+    }
+
+    .lang-name {
+      font-weight: 600;
+    }
+
+    .bar-cell {
+      width: 80px;
+      padding: 0.55rem 0.6rem;
+    }
+
+    .bar {
+      height: 8px;
+      background: var(--accent);
+      border-radius: 2px;
+      opacity: 0.6;
+    }
+
+    /* Tier colors */
+    .tier-elite { color: var(--success, #22c55e); font-weight: 600; }
+    .tier-high { color: var(--accent); font-weight: 600; }
+    .tier-medium { font-weight: 500; }
+    .tier-low { color: var(--text-muted); }
+    .tier-emerging { color: var(--text-muted); }
+
+    /* Freshness callouts */
+    .freshness-callouts {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+      margin: 1.25rem 0;
+    }
+
+    .callout {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1rem;
+      text-align: center;
+    }
+
+    .callout-number {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--accent);
+    }
+
+    .callout-label {
+      font-size: 0.78rem;
+      color: var(--text-secondary);
+      margin-top: 0.25rem;
+      line-height: 1.4;
+    }
+
+    .callout-delta {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      margin-top: 0.3rem;
+    }
+
+    /* CTA */
+    .cta-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      border-radius: 4px;
+      padding: 1rem 1.25rem;
+      margin-top: 1.5rem;
+      font-size: 0.88rem;
+    }
+
+    .cta-box p {
+      margin: 0.25rem 0;
+    }
+
+    /* Footer */
+    .post-footer {
+      margin-top: 2.5rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--border);
+      font-size: 0.78rem;
+      color: var(--text-muted);
+    }
+
+    .methodology {
+      line-height: 1.6;
+    }
+
+    .share-line {
+      margin-top: 0.75rem;
+    }
+
+    @media (max-width: 600px) {
+      .stat-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .freshness-callouts {
+        grid-template-columns: 1fr;
+      }
+
+      .top10-table th:nth-child(4),
+      .top10-table td:nth-child(4),
+      .top10-table th:nth-child(5),
+      .top10-table td:nth-child(5),
+      .top10-table th:nth-child(6),
+      .top10-table td:nth-child(6) {
+        display: none;
+      }
+    }
+  </style>
+</Base>

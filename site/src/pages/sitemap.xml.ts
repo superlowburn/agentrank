@@ -22,6 +22,7 @@ const STATIC_PAGES = [
   { path: '/blog/', changefreq: 'weekly' },
   { path: '/category/', changefreq: 'weekly' },
   { path: '/pricing/', changefreq: 'weekly' },
+  { path: '/faq/', changefreq: 'monthly' },
   { path: '/methodology/', changefreq: 'monthly' },
   { path: '/integrations/', changefreq: 'weekly' },
   { path: '/embed/', changefreq: 'monthly' },

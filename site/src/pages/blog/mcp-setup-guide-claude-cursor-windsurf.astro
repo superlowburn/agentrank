@@ -44,6 +44,45 @@ const jsonLd = {
   keywords: 'claude desktop mcp setup, mcp server install, cursor mcp, windsurf mcp setup, add mcp server, mcp configuration, mcp setup guide 2026, vs code mcp',
 };
 
+const faqJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: [
+    {
+      '@type': 'Question',
+      name: 'How do I add an MCP server to Claude Desktop?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Edit Claude Desktop\'s config file (claude_desktop_config.json) and add an entry to the mcpServers object with the server\'s command and environment variables. Claude Desktop auto-launches the server process on startup.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'How do I add an MCP server to Cursor?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Open Cursor Settings, go to Features > MCP Servers, and add a new server configuration with its command. Cursor restarts the server process each session.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'How do I test that my MCP server configuration is working?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Use the MCP Inspector (MCPJam/inspector on GitHub, score 62.0) — an interactive GUI that connects to any MCP server and lets you browse tools, call them, and inspect responses without needing a full AI client.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'What MCP servers should I install first?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Start with the official Anthropic SDK servers for filesystem and GitHub access, then add domain-specific servers for your workflow. The AgentRank index ranks over 25,000 servers by real quality signals to help you find the best options.',
+      },
+    },
+  ],
+};
+
 const starterServers = [
   {
     rank: 1,
@@ -99,7 +138,7 @@ const starterServers = [
   activeTab="blog"
   keywords="claude desktop mcp setup, mcp server install, cursor mcp, windsurf mcp setup, add mcp server, mcp configuration guide 2026, vs code mcp copilot"
   canonicalUrl="https://agentrank-ai.com/blog/mcp-setup-guide-claude-cursor-windsurf/"
-  jsonLd={jsonLd}
+  jsonLd={[jsonLd, faqJsonLd]}
 
   ogImage="/og/mcp-setup-guide-claude-cursor-windsurf.png"
 >

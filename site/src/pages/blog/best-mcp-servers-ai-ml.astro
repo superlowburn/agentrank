@@ -138,6 +138,36 @@ const stats = {
   avgVectorScore: 38.4,
   topGeneralScore: 88.57,
 };
+const faqJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: [
+    {
+      '@type': 'Question',
+      name: 'What are the best MCP servers for AI and machine learning?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'The top AI/ML MCP servers connect agents to model inference APIs, vector databases, embedding services, and ML pipeline tools. They let AI agents call other AI models, search vector stores, and trigger ML workflows.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Can MCP servers connect to vector databases?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Yes — MCP servers for Pinecone, Weaviate, Qdrant, and Chroma exist in the AgentRank index. They let AI agents perform semantic search, upsert vectors, and manage collections through natural language.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'How do AI agents use MCP to call other AI models?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'AI/ML MCP servers can expose model inference endpoints as callable tools. An agent can call a tool like invoke_image_model() or search_embeddings() and the MCP server handles the API call and returns structured results.',
+      },
+    },
+  ],
+};
 ---
 
 <Base
@@ -146,7 +176,7 @@ const stats = {
   activeTab="blog"
   keywords="best MCP servers AI machine learning, vector database MCP server, RAG MCP server, HuggingFace MCP, Qdrant MCP, ChromaDB MCP, embedding search MCP tools 2026"
   canonicalUrl="https://agentrank-ai.com/blog/best-mcp-servers-ai-ml/"
-  jsonLd={jsonLd}
+  jsonLd={[jsonLd, faqJsonLd]}
 
   ogImage="/og/best-mcp-servers-ai-ml.png"
 >

@@ -1,0 +1,869 @@
+---
+export const prerender = true;
+
+import Base from '../../layouts/Base.astro';
+import BlogSubscribeCTA from '../../components/BlogSubscribeCTA.astro';
+import RelatedPosts from '../../components/RelatedPosts.astro';
+
+const relatedPosts = [
+  { href: '/blog/how-to-build-an-mcp-server/', title: 'How to Build an MCP Server in 2026' },
+  { href: '/blog/fastmcp-tutorial-python-mcp-server/', title: 'FastMCP Tutorial: Build a Python MCP Server in 20 Minutes' },
+  { href: '/blog/best-mcp-servers-ai-ml/', title: 'Best MCP Servers for AI/ML Workflows in 2026' },
+  { href: '/blog/mcp-server-landscape-q1-2026/', title: 'The MCP Server Landscape: Q1 2026' },
+  { href: '/blog/what-is-mcp-model-context-protocol-explained/', title: 'What is MCP? Model Context Protocol Explained' },
+];
+
+const publishDate = '2026-03-18';
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'TechArticle',
+  headline: 'How to Integrate AgentRank Scores Into Your AI Agent',
+  description: 'Step-by-step developer tutorial: use the AgentRank API to give your AI agent live MCP tool recommendations ranked by quality signals. Includes curl, Python, TypeScript, Claude MCP, OpenAI function calling, and LangChain examples.',
+  datePublished: publishDate,
+  dateModified: publishDate,
+  author: {
+    '@type': 'Organization',
+    name: 'AgentRank',
+    url: 'https://agentrank-ai.com',
+  },
+  publisher: {
+    '@type': 'Organization',
+    name: 'AgentRank',
+    logo: {
+      '@type': 'ImageObject',
+      url: 'https://agentrank-ai.com/og-image.png',
+    },
+  },
+  mainEntityOfPage: {
+    '@type': 'WebPage',
+    '@id': 'https://agentrank-ai.com/blog/integrate-agentrank-ai-agent-tutorial/',
+  },
+  image: 'https://agentrank-ai.com/og-image.png',
+  keywords: 'agentrank api tutorial, integrate agentrank, mcp tool recommendations, ai agent mcp server, agentrank python, agentrank typescript, openai function calling mcp, langchain mcp tools, agentrank mcp server',
+  proficiencyLevel: 'Intermediate',
+  dependencies: 'Python 3.10+ or Node.js 18+',
+};
+
+// ── code samples ──────────────────────────────────────────────────────────────
+// Defined here so JSX doesn't try to parse { and } as expressions.
+
+const curlSearch = `curl "https://agentrank-ai.com/api/v1/search?q=database&limit=5"`;
+
+const curlResponse = `{
+  "query": "database",
+  "category": "all",
+  "sort": "score",
+  "results": [
+    {
+      "type": "tool",
+      "id": "benborla29--mcp-server-mysql",
+      "name": "benborla29/mcp-server-mysql",
+      "description": "A MySQL MCP server with read and write operations",
+      "score": 72.4,
+      "rank": 18,
+      "url": "https://agentrank-ai.com/tool/benborla29--mcp-server-mysql/",
+      "raw": { "stars": 1842, "lastCommitAt": "2026-03-10T14:22:00Z" }
+    }
+  ],
+  "meta": { "total": 47, "limit": 5, "offset": 0 }
+}`;
+
+const pythonSearch = `import requests
+
+def search_tools(query: str, limit: int = 10) -> list[dict]:
+    """Search the AgentRank index for tools matching a query."""
+    resp = requests.get(
+        "https://agentrank-ai.com/api/v1/search",
+        params={"q": query, "limit": limit, "sort": "score"},
+        timeout=10,
+    )
+    resp.raise_for_status()
+    return resp.json()["results"]
+
+results = search_tools("database")
+for tool in results:
+    print(f"#{tool['rank']:3d}  {tool['name']:<45}  score={tool['score']}")`;
+
+const tsSearch = `interface AgentRankResult {
+  type: "tool" | "skill" | "agent";
+  id: string;
+  name: string;
+  description: string | null;
+  score: number;
+  rank: number;
+  url: string;
+}
+
+async function searchTools(query: string, limit = 10): Promise<AgentRankResult[]> {
+  const url = new URL("https://agentrank-ai.com/api/v1/search");
+  url.searchParams.set("q", query);
+  url.searchParams.set("limit", String(limit));
+  url.searchParams.set("sort", "score");
+
+  const res = await fetch(url.toString());
+  if (!res.ok) throw new Error(\`AgentRank API error: \${res.status}\`);
+  const data = await res.json();
+  return data.results;
+}
+
+const results = await searchTools("database");
+results.forEach(t => console.log(\`#\${t.rank}  \${t.name}  score=\${t.score}\`));`;
+
+const curlCategory = `# MCP tool repos only
+curl "https://agentrank-ai.com/api/v1/search?q=browser&category=tool&limit=5"
+
+# Registry skills only
+curl "https://agentrank-ai.com/api/v1/search?q=playwright&category=skill&limit=5"`;
+
+const pythonCategory = `def search_mcp_tools(query: str, sort: str = "score", limit: int = 10) -> list[dict]:
+    resp = requests.get(
+        "https://agentrank-ai.com/api/v1/search",
+        params={"q": query, "category": "tool", "sort": sort, "limit": limit},
+        timeout=10,
+    )
+    resp.raise_for_status()
+    return resp.json()["results"]
+
+top   = search_mcp_tools("browser automation")             # ranked by score
+fresh = search_mcp_tools("browser automation", sort="freshness")  # by recency`;
+
+const curlDetail = `curl -H "Authorization: Bearer YOUR_API_KEY" \\
+  "https://agentrank-ai.com/api/v2/tool/modelcontextprotocol--python-sdk"`;
+
+const detailResponse = `{
+  "id": "modelcontextprotocol--python-sdk",
+  "name": "modelcontextprotocol/python-sdk",
+  "score": 62.3,
+  "rank": 3,
+  "signals": {
+    "stars":       { "raw": 14820, "score": 85.0, "weight": 0.16 },
+    "freshness":   { "daysSinceLastCommit": 3, "score": 98.0, "weight": 0.30 },
+    "issueHealth": { "closeRate": 0.74, "score": 74.0, "weight": 0.32 },
+    "contributors":{ "count": 89, "score": 72.0, "weight": 0.12 },
+    "dependents":  { "count": 0,  "score": 0.0,  "weight": 0.00 }
+  },
+  "rankHistory": [
+    { "date": "2026-03-17", "rank": 4, "score": 61.8 },
+    { "date": "2026-03-16", "rank": 4, "score": 61.5 }
+  ]
+}`;
+
+const pythonDetail = `import requests
+
+API_KEY = "your_api_key"  # get free at agentrank-ai.com/docs
+
+def get_tool_details(github_full_name: str) -> dict:
+    tool_id = github_full_name.replace("/", "--")
+    resp = requests.get(
+        f"https://agentrank-ai.com/api/v2/tool/{tool_id}",
+        headers={"Authorization": f"Bearer {API_KEY}"},
+        timeout=10,
+    )
+    resp.raise_for_status()
+    return resp.json()
+
+details = get_tool_details("modelcontextprotocol/python-sdk")
+print(f"Score: {details['score']} | Rank: #{details['rank']}")
+for signal, data in details["signals"].items():
+    print(f"  {signal:<16} {data['score']:5.1f}  (weight {data['weight']:.0%})")`;
+
+const pythonRecommend = `import requests
+
+BASE_URL = "https://agentrank-ai.com/api/v1/search"
+
+def recommend_tools(use_case: str, top_n: int = 5) -> str:
+    """Return top-ranked MCP tools for a given use case.
+
+    Args:
+        use_case: e.g. "scrape web pages" or "query postgres"
+        top_n: number of results
+
+    Returns:
+        Formatted string ready to inject into an LLM prompt.
+    """
+    resp = requests.get(
+        BASE_URL,
+        params={"q": use_case, "category": "tool", "sort": "score", "limit": top_n},
+        timeout=10,
+    )
+    resp.raise_for_status()
+    results = resp.json()["results"]
+
+    if not results:
+        return f"No ranked tools found for '{use_case}'."
+
+    verdict = lambda s: "highly rated" if s >= 80 else "solid" if s >= 60 else "use with caution"
+
+    lines = [f"Top {len(results)} MCP tools for '{use_case}':\\n"]
+    for i, tool in enumerate(results, 1):
+        lines.append(f"{i}. {tool['name']} — score {tool['score']:.1f} ({verdict(tool['score'])}, #{tool['rank']})")
+        if tool.get("description"):
+            lines.append(f"   {tool['description']}")
+        lines.append(f"   {tool['url']}")
+    return "\\n".join(lines)`;
+
+const tsRecommend = `const BASE_URL = "https://agentrank-ai.com/api/v1/search";
+
+export async function recommendTools(useCase: string, topN = 5): Promise<string> {
+  const url = new URL(BASE_URL);
+  url.searchParams.set("q", useCase);
+  url.searchParams.set("category", "tool");
+  url.searchParams.set("sort", "score");
+  url.searchParams.set("limit", String(topN));
+
+  const res = await fetch(url.toString());
+  if (!res.ok) throw new Error(\`AgentRank error: \${res.status}\`);
+  const data = await res.json();
+  const results: any[] = data.results;
+
+  if (!results.length) return \`No ranked tools found for '\${useCase}'.\`;
+
+  const verdict = (s: number) =>
+    s >= 80 ? "highly rated" : s >= 60 ? "solid" : "use with caution";
+
+  const lines = [\`Top \${results.length} MCP tools for '\${useCase}':\\n\`];
+  results.forEach((tool, i) => {
+    lines.push(\`\${i + 1}. \${tool.name} — score \${tool.score.toFixed(1)} (\${verdict(tool.score)}, #\${tool.rank})\`);
+    if (tool.description) lines.push(\`   \${tool.description}\`);
+    lines.push(\`   \${tool.url}\`);
+  });
+  return lines.join("\\n");
+}`;
+
+const openaiAgent = `from openai import OpenAI
+from recommend_tools import recommend_tools
+import json, os
+
+client = OpenAI(api_key=os.environ["OPENAI_API_KEY"])
+
+TOOLS = [
+  {
+    "type": "function",
+    "function": {
+      "name": "recommend_tools",
+      "description": (
+        "Search AgentRank for MCP servers ranked by quality signals. "
+        "Use when the user asks for a tool recommendation."
+      ),
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "use_case": {"type": "string", "description": "What the tool should do"},
+          "top_n":    {"type": "integer", "default": 5},
+        },
+        "required": ["use_case"],
+      },
+    },
+  }
+]
+
+def chat(user_message: str) -> str:
+    messages = [{"role": "user", "content": user_message}]
+    response = client.chat.completions.create(
+        model="gpt-4o", messages=messages, tools=TOOLS, tool_choice="auto"
+    )
+    msg = response.choices[0].message
+    if not msg.tool_calls:
+        return msg.content
+
+    messages.append(msg)
+    for call in msg.tool_calls:
+        args = json.loads(call.function.arguments)
+        messages.append({"role": "tool", "tool_call_id": call.id,
+                         "content": recommend_tools(**args)})
+
+    final = client.chat.completions.create(model="gpt-4o", messages=messages)
+    return final.choices[0].message.content
+
+print(chat("What's the best MCP server for browsing the web?"))`;
+
+const langchainAgent = `from langchain.agents import AgentExecutor, create_openai_functions_agent
+from langchain_core.tools import Tool
+from langchain_openai import ChatOpenAI
+from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
+from recommend_tools import recommend_tools
+
+agentrank_tool = Tool(
+    name="recommend_tools",
+    func=lambda q: recommend_tools(q),
+    description=(
+        "Search AgentRank for top-ranked MCP servers. "
+        "Input: plain-English use case. Returns: ranked recommendations."
+    ),
+)
+
+llm    = ChatOpenAI(model="gpt-4o", temperature=0)
+prompt = ChatPromptTemplate.from_messages([
+    ("system", "You are a helpful AI assistant. Use AgentRank to recommend tools."),
+    ("human", "{input}"),
+    MessagesPlaceholder("agent_scratchpad"),
+])
+agent    = create_openai_functions_agent(llm, [agentrank_tool], prompt)
+executor = AgentExecutor(agent=agent, tools=[agentrank_tool], verbose=True)
+
+result = executor.invoke({"input": "I need to browse the web from my AI agent"})
+print(result["output"])`;
+
+const claudeDesktopConfig = `{
+  "mcpServers": {
+    "agentrank": {
+      "command": "npx",
+      "args": ["-y", "agentrank-mcp-server"]
+    }
+  }
+}`;
+
+const vsCodeConfig = `{
+  "servers": {
+    "agentrank": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "agentrank-mcp-server"]
+    }
+  }
+}`;
+const faqJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: [
+    {
+      '@type': 'Question',
+      name: 'How do I integrate AgentRank into my AI agent?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Use the AgentRank API to give your AI agent live MCP tool recommendations ranked by quality signals. The API supports tool search, category filtering, and score lookups. Examples are available for curl, Python, TypeScript, OpenAI function calling, and LangChain.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'What is the AgentRank API?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'The AgentRank API provides programmatic access to 25,000+ ranked MCP servers. Endpoints include /tools (leaderboard), /search (keyword search), /categories (filtered by category), and /skills. Requires a Pro API plan at agentrank-ai.com/pricing.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Can I use AgentRank with the Claude API?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Yes. AgentRank provides an MCP server (install via npx -y agentrank-mcp) that lets any MCP-compatible client query the index. You can also call the REST API directly with the Anthropic SDK using tool_use/function_calling patterns.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'What AgentRank API endpoints are available?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'The main endpoints are: GET /api/tools (ranked leaderboard with pagination), GET /api/search?q= (keyword search across 25,000+ tools), GET /api/tools/:slug (single tool with score breakdown), and GET /api/categories (all categories with counts). See agentrank-ai.com/docs for full documentation.',
+      },
+    },
+  ],
+};
+---
+
+<Base
+  title="How to Integrate AgentRank Scores Into Your AI Agent — Tutorial"
+  description="Step-by-step developer tutorial: use the AgentRank API to give your AI agent live MCP tool recommendations ranked by quality signals. curl, Python, TypeScript, Claude MCP, OpenAI, and LangChain examples."
+  activeTab="blog"
+  keywords="agentrank api tutorial, integrate agentrank, mcp tool recommendations, ai agent mcp server, agentrank python, agentrank typescript, openai function calling mcp"
+  canonicalUrl="https://agentrank-ai.com/blog/integrate-agentrank-ai-agent-tutorial/"
+  jsonLd={[jsonLd, faqJsonLd]}
+  ogImage="/og-image.png"
+>
+  <article class="blog-post">
+    <header class="post-header">
+      <div class="breadcrumb"><a href="/blog/">Blog</a> <span>/</span></div>
+      <h1>How to Integrate AgentRank Scores Into Your AI Agent</h1>
+      <div class="post-meta">
+        <time datetime={publishDate}>March 18, 2026</time>
+        <span class="sep">&middot;</span>
+        <span>15 min read</span>
+        <span class="sep">&middot;</span>
+        <span>Developer Tutorial</span>
+      </div>
+      <p class="lede">
+        The AgentRank API indexes <strong>25,000+ MCP servers and agent tools</strong>, scored daily
+        by real signals: stars, freshness, issue health, contributors, and dependents. This tutorial
+        shows you how to query those rankings from your own agent — so it recommends the best tool
+        for the job instead of guessing.
+      </p>
+    </header>
+
+    <nav class="toc">
+      <strong>Contents</strong>
+      <ol>
+        <li><a href="#what-you-build">What you'll build</a></li>
+        <li><a href="#prerequisites">Prerequisites</a></li>
+        <li><a href="#step1-query">Step 1 — Query the API</a></li>
+        <li><a href="#step2-category">Step 2 — Filter by category</a></li>
+        <li><a href="#step3-details">Step 3 — Get tool details</a></li>
+        <li><a href="#step4-recommend">Step 4 — Build a recommendation function</a></li>
+        <li><a href="#step5-agent">Step 5 — Add to your agent</a></li>
+        <li><a href="#bonus-mcp">Bonus — Use the AgentRank MCP server</a></li>
+      </ol>
+    </nav>
+
+    <section id="what-you-build">
+      <h2>What you'll build</h2>
+      <p>
+        By the end of this tutorial you'll have a <code>recommend_tools(use_case)</code> function
+        that takes a natural-language description and returns the top-ranked MCP servers for that
+        use case — scored by real quality signals, updated daily. You'll wire it into:
+      </p>
+      <ul class="feature-list">
+        <li><strong>Claude</strong> — via the AgentRank MCP server (zero code required)</li>
+        <li><strong>OpenAI</strong> — as a function-calling tool</li>
+        <li><strong>LangChain</strong> — as a structured tool</li>
+      </ul>
+      <p>The recommendation logic is ~20 lines. All the intelligence comes from the AgentRank index.</p>
+    </section>
+
+    <section id="prerequisites">
+      <h2>Prerequisites</h2>
+      <ul class="feature-list">
+        <li>Basic Python 3.10+ <em>or</em> TypeScript/Node.js 18+ knowledge</li>
+        <li>The AgentRank API base URL: <code>https://agentrank-ai.com/api/v1</code> (no auth for read queries)</li>
+        <li>For advanced endpoints: a free API key from <a href="/docs/" class="inline-link">agentrank-ai.com/docs</a></li>
+      </ul>
+      <div class="info-box">
+        <strong>API tiers</strong>
+        <p>
+          The <code>/api/v1</code> endpoints are public — no API key, no signup. Rate limit: 100 req/min per IP.
+          The <code>/api/v2</code> endpoints require a Bearer token and return richer data:
+          full score breakdowns, rank history, and Glama usage stats.
+          Get a free key at <a href="/docs/" class="inline-link">agentrank-ai.com/docs</a>.
+        </p>
+      </div>
+    </section>
+
+    <section id="step1-query">
+      <h2>Step 1 — Query the API</h2>
+      <p>
+        The search endpoint returns tools ranked by AgentRank score. The simplest query is a
+        keyword search with no authentication required.
+      </p>
+
+      <h3>curl</h3>
+      <div class="code-block">
+        <div class="code-label">curl — search for database tools</div>
+        <pre><code>{curlSearch}</code></pre>
+      </div>
+      <div class="code-block">
+        <div class="code-label">Response</div>
+        <pre><code>{curlResponse}</code></pre>
+      </div>
+
+      <h3>Python</h3>
+      <div class="code-block">
+        <div class="code-label">Python — requests</div>
+        <pre><code>{pythonSearch}</code></pre>
+      </div>
+
+      <h3>TypeScript</h3>
+      <div class="code-block">
+        <div class="code-label">TypeScript — fetch</div>
+        <pre><code>{tsSearch}</code></pre>
+      </div>
+    </section>
+
+    <section id="step2-category">
+      <h2>Step 2 — Filter by category</h2>
+      <p>
+        The <code>category</code> parameter narrows results. Valid values: <code>tool</code>
+        (GitHub repos), <code>skill</code> (registry entries), <code>agent</code> (A2A agents),
+        or omit for all. The <code>sort</code> parameter accepts <code>score</code> (default),
+        <code>rank</code>, <code>stars</code>, or <code>freshness</code>.
+      </p>
+      <div class="code-block">
+        <div class="code-label">curl — category and sort examples</div>
+        <pre><code>{curlCategory}</code></pre>
+      </div>
+      <div class="code-block">
+        <div class="code-label">Python — category + sort</div>
+        <pre><code>{pythonCategory}</code></pre>
+      </div>
+    </section>
+
+    <section id="step3-details">
+      <h2>Step 3 — Get tool details</h2>
+      <p>
+        The <code>/api/v2/tool/&#123;id&#125;</code> endpoint returns the full signal breakdown:
+        individual sub-scores, weights, rank history, GitHub topics, and Glama usage stats.
+        This endpoint requires an API key. The tool ID uses <code>--</code> instead of <code>/</code>
+        (e.g. <code>modelcontextprotocol/python-sdk</code> → <code>modelcontextprotocol--python-sdk</code>).
+      </p>
+      <div class="code-block">
+        <div class="code-label">curl — full tool detail (v2)</div>
+        <pre><code>{curlDetail}</code></pre>
+      </div>
+      <div class="code-block">
+        <div class="code-label">Response — score breakdown</div>
+        <pre><code>{detailResponse}</code></pre>
+      </div>
+      <div class="code-block">
+        <div class="code-label">Python — look up a specific tool</div>
+        <pre><code>{pythonDetail}</code></pre>
+      </div>
+    </section>
+
+    <section id="step4-recommend">
+      <h2>Step 4 — Build a recommendation function</h2>
+      <p>
+        Combine search and filtering into a single <code>recommend_tools</code> function.
+        Takes plain-English input, returns an agent-friendly formatted summary.
+      </p>
+      <div class="code-block">
+        <div class="code-label">Python — recommend_tools.py</div>
+        <pre><code>{pythonRecommend}</code></pre>
+      </div>
+      <div class="code-block">
+        <div class="code-label">TypeScript — recommendTools.ts</div>
+        <pre><code>{tsRecommend}</code></pre>
+      </div>
+    </section>
+
+    <section id="step5-agent">
+      <h2>Step 5 — Add to your agent</h2>
+
+      <h3>OpenAI function calling</h3>
+      <p>
+        Expose <code>recommend_tools</code> as a tool in your OpenAI chat loop.
+        The model calls it automatically when the user asks for a tool recommendation.
+      </p>
+      <div class="code-block">
+        <div class="code-label">Python — openai_agent.py</div>
+        <pre><code>{openaiAgent}</code></pre>
+      </div>
+
+      <h3>LangChain</h3>
+      <p>
+        Wrap <code>recommend_tools</code> as a LangChain <code>Tool</code> and add it to any
+        ReAct or OpenAI Functions agent.
+      </p>
+      <div class="code-block">
+        <div class="code-label">Python — langchain_agent.py</div>
+        <pre><code>{langchainAgent}</code></pre>
+      </div>
+    </section>
+
+    <section id="bonus-mcp">
+      <h2>Bonus — Use the AgentRank MCP server</h2>
+      <p>
+        If you're using Claude Desktop, Cursor, Windsurf, or any other MCP-capable client,
+        skip the API integration entirely. Install the
+        <a href="https://www.npmjs.com/package/agentrank-mcp-server" target="_blank" rel="noopener noreferrer" class="inline-link">agentrank-mcp-server</a>
+        npm package and Claude will automatically query AgentRank whenever it needs to recommend a tool.
+      </p>
+
+      <div class="code-block">
+        <div class="code-label">Install</div>
+        <pre><code>npm install -g agentrank-mcp-server
+# or without installing:
+npx -y agentrank-mcp-server</code></pre>
+      </div>
+
+      <h3>Claude Desktop &amp; Cursor</h3>
+      <div class="code-block">
+        <div class="code-label">~/.config/claude/claude_desktop_config.json  or  .cursor/mcp.json</div>
+        <pre><code>{claudeDesktopConfig}</code></pre>
+      </div>
+
+      <h3>VS Code (Copilot)</h3>
+      <div class="code-block">
+        <div class="code-label">.vscode/mcp.json</div>
+        <pre><code>{vsCodeConfig}</code></pre>
+      </div>
+
+      <p>The MCP server exposes three tools:</p>
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Tool</th>
+            <th>Description</th>
+            <th>Example prompt</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>search</code></td>
+            <td>Search 25,000+ MCP servers by keyword</td>
+            <td>"Best tool for querying a database?"</td>
+          </tr>
+          <tr>
+            <td><code>lookup</code></td>
+            <td>Get score and verdict for a specific GitHub repo</td>
+            <td>"Is modelcontextprotocol/python-sdk any good?"</td>
+          </tr>
+          <tr>
+            <td><code>get_badge_url</code></td>
+            <td>Generate an embeddable score badge</td>
+            <td>"Give me a README badge for my MCP server"</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="info-box">
+        <strong>How the MCP server works</strong>
+        <p>
+          Calls <code>/api/v1/search</code> — no API key needed, no configuration required.
+          Rankings update nightly, so recommendations always reflect the current ecosystem.
+        </p>
+      </div>
+    </section>
+
+    <section id="whats-next">
+      <h2>What's next</h2>
+      <ul class="feature-list">
+        <li><strong>Add rank history</strong> — v2 API with <code>?history=1</code> detects trending tools</li>
+        <li><strong>Scope by language</strong> — search for <code>"python database"</code> to narrow results</li>
+        <li><strong>Embed score badges</strong> — show AgentRank scores in your tool catalog or README</li>
+        <li><strong>Submit your own tool</strong> — add any GitHub repo at <a href="/submit/" class="inline-link">agentrank-ai.com/submit</a></li>
+      </ul>
+      <p>
+        The complete runnable code samples are in the
+        <a href="https://github.com/superlowburn/agentrank/tree/main/scripts/quickstart-code-samples" target="_blank" rel="noopener noreferrer" class="inline-link">scripts/quickstart-code-samples</a>
+        directory of the AgentRank repo.
+      </p>
+    </section>
+
+    <BlogSubscribeCTA />
+    <RelatedPosts posts={relatedPosts} />
+  </article>
+</Base>
+
+<style>
+  .blog-post {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 2rem 1rem 4rem;
+  }
+
+  .breadcrumb {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    margin-bottom: 0.75rem;
+  }
+
+  .breadcrumb a {
+    color: var(--text-muted);
+    text-decoration: none;
+  }
+
+  .breadcrumb a:hover { color: var(--text); }
+
+  .breadcrumb span { margin: 0 0.3rem; }
+
+  .post-header {
+    margin-bottom: 2.5rem;
+    padding-bottom: 2rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  h1 {
+    font-size: 1.9rem;
+    font-weight: 700;
+    line-height: 1.25;
+    margin: 0 0 0.75rem;
+    color: var(--text);
+    letter-spacing: -0.02em;
+  }
+
+  .post-meta {
+    font-size: 0.82rem;
+    color: var(--text-muted);
+    margin-bottom: 1.25rem;
+  }
+
+  .sep { margin: 0 0.4rem; }
+
+  .lede {
+    font-size: 1.05rem;
+    line-height: 1.65;
+    color: var(--text-secondary);
+    margin: 0;
+  }
+
+  .toc {
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 1rem 1.25rem;
+    margin-bottom: 2.5rem;
+    font-size: 0.85rem;
+  }
+
+  .toc strong {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-muted);
+  }
+
+  .toc ol {
+    margin: 0;
+    padding-left: 1.25rem;
+    line-height: 1.9;
+  }
+
+  .toc a {
+    color: var(--text-secondary);
+    text-decoration: none;
+  }
+
+  .toc a:hover { color: var(--text); }
+
+  section { margin-bottom: 3rem; }
+
+  h2 {
+    font-size: 1.3rem;
+    font-weight: 700;
+    margin: 0 0 1rem;
+    padding-top: 0.5rem;
+    color: var(--text);
+    letter-spacing: -0.01em;
+  }
+
+  h3 {
+    font-size: 1rem;
+    font-weight: 600;
+    margin: 1.5rem 0 0.5rem;
+    color: var(--text);
+  }
+
+  p {
+    font-size: 0.92rem;
+    line-height: 1.7;
+    color: var(--text-secondary);
+    margin: 0 0 1rem;
+  }
+
+  ul, ol {
+    font-size: 0.92rem;
+    line-height: 1.7;
+    color: var(--text-secondary);
+    margin: 0 0 1rem;
+    padding-left: 1.5rem;
+  }
+
+  a {
+    color: var(--text);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  .inline-link {
+    color: var(--text);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  code {
+    font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+    font-size: 0.82em;
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    padding: 0.1em 0.35em;
+  }
+
+  .code-block {
+    margin: 1rem 0 1.25rem;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .code-label {
+    background: var(--bg-surface);
+    border-bottom: 1px solid var(--border);
+    padding: 0.4rem 0.75rem;
+    font-size: 0.72rem;
+    font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  .code-block pre {
+    margin: 0;
+    padding: 1rem 0.875rem;
+    overflow-x: auto;
+    background: transparent;
+  }
+
+  .code-block pre code {
+    font-size: 0.78rem;
+    background: none;
+    border: none;
+    padding: 0;
+    line-height: 1.6;
+    color: var(--text);
+    white-space: pre;
+  }
+
+  .data-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.82rem;
+    margin: 1rem 0 1.25rem;
+  }
+
+  .data-table th {
+    text-align: left;
+    font-weight: 600;
+    color: var(--text-muted);
+    border-bottom: 1px solid var(--border);
+    padding: 0.4rem 0.75rem 0.4rem 0;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+
+  .data-table td {
+    padding: 0.45rem 0.75rem 0.45rem 0;
+    border-bottom: 1px solid var(--border);
+    color: var(--text);
+    vertical-align: top;
+  }
+
+  .data-table tr:last-child td { border-bottom: none; }
+
+  .feature-list {
+    padding-left: 0;
+    list-style: none;
+  }
+
+  .feature-list li {
+    padding: 0.4rem 0 0.4rem 1rem;
+    border-left: 2px solid var(--border);
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+    line-height: 1.6;
+  }
+
+  .info-box {
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--text-muted);
+    border-radius: 4px;
+    padding: 0.875rem 1rem;
+    margin: 1.25rem 0;
+    font-size: 0.88rem;
+  }
+
+  .info-box strong {
+    display: block;
+    margin-bottom: 0.35rem;
+    color: var(--text);
+  }
+
+  .info-box p {
+    margin: 0;
+    font-size: 0.88rem;
+    line-height: 1.6;
+  }
+</style>

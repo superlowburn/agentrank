@@ -128,6 +128,36 @@ const stats = {
   avgDataScienceScore: 32.5,
   topScore: 88.31,
 };
+const faqJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: [
+    {
+      '@type': 'Question',
+      name: 'What are the best MCP servers for data science workflows?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'The top data science MCP servers in the AgentRank index include tools for running Python or R code, executing Jupyter notebooks, connecting to data warehouses, and querying analytics platforms.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Can Claude run Python code through an MCP server?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Yes. Code execution MCP servers let Claude write and run Python (or R) code in a sandboxed environment. The agent can iterate on analysis, inspect results, and refine code without leaving the conversation.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Can I give Claude access to my data warehouse?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Yes. MCP servers for Snowflake, BigQuery, Databricks, and DuckDB let Claude query your data warehouse directly. The agent generates SQL, runs it through the MCP server, and analyzes the results.',
+      },
+    },
+  ],
+};
 ---
 
 <Base
@@ -136,7 +166,7 @@ const stats = {
   activeTab="blog"
   keywords="best MCP servers data science, jupyter MCP server, duckdb MCP data science, dbt MCP server, apache spark MCP, snowflake MCP 2026, google analytics MCP"
   canonicalUrl="https://agentrank-ai.com/blog/best-mcp-servers-data-science/"
-  jsonLd={jsonLd}
+  jsonLd={[jsonLd, faqJsonLd]}
   ogImage="/og/best-mcp-servers-data-science.png"
 >
   <article class="blog-post">

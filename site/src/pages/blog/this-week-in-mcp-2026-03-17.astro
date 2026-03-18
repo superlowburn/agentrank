@@ -43,6 +43,36 @@ const jsonLd = {
   image: 'https://agentrank-ai.com/og-image.png',
   keywords: 'this week in MCP 2026-03-17, MCP weekly report, MCP server updates March 17 2026, AgentRank weekly',
 };
+const faqJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: [
+    {
+      '@type': 'Question',
+      name: 'How often does AgentRank publish ecosystem updates?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'AgentRank publishes a weekly \'This Week in MCP\' digest covering the biggest movers, new tools entering the top 100, and notable ecosystem events. Subscribe to the newsletter for automatic delivery.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'How many new MCP servers are added each week?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Based on index data from March 2026, dozens to hundreds of new MCP-related repositories are discovered each week. The ecosystem is growing at over 6,000 new repositories per quarter.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Where can I track MCP server score changes?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'The AgentRank Movers page shows the biggest week-over-week score changes. The Trends page shows category-level momentum data. Subscribe to the digest for a curated weekly summary.',
+      },
+    },
+  ],
+};
 ---
 
 <Base
@@ -51,7 +81,7 @@ const jsonLd = {
   activeTab="blog"
   keywords="this week in MCP 2026-03-17, MCP weekly report, MCP server updates March 17, 2026, AgentRank weekly"
   canonicalUrl="https://agentrank-ai.com/blog/this-week-in-mcp-2026-03-17/"
-  jsonLd={jsonLd}
+  jsonLd={[jsonLd, faqJsonLd]}
 
   ogImage="/og/this-week-in-mcp-2026-03-17.png"
 >

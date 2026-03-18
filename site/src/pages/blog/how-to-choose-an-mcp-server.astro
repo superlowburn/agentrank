@@ -171,6 +171,45 @@ const tiers = [
     example: '74% of the AgentRank index — the long tail of abandoned experiments.',
   },
 ];
+
+const faqJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: [
+    {
+      '@type': 'Question',
+      name: 'What makes a good MCP server?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Five key signals: freshness (commits within the last 30 days), high issue close rate (above 70%), inbound dependents (other repos importing it), star count, and multiple contributors. Freshness and issue health together account for 50% of the AgentRank score.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Should I prefer official vendor MCP servers?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Yes — when an official server exists (like redis/mcp-redis or mongodb-js/mongodb-mcp-server), always prefer it. Official servers track breaking API changes and have organizational backing.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'How do I quickly evaluate if an MCP server is production-ready?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Copy the README example and run it. If it doesn\'t work out of the box, the server is broken or unmaintained. Check that the last commit was within 30 days and that the issue close rate is above 70%.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'What is a red flag for an MCP server?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Last commit over 90 days ago (freshness score starts decaying hard), less than 30% issue close rate with many open issues, zero dependents after 6+ months, and a solo maintainer with infrequent commits.',
+      },
+    },
+  ],
+};
 ---
 
 <Base
@@ -179,7 +218,7 @@ const tiers = [
   activeTab="blog"
   keywords="how to choose MCP server, MCP server evaluation, best MCP server 2026, MCP server quality, picking MCP server, MCP server comparison guide"
   canonicalUrl="https://agentrank-ai.com/blog/how-to-choose-an-mcp-server/"
-  jsonLd={jsonLd}
+  jsonLd={[jsonLd, faqJsonLd]}
 
   ogImage="/og/how-to-choose-an-mcp-server.png"
 >

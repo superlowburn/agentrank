@@ -42,6 +42,45 @@ const jsonLd = {
   keywords: 'MCP server vs REST API, MCP vs REST, model context protocol vs REST API, when to use MCP server, MCP API comparison 2026',
 };
 
+const faqJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: [
+    {
+      '@type': 'Question',
+      name: 'Should I build an MCP server or a REST API?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Build an MCP server when AI agents are the primary consumer. Build a REST API when developers writing code are the primary consumer. Many services build both — REST for traditional integrations and MCP for AI agent access.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Can an MCP server replace a REST API?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'No — they serve different consumers. REST APIs are for developers writing code; MCP servers are for AI agents at runtime. The best services ship both interfaces.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Is MCP ready for production use?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Yes. As of March 2026, over 25,000 MCP server repositories exist on GitHub and companies like AWS, Stripe, Docker, MongoDB, and Microsoft ship official production MCP servers.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'How does MCP tool discovery work compared to REST API discovery?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'MCP has protocol-native discovery — agents query a server\'s tool list at runtime and read JSON Schema definitions to understand what tools exist and how to call them. REST APIs rely on OpenAPI specs consumed by developers at design time.',
+      },
+    },
+  ],
+};
+
 const comparison = [
   {
     dimension: 'Primary consumer',
@@ -92,7 +131,7 @@ const comparison = [
   activeTab="blog"
   keywords="MCP server vs REST API, MCP vs REST, when to use MCP server, model context protocol comparison, REST API vs MCP 2026, AI agent API integration"
   canonicalUrl="https://agentrank-ai.com/blog/mcp-server-vs-rest-api/"
-  jsonLd={jsonLd}
+  jsonLd={[jsonLd, faqJsonLd]}
 
   ogImage="/og/mcp-server-vs-rest-api.png"
 >

@@ -143,6 +143,36 @@ const stats = {
   avgDatabaseScore: 41.2,
   topScore: 88.66,
 };
+const faqJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: [
+    {
+      '@type': 'Question',
+      name: 'What are the best MCP servers for database access?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'The top-scored database MCP servers in the AgentRank index include official servers from motherduck, Neon, MongoDB, and Redis. Scores are updated nightly from real GitHub signals including freshness, issue health, and inbound dependents.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Is there an official MCP server for PostgreSQL?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Yes — multiple official and community PostgreSQL MCP servers exist in the AgentRank index. The most reliable are those from database vendors (Neon, Supabase) or with high issue-close rates and recent commits.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'How do I give Claude access to my database?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Install a database MCP server for your database type (Postgres, MongoDB, Redis, etc.) and configure it in your MCP client\'s config with your connection string. The MCP server handles query routing and result serialization; Claude handles the SQL reasoning.',
+      },
+    },
+  ],
+};
 ---
 
 <Base
@@ -151,7 +181,7 @@ const stats = {
   activeTab="blog"
   keywords="best MCP servers database management, database MCP server 2026, postgres MCP, mongodb MCP server, redis MCP, MySQL MCP server, SQL MCP agent"
   canonicalUrl="https://agentrank-ai.com/blog/best-mcp-servers-database/"
-  jsonLd={jsonLd}
+  jsonLd={[jsonLd, faqJsonLd]}
 
   ogImage="/og/best-mcp-servers-database.png"
 >

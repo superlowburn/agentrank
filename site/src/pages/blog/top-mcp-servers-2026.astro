@@ -202,6 +202,36 @@ const stats = {
   avgScore: 29.6,
   topScore: 98.67,
 };
+const faqJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: [
+    {
+      '@type': 'Question',
+      name: 'What are the top 10 MCP servers for AI agents in 2026?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'The top MCP servers are ranked by AgentRank\'s composite score across eight GitHub signals. The list changes nightly as scores update. The AgentRank leaderboard shows the current top 10 across all 25,000+ indexed servers.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'How is the top MCP server list ranked?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Rankings are computed nightly from eight real GitHub signals: freshness (20%), issue health (25%), inbound dependents (25%), stars (15%), contributor count (10%), and three supplementary signals. It is not sorted by stars alone.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'How often do the top MCP server rankings change?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Rankings update nightly. Tools that commit frequently, close issues quickly, and gain dependent repos can climb quickly. Tools that go stale (no commits for 90+ days) decay and fall in rankings over time.',
+      },
+    },
+  ],
+};
 ---
 
 <Base
@@ -210,7 +240,7 @@ const stats = {
   activeTab="blog"
   keywords="top MCP servers 2026, best MCP servers for AI agents, MCP server ranking, highest scored MCP servers, best model context protocol servers, MCP server list 2026, CoplayDev unity-mcp, playwright MCP, serena MCP"
   canonicalUrl="https://agentrank-ai.com/blog/top-mcp-servers-2026/"
-  jsonLd={jsonLd}
+  jsonLd={[jsonLd, faqJsonLd]}
 
   ogImage="/og/top-mcp-servers-2026.png"
 >

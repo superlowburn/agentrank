@@ -43,6 +43,36 @@ const jsonLd = {
   image: 'https://agentrank-ai.com/og-image.png',
   keywords: 'this week in MCP 2026-03-24, MCP weekly report, MCP server updates March 24 2026, AgentRank weekly, fastmcp, MCP SDK rankings',
 };
+const faqJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: [
+    {
+      '@type': 'Question',
+      name: 'What is the This Week in MCP digest?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'This Week in MCP is AgentRank\'s weekly ecosystem report covering the top movers, new tools, and noteworthy score changes across 25,000+ indexed MCP servers and agent tools.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'How do I find the fastest-growing MCP tools?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Visit the AgentRank Movers page for weekly score changes or the Trends page for category-level momentum. The weekly digest summarizes the biggest moves each Monday.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'How can I make sure my MCP server appears in weekly movement reports?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Commit regularly to your repository, close open issues, and build documentation that attracts dependent repos. These activities drive AgentRank score changes that surface tools in weekly movement reports.',
+      },
+    },
+  ],
+};
 ---
 
 <Base
@@ -51,7 +81,7 @@ const jsonLd = {
   activeTab="blog"
   keywords="this week in MCP 2026-03-24, MCP weekly report, MCP server updates March 24 2026, AgentRank weekly"
   canonicalUrl="https://agentrank-ai.com/blog/this-week-in-mcp-2026-03-24/"
-  jsonLd={jsonLd}
+  jsonLd={[jsonLd, faqJsonLd]}
 
   ogImage="/og/this-week-in-mcp-2026-03-24.png"
 >

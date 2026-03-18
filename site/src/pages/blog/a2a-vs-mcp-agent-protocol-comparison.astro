@@ -101,6 +101,45 @@ const ecosystemData = [
   { protocol: 'MCP', repos: 25632, topCategory: 'Database access (847 repos)', growth: '2x Q3→Q4 2025, 2x again Q1 2026', clientSupport: 'Claude, Cursor, Copilot, Cline, VS Code, Windsurf, Zed' },
   { protocol: 'A2A', repos: 2400, topCategory: 'Agent orchestration frameworks', growth: 'Rapid — launched April 2025, doubled each quarter', clientSupport: 'Google ADK, LangGraph, CrewAI, custom agent frameworks' },
 ];
+
+const faqJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: [
+    {
+      '@type': 'Question',
+      name: 'What is the difference between A2A and MCP?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'MCP (Model Context Protocol) connects AI agents to tools, APIs, and data sources. A2A (Agent2Agent Protocol) connects AI agents to other AI agents for task delegation and multi-agent coordination. They solve different problems at different layers of the agent stack.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Do I need both A2A and MCP in my agent system?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Often yes for complex systems. MCP gives your agents access to tools and data; A2A enables agents to delegate subtasks to specialized agents. They are complementary protocols, not competitors.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Who created A2A and MCP?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'MCP was created by Anthropic and published as an open standard in November 2024. A2A (Agent2Agent Protocol) was created by Google DeepMind and is also an open standard.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Which protocol has broader ecosystem adoption?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'MCP has broader adoption as of March 2026, with over 25,000 repositories on GitHub. A2A is newer but growing rapidly, particularly in enterprise multi-agent orchestration use cases.',
+      },
+    },
+  ],
+};
 ---
 
 <Base
@@ -109,7 +148,7 @@ const ecosystemData = [
   activeTab="blog"
   keywords="a2a vs mcp, agent to agent protocol, mcp vs a2a, google a2a protocol, anthropic mcp comparison, agent protocol comparison 2026, a2a protocol explained, model context protocol vs agent to agent"
   canonicalUrl="https://agentrank-ai.com/blog/a2a-vs-mcp-agent-protocol-comparison/"
-  jsonLd={jsonLd}
+  jsonLd={[jsonLd, faqJsonLd]}
   ogImage="/og/a2a-vs-mcp-agent-protocol-comparison.png"
 >
   <article class="blog-post">

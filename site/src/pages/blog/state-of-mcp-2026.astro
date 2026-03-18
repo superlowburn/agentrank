@@ -109,6 +109,36 @@ const licenseBreakdown = [
   { license: 'GPL-3.0 / AGPL-3.0', pct: 2.1 },
   { license: 'Other', pct: 5.4 },
 ];
+const faqJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: [
+    {
+      '@type': 'Question',
+      name: 'How many MCP servers has AgentRank indexed?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'AgentRank has indexed 25,632 MCP-related repositories as of March 2026, scored across eight GitHub signals updated nightly.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'What does the AgentRank score distribution look like?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Most MCP servers score between 20 and 50 on the 0-100 scale. The top 10% score above 70, and fewer than 1% score above 90. A score above 60 indicates an actively maintained, production-relevant tool.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'What are the most reliable MCP servers in the ecosystem?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'The highest-scoring servers consistently come from established developer tool vendors (Redis, MongoDB, AWS, Microsoft) and from high-adoption open source projects. The AgentRank leaderboard shows the current top tools across all categories.',
+      },
+    },
+  ],
+};
 ---
 
 <Base
@@ -117,7 +147,7 @@ const licenseBreakdown = [
   activeTab="blog"
   keywords="best MCP servers 2026, MCP server comparison, agent tools ranking, model context protocol servers, MCP ecosystem 2026, top MCP servers"
   canonicalUrl="https://agentrank-ai.com/blog/state-of-mcp-2026/"
-  jsonLd={jsonLd}
+  jsonLd={[jsonLd, faqJsonLd]}
 
   ogImage="/og/state-of-mcp-2026.png"
 >

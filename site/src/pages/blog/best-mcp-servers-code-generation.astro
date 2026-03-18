@@ -143,6 +143,36 @@ const stats = {
   avgCodeScore: 38.4,
   topScore: 66.6,
 };
+const faqJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: [
+    {
+      '@type': 'Question',
+      name: 'What are the best MCP servers for code generation?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'The highest-scored code generation MCP servers in the AgentRank index include semantic code search tools (like oraios/serena with 21,474 stars), language server integrations, and context-aware code retrieval servers.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'How does an MCP server help with code generation?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Code generation MCP servers give AI agents symbol-aware access to your codebase — finding references, understanding types, navigating the dependency graph. This dramatically improves the quality of AI-generated code compared to pasting files directly.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'What is the most-starred MCP server?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'oraios/serena, a semantic code retrieval and editing toolkit, is among the most-starred MCP servers with over 21,000 GitHub stars. It gives AI coding agents deep, symbol-aware access to any codebase.',
+      },
+    },
+  ],
+};
 ---
 
 <Base
@@ -151,7 +181,7 @@ const stats = {
   activeTab="blog"
   keywords="best MCP servers code generation, coding agent MCP, GitHub MCP server 2026, code execution MCP, AI code editing, Serena MCP, developer tools MCP server"
   canonicalUrl="https://agentrank-ai.com/blog/best-mcp-servers-code-generation/"
-  jsonLd={jsonLd}
+  jsonLd={[jsonLd, faqJsonLd]}
 
   ogImage="/og/best-mcp-servers-code-generation.png"
 >

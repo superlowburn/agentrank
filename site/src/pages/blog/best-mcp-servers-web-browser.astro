@@ -143,6 +143,36 @@ const stats = {
   avgWebScore: 35.8,
   topScore: 85.0,
 };
+const faqJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: [
+    {
+      '@type': 'Question',
+      name: 'What are the best MCP servers for browser automation?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'The top browser MCP servers in the AgentRank index include Playwright-based servers for full browser control, Puppeteer integrations, and web scraping tools. These give AI agents the ability to navigate websites, fill forms, and extract data.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Can I use MCP to give Claude control of a browser?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Yes. Browser automation MCP servers (based on Playwright or Puppeteer) let Claude navigate websites, click elements, fill forms, and extract content. The agent sees the page as structured data and interacts with it programmatically.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'What browser MCP servers are production-ready?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Look for browser MCP servers with recent commits and high AgentRank scores. The most reliable have active maintainers who keep up with Playwright or Puppeteer API changes and have closed the majority of their reported issues.',
+      },
+    },
+  ],
+};
 ---
 
 <Base
@@ -151,7 +181,7 @@ const stats = {
   activeTab="blog"
   keywords="best MCP servers web scraping, browser automation MCP, Playwright MCP server, Puppeteer MCP 2026, Firecrawl MCP, web scraping AI agent, Chrome DevTools MCP"
   canonicalUrl="https://agentrank-ai.com/blog/best-mcp-servers-web-browser/"
-  jsonLd={jsonLd}
+  jsonLd={[jsonLd, faqJsonLd]}
 
   ogImage="/og/best-mcp-servers-web-browser.png"
 >

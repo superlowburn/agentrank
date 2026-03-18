@@ -68,6 +68,45 @@ const checklist = [
   { category: 'Maintenance', item: 'Enable GitHub Dependabot or equivalent on your repo', critical: false },
   { category: 'Maintenance', item: 'Close stale issues or label them — issue health is a public trust signal', critical: false },
 ];
+
+const faqJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: [
+    {
+      '@type': 'Question',
+      name: 'What are the biggest security risks in MCP servers?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Prompt injection attacks (malicious data manipulates the AI\'s behavior), insufficient input validation, hardcoded secrets in source code, overly broad process permissions, and insecure transport on remote deployments.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'How should I handle secrets in an MCP server?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Always load API keys and tokens from environment variables — never hardcode them in source code. Never log secrets even in debug mode. Audit which environment variables are accessible to the server process.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Should I run my MCP server as root?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'No. Always run MCP server processes as a non-root user. Apply least-privilege permissions to both the process and the credentials it holds. Mount file system volumes read-only when write access is not needed.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'How do I defend against prompt injection in MCP tools?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Validate and sanitize all tool argument inputs before use. Never pass raw tool arguments as shell command strings. Sanitize file path arguments and reject traversal patterns. Scrub secrets and internal paths from tool output before returning.',
+      },
+    },
+  ],
+};
 ---
 
 <Base
@@ -76,7 +115,7 @@ const checklist = [
   activeTab="blog"
   keywords="mcp server security, model context protocol security, mcp best practices, mcp authentication, mcp prompt injection, mcp secrets management, secure mcp server 2026"
   canonicalUrl="https://agentrank-ai.com/blog/mcp-server-security-best-practices/"
-  jsonLd={jsonLd}
+  jsonLd={[jsonLd, faqJsonLd]}
   ogImage="/og/mcp-server-security-best-practices.png"
 >
   <article class="blog-post">

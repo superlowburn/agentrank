@@ -106,6 +106,36 @@ const platforms = [
     bestFor: 'Vendors seeking official certification/listing',
   },
 ];
+const faqJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: [
+    {
+      '@type': 'Question',
+      name: 'What are the main MCP server directories?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'The major MCP server directories include MCPMarket, PulseMCP, Glama.ai, the official MCP Registry (registry.mcp.so), Awesome-MCP-Servers on GitHub, and AgentRank. Each has different coverage, ranking methodology, and update frequency.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'How is AgentRank different from other MCP directories?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'AgentRank ranks by computed quality signals (freshness, issue health, dependents, stars) rather than manual curation or simple star counts. It indexes 25,000+ repositories automatically and updates scores nightly — the largest and most frequently updated MCP index.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Which MCP directory should I use to find production-ready tools?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'AgentRank is best for finding actively maintained, production-ready tools because scores weight maintenance signals (freshness, issue health) heavily. Browsing by category and sorting by score quickly surfaces the most reliable options.',
+      },
+    },
+  ],
+};
 ---
 
 <Base
@@ -114,7 +144,7 @@ const platforms = [
   activeTab="blog"
   keywords="best mcp server directory, mcp server comparison 2026, how to find mcp servers, mcp server ranking, mcp discovery tools compared, mcp registry comparison"
   canonicalUrl="https://agentrank-ai.com/blog/mcp-server-directory-comparison/"
-  jsonLd={jsonLd}
+  jsonLd={[jsonLd, faqJsonLd]}
 
   ogImage="/og/mcp-server-directory-comparison.png"
 >

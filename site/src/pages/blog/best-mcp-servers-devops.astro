@@ -183,6 +183,36 @@ const stats = {
   kubernetesTools: 28,
   cloudProviderTools: 34,
 };
+const faqJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: [
+    {
+      '@type': 'Question',
+      name: 'What are the best MCP servers for DevOps and infrastructure?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'The top DevOps MCP servers in the AgentRank index include servers for Kubernetes, cloud platforms (AWS, Azure, GCP), CI/CD pipelines, and container management. Official vendor servers score highest for reliability.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Is there an official MCP server for Kubernetes?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Yes — Kubernetes MCP servers exist in the AgentRank index for cluster management, pod operations, and deployment automation. Check the AgentRank DevOps category for current scores and rankings.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Can AI agents manage cloud infrastructure through MCP?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Yes. AWS ships 60+ official MCP servers for AWS services, and Microsoft ships Azure MCP. These let AI agents perform cloud operations — deploying resources, reading logs, managing services — through natural language instructions.',
+      },
+    },
+  ],
+};
 ---
 
 <Base
@@ -191,7 +221,7 @@ const stats = {
   activeTab="blog"
   keywords="best MCP servers DevOps infrastructure, kubernetes MCP server, AWS MCP server, Azure DevOps MCP, Google Cloud MCP, CI/CD MCP tools, infrastructure as code MCP"
   canonicalUrl="https://agentrank-ai.com/blog/best-mcp-servers-devops/"
-  jsonLd={jsonLd}
+  jsonLd={[jsonLd, faqJsonLd]}
 
   ogImage="/og/best-mcp-servers-devops.png"
 >

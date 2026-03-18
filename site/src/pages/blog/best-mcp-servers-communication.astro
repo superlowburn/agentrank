@@ -142,6 +142,36 @@ const stats = {
   avgCommunicationScore: 34.2,
   topScore: 64.9,
 };
+const faqJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: [
+    {
+      '@type': 'Question',
+      name: 'What are the best MCP servers for communication tools?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'The top communication MCP servers in the AgentRank index connect AI agents to Slack, GitHub, Linear, Notion, and email. Official vendor servers score highest for reliability and API coverage.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Is there an official Slack MCP server?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Yes — official and community Slack MCP servers exist that let AI agents send messages, read channels, and search conversation history. Look for servers with recent commits and high issue-close rates for production use.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Can I use MCP to give Claude access to GitHub?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Yes. The official Anthropic Python SDK ships a GitHub MCP server that gives Claude access to issues, pull requests, repositories, and code search. Configure it once in Claude Desktop or Cursor to use it across all sessions.',
+      },
+    },
+  ],
+};
 ---
 
 <Base
@@ -150,7 +180,7 @@ const stats = {
   activeTab="blog"
   keywords="best MCP servers communication, Slack MCP server 2026, Discord MCP server, email MCP server, messaging MCP, IMAP SMTP MCP, Teams MCP agent"
   canonicalUrl="https://agentrank-ai.com/blog/best-mcp-servers-communication/"
-  jsonLd={jsonLd}
+  jsonLd={[jsonLd, faqJsonLd]}
 
   ogImage="/og/best-mcp-servers-communication.png"
 >

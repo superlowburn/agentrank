@@ -205,6 +205,37 @@ const insights = [
     body: 'Four TypeScript or Go servers each, two Python. Java, Ruby, and Rust don\'t appear in the top 10. TypeScript and Go have better tooling for producing typed, maintainable MCP servers — and it shows in the quality signals.',
   },
 ];
+
+const faqJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: [
+    {
+      '@type': 'Question',
+      name: 'What are the top-ranked MCP servers?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'The highest-scoring MCP servers in the AgentRank index come from major vendors and high-adoption open source projects. Scores above 90 represent the top tier of the 25,000+ indexed repositories. See the full ranked comparison on the AgentRank leaderboard.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'How does AgentRank compare MCP servers?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'AgentRank computes a composite 0–100 score from eight GitHub signals: freshness (20%), issue health (25%), inbound dependents (25%), stars (15%), contributor count (10%), plus three minor signals. Higher scores indicate better maintenance and real production adoption.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Does a higher star count always mean a better MCP server?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'No. Stars account for only 15% of the AgentRank score. A server with fewer stars but active maintenance (recent commits, closed issues, real dependents) often outscores a popular but stale repository.',
+      },
+    },
+  ],
+};
 ---
 
 <Base
@@ -213,7 +244,7 @@ const insights = [
   activeTab="blog"
   keywords="MCP server comparison 2026, top MCP servers, best MCP servers ranked, MCP server head to head, MCP server leaderboard, MCP server scores comparison"
   canonicalUrl="https://agentrank-ai.com/blog/mcp-server-comparison-top-10/"
-  jsonLd={jsonLd}
+  jsonLd={[jsonLd, faqJsonLd]}
 
   ogImage="/og/mcp-server-comparison-top-10.png"
 >

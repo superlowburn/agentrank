@@ -44,6 +44,45 @@ const jsonLd = {
   keywords: 'how to build MCP server, build MCP server Python, build MCP server TypeScript, MCP server tutorial, FastMCP tutorial, model context protocol server guide 2026',
 };
 
+const faqJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: [
+    {
+      '@type': 'Question',
+      name: 'What is the easiest way to build an MCP server in Python?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Use FastMCP — the most popular Python MCP framework with 6,734 stars on GitHub. It uses a decorator-based approach (similar to FastAPI) and can get a working server running in under 20 lines of code.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'What languages can I use to build an MCP server?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Python and TypeScript are the most commonly used. Official SDKs from Anthropic exist for both. FastMCP (Python) has the most stars of any MCP framework. The official TypeScript SDK has the broadest spec coverage.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Do I need to implement the MCP protocol from scratch?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'No. Use an existing framework — FastMCP, the official Python SDK, or the TypeScript SDK. They handle all protocol-level implementation so you focus on writing the tool functions your server exposes.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'How do I connect my MCP server to Claude Desktop?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Add a JSON entry to Claude Desktop\'s mcpServers config. Specify the command to run your server and any required environment variables. The host launches your server as a subprocess on startup.',
+      },
+    },
+  ],
+};
+
 const frameworks = [
   {
     rank: 1,
@@ -106,7 +145,7 @@ const frameworks = [
   activeTab="blog"
   keywords="how to build MCP server, MCP server tutorial 2026, build MCP server Python, build MCP server TypeScript, FastMCP tutorial, model context protocol server guide, MCP server development"
   canonicalUrl="https://agentrank-ai.com/blog/how-to-build-an-mcp-server/"
-  jsonLd={jsonLd}
+  jsonLd={[jsonLd, faqJsonLd]}
 
   ogImage="/og/how-to-build-an-mcp-server.png"
 >
