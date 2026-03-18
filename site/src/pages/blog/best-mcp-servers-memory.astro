@@ -1,0 +1,673 @@
+---
+export const prerender = true;
+
+import Base from '../../layouts/Base.astro';
+import BlogSubscribeCTA from '../../components/BlogSubscribeCTA.astro';
+import RelatedPosts from '../../components/RelatedPosts.astro';
+
+const relatedPosts = [
+  { href: '/blog/best-mcp-servers-code-generation/', title: 'Best MCP Servers for Code Generation in 2026' },
+  { href: '/blog/best-mcp-servers-ai-ml/', title: 'Best MCP Servers for AI & Machine Learning in 2026' },
+  { href: '/blog/how-to-choose-an-mcp-server/', title: 'How to Choose an MCP Server in 2026' },
+  { href: '/blog/mcp-server-comparison-top-10/', title: 'MCP Server Comparison: Top 10 Head-to-Head' },
+  { href: '/blog/mcp-server-landscape-q1-2026/', title: 'The MCP Server Landscape: Q1 2026' },
+];
+
+const publishDate = '2026-03-18';
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: 'Best MCP Servers for Memory and Knowledge Management in 2026',
+  description: 'The top-ranked MCP servers for persistent agent memory, knowledge graphs, codebase indexing, and context management. Scored by real signals from the AgentRank index.',
+  datePublished: publishDate,
+  dateModified: publishDate,
+  author: {
+    '@type': 'Organization',
+    name: 'AgentRank',
+    url: 'https://agentrank-ai.com',
+  },
+  publisher: {
+    '@type': 'Organization',
+    name: 'AgentRank',
+    url: 'https://agentrank-ai.com',
+    logo: {
+      '@type': 'ImageObject',
+      url: 'https://agentrank-ai.com/og-image.png',
+    },
+  },
+  mainEntityOfPage: {
+    '@type': 'WebPage',
+    '@id': 'https://agentrank-ai.com/blog/best-mcp-servers-memory/',
+  },
+  image: 'https://agentrank-ai.com/og/best-mcp-servers-memory.png',
+  keywords: 'best MCP servers memory, knowledge graph MCP, persistent memory AI agent, codebase memory MCP, context management MCP server 2026',
+};
+
+const tools = [
+  {
+    rank: 1,
+    name: 'oraios/serena',
+    slug: 'oraios--serena',
+    score: 93.61,
+    stars: 21474,
+    lang: 'Python',
+    contributors: 134,
+    lastCommit: '2026-03-13',
+    desc: 'Coding agent toolkit with semantic retrieval and editing via MCP server and other integrations',
+    useCase: 'Semantic Code Retrieval',
+    highlight: '21,474 stars and 134 contributors — the most active memory/retrieval project in the index.',
+  },
+  {
+    rank: 2,
+    name: 'ForLoopCodes/contextplus',
+    slug: 'ForLoopCodes--contextplus',
+    score: 88.35,
+    stars: 1459,
+    lang: 'TypeScript',
+    contributors: 7,
+    lastCommit: '2026-03-10',
+    desc: 'Semantic intelligence MCP server combining RAG, Tree-sitter AST, and Obsidian-style linking for large codebases',
+    useCase: 'Codebase Knowledge Graph',
+    highlight: 'Combines RAG, AST parsing, and spectral clustering. Turns a codebase into a searchable feature graph.',
+  },
+  {
+    rank: 3,
+    name: 'Gentleman-Programming/engram',
+    slug: 'Gentleman-Programming--engram',
+    score: 86.25,
+    stars: 1290,
+    lang: 'Go',
+    contributors: 6,
+    lastCommit: '2026-03-13',
+    desc: 'Persistent memory system for AI coding agents — agent-agnostic Go binary with SQLite, MCP server, HTTP API, CLI, and TUI',
+    useCase: 'Persistent Session Memory',
+    highlight: 'Single Go binary with SQLite + FTS5. Works across Claude, Cursor, Cline, and other MCP clients.',
+  },
+  {
+    rank: 4,
+    name: 'DeusData/codebase-memory-mcp',
+    slug: 'DeusData--codebase-memory-mcp',
+    score: 75.79,
+    stars: 649,
+    lang: 'C',
+    contributors: 5,
+    lastCommit: '2026-03-12',
+    desc: 'MCP server that indexes your codebase into a persistent knowledge graph — 64 languages, sub-ms queries',
+    useCase: 'Codebase Indexing',
+    highlight: '64 language support, sub-millisecond queries, 99% fewer tokens than grep. Single Go binary.',
+  },
+  {
+    rank: 5,
+    name: 'samvallad33/vestige',
+    slug: 'samvallad33--vestige',
+    score: 72.71,
+    stars: 420,
+    lang: 'Rust',
+    contributors: 3,
+    lastCommit: '2026-03-03',
+    desc: 'Cognitive memory for AI agents — FSRS-6 spaced repetition, 29 brain modules, 3D dashboard, single 22MB Rust binary',
+    useCase: 'Cognitive / Long-term Memory',
+    highlight: 'Spaced repetition-based memory decay. 29 brain modules model different memory types. 22MB Rust binary.',
+  },
+  {
+    rank: 6,
+    name: 'CheMiguel23/MemoryMesh',
+    slug: 'CheMiguel23--MemoryMesh',
+    score: 72.25,
+    stars: 335,
+    lang: 'TypeScript',
+    contributors: 4,
+    lastCommit: '2026-03-01',
+    desc: 'Knowledge graph server using MCP to provide structured memory persistence for AI models',
+    useCase: 'Knowledge Graph',
+    highlight: 'Structured knowledge graph with typed nodes and edges. Best for agents that need relational memory.',
+  },
+  {
+    rank: 7,
+    name: 'GreatScottyMac/context-portal',
+    slug: 'GreatScottyMac--context-portal',
+    score: 67.12,
+    stars: 756,
+    lang: 'Python',
+    contributors: 10,
+    lastCommit: '2026-01-27',
+    desc: 'Memory bank MCP server building project-specific knowledge graphs for AI-powered RAG in IDEs',
+    useCase: 'Project Memory Bank',
+    highlight: '756 stars. Builds project-specific knowledge graphs for RAG-powered IDE assistants.',
+  },
+];
+
+const stats = {
+  totalMemoryTools: 1382,
+  avgMemoryScore: 33.0,
+  topScore: 93.61,
+  freshnessRate: 37.6,
+};
+
+const faqJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: [
+    {
+      '@type': 'Question',
+      name: 'What is the best MCP server for persistent agent memory?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Gentleman-Programming/engram is the top-ranked dedicated persistent memory MCP server, scoring 86.25 with 1,290 stars. It is agent-agnostic, uses SQLite with full-text search, and provides an MCP server, HTTP API, CLI, and TUI in a single Go binary. It works with Claude, Cursor, Cline, and other MCP clients.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Can an MCP server index my codebase for AI agents?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Yes — DeusData/codebase-memory-mcp and oraios/serena both provide codebase indexing for AI agents via MCP. codebase-memory-mcp supports 64 languages and delivers sub-millisecond queries from a persistent knowledge graph. serena combines semantic retrieval with editing capabilities and has 21,474 stars with 134 contributors.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'What is a knowledge graph MCP server?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'A knowledge graph MCP server stores information as typed nodes and relationships rather than flat text. This allows AI agents to query structured facts (e.g., "what dependencies does module X have?") instead of performing keyword searches. CheMiguel23/MemoryMesh and GreatScottyMac/context-portal are examples in the AgentRank index.',
+      },
+    },
+  ],
+};
+---
+
+<Base
+  title="Best MCP Servers for Memory and Knowledge Management in 2026 — AgentRank"
+  description="The top-ranked MCP servers for persistent agent memory, knowledge graphs, codebase indexing, and context management. Real scores from the AgentRank index — March 2026."
+  activeTab="blog"
+  keywords="best MCP servers memory, knowledge graph MCP, persistent memory AI agent, codebase memory MCP server, context management MCP 2026, agent memory persistence"
+  canonicalUrl="https://agentrank-ai.com/blog/best-mcp-servers-memory/"
+  jsonLd={[jsonLd, faqJsonLd]}
+  ogImage="/og/best-mcp-servers-memory.png"
+>
+  <article class="blog-post">
+    <header class="post-header">
+      <div class="breadcrumb"><a href="/blog/">Blog</a> <span>/</span></div>
+      <h1>Best MCP Servers for Memory and Knowledge Management in 2026</h1>
+      <div class="post-meta">
+        <time datetime={publishDate}>March 18, 2026</time>
+        <span class="sep">&middot;</span>
+        <span>5 min read</span>
+        <span class="sep">&middot;</span>
+        <span>AgentRank Index</span>
+      </div>
+      <p class="lede">
+        Persistent memory is the unsolved problem in AI agents. A session ends, context disappears.
+        The memory/knowledge category in the AgentRank index has the fastest freshness rate in the index
+        at <strong>{stats.freshnessRate}%</strong> — more active new development here than any other category.
+        We scored <strong>{stats.totalMemoryTools} memory and knowledge tools</strong>. Here are the ones doing it right.
+      </p>
+    </header>
+
+    <nav class="toc">
+      <strong>Contents</strong>
+      <ol>
+        <li><a href="#rankings">Rankings by score</a></li>
+        <li><a href="#by-use-case">Choosing by use case</a></li>
+        <li><a href="#what-to-watch">What to watch for</a></li>
+        <li><a href="#methodology">Methodology</a></li>
+      </ol>
+    </nav>
+
+    <section id="rankings">
+      <h2>Top memory and knowledge MCP servers</h2>
+      <p>
+        Ranked by the composite AgentRank score — a weighted blend of stars (15%), freshness (25%),
+        issue health (25%), contributors (10%), and inbound dependents (25%).
+        Average score across all {stats.totalMemoryTools} memory and knowledge tools is <strong>{stats.avgMemoryScore}</strong>.
+        The tools below are in the top tier.
+      </p>
+
+      <table class="data-table top-table">
+        <thead>
+          <tr>
+            <th class="num">#</th>
+            <th>Repository</th>
+            <th class="num">Score</th>
+            <th class="num">Stars</th>
+            <th>Use Case</th>
+            <th>Lang</th>
+          </tr>
+        </thead>
+        <tbody>
+          {tools.map((tool) => (
+            <tr>
+              <td class="num rank-num">{tool.rank}</td>
+              <td class="tool-cell">
+                <a href={`/tool/${tool.slug}/`} class="tool-link">{tool.name}</a>
+                <span class="tool-desc">{tool.desc}</span>
+              </td>
+              <td class="num score-cell">{tool.score}</td>
+              <td class="num">{tool.stars.toLocaleString('en-US')}</td>
+              <td class="use-case">{tool.useCase}</td>
+              <td class="lang-badge">{tool.lang}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </section>
+
+    <section id="by-use-case">
+      <h2>Choosing by use case</h2>
+
+      <h3>Semantic codebase retrieval (serena)</h3>
+      <p>
+        <a href="/tool/oraios--serena/" class="inline-link">oraios/serena</a> tops this category at a
+        score of <strong>93.61</strong> with 21,474 stars and 134 contributors — by far the most active
+        project here. It is a coding agent toolkit built around semantic retrieval: instead of loading
+        entire files into context, it retrieves exactly the code an agent needs based on the task.
+        Supports MCP and other integration modes. The contributor count (134) suggests this is now
+        institutional-grade tooling, not a side project.
+      </p>
+
+      <h3>Large codebase intelligence (Context+)</h3>
+      <p>
+        <a href="/tool/ForLoopCodes--contextplus/" class="inline-link">ForLoopCodes/contextplus</a> scores
+        <strong>88.35</strong> with a novel approach: it combines RAG, Tree-sitter AST parsing, spectral clustering,
+        and Obsidian-style linking to turn a large codebase into a searchable, hierarchical feature graph.
+        The goal is 99% accuracy — the claim is that most retrieval tools fail on large codebases because
+        they don't understand code structure. Context+ uses AST to understand it. Only 2 open issues,
+        active commits, and 1,459 stars.
+      </p>
+
+      <h3>Persistent session memory (engram)</h3>
+      <p>
+        <a href="/tool/Gentleman-Programming--engram/" class="inline-link">Gentleman-Programming/engram</a> is
+        the dedicated memory store in this list, scoring <strong>86.25</strong> with 1,290 stars. It is
+        agent-agnostic: a single Go binary with SQLite + FTS5 that provides an MCP server, HTTP API, CLI,
+        and a TUI for browsing stored memories. The key property is persistence — memories survive across
+        sessions and across tools. Works with Claude Desktop, Cursor, Cline, and any MCP client.
+        If you want an agent that remembers decisions, preferences, and context between sessions, this is the tool.
+      </p>
+
+      <h3>Codebase knowledge graph (codebase-memory-mcp)</h3>
+      <p>
+        <a href="/tool/DeusData--codebase-memory-mcp/" class="inline-link">DeusData/codebase-memory-mcp</a> takes
+        a different angle on codebase memory: it indexes your entire codebase into a persistent knowledge
+        graph with <strong>64-language support</strong> and sub-millisecond queries. Score of <strong>75.79</strong>
+        and 649 stars. The 99% token reduction versus grep is the headline — instead of loading thousands of
+        lines for context, agents query the graph. Single Go binary, no Docker, no API keys required.
+      </p>
+
+      <h3>Cognitive memory with decay (vestige)</h3>
+      <p>
+        <a href="/tool/samvallad33--vestige/" class="inline-link">samvallad33/vestige</a> is the most
+        interesting architectural experiment in this list, scoring <strong>72.71</strong>. It models memory
+        biologically — using FSRS-6 spaced repetition to apply forgetting curves to stored facts, with
+        29 distinct "brain modules" representing different memory types (episodic, semantic, procedural, etc.).
+        The idea: agents should forget irrelevant information over time, not accumulate it indefinitely.
+        22MB Rust binary, 420 stars, and an integrated 3D memory visualization dashboard.
+      </p>
+
+      <h3>Structured knowledge graphs (MemoryMesh)</h3>
+      <p>
+        <a href="/tool/CheMiguel23--MemoryMesh/" class="inline-link">CheMiguel23/MemoryMesh</a> provides
+        structured graph memory — typed nodes and relationships rather than text blobs. Score of <strong>72.25</strong>
+        with 335 stars. The distinction matters: a flat memory store answers "what do you remember about X?",
+        while a knowledge graph answers "what does X depend on?" and "who maintains X?".
+        TypeScript, 4 contributors, active maintenance.
+      </p>
+
+      <h3>Project-scoped memory bank (context-portal)</h3>
+      <p>
+        <a href="/tool/GreatScottyMac--context-portal/" class="inline-link">GreatScottyMac/context-portal</a> (ConPort)
+        builds a project-specific knowledge graph scoped to your IDE workspace, scoring <strong>67.12</strong> with
+        756 stars. Rather than general-purpose agent memory, ConPort focuses on what AI coding assistants
+        need in an IDE context: decisions made, code patterns, project conventions, and architectural context.
+        RAG-powered retrieval from a local graph. Python, 10 contributors.
+      </p>
+    </section>
+
+    <section id="what-to-watch">
+      <h2>What to watch for</h2>
+
+      <h3>This category moves faster than any other</h3>
+      <p>
+        The memory/knowledge category has a freshness rate of <strong>{stats.freshnessRate}%</strong> in the AgentRank index —
+        the highest of any category. More tools are being actively committed to here than in database,
+        DevOps, or communication tooling. The problem is unsolved and the competition is real.
+        Tools that rank well today may be overtaken quickly. Check <code>last_commit</code> dates
+        and issue activity before committing to a dependency.
+      </p>
+
+      <h3>Codebase-specific vs. general-purpose memory</h3>
+      <p>
+        There are two distinct sub-problems here. <em>Codebase memory</em> (serena, codebase-memory-mcp, Context+)
+        is about reducing context window usage in coding workflows — fetching what's relevant instead of
+        loading everything. <em>General agent memory</em> (engram, vestige, MemoryMesh) is about persisting
+        knowledge across sessions and tools. Most projects tackle one or the other.
+        Pick based on your actual pain point.
+      </p>
+
+      <h3>Low issue health is common here</h3>
+      <p>
+        Several tools in this category have open-to-closed issue ratios below 1.0 —
+        meaning more open issues than closed. That's a signal of fast-moving development
+        with real users filing bugs. It's not necessarily a red flag, but check whether critical
+        issues are being triaged. <a href="/tool/ForLoopCodes--contextplus/" class="inline-link">contextplus</a> and
+        <a href="/tool/Gentleman-Programming--engram/" class="inline-link">engram</a> are the cleanest
+        on this dimension in the top tier.
+      </p>
+
+      <div class="cta-box">
+        <p>
+          <strong>Browse the full memory category:</strong> <a href="/category/memory/">All memory and knowledge MCP servers ranked</a> —
+          {stats.totalMemoryTools} tools indexed, updated daily.
+        </p>
+        <p>
+          <strong>Building a memory MCP server?</strong> <a href="/submit/">Submit it</a> to get indexed and scored.
+        </p>
+      </div>
+    </section>
+
+    <section id="methodology">
+      <h2>Methodology</h2>
+      <p>
+        Tools classified as "memory/knowledge" via keyword matching on description, repo name, and topics —
+        including persistent memory, knowledge graphs, codebase indexing, RAG, context management, and
+        retrieval-augmented generation. Only non-archived repositories included.
+        Scores computed using: stars 15%, freshness 25%, issue health 25%, contributors 10%, inbound dependents 25%.
+      </p>
+    </section>
+
+    <RelatedPosts posts={relatedPosts} />
+    <BlogSubscribeCTA source="blog" />
+    <footer class="post-footer">
+      <p class="methodology">
+        <strong>Methodology:</strong> Data from the AgentRank index crawled March 2026.
+        Scores computed using: stars 15%, freshness 25%, issue health 25%, contributors 10%, inbound dependents 25%.
+        Tools classified as "memory/knowledge" via keyword matching on description, topics, and repo name.
+        Only non-archived repositories included.
+      </p>
+      <p class="share-line">
+        Found this useful? <a href="https://x.com/AgentRank_ai" target="_blank" rel="noopener noreferrer">Follow @AgentRank_ai</a> for
+        weekly ecosystem updates, biggest movers, and new tool spotlights.
+      </p>
+    </footer>
+  </article>
+
+  <style>
+    .blog-post {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 2rem 0 3rem;
+    }
+
+    .breadcrumb {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      margin-bottom: 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .breadcrumb a {
+      color: var(--text-muted);
+      text-decoration: none;
+    }
+
+    .breadcrumb a:hover {
+      color: var(--accent);
+    }
+
+    .post-header {
+      margin-bottom: 2rem;
+    }
+
+    h1 {
+      font-size: 2rem;
+      font-weight: 700;
+      line-height: 1.2;
+      margin-bottom: 0.75rem;
+      color: var(--text-primary);
+    }
+
+    .post-meta {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      margin-bottom: 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .sep {
+      opacity: 0.4;
+    }
+
+    .lede {
+      font-size: 1.05rem;
+      line-height: 1.65;
+      color: var(--text-secondary);
+    }
+
+    .toc {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 1.25rem 1.5rem;
+      margin-bottom: 2.5rem;
+    }
+
+    .toc strong {
+      font-size: 0.82rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      display: block;
+      margin-bottom: 0.5rem;
+    }
+
+    .toc ol {
+      margin: 0;
+      padding-left: 1.25rem;
+    }
+
+    .toc li {
+      font-size: 0.9rem;
+      margin-bottom: 0.3rem;
+    }
+
+    .toc a {
+      color: var(--text-secondary);
+      text-decoration: none;
+    }
+
+    .toc a:hover {
+      color: var(--accent);
+    }
+
+    section {
+      margin-bottom: 2.5rem;
+    }
+
+    h2 {
+      font-size: 1.4rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      color: var(--text-primary);
+    }
+
+    h3 {
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-top: 1.5rem;
+      margin-bottom: 0.6rem;
+      color: var(--text-primary);
+    }
+
+    p {
+      font-size: 0.95rem;
+      line-height: 1.7;
+      color: var(--text-secondary);
+      margin-bottom: 1rem;
+    }
+
+    code {
+      font-family: monospace;
+      font-size: 0.88em;
+      background: var(--bg-secondary);
+      padding: 0.1em 0.35em;
+      border-radius: 3px;
+      border: 1px solid var(--border);
+    }
+
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .data-table thead th {
+      text-align: left;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      padding: 0.5rem 0.75rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .data-table tbody tr {
+      border-bottom: 1px solid var(--border-subtle, var(--border));
+    }
+
+    .data-table tbody tr:hover {
+      background: var(--bg-secondary);
+    }
+
+    .data-table td {
+      padding: 0.65rem 0.75rem;
+      vertical-align: top;
+    }
+
+    .num {
+      text-align: right;
+      white-space: nowrap;
+    }
+
+    .rank-num {
+      color: var(--text-muted);
+      font-size: 0.8rem;
+    }
+
+    .tool-cell {
+      min-width: 200px;
+    }
+
+    .tool-link {
+      display: block;
+      font-weight: 600;
+      color: var(--accent);
+      text-decoration: none;
+      font-size: 0.85rem;
+    }
+
+    .tool-link:hover {
+      text-decoration: underline;
+    }
+
+    .tool-desc {
+      display: block;
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      margin-top: 0.2rem;
+      line-height: 1.4;
+    }
+
+    .score-cell {
+      font-weight: 700;
+      color: var(--accent);
+    }
+
+    .use-case {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      white-space: nowrap;
+    }
+
+    .lang-badge {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      white-space: nowrap;
+    }
+
+    .inline-link {
+      color: var(--accent);
+      text-decoration: none;
+      font-family: monospace;
+      font-size: 0.9em;
+    }
+
+    .inline-link:hover {
+      text-decoration: underline;
+    }
+
+    .cta-box {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 1.25rem 1.5rem;
+      margin-top: 1.5rem;
+    }
+
+    .cta-box p {
+      margin-bottom: 0.5rem;
+      font-size: 0.9rem;
+    }
+
+    .cta-box p:last-child {
+      margin-bottom: 0;
+    }
+
+    .cta-box a {
+      color: var(--accent);
+    }
+
+    .post-footer {
+      border-top: 1px solid var(--border);
+      padding-top: 1.5rem;
+      margin-top: 2rem;
+    }
+
+    .methodology {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+      margin-bottom: 1rem;
+    }
+
+    .share-line {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    .share-line a {
+      color: var(--accent);
+    }
+
+    @media (max-width: 640px) {
+      h1 {
+        font-size: 1.5rem;
+      }
+
+      .data-table {
+        font-size: 0.78rem;
+      }
+
+      .use-case,
+      .lang-badge {
+        display: none;
+      }
+    }
+  </style>
+</Base>

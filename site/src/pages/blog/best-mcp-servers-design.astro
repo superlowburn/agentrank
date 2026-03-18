@@ -1,0 +1,663 @@
+---
+export const prerender = true;
+
+import Base from '../../layouts/Base.astro';
+import BlogSubscribeCTA from '../../components/BlogSubscribeCTA.astro';
+import RelatedPosts from '../../components/RelatedPosts.astro';
+
+const relatedPosts = [
+  { href: '/blog/best-mcp-servers-code-generation/', title: 'Best MCP Servers for Code Generation in 2026' },
+  { href: '/blog/best-mcp-servers-productivity/', title: 'Best MCP Servers for Productivity in 2026' },
+  { href: '/blog/how-to-choose-an-mcp-server/', title: 'How to Choose an MCP Server in 2026' },
+  { href: '/blog/mcp-server-comparison-top-10/', title: 'MCP Server Comparison: Top 10 Head-to-Head' },
+  { href: '/blog/mcp-server-landscape-q1-2026/', title: 'The MCP Server Landscape: Q1 2026' },
+];
+
+const publishDate = '2026-03-18';
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: 'Best MCP Servers for Design (Figma, UI/UX Workflows) in 2026',
+  description: 'The top-ranked MCP servers for design workflows — Figma context, UI components, diagramming, and icon systems. Scored by real signals from the AgentRank index.',
+  datePublished: publishDate,
+  dateModified: publishDate,
+  author: {
+    '@type': 'Organization',
+    name: 'AgentRank',
+    url: 'https://agentrank-ai.com',
+  },
+  publisher: {
+    '@type': 'Organization',
+    name: 'AgentRank',
+    url: 'https://agentrank-ai.com',
+    logo: {
+      '@type': 'ImageObject',
+      url: 'https://agentrank-ai.com/og-image.png',
+    },
+  },
+  mainEntityOfPage: {
+    '@type': 'WebPage',
+    '@id': 'https://agentrank-ai.com/blog/best-mcp-servers-design/',
+  },
+  image: 'https://agentrank-ai.com/og/best-mcp-servers-design.png',
+  keywords: 'best MCP servers design, Figma MCP server, UI component MCP, design workflow AI agent, shadcn MCP, Excalidraw MCP, Penpot MCP 2026',
+};
+
+const tools = [
+  {
+    rank: 1,
+    name: 'GLips/Figma-Context-MCP',
+    slug: 'GLips--Figma-Context-MCP',
+    score: 89.86,
+    stars: 13663,
+    lang: 'TypeScript',
+    contributors: 24,
+    lastCommit: '2026-03-11',
+    desc: 'MCP server to provide Figma layout information to AI coding agents like Cursor',
+    useCase: 'Figma / Layout Context',
+    highlight: 'Highest-starred design tool in the index at 13,663 stars. Feeds Figma layout data directly to agents.',
+  },
+  {
+    rank: 2,
+    name: 'magicuidesign/mcp',
+    slug: 'magicuidesign--mcp',
+    score: 85.07,
+    stars: 182,
+    lang: 'TypeScript',
+    contributors: 3,
+    lastCommit: '2026-03-10',
+    desc: 'Official Magic UI MCP server',
+    useCase: 'Animated UI Components',
+    highlight: 'Official server from the Magic UI team. Lets agents generate polished animated components on demand.',
+  },
+  {
+    rank: 3,
+    name: 'better-auth/better-icons',
+    slug: 'better-auth--better-icons',
+    score: 85.03,
+    stars: 440,
+    lang: 'TypeScript',
+    contributors: 5,
+    lastCommit: '2026-02-22',
+    desc: 'MCP server for searching and retrieving icons',
+    useCase: 'Icon Search',
+    highlight: 'Zero open issues. Clean, focused tool for icon lookup — useful whenever an agent needs to pick the right icon for a UI.',
+  },
+  {
+    rank: 4,
+    name: 'Jpisnice/shadcn-ui-mcp-server',
+    slug: 'Jpisnice--shadcn-ui-mcp-server',
+    score: 83.64,
+    stars: 2696,
+    lang: 'TypeScript',
+    contributors: 15,
+    lastCommit: '2026-02-10',
+    desc: 'MCP server providing LLMs context about shadcn/ui component structure, usage, and installation',
+    useCase: 'shadcn/ui Components',
+    highlight: '2,696 stars. Broad framework support: React, Svelte 5, Vue, and React Native. The go-to for shadcn-based projects.',
+  },
+  {
+    rank: 5,
+    name: '8beeeaaat/touchdesigner-mcp',
+    slug: '8beeeaaat--touchdesigner-mcp',
+    score: 82.38,
+    stars: 224,
+    lang: 'TypeScript',
+    contributors: 2,
+    lastCommit: '2026-03-07',
+    desc: 'MCP server for TouchDesigner',
+    useCase: 'Generative / Motion Design',
+    highlight: 'Strong issue health: 39 closed vs 1 open. TouchDesigner is the leading tool for interactive visual and motion design.',
+  },
+  {
+    rank: 6,
+    name: 'yctimlin/mcp_excalidraw',
+    slug: 'yctimlin--mcp_excalidraw',
+    score: 76.46,
+    stars: 1428,
+    lang: 'JavaScript',
+    contributors: 13,
+    lastCommit: '2026-03-06',
+    desc: 'MCP server and Claude Code skill for Excalidraw — programmatic canvas toolkit for diagrams via AI agents',
+    useCase: 'Diagramming / Whiteboarding',
+    highlight: '1,428 stars. Creates, edits, and exports Excalidraw diagrams with real-time canvas sync. Useful for architecture and UX flow diagrams.',
+  },
+  {
+    rank: 7,
+    name: 'penpot/penpot-mcp',
+    slug: 'penpot--penpot-mcp',
+    score: 70.76,
+    stars: 221,
+    lang: 'TypeScript',
+    contributors: 7,
+    lastCommit: '2026-02-18',
+    desc: "Penpot's official MCP Server",
+    useCase: 'Open-source Design Tool',
+    highlight: 'Official server from the Penpot team — the leading open-source Figma alternative. Best pick for self-hosted design stacks.',
+  },
+];
+
+const stats = {
+  totalDesignTools: 768,
+  avgDesignScore: 32.2,
+  topScore: 89.86,
+};
+
+const faqJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: [
+    {
+      '@type': 'Question',
+      name: 'What is the best MCP server for Figma?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'GLips/Figma-Context-MCP is the top-ranked Figma MCP server in the AgentRank index with 13,663 stars and a score of 89.86. It feeds Figma layout data to AI coding agents like Cursor so they can implement designs accurately. A second option is arinspunk/claude-talk-to-figma-mcp, which supports bidirectional read/write operations on Figma files.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Is there an MCP server for shadcn/ui?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Yes — Jpisnice/shadcn-ui-mcp-server provides LLMs with full context about shadcn/ui component structure, usage patterns, and installation. It supports React, Svelte 5, Vue, and React Native. It has 2,696 stars and scores 83.64 in the AgentRank index.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Can AI agents interact with Penpot or open-source design tools?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Yes — penpot/penpot-mcp is the official MCP server for Penpot, the open-source Figma alternative. It is maintained by the Penpot team directly, making it a reliable choice for teams that self-host their design tooling and want agent workflows integrated with it.',
+      },
+    },
+  ],
+};
+---
+
+<Base
+  title="Best MCP Servers for Design (Figma, UI/UX Workflows) in 2026 — AgentRank"
+  description="The top-ranked MCP servers for design workflows — Figma context, UI components, icons, diagramming, and open-source design tools. Scored by real signals, updated March 2026."
+  activeTab="blog"
+  keywords="best MCP servers design, Figma MCP server, UI component MCP, shadcn MCP server, Excalidraw MCP, Penpot MCP, design workflow AI agent 2026"
+  canonicalUrl="https://agentrank-ai.com/blog/best-mcp-servers-design/"
+  jsonLd={[jsonLd, faqJsonLd]}
+  ogImage="/og/best-mcp-servers-design.png"
+>
+  <article class="blog-post">
+    <header class="post-header">
+      <div class="breadcrumb"><a href="/blog/">Blog</a> <span>/</span></div>
+      <h1>Best MCP Servers for Design (Figma, UI/UX Workflows) in 2026</h1>
+      <div class="post-meta">
+        <time datetime={publishDate}>March 18, 2026</time>
+        <span class="sep">&middot;</span>
+        <span>5 min read</span>
+        <span class="sep">&middot;</span>
+        <span>AgentRank Index</span>
+      </div>
+      <p class="lede">
+        Design-to-code is one of the most compelling agent use cases — pull Figma layout data, generate
+        the right component, pick the right icon, done. The gap is tooling. We scored
+        <strong>{stats.totalDesignTools} design-category tools</strong> in the AgentRank index.
+        Figma-Context-MCP alone has more stars than the next nine entries combined.
+        Here is what's worth using.
+      </p>
+    </header>
+
+    <nav class="toc">
+      <strong>Contents</strong>
+      <ol>
+        <li><a href="#rankings">Rankings by score</a></li>
+        <li><a href="#by-use-case">Choosing by use case</a></li>
+        <li><a href="#what-to-watch">What to watch for</a></li>
+        <li><a href="#methodology">Methodology</a></li>
+      </ol>
+    </nav>
+
+    <section id="rankings">
+      <h2>Top design MCP servers</h2>
+      <p>
+        Ranked by the composite AgentRank score — a weighted blend of stars (15%), freshness (25%),
+        issue health (25%), contributors (10%), and inbound dependents (25%).
+        Average score across all {stats.totalDesignTools} design tools is <strong>{stats.avgDesignScore}</strong>.
+        The tools below are in the top tier.
+      </p>
+
+      <table class="data-table top-table">
+        <thead>
+          <tr>
+            <th class="num">#</th>
+            <th>Repository</th>
+            <th class="num">Score</th>
+            <th class="num">Stars</th>
+            <th>Use Case</th>
+            <th>Lang</th>
+          </tr>
+        </thead>
+        <tbody>
+          {tools.map((tool) => (
+            <tr>
+              <td class="num rank-num">{tool.rank}</td>
+              <td class="tool-cell">
+                <a href={`/tool/${tool.slug}/`} class="tool-link">{tool.name}</a>
+                <span class="tool-desc">{tool.desc}</span>
+              </td>
+              <td class="num score-cell">{tool.score}</td>
+              <td class="num">{tool.stars.toLocaleString('en-US')}</td>
+              <td class="use-case">{tool.useCase}</td>
+              <td class="lang-badge">{tool.lang}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </section>
+
+    <section id="by-use-case">
+      <h2>Choosing by use case</h2>
+
+      <h3>Figma layout context for AI coding agents</h3>
+      <p>
+        <a href="/tool/GLips--Figma-Context-MCP/" class="inline-link">GLips/Figma-Context-MCP</a> is the
+        standout tool in this category — 13,663 stars, a score of <strong>89.86</strong>, and 24 contributors.
+        It provides Figma layout data directly to AI coding agents like Cursor, enabling them to
+        implement designs accurately without manual handoff. The server reads node properties, layout constraints,
+        typography, and spacing from your Figma file and structures them for agent consumption.
+        If your workflow involves going from Figma to code, this is the essential tool.
+      </p>
+
+      <h3>Animated and polished UI components (Magic UI)</h3>
+      <p>
+        <a href="/tool/magicuidesign--mcp/" class="inline-link">magicuidesign/mcp</a> is the official MCP
+        server from Magic UI, scoring <strong>85.07</strong>. Magic UI is a library of animated React
+        components — the kind of polished effects that would otherwise require custom CSS or Framer Motion expertise.
+        With this server, an agent can generate and integrate those components on demand. Zero open issues
+        and active commits signal a well-maintained project despite its small contributor count.
+      </p>
+
+      <h3>Icon search and retrieval</h3>
+      <p>
+        <a href="/tool/better-auth--better-icons/" class="inline-link">better-auth/better-icons</a> scores
+        <strong>85.03</strong> with zero open issues — a clean, focused tool for icon lookup. When an
+        agent needs to pick the right icon for a component or interface, this server provides semantic search
+        across icon sets so agents can find and retrieve icons by description rather than guessing names.
+        Well-maintained by the better-auth team.
+      </p>
+
+      <h3>shadcn/ui component context</h3>
+      <p>
+        <a href="/tool/Jpisnice--shadcn-ui-mcp-server/" class="inline-link">Jpisnice/shadcn-ui-mcp-server</a> has
+        2,696 stars and scores <strong>83.64</strong>. It gives LLMs full context about shadcn/ui component
+        structure, usage patterns, and installation — compatible with React, Svelte 5, Vue, and React Native.
+        If your project uses shadcn/ui (and many do), this server closes the gap between "the agent knows
+        React" and "the agent knows exactly how to use your component system."
+      </p>
+
+      <h3>Generative and motion design (TouchDesigner)</h3>
+      <p>
+        <a href="/tool/8beeeaaat--touchdesigner-mcp/" class="inline-link">8beeeaaat/touchdesigner-mcp</a> scores
+        <strong>82.38</strong> with an exceptional issue health ratio: 39 closed versus 1 open.
+        TouchDesigner is the leading environment for interactive visual and motion design — live performances,
+        generative visuals, and real-time data-driven graphics. This server lets agents script and control
+        TouchDesigner networks programmatically, which opens up AI-assisted creative workflows that were
+        previously entirely manual.
+      </p>
+
+      <h3>Diagramming and whiteboarding (Excalidraw)</h3>
+      <p>
+        <a href="/tool/yctimlin--mcp_excalidraw/" class="inline-link">yctimlin/mcp_excalidraw</a> brings
+        programmatic control to Excalidraw with 1,428 stars and a score of <strong>76.46</strong>. The server
+        lets agents create, edit, and export Excalidraw diagrams with real-time canvas sync — useful for
+        generating architecture diagrams, UX flow charts, or system diagrams from structured data.
+        13 contributors and active commits make this a reliable choice.
+      </p>
+
+      <h3>Open-source design tool integration (Penpot)</h3>
+      <p>
+        <a href="/tool/penpot--penpot-mcp/" class="inline-link">penpot/penpot-mcp</a> is the official
+        server from the Penpot team, scoring <strong>70.76</strong>. Penpot is the leading open-source
+        Figma alternative — self-hosted, browser-based, SVG-native. The official server integration means
+        teams that run Penpot on-premise can connect their design tool to agent workflows without relying
+        on a third-party server or reverse-engineering the API.
+      </p>
+    </section>
+
+    <section id="what-to-watch">
+      <h2>What to watch for</h2>
+
+      <h3>Figma-Context-MCP vs. claude-talk-to-figma-mcp</h3>
+      <p>
+        Two Figma servers exist in the index with meaningfully different approaches.
+        <a href="/tool/GLips--Figma-Context-MCP/" class="inline-link">GLips/Figma-Context-MCP</a> (score 89.86)
+        reads layout data and feeds it to coding agents — it is primarily designed for design-to-code pipelines.
+        <a href="/tool/arinspunk--claude-talk-to-figma-mcp/" class="inline-link">arinspunk/claude-talk-to-figma-mcp</a> (score 68.87)
+        supports bidirectional operations: reading <em>and</em> modifying Figma designs from Claude.
+        Use the first when you want to implement from Figma; use the second when you want the agent to
+        edit the Figma file itself.
+      </p>
+
+      <h3>Official vs. community servers</h3>
+      <p>
+        This category has a healthy mix of official servers (magicuidesign/mcp, penpot/penpot-mcp) and
+        well-maintained community efforts (Figma-Context-MCP, shadcn-ui-mcp-server, mcp_excalidraw).
+        For official design tools with public APIs, an official server from the tool vendor is the safer
+        long-term dependency. For tools like shadcn/ui that don't publish an official server, a
+        high-star community server with good issue health is the next best thing.
+      </p>
+
+      <h3>The design-to-code gap is still early</h3>
+      <p>
+        Average score across all {stats.totalDesignTools} design tools is <strong>{stats.avgDesignScore}</strong> —
+        the lowest category average in the index. Most design MCP tooling is recent, with small contributor
+        counts and variable maintenance. Figma-Context-MCP is the clear outlier. The rest of this
+        category is still maturing. Check last-commit dates and issue health before depending on a
+        lower-ranked tool in production.
+      </p>
+
+      <div class="cta-box">
+        <p>
+          <strong>Browse the full design category:</strong> <a href="/category/design/">All design MCP servers ranked</a> —
+          {stats.totalDesignTools} tools indexed, updated daily.
+        </p>
+        <p>
+          <strong>Building a design MCP server?</strong> <a href="/submit/">Submit it</a> to get indexed and scored.
+        </p>
+      </div>
+    </section>
+
+    <section id="methodology">
+      <h2>Methodology</h2>
+      <p>
+        Tools classified as "design" via keyword matching on description, repo name, and topics — including
+        Figma, UI components, icon systems, diagramming, animation, and design tool integrations.
+        Only non-archived repositories included. Scores computed using: stars 15%, freshness 25%,
+        issue health 25%, contributors 10%, inbound dependents 25%.
+      </p>
+    </section>
+
+    <RelatedPosts posts={relatedPosts} />
+    <BlogSubscribeCTA source="blog" />
+    <footer class="post-footer">
+      <p class="methodology">
+        <strong>Methodology:</strong> Data from the AgentRank index crawled March 2026.
+        Scores computed using: stars 15%, freshness 25%, issue health 25%, contributors 10%, inbound dependents 25%.
+        Tools classified as "design" via keyword matching on description, topics, and repo name.
+        Only non-archived repositories included.
+      </p>
+      <p class="share-line">
+        Found this useful? <a href="https://x.com/AgentRank_ai" target="_blank" rel="noopener noreferrer">Follow @AgentRank_ai</a> for
+        weekly ecosystem updates, biggest movers, and new tool spotlights.
+      </p>
+    </footer>
+  </article>
+
+  <style>
+    .blog-post {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 2rem 0 3rem;
+    }
+
+    .breadcrumb {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      margin-bottom: 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .breadcrumb a {
+      color: var(--text-muted);
+      text-decoration: none;
+    }
+
+    .breadcrumb a:hover {
+      color: var(--accent);
+    }
+
+    .post-header {
+      margin-bottom: 2rem;
+    }
+
+    h1 {
+      font-size: 2rem;
+      font-weight: 700;
+      line-height: 1.2;
+      margin-bottom: 0.75rem;
+      color: var(--text-primary);
+    }
+
+    .post-meta {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      margin-bottom: 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .sep {
+      opacity: 0.4;
+    }
+
+    .lede {
+      font-size: 1.05rem;
+      line-height: 1.65;
+      color: var(--text-secondary);
+    }
+
+    .toc {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 1.25rem 1.5rem;
+      margin-bottom: 2.5rem;
+    }
+
+    .toc strong {
+      font-size: 0.82rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      display: block;
+      margin-bottom: 0.5rem;
+    }
+
+    .toc ol {
+      margin: 0;
+      padding-left: 1.25rem;
+    }
+
+    .toc li {
+      font-size: 0.9rem;
+      margin-bottom: 0.3rem;
+    }
+
+    .toc a {
+      color: var(--text-secondary);
+      text-decoration: none;
+    }
+
+    .toc a:hover {
+      color: var(--accent);
+    }
+
+    section {
+      margin-bottom: 2.5rem;
+    }
+
+    h2 {
+      font-size: 1.4rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      color: var(--text-primary);
+    }
+
+    h3 {
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-top: 1.5rem;
+      margin-bottom: 0.6rem;
+      color: var(--text-primary);
+    }
+
+    p {
+      font-size: 0.95rem;
+      line-height: 1.7;
+      color: var(--text-secondary);
+      margin-bottom: 1rem;
+    }
+
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .data-table thead th {
+      text-align: left;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      padding: 0.5rem 0.75rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .data-table tbody tr {
+      border-bottom: 1px solid var(--border-subtle, var(--border));
+    }
+
+    .data-table tbody tr:hover {
+      background: var(--bg-secondary);
+    }
+
+    .data-table td {
+      padding: 0.65rem 0.75rem;
+      vertical-align: top;
+    }
+
+    .num {
+      text-align: right;
+      white-space: nowrap;
+    }
+
+    .rank-num {
+      color: var(--text-muted);
+      font-size: 0.8rem;
+    }
+
+    .tool-cell {
+      min-width: 200px;
+    }
+
+    .tool-link {
+      display: block;
+      font-weight: 600;
+      color: var(--accent);
+      text-decoration: none;
+      font-size: 0.85rem;
+    }
+
+    .tool-link:hover {
+      text-decoration: underline;
+    }
+
+    .tool-desc {
+      display: block;
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      margin-top: 0.2rem;
+      line-height: 1.4;
+    }
+
+    .score-cell {
+      font-weight: 700;
+      color: var(--accent);
+    }
+
+    .use-case {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      white-space: nowrap;
+    }
+
+    .lang-badge {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      white-space: nowrap;
+    }
+
+    .inline-link {
+      color: var(--accent);
+      text-decoration: none;
+      font-family: monospace;
+      font-size: 0.9em;
+    }
+
+    .inline-link:hover {
+      text-decoration: underline;
+    }
+
+    .cta-box {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 1.25rem 1.5rem;
+      margin-top: 1.5rem;
+    }
+
+    .cta-box p {
+      margin-bottom: 0.5rem;
+      font-size: 0.9rem;
+    }
+
+    .cta-box p:last-child {
+      margin-bottom: 0;
+    }
+
+    .cta-box a {
+      color: var(--accent);
+    }
+
+    .post-footer {
+      border-top: 1px solid var(--border);
+      padding-top: 1.5rem;
+      margin-top: 2rem;
+    }
+
+    .methodology {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+      margin-bottom: 1rem;
+    }
+
+    .share-line {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    .share-line a {
+      color: var(--accent);
+    }
+
+    @media (max-width: 640px) {
+      h1 {
+        font-size: 1.5rem;
+      }
+
+      .data-table {
+        font-size: 0.78rem;
+      }
+
+      .use-case,
+      .lang-badge {
+        display: none;
+      }
+    }
+  </style>
+</Base>

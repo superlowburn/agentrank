@@ -1,0 +1,613 @@
+---
+export const prerender = true;
+
+import Base from '../../layouts/Base.astro';
+import BlogSubscribeCTA from '../../components/BlogSubscribeCTA.astro';
+import RelatedPosts from '../../components/RelatedPosts.astro';
+
+const relatedPosts = [
+  { href: '/blog/best-mcp-servers-api-integration/', title: 'Best MCP Servers for API Integration in 2026' },
+  { href: '/blog/best-mcp-servers-productivity/', title: 'Best MCP Servers for Productivity in 2026' },
+  { href: '/blog/best-mcp-servers-devops/', title: 'Best MCP Servers for DevOps & Infrastructure in 2026' },
+  { href: '/blog/how-to-choose-an-mcp-server/', title: 'How to Choose an MCP Server in 2026' },
+  { href: '/blog/mcp-server-comparison-top-10/', title: 'MCP Server Comparison: Top 10 Head-to-Head' },
+];
+
+const publishDate = '2026-03-18';
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: 'Best MCP Servers for Home Automation and IoT in 2026',
+  description: 'Top-ranked MCP servers for Home Assistant, smart home control, and IoT device management. Real scores from the AgentRank index, updated March 2026.',
+  datePublished: publishDate,
+  dateModified: publishDate,
+  author: {
+    '@type': 'Organization',
+    name: 'AgentRank',
+    url: 'https://agentrank-ai.com',
+  },
+  publisher: {
+    '@type': 'Organization',
+    name: 'AgentRank',
+    url: 'https://agentrank-ai.com',
+    logo: {
+      '@type': 'ImageObject',
+      url: 'https://agentrank-ai.com/og-image.png',
+    },
+  },
+  mainEntityOfPage: {
+    '@type': 'WebPage',
+    '@id': 'https://agentrank-ai.com/blog/best-mcp-servers-home-automation/',
+  },
+  image: 'https://agentrank-ai.com/og/best-mcp-servers-home-automation.png',
+  keywords: 'best MCP servers home automation, Home Assistant MCP server, ha-mcp, IoT MCP server, smart home AI agent, home automation AI 2026',
+};
+
+const tools = [
+  {
+    rank: 1,
+    name: 'homeassistant-ai/ha-mcp',
+    slug: 'homeassistant-ai--ha-mcp',
+    score: 93.13,
+    stars: 1190,
+    lang: 'Python',
+    contributors: 18,
+    lastCommit: '2026-03-14',
+    desc: 'The Unofficial and Awesome Home Assistant MCP Server',
+    platform: 'Home Assistant',
+    highlight: 'Highest-scoring home automation tool by a wide margin. 1,190 stars, 18 contributors, updated March 2026.',
+  },
+  {
+    rank: 2,
+    name: 'Coolver/home-assistant-vibecode-agent',
+    slug: 'Coolver--home-assistant-vibecode-agent',
+    score: 82.05,
+    stars: 482,
+    lang: 'Python',
+    contributors: 6,
+    lastCommit: '2026-03-10',
+    desc: 'Home Assistant MCP server agent for IDE integration — automations, dashboards, config via natural language',
+    platform: 'Home Assistant',
+    highlight: 'Designed for IDE use: Cursor, VS Code, Claude Code. Natural language config management and dashboard design.',
+  },
+  {
+    rank: 3,
+    name: 'c1pher-cn/ha-mcp-for-xiaozhi',
+    slug: 'c1pher-cn--ha-mcp-for-xiaozhi',
+    score: 59.15,
+    stars: 212,
+    lang: 'Python',
+    contributors: 2,
+    lastCommit: '2025-10-10',
+    desc: 'Home Assistant MCP server for Xiaozhi AI',
+    platform: 'Home Assistant',
+    highlight: '212 stars. Targeted at Xiaozhi AI integration. Scores well on issue health (all 21 issues closed).',
+  },
+  {
+    rank: 4,
+    name: 'deswong/Openhab-MCP',
+    slug: 'deswong--Openhab-MCP',
+    score: 57.16,
+    stars: 4,
+    lang: 'TypeScript',
+    contributors: 0,
+    lastCommit: '2026-03-13',
+    desc: 'Full OpenHAB (v5+) control via MCP — Items, Things, Rules, Persistence, Semantic Tags',
+    platform: 'OpenHAB',
+    highlight: 'Only OpenHAB MCP server in the index. Full v5+ API coverage including semantic tags. Very fresh (March 2026).',
+  },
+  {
+    rank: 5,
+    name: 'voska/hass-mcp',
+    slug: 'voska--hass-mcp',
+    score: 51.53,
+    stars: 284,
+    lang: 'Python',
+    contributors: 6,
+    lastCommit: '2025-08-05',
+    desc: 'Home Assistant MCP Server',
+    platform: 'Home Assistant',
+    highlight: '284 stars, 6 contributors. Earlier project that predates ha-mcp. Useful as a reference implementation.',
+  },
+  {
+    rank: 6,
+    name: 'achetronic/hass-mcp',
+    slug: 'achetronic--hass-mcp',
+    score: 52.03,
+    stars: 4,
+    lang: 'Go',
+    contributors: 0,
+    lastCommit: '2026-03-02',
+    desc: 'A remote MCP server for Home Assistant to control your home using AI',
+    platform: 'Home Assistant',
+    highlight: 'The only Home Assistant MCP server written in Go. Designed as a remote server rather than local installation.',
+  },
+];
+
+const stats = {
+  totalHomeAutoTools: 24,
+  topScore: 93.13,
+  homeAssistantTools: 5,
+  otherPlatforms: 2,
+};
+
+const faqJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: [
+    {
+      '@type': 'Question',
+      name: 'What is the best MCP server for Home Assistant?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'homeassistant-ai/ha-mcp scores 93.13 in the AgentRank index — the highest-rated home automation tool. It has 1,190 stars, 18 contributors, and was updated in March 2026. It provides full control of Home Assistant entities, automations, scenes, and scripts through AI agents.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Can AI agents control smart home devices through MCP?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Yes. MCP servers for Home Assistant act as a bridge between AI agents and smart home platforms. Through tools like ha-mcp, AI agents can read device states, control lights and thermostats, trigger automations, and manage Home Assistant configuration — all via natural language.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Is there an MCP server for OpenHAB?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Yes — deswong/Openhab-MCP provides full OpenHAB v5+ control via MCP, covering Items, Things, Rules, Persistence, and Semantic Tags. It is the only OpenHAB MCP server currently indexed by AgentRank.',
+      },
+    },
+  ],
+};
+---
+
+<Base
+  title="Best MCP Servers for Home Automation and IoT in 2026 — AgentRank"
+  description="Top-ranked MCP servers for Home Assistant, smart home control, and IoT device management. Scored by freshness, issue health, and community signals. March 2026 data."
+  activeTab="blog"
+  keywords="best MCP servers home automation, Home Assistant MCP server, ha-mcp, IoT MCP server, smart home AI agent, home automation AI, OpenHAB MCP, home assistant AI control"
+  canonicalUrl="https://agentrank-ai.com/blog/best-mcp-servers-home-automation/"
+  jsonLd={[jsonLd, faqJsonLd]}
+  ogImage="/og/best-mcp-servers-home-automation.png"
+>
+  <article class="blog-post">
+    <header class="post-header">
+      <div class="breadcrumb"><a href="/blog/">Blog</a> <span>/</span></div>
+      <h1>Best MCP Servers for Home Automation and IoT in 2026</h1>
+      <div class="post-meta">
+        <time datetime={publishDate}>March 18, 2026</time>
+        <span class="sep">&middot;</span>
+        <span>5 min read</span>
+        <span class="sep">&middot;</span>
+        <span>AgentRank Index</span>
+      </div>
+      <p class="lede">
+        Home Assistant has one of the most active developer communities in open source.
+        When ha-mcp launched, it reached 1,190 stars faster than most MCP servers in any category.
+        We indexed <strong>{stats.totalHomeAutoTools} home automation and IoT tools</strong>.
+        Here are the ones that score highest — and what they actually do.
+      </p>
+    </header>
+
+    <nav class="toc">
+      <strong>Contents</strong>
+      <ol>
+        <li><a href="#rankings">Rankings by score</a></li>
+        <li><a href="#ha-mcp">ha-mcp deep-dive</a></li>
+        <li><a href="#ide-integration">IDE integration: vibecode-agent</a></li>
+        <li><a href="#openhab">OpenHAB alternative</a></li>
+        <li><a href="#picks">Recommended picks</a></li>
+      </ol>
+    </nav>
+
+    <section id="rankings">
+      <h2>Top home automation MCP servers</h2>
+      <p>
+        Home automation is a newer MCP category, but ha-mcp already has one of the highest scores
+        in the entire index at 93.13. Home Assistant's existing community is the reason — thousands
+        of developers were already looking for a way to connect AI agents to their smart home setups.
+        MCP gave them the bridge.
+      </p>
+
+      <table class="data-table top-table">
+        <thead>
+          <tr>
+            <th class="num">#</th>
+            <th>Repository</th>
+            <th class="num">Score</th>
+            <th class="num">Stars</th>
+            <th>Platform</th>
+            <th>Lang</th>
+          </tr>
+        </thead>
+        <tbody>
+          {tools.map((tool) => (
+            <tr>
+              <td class="num rank-num">{tool.rank}</td>
+              <td class="tool-cell">
+                <a href={`/tool/${tool.slug}/`} class="tool-link">{tool.name}</a>
+                <span class="tool-desc">{tool.desc}</span>
+              </td>
+              <td class="num score-cell">{tool.score}</td>
+              <td class="num">{tool.stars.toLocaleString('en-US')}</td>
+              <td class="platform-badge">{tool.platform}</td>
+              <td class="lang-badge">{tool.lang}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </section>
+
+    <section id="ha-mcp">
+      <h2>ha-mcp: the clear leader</h2>
+      <p>
+        <a href="/tool/homeassistant-ai--ha-mcp/" class="inline-link">homeassistant-ai/ha-mcp</a> sits at
+        <strong>93.13</strong> — one of the highest scores in the home automation category and well above
+        comparable community-built tools. The signals behind the score are strong across the board:
+        18 contributors, 1,190 stars, active issue management (204 closed against 36 open), and a
+        March 2026 commit date.
+      </p>
+      <p>
+        The project is organized under the <code>homeassistant-ai</code> GitHub org rather than a
+        single maintainer's account. That organizational structure contributes to the multi-contributor
+        signal and suggests the project has distributed ownership — lower bus factor risk than a single-person
+        project.
+      </p>
+      <p>
+        What it does: expose Home Assistant's entity registry, state machine, automation engine, and
+        script runner to AI agents via MCP tools. An agent connected to ha-mcp can read all device states,
+        turn lights on or off, change thermostat setpoints, trigger scenes and scripts, and query
+        automations — all without a human using the HA dashboard. For home automation use cases where
+        you want an agent to respond to natural language commands or monitor conditions, this is the
+        starting point.
+      </p>
+    </section>
+
+    <section id="ide-integration">
+      <h2>IDE integration: vibecode-agent</h2>
+      <p>
+        <a href="/tool/Coolver--home-assistant-vibecode-agent/" class="inline-link">Coolver/home-assistant-vibecode-agent</a>
+        takes a different angle at <strong>82.05</strong>. Rather than focusing on runtime device control,
+        it's built for developers who work on their Home Assistant configuration inside an IDE.
+      </p>
+      <p>
+        The pitch: connect Cursor, VS Code, or Claude Code to your live Home Assistant instance and
+        have an AI assist with writing and debugging automations, designing Lovelace dashboards, adjusting
+        theme variables, and deploying configuration changes — all without leaving the editor. 482 stars
+        and 6 contributors in a short time suggests the developer audience found it immediately useful.
+      </p>
+      <p>
+        The distinction between ha-mcp and vibecode-agent matters for use case selection.
+        ha-mcp is for runtime agent control — you want an AI to operate your home.
+        vibecode-agent is for development-time assistance — you want an AI to help you configure it.
+        They're complementary.
+      </p>
+    </section>
+
+    <section id="openhab">
+      <h2>OpenHAB: one dedicated server</h2>
+      <p>
+        <a href="/tool/deswong--Openhab-MCP/" class="inline-link">deswong/Openhab-MCP</a> is the only
+        OpenHAB server in the index. At <strong>57.16</strong>, it's a newer project (4 stars, no contributors
+        beyond the author), but the freshness signal is strong — last committed March 13, 2026.
+      </p>
+      <p>
+        OpenHAB is a less common home automation platform than Home Assistant, but it has a loyal user
+        base — particularly in Germany and enterprise/commercial smart building deployments. The server
+        exposes the full OpenHAB v5+ REST API surface: Items, Things, Rules, Persistence history, and
+        Semantic Tags. If you're running OpenHAB, this is your only current MCP option, and it's
+        more complete than many early-stage tools.
+      </p>
+    </section>
+
+    <section id="picks">
+      <h2>Recommended picks</h2>
+
+      <h3>Best for Home Assistant control</h3>
+      <p>
+        <strong><a href="/tool/homeassistant-ai--ha-mcp/" class="inline-link">homeassistant-ai/ha-mcp</a></strong>
+        at 93.13. No competition in this category. Start here.
+      </p>
+
+      <h3>Best for Home Assistant development</h3>
+      <p>
+        <strong><a href="/tool/Coolver--home-assistant-vibecode-agent/" class="inline-link">Coolver/home-assistant-vibecode-agent</a></strong>
+        at 82.05. Use alongside ha-mcp: one for building automations, one for running them.
+      </p>
+
+      <h3>Best for OpenHAB</h3>
+      <p>
+        <strong><a href="/tool/deswong--Openhab-MCP/" class="inline-link">deswong/Openhab-MCP</a></strong>
+        at 57.16. Early-stage but comprehensive. The only option for OpenHAB users.
+      </p>
+
+      <h3>Go implementation</h3>
+      <p>
+        <strong><a href="/tool/achetronic--hass-mcp/" class="inline-link">achetronic/hass-mcp</a></strong>
+        at 52.03. If your deployment environment requires a Go binary over a Python process, this is the
+        only Home Assistant MCP server built in Go. Remote server architecture makes it easy to run
+        as a sidecar.
+      </p>
+
+      <div class="cta-box">
+        <p>
+          <strong>Building a home automation MCP server?</strong> <a href="/submit/">Submit it</a> to
+          get indexed and scored alongside ha-mcp and the others.
+        </p>
+        <p>
+          <strong>Using ha-mcp?</strong> Check the <a href="/tool/homeassistant-ai--ha-mcp/">full AgentRank score breakdown</a>
+          — freshness, issue health, contributors, and dependents.
+        </p>
+      </div>
+    </section>
+
+    <RelatedPosts posts={relatedPosts} />
+    <BlogSubscribeCTA source="blog" />
+    <footer class="post-footer">
+      <p class="methodology">
+        <strong>Methodology:</strong> Data from the AgentRank index crawled March 2026.
+        Home automation tools identified via keyword matching on description and repo name
+        (home assistant, homeassistant, ha-mcp, iot, smart home, mqtt, zigbee, openhab, hass).
+        Scores: stars 15%, freshness 25%, issue health 25%, contributors 10%, inbound dependents 25%.
+        Only non-archived repositories included.
+      </p>
+      <p class="share-line">
+        Found this useful? <a href="https://x.com/AgentRank_ai" target="_blank" rel="noopener noreferrer">Follow @AgentRank_ai</a> for
+        weekly ecosystem updates, biggest movers, and new tool spotlights.
+      </p>
+    </footer>
+  </article>
+
+  <style>
+    .blog-post {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 2rem 0 3rem;
+    }
+
+    .breadcrumb {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      margin-bottom: 0.75rem;
+    }
+
+    .breadcrumb span {
+      margin: 0 0.25rem;
+      opacity: 0.5;
+    }
+
+    .post-header {
+      margin-bottom: 2rem;
+      padding-bottom: 1.5rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .post-header h1 {
+      font-size: 1.6rem;
+      font-weight: 700;
+      line-height: 1.3;
+      margin-bottom: 0.75rem;
+    }
+
+    .post-meta {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      flex-wrap: wrap;
+      margin-bottom: 1rem;
+    }
+
+    .sep {
+      opacity: 0.4;
+    }
+
+    .lede {
+      font-size: 1rem;
+      line-height: 1.7;
+      color: var(--text);
+      opacity: 0.9;
+    }
+
+    .toc {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 1rem 1.25rem;
+      margin-bottom: 2.5rem;
+      font-size: 0.82rem;
+    }
+
+    .toc strong {
+      display: block;
+      margin-bottom: 0.6rem;
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+    }
+
+    .toc ol {
+      margin: 0;
+      padding-left: 1.2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+    }
+
+    .toc a {
+      color: var(--text-muted);
+    }
+
+    .toc a:hover {
+      color: var(--accent);
+    }
+
+    section {
+      margin-bottom: 3rem;
+    }
+
+    section h2 {
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin-bottom: 0.75rem;
+      padding-bottom: 0.4rem;
+      border-bottom: 2px solid var(--accent);
+      display: inline-block;
+    }
+
+    section h3 {
+      font-size: 0.95rem;
+      font-weight: 700;
+      margin: 1.5rem 0 0.5rem;
+      color: var(--text);
+    }
+
+    section p {
+      font-size: 0.9rem;
+      line-height: 1.75;
+      color: var(--text);
+      opacity: 0.9;
+      margin-bottom: 0.9rem;
+    }
+
+    code {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      padding: 0.1rem 0.35rem;
+      font-size: 0.82rem;
+    }
+
+    .inline-link {
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.82rem;
+      margin: 1rem 0 1.25rem;
+    }
+
+    .data-table th {
+      text-align: left;
+      font-weight: 600;
+      color: var(--text-muted);
+      border-bottom: 1px solid var(--border);
+      padding: 0.4rem 0.75rem 0.4rem 0;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+
+    .data-table td {
+      padding: 0.45rem 0.75rem 0.45rem 0;
+      border-bottom: 1px solid var(--border);
+      color: var(--text);
+      vertical-align: top;
+    }
+
+    .data-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .num {
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .rank-num {
+      color: var(--text-muted);
+      font-weight: 700;
+    }
+
+    .top-table .tool-cell {
+      display: flex;
+      flex-direction: column;
+      gap: 0.2rem;
+    }
+
+    .tool-link {
+      font-weight: 600;
+      color: var(--accent);
+      font-size: 0.82rem;
+    }
+
+    .tool-desc {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      font-weight: 400;
+    }
+
+    .score-cell {
+      color: var(--accent);
+      font-weight: 700;
+    }
+
+    .platform-badge {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      white-space: nowrap;
+    }
+
+    .lang-badge {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      white-space: nowrap;
+    }
+
+    .cta-box {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      border-radius: 4px;
+      padding: 1rem 1.25rem;
+      margin-top: 1.5rem;
+    }
+
+    .cta-box p {
+      margin-bottom: 0.5rem;
+    }
+
+    .cta-box p:last-child {
+      margin-bottom: 0;
+    }
+
+    .post-footer {
+      margin-top: 3rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--border);
+    }
+
+    .methodology {
+      font-size: 0.75rem !important;
+      color: var(--text-muted) !important;
+      opacity: 1 !important;
+    }
+
+    .share-line {
+      font-size: 0.82rem !important;
+      margin-top: 0.75rem;
+    }
+
+    @media (max-width: 640px) {
+      .post-header h1 {
+        font-size: 1.3rem;
+      }
+
+      .data-table {
+        font-size: 0.75rem;
+      }
+
+      .platform-badge, .lang-badge {
+        display: none;
+      }
+    }
+  </style>
+</Base>

@@ -331,6 +331,34 @@ const PAGES = [
     label: 'agentrank-ai.com/blog',
     type: 'blog',
   },
+  {
+    slug: 'best-mcp-servers-design',
+    title: 'Best MCP Servers for Design (Figma, UI/UX)',
+    subtitle: 'Figma-Context-MCP, shadcn/ui, Excalidraw — ranked for 2026',
+    label: 'agentrank-ai.com/blog',
+    type: 'blog',
+  },
+  {
+    slug: 'best-mcp-servers-home-automation',
+    title: 'Best MCP Servers for Home Automation & IoT',
+    subtitle: 'ha-mcp, vibecode-agent, OpenHAB — ranked for 2026',
+    label: 'agentrank-ai.com/blog',
+    type: 'blog',
+  },
+  {
+    slug: 'best-mcp-servers-memory',
+    title: 'Best MCP Servers for Memory & Knowledge Management',
+    subtitle: 'serena, engram, codebase-memory-mcp — ranked for 2026',
+    label: 'agentrank-ai.com/blog',
+    type: 'blog',
+  },
+  {
+    slug: 'best-mcp-servers-game-dev',
+    title: 'Best MCP Servers for Game Development',
+    subtitle: 'unity-mcp, XcodeBuildMCP, KiCad-MCP — ranked for 2026',
+    label: 'agentrank-ai.com/blog',
+    type: 'blog',
+  },
 ];
 
 function buildHtml(page) {
