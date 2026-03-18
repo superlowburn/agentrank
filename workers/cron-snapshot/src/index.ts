@@ -11,6 +11,9 @@
 
 export interface Env {
   DB: D1Database;
+  RESEND_API_KEY?: string;
+  DASH_TOKEN?: string;
+  UNSUB_SECRET?: string;
 }
 
 // ---------------------------------------------------------------------------
@@ -467,12 +470,233 @@ async function submitIndexNow(db: D1Database): Promise<void> {
   console.log(`[cron-snapshot] IndexNow: submitted ${submitted} URLs total`);
 }
 
+// ---------------------------------------------------------------------------
+// Weekly digest email — runs Tuesday 09:00 UTC
+// ---------------------------------------------------------------------------
+
+async function generateUnsubToken(secret: string, email: string): Promise<string> {
+  const key = await crypto.subtle.importKey(
+    'raw',
+    new TextEncoder().encode(secret),
+    { name: 'HMAC', hash: 'SHA-256' },
+    false,
+    ['sign']
+  );
+  const sig = await crypto.subtle.sign('HMAC', key, new TextEncoder().encode(email));
+  return Array.from(new Uint8Array(sig)).map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
+function buildDigestHtml(
+  top10: { full_name: string; rank: number; score: number; stars: number }[],
+  gainers: { full_name: string; current_rank: number; prev_rank: number; rank_delta: number }[],
+  newTools: { full_name: string; rank: number; score: number; stars: number }[],
+  weekOf: string,
+  unsubUrl: string,
+): string {
+  const site = 'https://agentrank-ai.com';
+  const shortName = (s: string) => s.split('/').pop() ?? s;
+  const ghUrl = (s: string) => `https://github.com/${s}`;
+
+  const top10Rows = top10.map(t => `
+    <tr>
+      <td style="padding:8px 0;border-bottom:1px solid #1f2937;color:#6b7280;font-size:13px;">#${t.rank}</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #1f2937;">
+        <a href="${ghUrl(t.full_name)}" style="color:#818cf8;text-decoration:none;font-weight:600;">${shortName(t.full_name)}</a>
+      </td>
+      <td style="padding:8px 0;border-bottom:1px solid #1f2937;text-align:right;color:#e5e7eb;font-size:13px;">${t.score.toFixed(1)}</td>
+      <td style="padding:8px 0 8px 8px;border-bottom:1px solid #1f2937;text-align:right;color:#9ca3af;font-size:13px;">&#9733; ${t.stars.toLocaleString()}</td>
+    </tr>`).join('');
+
+  const gainersRows = gainers.length ? gainers.map(g => `
+    <tr>
+      <td style="padding:8px 0;border-bottom:1px solid #1f2937;">
+        <a href="${ghUrl(g.full_name)}" style="color:#818cf8;text-decoration:none;font-weight:600;">${shortName(g.full_name)}</a>
+      </td>
+      <td style="padding:8px 0 8px 12px;border-bottom:1px solid #1f2937;text-align:right;color:#22c55e;white-space:nowrap;">
+        &#9650; ${g.rank_delta} (#${g.prev_rank} &rarr; #${g.current_rank})
+      </td>
+    </tr>`).join('') : `<tr><td colspan="2" style="padding:12px 0;color:#6b7280;font-style:italic;">No significant movers this week.</td></tr>`;
+
+  const newToolsRows = newTools.length ? newTools.map(t => `
+    <tr>
+      <td style="padding:8px 0;border-bottom:1px solid #1f2937;">
+        <a href="${ghUrl(t.full_name)}" style="color:#818cf8;text-decoration:none;font-weight:600;">${shortName(t.full_name)}</a>
+      </td>
+      <td style="padding:8px 0;border-bottom:1px solid #1f2937;text-align:right;color:#9ca3af;font-size:13px;">${t.score.toFixed(1)} · &#9733; ${t.stars.toLocaleString()}</td>
+    </tr>`).join('') : '';
+
+  const newSection = newTools.length ? `
+    <tr>
+      <td style="padding:0 0 32px;">
+        <h2 style="margin:0 0 16px;font-size:15px;font-weight:600;color:#f9fafb;text-transform:uppercase;letter-spacing:0.5px;">New in the Index</h2>
+        <table width="100%" cellpadding="0" cellspacing="0"><tbody>${newToolsRows}</tbody></table>
+      </td>
+    </tr>` : '';
+
+  return `<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>AgentRank Weekly Digest</title></head>
+<body style="margin:0;padding:0;background:#0a0a0a;color:#e5e5e5;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background:#0a0a0a;">
+    <tr><td align="center" style="padding:40px 16px;">
+      <table width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;">
+        <tr><td style="padding:0 0 32px;">
+          <a href="${site}/" style="text-decoration:none;">
+            <span style="font-size:22px;font-weight:700;color:#f9fafb;">AgentRank</span>
+            <span style="font-size:13px;color:#6b7280;margin-left:8px;">Weekly Digest</span>
+          </a>
+          <div style="font-size:12px;color:#4b5563;margin-top:4px;">Week of ${weekOf}</div>
+        </td></tr>
+        <tr><td style="padding:0 0 32px;">
+          <h2 style="margin:0 0 16px;font-size:15px;font-weight:600;color:#f9fafb;text-transform:uppercase;letter-spacing:0.5px;">Top 10 This Week</h2>
+          <table width="100%" cellpadding="0" cellspacing="0">
+            <thead><tr>
+              <th style="text-align:left;font-size:11px;color:#4b5563;padding:0 0 8px;border-bottom:1px solid #1f2937;">#</th>
+              <th style="text-align:left;font-size:11px;color:#4b5563;padding:0 12px 8px;border-bottom:1px solid #1f2937;">Tool</th>
+              <th style="text-align:right;font-size:11px;color:#4b5563;padding:0 0 8px;border-bottom:1px solid #1f2937;">Score</th>
+              <th style="text-align:right;font-size:11px;color:#4b5563;padding:0 0 8px 8px;border-bottom:1px solid #1f2937;">Stars</th>
+            </tr></thead>
+            <tbody>${top10Rows}</tbody>
+          </table>
+        </td></tr>
+        <tr><td style="padding:0 0 32px;">
+          <h2 style="margin:0 0 16px;font-size:15px;font-weight:600;color:#f9fafb;text-transform:uppercase;letter-spacing:0.5px;">Biggest Movers</h2>
+          <table width="100%" cellpadding="0" cellspacing="0"><tbody>${gainersRows}</tbody></table>
+        </td></tr>
+        ${newSection}
+        <tr><td style="padding:0 0 40px;text-align:center;">
+          <a href="${site}/" style="display:inline-block;background:#6366f1;color:#fff;text-decoration:none;padding:13px 32px;border-radius:6px;font-weight:600;font-size:14px;">
+            View Full Leaderboard
+          </a>
+        </td></tr>
+        <tr><td style="border-top:1px solid #111827;padding:24px 0 0;">
+          <p style="margin:0;font-size:12px;color:#374151;line-height:1.6;">
+            You're receiving this because you subscribed to AgentRank at
+            <a href="${site}/" style="color:#4b5563;">agentrank-ai.com</a>.<br>
+            <a href="${unsubUrl}" style="color:#4b5563;">Unsubscribe</a>
+          </p>
+        </td></tr>
+      </table>
+    </td></tr>
+  </table>
+</body></html>`;
+}
+
+async function sendWeeklyDigest(env: Env): Promise<void> {
+  const resendKey = env.RESEND_API_KEY;
+  if (!resendKey) {
+    console.log('[cron-snapshot] sendWeeklyDigest: RESEND_API_KEY not set, skipping');
+    return;
+  }
+
+  const today = utcDateString();
+  const d = new Date(today + 'T00:00:00Z');
+  d.setUTCDate(d.getUTCDate() - 7);
+  const prevDate = d.toISOString().slice(0, 10);
+
+  const weekLabel = new Date(today + 'T00:00:00Z').toLocaleDateString('en-US', {
+    month: 'long', day: 'numeric', year: 'numeric', timeZone: 'UTC',
+  });
+  const subject = `AgentRank Weekly — ${weekLabel}`;
+
+  const db = env.DB;
+
+  const [top10Result, gainersResult, newToolsResult, subsResult] = await Promise.all([
+    db.prepare(`SELECT full_name, rank, score, stars FROM tools WHERE rank IS NOT NULL ORDER BY rank ASC LIMIT 10`)
+      .all().catch(() => ({ results: [] as unknown[] })),
+
+    db.prepare(`
+      SELECT
+        cur.tool_full_name AS full_name,
+        cur.rank AS current_rank,
+        prev.rank AS prev_rank,
+        (prev.rank - cur.rank) AS rank_delta
+      FROM rank_history cur
+      JOIN rank_history prev
+        ON cur.tool_full_name = prev.tool_full_name
+       AND cur.tool_type = prev.tool_type
+      WHERE cur.snapshot_date = ?1
+        AND prev.snapshot_date = ?2
+        AND cur.tool_type = 'tool'
+        AND (prev.rank - cur.rank) >= 3
+      ORDER BY (prev.rank - cur.rank) DESC
+      LIMIT 5
+    `).bind(today, prevDate).all().catch(() => ({ results: [] as unknown[] })),
+
+    db.prepare(`
+      SELECT
+        cur.tool_full_name AS full_name,
+        cur.rank,
+        cur.score,
+        cur.stars
+      FROM rank_history cur
+      WHERE cur.snapshot_date = ?1
+        AND cur.tool_type = 'tool'
+        AND NOT EXISTS (
+          SELECT 1 FROM rank_history old
+          WHERE old.tool_full_name = cur.tool_full_name
+            AND old.tool_type = 'tool'
+            AND old.snapshot_date < ?2
+        )
+      ORDER BY cur.score DESC
+      LIMIT 5
+    `).bind(today, prevDate).all().catch(() => ({ results: [] as unknown[] })),
+
+    db.prepare(`SELECT email FROM email_subscribers ORDER BY subscribed_at ASC`)
+      .all().catch(() => ({ results: [] as unknown[] })),
+  ]);
+
+  const top10 = (top10Result.results || []) as { full_name: string; rank: number; score: number; stars: number }[];
+  const gainers = (gainersResult.results || []) as { full_name: string; current_rank: number; prev_rank: number; rank_delta: number }[];
+  const newTools = (newToolsResult.results || []) as { full_name: string; rank: number; score: number; stars: number }[];
+  const subscribers = (subsResult.results || []).map((r: any) => r.email as string);
+
+  if (subscribers.length === 0) {
+    console.log('[cron-snapshot] sendWeeklyDigest: no subscribers, skipping send');
+    return;
+  }
+
+  const unsubSecret = env.UNSUB_SECRET || env.DASH_TOKEN || 'change-me';
+  let sent = 0;
+  let failed = 0;
+
+  for (const email of subscribers) {
+    const unsubToken = await generateUnsubToken(unsubSecret, email);
+    const unsubUrl = `https://agentrank-ai.com/api/unsubscribe?email=${encodeURIComponent(email)}&token=${unsubToken}`;
+    const html = buildDigestHtml(top10, gainers, newTools, weekLabel, unsubUrl);
+
+    const res = await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${resendKey}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        from: 'AgentRank <digest@agentrank-ai.com>',
+        to: email,
+        subject,
+        html,
+      }),
+    }).catch(() => null);
+
+    if (res?.ok) {
+      sent++;
+    } else {
+      failed++;
+      console.log(`[cron-snapshot] sendWeeklyDigest: failed to send to ${email}: HTTP ${res?.status ?? 'error'}`);
+    }
+  }
+
+  console.log(`[cron-snapshot] sendWeeklyDigest: sent=${sent} failed=${failed} total=${subscribers.length}`);
+}
+
 // --- Scheduled handler ---
 
 export default {
   async scheduled(event: ScheduledEvent, env: Env, ctx: ExecutionContext): Promise<void> {
     const today = utcDateString();
     const isMonday = new Date().getUTCDay() === 1;
+    const isTuesday = new Date().getUTCDay() === 2;
 
     console.log(`[cron-snapshot] Running at ${event.scheduledTime}, date=${today}, isMonday=${isMonday}`);
 
@@ -499,7 +723,16 @@ export default {
       console.log(`[cron-snapshot] IndexNow submission failed (non-fatal): ${e?.message}`);
     }
 
-    // Step 4: On Mondays, log weekly content for the bot to consume
+    // Step 4: On Tuesdays, send the weekly email digest to all subscribers
+    if (isTuesday) {
+      try {
+        await sendWeeklyDigest(env);
+      } catch (e: any) {
+        console.log(`[cron-snapshot] sendWeeklyDigest failed (non-fatal): ${e?.message}`);
+      }
+    }
+
+    // Step 5: On Mondays, log weekly content for the bot to consume
     // The bot reads from /api/v1/movers and /api/v1/new-tools — no storage needed here.
     // Just log for observability; the API endpoints do the computation live.
     if (isMonday) {
