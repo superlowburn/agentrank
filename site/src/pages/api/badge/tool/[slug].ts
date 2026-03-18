@@ -17,7 +17,8 @@ export const GET: APIRoute = async ({ params, locals }) => {
   return new Response(generateBadgeSvg(score), {
     headers: {
       'Content-Type': 'image/svg+xml',
-      'Cache-Control': 's-maxage=86400, max-age=3600',
+      'Cache-Control': 's-maxage=3600, max-age=600',
+      'Access-Control-Allow-Origin': '*',
     },
   });
 };
