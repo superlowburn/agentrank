@@ -5,6 +5,35 @@ import Base from '../../layouts/Base.astro';
 import BlogSubscribeCTA from '../../components/BlogSubscribeCTA.astro';
 
 const publishDate = '2026-03-17';
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: 'This Week in MCP — March 17, 2026',
+  description: 'Weekly ecosystem report: 25,632 MCP tools indexed, biggest movers, and ecosystem stats for the week of March 17, 2026.',
+  datePublished: publishDate,
+  dateModified: publishDate,
+  author: {
+    '@type': 'Organization',
+    name: 'AgentRank',
+    url: 'https://agentrank-ai.com',
+  },
+  publisher: {
+    '@type': 'Organization',
+    name: 'AgentRank',
+    url: 'https://agentrank-ai.com',
+    logo: {
+      '@type': 'ImageObject',
+      url: 'https://agentrank-ai.com/og-image.png',
+    },
+  },
+  mainEntityOfPage: {
+    '@type': 'WebPage',
+    '@id': 'https://agentrank-ai.com/blog/this-week-in-mcp-2026-03-17/',
+  },
+  image: 'https://agentrank-ai.com/og-image.png',
+  keywords: 'this week in MCP 2026-03-17, MCP weekly report, MCP server updates March 17 2026, AgentRank weekly',
+};
 ---
 
 <Base
@@ -13,6 +42,7 @@ const publishDate = '2026-03-17';
   activeTab="blog"
   keywords="this week in MCP 2026-03-17, MCP weekly report, MCP server updates March 17, 2026, AgentRank weekly"
   canonicalUrl="https://agentrank-ai.com/blog/this-week-in-mcp-2026-03-17/"
+  jsonLd={jsonLd}
 >
   <article class="blog-post">
     <header class="post-header">

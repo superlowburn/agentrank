@@ -2,6 +2,7 @@
 export const prerender = true;
 
 import Base from '../../layouts/Base.astro';
+import BlogSubscribeCTA from '../../components/BlogSubscribeCTA.astro';
 
 const posts = [
   {
@@ -96,6 +97,30 @@ const posts = [
     readTime: '8 min read',
   },
 ];
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Blog',
+  name: 'AgentRank Blog',
+  description: 'Data-driven analysis of the MCP server and agent tools ecosystem. Real numbers from the AgentRank index.',
+  url: 'https://agentrank-ai.com/blog/',
+  publisher: {
+    '@type': 'Organization',
+    name: 'AgentRank',
+    url: 'https://agentrank-ai.com',
+    logo: {
+      '@type': 'ImageObject',
+      url: 'https://agentrank-ai.com/og-image.png',
+    },
+  },
+  blogPost: posts.map((post) => ({
+    '@type': 'BlogPosting',
+    headline: post.title,
+    description: post.description,
+    datePublished: post.date,
+    url: `https://agentrank-ai.com/blog/${post.slug}/`,
+  })),
+};
 ---
 
 <Base
@@ -104,6 +129,7 @@ const posts = [
   activeTab="blog"
   keywords="MCP server blog, agent tools analysis, MCP ecosystem data, best MCP servers 2026"
   canonicalUrl="https://agentrank-ai.com/blog/"
+  jsonLd={jsonLd}
 >
   <div class="blog-index">
     <div class="page-header">
@@ -125,6 +151,8 @@ const posts = [
         </article>
       ))}
     </div>
+
+    <BlogSubscribeCTA source="blog-index" />
   </div>
 
   <style>
