@@ -22,7 +22,7 @@ const jsonLd = {
   headline: 'The MCP Server Landscape: Q1 2026 — A Data-Driven Ecosystem Report',
   description: 'Quarterly ecosystem report on MCP servers and agent tools. Growth trajectory, category breakdown, biggest movers, language trends, and Q2 2026 predictions — using real data from the AgentRank index.',
   datePublished: publishDate,
-  dateModified: publishDate,
+  dateModified: '2026-03-18',
   author: {
     '@type': 'Organization',
     name: 'AgentRank',
@@ -52,7 +52,7 @@ const growthData = [
   { period: 'Q2 2025', repos: 9800, qoq: '+188%' },
   { period: 'Q3 2025', repos: 15200, qoq: '+55%' },
   { period: 'Q4 2025', repos: 21100, qoq: '+39%' },
-  { period: 'Q1 2026 (Mar 17)', repos: 25632, qoq: '+21%' },
+  { period: 'Q1 2026 (Mar 18)', repos: 25750, qoq: '+22%' },
 ];
 
 // Category breakdown
@@ -82,18 +82,18 @@ const biggestRisers = [
   {
     name: 'microsoft/playwright-mcp',
     slug: 'microsoft--playwright-mcp',
-    scoreNow: 94.81,
+    scoreNow: 94.2,
     starsQ4: 14800,
-    starsNow: 28849,
+    starsNow: 29150,
     starDelta: '+95%',
     why: 'Glama install milestone of 1.77M drove massive visibility. Now the single most-installed MCP tool.',
   },
   {
     name: 'PrefectHQ/fastmcp',
     slug: 'PrefectHQ--fastmcp',
-    scoreNow: 94.73,
+    scoreNow: 95.0,
     starsQ4: 12400,
-    starsNow: 23659,
+    starsNow: 23775,
     starDelta: '+91%',
     why: 'v2 release with HTTP transport support and major refactor attracted the Python community at scale.',
   },
@@ -120,7 +120,7 @@ const biggestRisers = [
 // New entries to the index this quarter (tools that didn't exist at Q4 2025 end)
 const newEntrants = [
   { name: 'laravel/boost', score: 96.94, stars: 3333, desc: 'Official Laravel MCP server for AI-assisted development', slug: 'laravel--boost' },
-  { name: 'microsoft/azure-devops-mcp', score: 97.17, stars: 1406, desc: 'Official Azure DevOps MCP server by Microsoft', slug: 'microsoft--azure-devops-mcp' },
+  { name: 'microsoft/azure-devops-mcp', score: 97.2, stars: 1423, desc: 'Official Azure DevOps MCP server by Microsoft', slug: 'microsoft--azure-devops-mcp' },
   { name: 'zcaceres/markdownify-mcp', score: 95.08, stars: 2449, desc: 'Convert almost any content to Markdown via MCP', slug: 'zcaceres--markdownify-mcp' },
 ];
 
@@ -141,7 +141,7 @@ const faqJsonLd = {
       name: 'How many MCP servers exist as of Q1 2026?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'The AgentRank index tracks over 25,600 MCP-related repositories on GitHub as of Q1 2026, with new repositories entering the index continuously.',
+        text: 'The AgentRank index tracks over 25,700 MCP-related repositories on GitHub as of Q1 2026, with new repositories entering the index continuously.',
       },
     },
     {
