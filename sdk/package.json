@@ -1,0 +1,51 @@
+{
+  "name": "@agentrank/sdk",
+  "version": "1.0.0",
+  "description": "TypeScript client for the AgentRank API — the ranked index of MCP servers, AI agent tools, and skills",
+  "author": "AgentRank <hello@agentrank-ai.com>",
+  "license": "MIT",
+  "homepage": "https://agentrank-ai.com",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/superlowburn/agentrank",
+    "directory": "sdk"
+  },
+  "keywords": [
+    "agentrank",
+    "mcp",
+    "model-context-protocol",
+    "ai-agents",
+    "agent-tools",
+    "mcp-servers",
+    "sdk",
+    "api-client",
+    "typescript"
+  ],
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/index.d.mts",
+        "default": "./dist/index.mjs"
+      },
+      "require": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      }
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "typecheck": "tsc --noEmit",
+    "dev": "tsup --watch"
+  },
+  "devDependencies": {
+    "tsup": "^8.3.0",
+    "typescript": "^5.7.0"
+  }
+}
