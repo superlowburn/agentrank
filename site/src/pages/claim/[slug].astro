@@ -5,6 +5,7 @@ const { slug } = Astro.params;
 const fullName = slug!.replace('--', '/');
 
 const { env } = Astro.locals.runtime;
+const oauthConfigured = !!env.GITHUB_CLIENT_ID;
 
 const row = await env.DB.prepare(
   'SELECT full_name, url, description, rank, score FROM tools WHERE full_name = ?'
@@ -49,6 +50,7 @@ const ERROR_MESSAGES: Record<string, string> = {
   token: 'Failed to get GitHub access token. Please try again.',
   user: 'Failed to get your GitHub user info. Please try again.',
   not_contributor: `You must be a contributor or owner of ${fullName} to claim this listing.`,
+  oauth_not_configured: 'GitHub OAuth is not yet configured. Leave your email below to be notified when claiming goes live.',
 };
 
 const CATEGORIES = [
@@ -96,15 +98,39 @@ const CATEGORIES = [
         Claim your listing to add a tagline, logo, and category. Verified maintainers get a
         <strong> Verified Publisher</strong> badge and priority placement on the AgentRank index.
       </p>
-      <p class="auth-desc">
-        You must be a contributor or owner of the
-        <a href={row.url as string} target="_blank" rel="noopener noreferrer">{fullName}</a> repository.
-        We verify ownership via GitHub.
-      </p>
-      <a href={`/api/auth/github?tool=${slug}&type=tool`} class="github-btn">
-        Verify with GitHub
-      </a>
-      <p class="auth-note">GitHub login only. We only read your public profile — no write access.</p>
+      {oauthConfigured ? (
+        <>
+          <p class="auth-desc">
+            You must be a contributor or owner of the
+            <a href={row.url as string} target="_blank" rel="noopener noreferrer">{fullName}</a> repository.
+            We verify ownership via GitHub.
+          </p>
+          <a href={`/api/auth/github?tool=${slug}&type=tool`} class="github-btn">
+            Verify with GitHub
+          </a>
+          <p class="auth-note">GitHub login only. We only read your public profile — no write access.</p>
+        </>
+      ) : (
+        <>
+          <p class="auth-desc">
+            Leave your email to claim this listing. GitHub verification coming soon.
+          </p>
+          <form id="claim-email-form" class="claim-email-form">
+            <div class="email-input-row">
+              <input
+                type="email"
+                id="claim-email-input"
+                name="email"
+                placeholder="you@example.com"
+                autocomplete="email"
+                required
+              />
+              <button type="submit" id="claim-email-btn" class="save-btn">Notify me</button>
+            </div>
+            <span id="claim-email-status" class="save-status"></span>
+          </form>
+        </>
+      )}
     </div>
   ) : (
     <>
@@ -208,6 +234,42 @@ const CATEGORIES = [
 </Base>
 
 <script>
+  const claimEmailForm = document.getElementById('claim-email-form') as HTMLFormElement | null;
+  if (claimEmailForm) {
+    const emailInput = document.getElementById('claim-email-input') as HTMLInputElement;
+    const btn = document.getElementById('claim-email-btn') as HTMLButtonElement;
+    const statusEl = document.getElementById('claim-email-status') as HTMLSpanElement;
+
+    claimEmailForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      btn.disabled = true;
+      statusEl.textContent = 'Submitting...';
+      statusEl.className = 'save-status';
+
+      try {
+        const res = await fetch('/api/subscribe', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: emailInput.value.trim(), source: 'claim' }),
+        });
+        const result = await res.json() as { success: boolean; error?: string };
+        if (result.success) {
+          claimEmailForm.innerHTML = '<p class="save-status ok">Got it! We will email you when claiming goes live.</p>';
+        } else {
+          statusEl.textContent = result.error || 'Submission failed. Please try again.';
+          statusEl.className = 'save-status err';
+          btn.disabled = false;
+          setTimeout(() => { statusEl.textContent = ''; }, 4000);
+        }
+      } catch {
+        statusEl.textContent = 'Network error. Please try again.';
+        statusEl.className = 'save-status err';
+        btn.disabled = false;
+        setTimeout(() => { statusEl.textContent = ''; }, 4000);
+      }
+    });
+  }
+
   const form = document.getElementById('claim-form') as HTMLFormElement | null;
   if (form) {
     const slugEl = document.getElementById('tool-slug') as HTMLInputElement;
@@ -337,6 +399,34 @@ const CATEGORIES = [
     color: var(--text-muted);
     margin-top: 0.75rem;
     opacity: 0.7;
+  }
+
+  .claim-email-form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    max-width: 420px;
+  }
+
+  .email-input-row {
+    display: flex;
+    gap: 0.5rem;
+  }
+
+  .email-input-row input[type="email"] {
+    flex: 1;
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 0.5rem 0.75rem;
+    color: var(--text);
+    font-family: inherit;
+    font-size: 0.85rem;
+  }
+
+  .email-input-row input[type="email"]:focus {
+    outline: none;
+    border-color: var(--accent);
   }
 
   .github-btn {

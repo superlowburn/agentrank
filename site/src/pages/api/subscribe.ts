@@ -132,7 +132,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
     return json({ success: false, error: 'Invalid email address.' }, 400, corsOrigin);
   }
 
-  const validSources = ['homepage', 'footer', 'blog', 'blog-index', 'embed', 'subscribe-page'];
+  const validSources = ['homepage', 'footer', 'blog', 'blog-index', 'embed', 'subscribe-page', 'claim'];
   if (!validSources.includes(source)) source = 'homepage';
 
   const clientIP = getClientIP(request);

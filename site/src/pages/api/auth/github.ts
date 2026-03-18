@@ -13,7 +13,9 @@ export const GET: APIRoute = async ({ request, locals }) => {
   }
 
   if (!env.GITHUB_CLIENT_ID) {
-    return new Response('GitHub OAuth not configured', { status: 503 });
+    const claimUrl = new URL(`/claim/${tool}`, url.origin);
+    claimUrl.searchParams.set('error', 'oauth_not_configured');
+    return new Response(null, { status: 302, headers: { Location: claimUrl.toString() } });
   }
 
   const nonce = crypto.randomUUID();
