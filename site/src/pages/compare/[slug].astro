@@ -1,0 +1,598 @@
+---
+export const prerender = true;
+
+import Base from '../../layouts/Base.astro';
+import { getComparisonPairs } from '../../data/ranked';
+import { toSlug, relativeTime, scoreColor, type Tool } from '../../data/tools';
+import { CATEGORIES } from '../../data/content-gen';
+
+const SITE = 'https://agentrank-ai.com';
+
+function toCompareSlug(a: Tool, b: Tool): string {
+  return `${toSlug(a.full_name)}-vs-${toSlug(b.full_name)}`;
+}
+
+export function getStaticPaths() {
+  const pairs = getComparisonPairs();
+  return pairs.map(({ a, b }) => ({
+    params: { slug: `${toSlug(a.full_name)}-vs-${toSlug(b.full_name)}` },
+    props: { a, b },
+  }));
+}
+
+// ── Page data ────────────────────────────────────────────────────────────────
+
+const { a, b } = Astro.props as { a: Tool; b: Tool };
+const { slug } = Astro.params;
+
+const nameA = a.full_name.split('/')[1] || a.full_name;
+const nameB = b.full_name.split('/')[1] || b.full_name;
+const catLabel = CATEGORIES[a.category || 'other'] || 'MCP Tool';
+
+const canonicalUrl = `${SITE}/compare/${slug}/`;
+const title = `${nameA} vs ${nameB}: MCP Tool Comparison — AgentRank`;
+const description = `Compare ${a.full_name} vs ${b.full_name} side by side. AgentRank scores, stars, freshness, issue health, contributors, and more.`;
+
+// ── Score helpers ────────────────────────────────────────────────────────────
+
+function issueHealth(t: Tool): number {
+  const total = t.open_issues + t.closed_issues;
+  return total > 0 ? t.closed_issues / total : 0.5;
+}
+
+function freshnessScore(t: Tool): number {
+  const days = Math.floor((Date.now() - new Date(t.last_commit_at).getTime()) / 86_400_000);
+  if (days <= 7) return 1.0;
+  if (days <= 90) return 1 - ((days - 7) / 83) * 0.6;
+  return Math.max(0, 0.4 * Math.exp(-(days - 90) / 180));
+}
+
+const healthA = issueHealth(a);
+const healthB = issueHealth(b);
+const freshA = freshnessScore(a);
+const freshB = freshnessScore(b);
+
+// ── JSON-LD ──────────────────────────────────────────────────────────────────
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'ItemList',
+  name: `${nameA} vs ${nameB} Comparison`,
+  description,
+  url: canonicalUrl,
+  numberOfItems: 2,
+  itemListElement: [
+    {
+      '@type': 'ListItem',
+      position: 1,
+      item: {
+        '@type': 'SoftwareApplication',
+        name: a.full_name,
+        url: a.url || `https://github.com/${a.full_name}`,
+        applicationCategory: 'DeveloperApplication',
+        description: a.description || `${a.full_name} is a ${catLabel}.`,
+      },
+    },
+    {
+      '@type': 'ListItem',
+      position: 2,
+      item: {
+        '@type': 'SoftwareApplication',
+        name: b.full_name,
+        url: b.url || `https://github.com/${b.full_name}`,
+        applicationCategory: 'DeveloperApplication',
+        description: b.description || `${b.full_name} is a ${catLabel}.`,
+      },
+    },
+  ],
+};
+
+// ── Related pairs (same category, different tools) ────────────────────────────
+
+const allPairs = getComparisonPairs();
+const relatedPairs = allPairs
+  .filter(({ a: pa, b: pb }) =>
+    !(pa.full_name === a.full_name && pb.full_name === b.full_name) &&
+    (pa.full_name === a.full_name || pb.full_name === a.full_name ||
+     pa.full_name === b.full_name || pb.full_name === b.full_name)
+  )
+  .slice(0, 6);
+---
+
+<Base
+  title={title}
+  description={description}
+  canonicalUrl={canonicalUrl}
+  jsonLd={jsonLd}
+>
+  <!-- Breadcrumb -->
+  <nav class="breadcrumb">
+    <a href="/">Home</a>
+    <span>/</span>
+    <a href="/compare/">Compare</a>
+    <span>/</span>
+    <span>{nameA} vs {nameB}</span>
+  </nav>
+
+  <div class="compare-page">
+    <h1 class="page-title">
+      <span class="tool-name-a">{nameA}</span>
+      <span class="vs-text">vs</span>
+      <span class="tool-name-b">{nameB}</span>
+    </h1>
+    <p class="page-sub">
+      Side-by-side comparison of two {catLabel} tools, scored by real signals updated daily.
+    </p>
+
+    <!-- Score summary cards -->
+    <div class="score-cards">
+      <div class="score-card {a.score >= b.score ? 'winner' : ''}">
+        <div class="card-header">
+          <a class="tool-link" href={`/tool/${toSlug(a.full_name)}/`}>{a.full_name}</a>
+          {a.score >= b.score && <span class="winner-badge">Higher Score</span>}
+        </div>
+        <div class="card-score" style={`color: ${scoreColor(a.score)}`}>{a.score.toFixed(1)}</div>
+        <div class="card-score-label">AgentRank Score</div>
+        <div class="card-rank">Rank #{a.rank.toLocaleString('en-US')}</div>
+        <a class="gh-link" href={a.url || `https://github.com/${a.full_name}`} target="_blank" rel="noopener noreferrer">View on GitHub →</a>
+      </div>
+
+      <div class="score-card {b.score > a.score ? 'winner' : ''}">
+        <div class="card-header">
+          <a class="tool-link" href={`/tool/${toSlug(b.full_name)}/`}>{b.full_name}</a>
+          {b.score > a.score && <span class="winner-badge">Higher Score</span>}
+        </div>
+        <div class="card-score" style={`color: ${scoreColor(b.score)}`}>{b.score.toFixed(1)}</div>
+        <div class="card-score-label">AgentRank Score</div>
+        <div class="card-rank">Rank #{b.rank.toLocaleString('en-US')}</div>
+        <a class="gh-link" href={b.url || `https://github.com/${b.full_name}`} target="_blank" rel="noopener noreferrer">View on GitHub →</a>
+      </div>
+    </div>
+
+    <!-- Full metrics table -->
+    <h2 class="section-title">Full Comparison</h2>
+    <div class="table-wrap">
+      <table class="compare-table">
+        <thead>
+          <tr>
+            <th class="metric-col">Metric</th>
+            <th class={a.score >= b.score ? 'winner-col' : ''}>{nameA}</th>
+            <th class={b.score > a.score ? 'winner-col' : ''}>{nameB}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="metric-label">AgentRank Score</td>
+            <td class={a.score >= b.score ? 'winner-cell' : ''}>
+              <span class="score-pill" style={`color: ${scoreColor(a.score)}`}>{a.score.toFixed(1)}</span>
+            </td>
+            <td class={b.score > a.score ? 'winner-cell' : ''}>
+              <span class="score-pill" style={`color: ${scoreColor(b.score)}`}>{b.score.toFixed(1)}</span>
+            </td>
+          </tr>
+          <tr>
+            <td class="metric-label">Rank</td>
+            <td class={a.rank <= b.rank ? 'winner-cell' : ''}>#{a.rank.toLocaleString('en-US')}</td>
+            <td class={b.rank < a.rank ? 'winner-cell' : ''}>#{b.rank.toLocaleString('en-US')}</td>
+          </tr>
+          <tr>
+            <td class="metric-label">Stars</td>
+            <td class={a.stars >= b.stars ? 'winner-cell' : ''}>{a.stars.toLocaleString('en-US')}</td>
+            <td class={b.stars > a.stars ? 'winner-cell' : ''}>{b.stars.toLocaleString('en-US')}</td>
+          </tr>
+          <tr>
+            <td class="metric-label">Forks</td>
+            <td class={a.forks >= b.forks ? 'winner-cell' : ''}>{a.forks.toLocaleString('en-US')}</td>
+            <td class={b.forks > a.forks ? 'winner-cell' : ''}>{b.forks.toLocaleString('en-US')}</td>
+          </tr>
+          <tr>
+            <td class="metric-label">Last Commit</td>
+            <td>{relativeTime(a.last_commit_at)}</td>
+            <td>{relativeTime(b.last_commit_at)}</td>
+          </tr>
+          <tr>
+            <td class="metric-label">Freshness</td>
+            <td>
+              <div class="bar-cell">
+                <div class="bar-track">
+                  <div class="bar-fill" style={`width:${(freshA * 100).toFixed(0)}%;background:#22c55e`}></div>
+                </div>
+                <span class="bar-val">{(freshA * 100).toFixed(0)}%</span>
+              </div>
+            </td>
+            <td>
+              <div class="bar-cell">
+                <div class="bar-track">
+                  <div class="bar-fill" style={`width:${(freshB * 100).toFixed(0)}%;background:#3b82f6`}></div>
+                </div>
+                <span class="bar-val">{(freshB * 100).toFixed(0)}%</span>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td class="metric-label">Issue Health</td>
+            <td>
+              <div class="bar-cell">
+                <div class="bar-track">
+                  <div class="bar-fill" style={`width:${(healthA * 100).toFixed(0)}%;background:#22c55e`}></div>
+                </div>
+                <span class="bar-val">{(healthA * 100).toFixed(0)}%</span>
+              </div>
+            </td>
+            <td>
+              <div class="bar-cell">
+                <div class="bar-track">
+                  <div class="bar-fill" style={`width:${(healthB * 100).toFixed(0)}%;background:#3b82f6`}></div>
+                </div>
+                <span class="bar-val">{(healthB * 100).toFixed(0)}%</span>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td class="metric-label">Open Issues</td>
+            <td class={a.open_issues <= b.open_issues ? 'winner-cell' : ''}>{a.open_issues.toLocaleString('en-US')}</td>
+            <td class={b.open_issues < a.open_issues ? 'winner-cell' : ''}>{b.open_issues.toLocaleString('en-US')}</td>
+          </tr>
+          <tr>
+            <td class="metric-label">Contributors</td>
+            <td class={a.contributors >= b.contributors ? 'winner-cell' : ''}>{a.contributors.toLocaleString('en-US')}</td>
+            <td class={b.contributors > a.contributors ? 'winner-cell' : ''}>{b.contributors.toLocaleString('en-US')}</td>
+          </tr>
+          <tr>
+            <td class="metric-label">Dependents</td>
+            <td class={a.dependents >= b.dependents ? 'winner-cell' : ''}>{a.dependents > 0 ? a.dependents.toLocaleString('en-US') : '0'}</td>
+            <td class={b.dependents > a.dependents ? 'winner-cell' : ''}>{b.dependents > 0 ? b.dependents.toLocaleString('en-US') : '0'}</td>
+          </tr>
+          <tr>
+            <td class="metric-label">Language</td>
+            <td>{a.language || '—'}</td>
+            <td>{b.language || '—'}</td>
+          </tr>
+          <tr>
+            <td class="metric-label">License</td>
+            <td>{a.license || '—'}</td>
+            <td>{b.license || '—'}</td>
+          </tr>
+          <tr>
+            <td class="metric-label">Category</td>
+            <td><a href={`/category/${a.category || 'other'}/`}>{CATEGORIES[a.category || 'other'] || a.category}</a></td>
+            <td><a href={`/category/${b.category || 'other'}/`}>{CATEGORIES[b.category || 'other'] || b.category}</a></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Description section -->
+    {(a.description || b.description) && (
+      <h2 class="section-title">About These Tools</h2>
+    )}
+    {(a.description || b.description) && (
+      <div class="about-grid">
+        {a.description && (
+          <div class="about-card">
+            <h3>{nameA}</h3>
+            <p>{a.description}</p>
+            <a href={`/tool/${toSlug(a.full_name)}/`}>View full profile →</a>
+          </div>
+        )}
+        {b.description && (
+          <div class="about-card">
+            <h3>{nameB}</h3>
+            <p>{b.description}</p>
+            <a href={`/tool/${toSlug(b.full_name)}/`}>View full profile →</a>
+          </div>
+        )}
+      </div>
+    )}
+
+    <!-- Related comparisons -->
+    {relatedPairs.length > 0 && (
+      <h2 class="section-title">Related Comparisons</h2>
+    )}
+    {relatedPairs.length > 0 && (
+      <div class="related-grid">
+        {relatedPairs.map(({ a: pa, b: pb }) => (
+          <a class="related-link" href={`/compare/${toCompareSlug(pa, pb)}/`}>
+            <span class="rel-name">{pa.full_name.split('/')[1]}</span>
+            <span class="rel-vs">vs</span>
+            <span class="rel-name">{pb.full_name.split('/')[1]}</span>
+            <span class="rel-score">{pa.score.toFixed(0)} / {pb.score.toFixed(0)}</span>
+          </a>
+        ))}
+      </div>
+    )}
+
+    <!-- CTA to interactive compare -->
+    <div class="cta-compare">
+      <p>Want to compare more tools or mix categories?</p>
+      <a href="/compare/" class="cta-btn">Open Interactive Compare Tool →</a>
+    </div>
+  </div>
+</Base>
+
+<style>
+  .breadcrumb {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    margin-bottom: 1.25rem;
+    display: flex;
+    gap: 0.4rem;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .breadcrumb a { color: var(--text-muted); text-decoration: none; }
+  .breadcrumb a:hover { color: var(--accent); }
+  .breadcrumb span:not(:last-child) { opacity: 0.5; }
+
+  .compare-page { max-width: 860px; }
+
+  .page-title {
+    font-size: 1.35rem;
+    font-weight: 700;
+    margin-bottom: 0.4rem;
+    line-height: 1.3;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+  .tool-name-a { color: #22c55e; }
+  .vs-text { color: var(--text-muted); font-weight: 400; font-size: 1rem; }
+  .tool-name-b { color: #3b82f6; }
+
+  .page-sub {
+    color: var(--text-muted);
+    font-size: 0.82rem;
+    margin-bottom: 1.75rem;
+  }
+
+  /* ── Score cards ── */
+  .score-cards {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-bottom: 2rem;
+  }
+
+  .score-card {
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 1rem 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+  .score-card.winner {
+    border-color: var(--accent);
+  }
+
+  .card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-bottom: 0.4rem;
+  }
+  .tool-link {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--text);
+    text-decoration: none;
+    word-break: break-all;
+  }
+  .tool-link:hover { color: var(--accent); }
+
+  .winner-badge {
+    font-size: 0.65rem;
+    background: var(--accent);
+    color: #000;
+    padding: 0.1rem 0.4rem;
+    border-radius: 3px;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+
+  .card-score {
+    font-size: 2.5rem;
+    font-weight: 800;
+    line-height: 1;
+  }
+  .card-score-label {
+    font-size: 0.68rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-muted);
+  }
+  .card-rank {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    margin-top: 0.1rem;
+  }
+  .gh-link {
+    font-size: 0.75rem;
+    color: var(--accent);
+    text-decoration: none;
+    margin-top: 0.5rem;
+  }
+  .gh-link:hover { text-decoration: underline; }
+
+  /* ── Section title ── */
+  .section-title {
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-muted);
+    margin: 2rem 0 0.9rem;
+  }
+
+  /* ── Compare table ── */
+  .table-wrap {
+    overflow-x: auto;
+    margin-bottom: 1rem;
+  }
+
+  .compare-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.82rem;
+  }
+
+  .compare-table th {
+    background: var(--bg-surface);
+    border-bottom: 2px solid var(--border);
+    padding: 0.5rem 0.75rem;
+    text-align: left;
+    font-weight: 600;
+    font-size: 0.78rem;
+    color: var(--text-muted);
+  }
+  .compare-table th.winner-col { border-bottom-color: var(--accent); color: var(--text); }
+  .compare-table th.metric-col { width: 130px; }
+
+  .compare-table td {
+    padding: 0.38rem 0.75rem;
+    border-bottom: 1px solid var(--border);
+    vertical-align: middle;
+  }
+  .compare-table tr:hover td { background: var(--bg-hover); }
+  .compare-table td.metric-label {
+    color: var(--text-muted);
+    font-size: 0.74rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    font-weight: 500;
+  }
+  .compare-table td.winner-cell { font-weight: 700; color: var(--accent); }
+  .compare-table a { color: var(--accent); text-decoration: none; }
+  .compare-table a:hover { text-decoration: underline; }
+
+  .score-pill {
+    display: inline-block;
+    padding: 0.1rem 0.45rem;
+    border-radius: 3px;
+    font-weight: 700;
+    background: var(--bg-hover);
+  }
+
+  /* ── Bar cells ── */
+  .bar-cell {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .bar-track {
+    flex: 1;
+    height: 8px;
+    background: var(--bg-surface);
+    border-radius: 2px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    max-width: 120px;
+  }
+  .bar-fill {
+    height: 100%;
+    border-radius: 2px;
+  }
+  .bar-val {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    width: 2.5rem;
+    text-align: right;
+  }
+
+  /* ── About grid ── */
+  .about-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+  .about-card {
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 1rem;
+  }
+  .about-card h3 {
+    font-size: 0.82rem;
+    font-weight: 700;
+    margin-bottom: 0.4rem;
+  }
+  .about-card p {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    line-height: 1.5;
+    margin-bottom: 0.6rem;
+  }
+  .about-card a {
+    font-size: 0.75rem;
+    color: var(--accent);
+    text-decoration: none;
+  }
+  .about-card a:hover { text-decoration: underline; }
+
+  /* ── Related comparisons ── */
+  .related-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 0.6rem;
+    margin-bottom: 2rem;
+  }
+  .related-link {
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 0.5rem 0.75rem;
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    text-decoration: none;
+    font-size: 0.78rem;
+    transition: border-color 0.15s;
+  }
+  .related-link:hover { border-color: var(--accent); }
+  .rel-name { color: var(--text); font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .rel-vs { color: var(--text-muted); font-size: 0.7rem; flex-shrink: 0; }
+  .rel-score { color: var(--text-muted); font-size: 0.7rem; margin-left: auto; flex-shrink: 0; }
+
+  /* ── CTA ── */
+  .cta-compare {
+    margin-top: 2rem;
+    padding: 1.25rem;
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+  .cta-compare p {
+    font-size: 0.82rem;
+    color: var(--text-muted);
+    margin: 0;
+    flex: 1;
+  }
+  .cta-btn {
+    background: var(--accent);
+    color: #000;
+    padding: 0.45rem 0.9rem;
+    border-radius: 4px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+  .cta-btn:hover { opacity: 0.9; }
+
+  /* ── Mobile ── */
+  @media (max-width: 640px) {
+    .score-cards { grid-template-columns: 1fr; }
+    .about-grid { grid-template-columns: 1fr; }
+    .page-title { font-size: 1.1rem; }
+    .card-score { font-size: 2rem; }
+  }
+</style>

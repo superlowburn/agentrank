@@ -1,6 +1,19 @@
 ---
 export const prerender = true;
 import Base from '../layouts/Base.astro';
+import { getComparisonPairs } from '../data/ranked';
+import { toSlug } from '../data/tools';
+import { CATEGORIES } from '../data/content-gen';
+
+const pairs = getComparisonPairs();
+
+// Group pairs by category for display
+const pairsByCategory: Record<string, Array<{ a: any; b: any }>> = {};
+for (const pair of pairs) {
+  const cat = pair.a.category || 'other';
+  if (!pairsByCategory[cat]) pairsByCategory[cat] = [];
+  pairsByCategory[cat].push(pair);
+}
 ---
 
 <Base
@@ -12,7 +25,7 @@ import Base from '../layouts/Base.astro';
   <div id="compare-app">
     <div class="page-header">
       <h2>Compare Tools</h2>
-      <p class="page-sub">Select 2–3 MCP servers or agent tools to compare side by side.</p>
+      <p class="page-sub">Select 2–3 MCP servers or agent tools to compare side by side. Or browse pre-built comparisons below.</p>
     </div>
 
     <div class="slots-row" id="slots-row">
@@ -48,6 +61,29 @@ import Base from '../layouts/Base.astro';
         </div>
       </div>
     </div>
+  </div>
+
+  <!-- Static comparison pages by category -->
+  <div class="static-comparisons">
+    <h3 class="static-title">Popular Comparisons</h3>
+    {Object.entries(pairsByCategory).map(([cat, catPairs]) => (
+      <div class="cat-section">
+        <h4 class="cat-label">{CATEGORIES[cat] || cat}</h4>
+        <div class="cat-links">
+          {catPairs.slice(0, 8).map(({ a, b }) => (
+            <a
+              href={`/compare/${toSlug(a.full_name)}-vs-${toSlug(b.full_name)}/`}
+              class="cmp-link"
+            >
+              <span class="cmp-name">{a.full_name.split('/')[1]}</span>
+              <span class="cmp-vs">vs</span>
+              <span class="cmp-name">{b.full_name.split('/')[1]}</span>
+              <span class="cmp-scores">{a.score.toFixed(0)} / {b.score.toFixed(0)}</span>
+            </a>
+          ))}
+        </div>
+      </div>
+    ))}
   </div>
 </Base>
 
@@ -418,6 +454,60 @@ import Base from '../layouts/Base.astro';
       width: 80px;
     }
   }
+
+  /* ── Static comparison section ── */
+  .static-comparisons {
+    margin-top: 3rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--border);
+  }
+
+  .static-title {
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-muted);
+    margin-bottom: 1.25rem;
+  }
+
+  .cat-section {
+    margin-bottom: 1.5rem;
+  }
+
+  .cat-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    margin-bottom: 0.5rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  .cat-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+
+  .cmp-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 0.3rem 0.6rem;
+    font-size: 0.75rem;
+    text-decoration: none;
+    color: var(--text);
+    transition: border-color 0.15s;
+  }
+  .cmp-link:hover { border-color: var(--accent); color: var(--accent); }
+
+  .cmp-name { font-weight: 500; }
+  .cmp-vs { color: var(--text-muted); font-size: 0.68rem; }
+  .cmp-scores { color: var(--text-muted); font-size: 0.68rem; margin-left: 0.15rem; }
 </style>
 
 <script>

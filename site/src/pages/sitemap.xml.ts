@@ -1,8 +1,14 @@
 import type { APIRoute } from 'astro';
+import { getComparisonPairs } from '../data/ranked';
+import { toSlug } from '../data/tools';
 
 export const prerender = false;
 
 const SITE = 'https://agentrank-ai.com';
+
+const COMPARISON_SLUGS = getComparisonPairs().map(
+  ({ a, b }) => `${toSlug(a.full_name)}-vs-${toSlug(b.full_name)}`
+);
 
 const STATIC_PAGES = [
   { path: '/', changefreq: 'daily' },
@@ -67,6 +73,13 @@ export const GET: APIRoute = async ({ locals }) => {
   for (const row of categoryRows.results as { category: string }[]) {
     urls += `  <url>
     <loc>${SITE}/category/${escapeXml(row.category)}/</loc>
+    <changefreq>weekly</changefreq>
+  </url>\n`;
+  }
+
+  for (const slug of COMPARISON_SLUGS) {
+    urls += `  <url>
+    <loc>${SITE}/compare/${escapeXml(slug)}/</loc>
     <changefreq>weekly</changefreq>
   </url>\n`;
   }
