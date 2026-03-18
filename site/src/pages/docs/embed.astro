@@ -17,12 +17,25 @@ const svgHtmlCode = `<a href="${SITE_URL}/tool/${exampleSlug}/"><img src="${SITE
   description="Embed AgentRank scores on your site or README. Three formats: JS snippet, HTML iframe, and SVG widget. No dependencies, updates daily."
   keywords="AgentRank embed, MCP score widget, embed agent score, AgentRank iframe, README widget"
   canonicalUrl={`${SITE_URL}/docs/embed/`}
+  activeTab="api"
 >
   <div class="page-header">
     <div class="breadcrumb"><a href="/docs/">Docs</a> / Embed</div>
     <h1>Embed Scores</h1>
     <p class="subtitle">Show live AgentRank scores on your site, README, or blog. Widgets update daily from real signals.</p>
   </div>
+
+  <nav class="docs-nav">
+    <a href="/docs/">Overview</a>
+    <a href="/docs/quickstart/">Quick Start</a>
+    <a href="/docs/authentication/">Auth</a>
+    <a href="/docs/rate-limits/">Rate Limits</a>
+    <a href="/docs/api/">API Reference</a>
+    <a href="/docs/sdk/">SDK</a>
+    <a href="/docs/embed/" class="active">Embed</a>
+  </nav>
+
+  <div class="docs-divider"></div>
 
   <section class="method" id="script">
     <h2>Method 1: JS Snippet <span class="badge">Simplest</span></h2>
@@ -247,8 +260,34 @@ const svgHtmlCode = `<a href="${SITE_URL}/tool/${exampleSlug}/"><img src="${SITE
 </Base>
 
 <style>
+  .docs-nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem;
+    margin-bottom: 0;
+  }
+
+  .docs-nav a {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    text-decoration: none;
+    padding: 0.25rem 0.6rem;
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    background: var(--bg-surface);
+    transition: color 0.15s, border-color 0.15s;
+  }
+
+  .docs-nav a:hover { color: var(--text); text-decoration: none; }
+  .docs-nav a.active { color: var(--accent); border-color: var(--accent); font-weight: 600; }
+
+  .docs-divider {
+    border-top: 1px solid var(--border);
+    margin: 2rem 0;
+  }
+
   .page-header {
-    margin-bottom: 2.5rem;
+    margin-bottom: 1.5rem;
   }
 
   .breadcrumb {

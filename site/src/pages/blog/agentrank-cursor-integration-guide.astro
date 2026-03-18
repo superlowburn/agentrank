@@ -1,0 +1,747 @@
+---
+export const prerender = true;
+
+import Base from '../../layouts/Base.astro';
+import BlogSubscribeCTA from '../../components/BlogSubscribeCTA.astro';
+import RelatedPosts from '../../components/RelatedPosts.astro';
+
+const relatedPosts = [
+  { href: '/blog/agentrank-claude-code-integration-guide/', title: 'How to Use AgentRank Scores in Claude Code' },
+  { href: '/blog/integrate-agentrank-ai-agent-tutorial/', title: 'How to Integrate AgentRank Scores Into Your AI Agent' },
+  { href: '/blog/mcp-setup-guide-claude-cursor-windsurf/', title: 'How to Set Up MCP Servers in Claude Desktop, Cursor, and Windsurf' },
+  { href: '/blog/how-to-choose-an-mcp-server/', title: 'How to Choose an MCP Server in 2026' },
+  { href: '/blog/top-mcp-servers-2026/', title: 'Top 10 MCP Servers for AI Agents in 2026' },
+];
+
+const publishDate = '2026-03-18';
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'TechArticle',
+  headline: 'How to Use AgentRank in Cursor',
+  description: 'Step-by-step guide to adding the AgentRank MCP server to Cursor. Query live MCP tool rankings, check scores before adding dependencies, and use AgentRank data to pick the best tools for your project.',
+  datePublished: publishDate,
+  dateModified: publishDate,
+  author: {
+    '@type': 'Organization',
+    name: 'AgentRank',
+    url: 'https://agentrank-ai.com',
+  },
+  publisher: {
+    '@type': 'Organization',
+    name: 'AgentRank',
+    logo: {
+      '@type': 'ImageObject',
+      url: 'https://agentrank-ai.com/og-image.png',
+    },
+  },
+  mainEntityOfPage: {
+    '@type': 'WebPage',
+    '@id': 'https://agentrank-ai.com/blog/agentrank-cursor-integration-guide/',
+  },
+  image: 'https://agentrank-ai.com/og/agentrank-cursor-integration-guide.png',
+  keywords: 'agentrank cursor, cursor mcp server, cursor mcp integration, agentrank cursor setup, cursor tool rankings, mcp server discovery cursor, cursor ai mcp',
+  proficiencyLevel: 'Beginner',
+  dependencies: 'Node.js 18+, Cursor',
+};
+
+const faqJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: [
+    {
+      '@type': 'Question',
+      name: 'How do I add AgentRank to Cursor?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Add AgentRank to your Cursor MCP config at ~/.cursor/mcp.json with the command "npx" and args ["-y", "agentrank-mcp-server"]. You can also configure it per-project using a .cursor/mcp.json file in your project root.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'What does the AgentRank MCP server add to Cursor?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'The AgentRank MCP server gives Cursor three tools: search (find the best MCP server for a task by keyword), lookup (get the live AgentRank score for any GitHub repo), and get_badge_url (generate an embeddable score badge). Cursor\'s AI can call these automatically when you ask about tool selection.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Does AgentRank work with Cursor Agent mode?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Yes. Cursor Agent mode can use MCP tools. When AgentRank is configured, Agent mode will call the search and lookup tools automatically when your prompt involves finding or evaluating MCP servers.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Can I use AgentRank with the @agentrank/sdk in Cursor projects?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Yes. Install @agentrank/sdk with npm and use it in any Node.js or TypeScript project. The SDK exposes search, getTool, and getMovers methods. Cursor can read and help you write code that calls these methods.',
+      },
+    },
+  ],
+};
+
+// ── code samples ──────────────────────────────────────────────────────────────
+
+const cursorMcpGlobal = `// ~/.cursor/mcp.json — available in all projects
+{
+  "mcpServers": {
+    "agentrank": {
+      "command": "npx",
+      "args": ["-y", "agentrank-mcp-server"]
+    }
+  }
+}`;
+
+const cursorMcpProject = `// .cursor/mcp.json — project-level config
+{
+  "mcpServers": {
+    "agentrank": {
+      "command": "npx",
+      "args": ["-y", "agentrank-mcp-server"]
+    }
+  }
+}`;
+
+const cursorMcpWithKey = `// ~/.cursor/mcp.json — with API key for richer data
+{
+  "mcpServers": {
+    "agentrank": {
+      "command": "npx",
+      "args": ["-y", "agentrank-mcp-server"],
+      "env": {
+        "AGENTRANK_API_KEY": "your_api_key_here"
+      }
+    }
+  }
+}`;
+
+const sdkInstall = `npm install @agentrank/sdk`;
+
+const sdkSearchPython = `import requests
+
+def find_best_mcp_server(task: str, top_n: int = 3) -> list[dict]:
+    """Find top-ranked MCP servers for a given task."""
+    resp = requests.get(
+        "https://agentrank-ai.com/api/v1/search",
+        params={"q": task, "category": "tool", "sort": "score", "limit": top_n},
+        timeout=10,
+    )
+    resp.raise_for_status()
+    return resp.json()["results"]
+
+# Find the best database MCP server
+tools = find_best_mcp_server("postgres database")
+for t in tools:
+    verdict = "recommended" if t["score"] >= 60 else "proceed with caution"
+    print(f"#{t['rank']:3d}  score={t['score']:.1f}  {verdict}  {t['name']}")`;
+
+const sdkSearchTs = `import { AgentRank } from '@agentrank/sdk';
+
+const ar = new AgentRank();
+
+// Find the top-ranked database MCP servers
+const results = await ar.search('postgres database', {
+  limit: 5,
+  sort: 'score',
+  category: 'tool',
+});
+
+for (const tool of results.results) {
+  const verdict = tool.score >= 60 ? 'recommended' : 'proceed with caution';
+  console.log(\`#\${tool.rank}  score=\${tool.score.toFixed(1)}  \${verdict}  \${tool.name}\`);
+}`;
+
+const sdkLookupTs = `import { AgentRank } from '@agentrank/sdk';
+
+const ar = new AgentRank();
+
+// Check a specific tool before adding it as a dependency
+const tool = await ar.getTool('jlowin/fastmcp');
+console.log(\`\${tool.name}: score=\${tool.score}, rank=#\${tool.rank}\`);
+// jlowin/fastmcp: score=89.4, rank=#1`;
+
+const sdkMoversTs = `import { AgentRank } from '@agentrank/sdk';
+
+const ar = new AgentRank();
+
+// See which MCP servers are gaining momentum this week
+const movers = await ar.getMovers({ direction: 'up', limit: 5 });
+for (const m of movers.results) {
+  console.log(\`+\${m.rankDelta} spots  \${m.name}  score=\${m.score.toFixed(1)}\`);
+}`;
+
+const cursorPromptSearch = `Search AgentRank for the best MCP server to handle web scraping with JavaScript rendering.
+Compare the top 3 options and recommend one.`;
+
+const cursorPromptLookup = `Look up the AgentRank score for modelcontextprotocol/servers.
+Is it still actively maintained? What's the issue health score?`;
+
+const cursorPromptWorkflow = `I'm about to add apify/mcp-server-rag-web-browser to my project.
+Check its AgentRank score first. Only proceed with the integration if it's above 55.`;
+
+const cursorPromptRefactor = `I have these MCP servers in my .mcp.json: firecrawl-dev/mcp-server-firecrawl,
+browserbase/mcp-server-browserbase, and apify/mcp-server-rag-web-browser.
+Use AgentRank to look up all three scores and recommend which one to keep.`;
+
+const cursorRulesSnippet = `# .cursorrules
+When recommending or evaluating MCP servers, always check the AgentRank score
+using the agentrank_search or agentrank_lookup tools before making a recommendation.
+Only recommend servers with a score above 50. If the top result is below 50, say so
+and explain the tradeoffs.`;
+---
+
+<Base
+  title="How to Use AgentRank in Cursor — Integration Guide"
+  description="Step-by-step guide to adding the AgentRank MCP server to Cursor. Query live tool rankings, check scores before adding dependencies, and pick the best MCP tools for your project from inside Cursor."
+  activeTab="blog"
+  keywords="agentrank cursor, cursor mcp server, cursor mcp integration, agentrank cursor setup, mcp tool rankings cursor, cursor ai tool discovery"
+  canonicalUrl="https://agentrank-ai.com/blog/agentrank-cursor-integration-guide/"
+  jsonLd={[jsonLd, faqJsonLd]}
+  ogImage="/og/agentrank-cursor-integration-guide.png"
+>
+  <article class="blog-post">
+    <header class="post-header">
+      <div class="breadcrumb"><a href="/blog/">Blog</a> <span>/</span></div>
+      <h1>How to Use AgentRank in Cursor</h1>
+      <div class="post-meta">
+        <time datetime={publishDate}>March 18, 2026</time>
+        <span class="sep">&middot;</span>
+        <span>8 min read</span>
+        <span class="sep">&middot;</span>
+        <span>Integration Guide</span>
+      </div>
+      <p class="lede">
+        Cursor supports MCP servers in both Chat and Agent modes. This guide shows you how to add
+        the AgentRank MCP server so Cursor can query <strong>live rankings for 25,000+ MCP
+        servers</strong> while you work — helping you pick the highest-quality tools instead of
+        guessing from outdated training data.
+      </p>
+    </header>
+
+    <nav class="toc">
+      <strong>Contents</strong>
+      <ol>
+        <li><a href="#why">Why use AgentRank in Cursor</a></li>
+        <li><a href="#install">Step 1 — Configure the MCP server</a></li>
+        <li><a href="#verify">Step 2 — Verify it's working</a></li>
+        <li><a href="#prompts">Step 3 — Prompts that work</a></li>
+        <li><a href="#cursorrules">Step 4 — Add to .cursorrules</a></li>
+        <li><a href="#sdk">Step 5 — Use the SDK in your project</a></li>
+        <li><a href="#api-key">Get richer data with an API key</a></li>
+      </ol>
+    </nav>
+
+    <section id="why">
+      <h2>Why use AgentRank in Cursor</h2>
+      <p>
+        When you ask Cursor to recommend an MCP server or help you choose between packages, it
+        draws on training data that's months old. The MCP ecosystem moves fast — servers get
+        abandoned, new ones become the community standard, and quality varies enormously.
+      </p>
+      <p>
+        AgentRank scores every MCP server daily on five signals: GitHub stars, commit freshness,
+        issue close rate, contributor count, and downstream dependents. The composite score runs
+        0&ndash;100. With the MCP server installed, Cursor can look up current scores in real
+        time instead of guessing.
+      </p>
+      <p>
+        The result: when you ask Cursor "what's the best MCP server for querying a database?",
+        it can answer with live data rather than stale training knowledge.
+      </p>
+    </section>
+
+    <section id="install">
+      <h2>Step 1 — Configure the MCP server</h2>
+      <p>
+        Cursor reads MCP server configuration from <code>~/.cursor/mcp.json</code> (global) or
+        <code>.cursor/mcp.json</code> in your project root (per-project). Global is recommended
+        since you'll want AgentRank available in every project.
+      </p>
+
+      <h3>Global configuration (recommended)</h3>
+      <div class="code-block">
+        <div class="code-label">~/.cursor/mcp.json</div>
+        <pre><code>{cursorMcpGlobal}</code></pre>
+      </div>
+
+      <h3>Project-level configuration</h3>
+      <div class="code-block">
+        <div class="code-label">.cursor/mcp.json</div>
+        <pre><code>{cursorMcpProject}</code></pre>
+      </div>
+
+      <p>
+        No installation required. <code>npx -y</code> downloads and runs
+        <code>agentrank-mcp-server</code> automatically on first use and caches it locally.
+        Subsequent runs start in under a second.
+      </p>
+
+      <div class="info-box">
+        <strong>Cursor Settings UI alternative</strong>
+        <p>
+          You can also add MCP servers through Cursor's UI: open <strong>Settings</strong>
+          &rarr; <strong>Features</strong> &rarr; <strong>MCP Servers</strong> &rarr;
+          <strong>Add Server</strong>. Set type to <code>stdio</code>, command to
+          <code>npx</code>, and args to <code>-y agentrank-mcp-server</code>. The UI writes
+          to the same <code>~/.cursor/mcp.json</code> file.
+        </p>
+      </div>
+    </section>
+
+    <section id="verify">
+      <h2>Step 2 — Verify it's working</h2>
+      <p>
+        After saving the config, restart Cursor or reload the window (<kbd>Cmd/Ctrl+Shift+P</kbd>
+        &rarr; "Developer: Reload Window"). The MCP server starts automatically.
+      </p>
+      <p>
+        Open Cursor Chat and type:
+      </p>
+      <div class="code-block">
+        <div class="code-label">Verification prompt</div>
+        <pre><code>What MCP tools do you have available? List them.</code></pre>
+      </div>
+      <p>
+        You should see the AgentRank tools listed. Three are exposed:
+      </p>
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Tool</th>
+            <th>What it does</th>
+            <th>Key inputs</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>search</code></td>
+            <td>Find the best MCP server for a task by keyword, returns ranked results</td>
+            <td>query, limit, category, sort</td>
+          </tr>
+          <tr>
+            <td><code>lookup</code></td>
+            <td>Get the AgentRank score for a specific GitHub repo</td>
+            <td>GitHub full name (e.g. <code>jlowin/fastmcp</code>)</td>
+          </tr>
+          <tr>
+            <td><code>get_badge_url</code></td>
+            <td>Generate an embeddable score badge URL for a README</td>
+            <td>GitHub full name</td>
+          </tr>
+        </tbody>
+      </table>
+      <p>
+        All tools use the free public API — no authentication required. The rate limit (100
+        req/min per IP) is well above what interactive Cursor usage generates.
+      </p>
+    </section>
+
+    <section id="prompts">
+      <h2>Step 3 — Prompts that work</h2>
+      <p>
+        Cursor invokes MCP tools automatically when the prompt is relevant. These are the
+        patterns that consistently trigger AgentRank tool use.
+      </p>
+
+      <h3>Find the best tool for a task</h3>
+      <div class="code-block">
+        <div class="code-label">Prompt</div>
+        <pre><code>{cursorPromptSearch}</code></pre>
+      </div>
+      <p>
+        Cursor calls <code>search("web scraping javascript rendering")</code>, gets back
+        the top-ranked results with scores, and gives you a grounded recommendation.
+      </p>
+
+      <h3>Check a specific tool</h3>
+      <div class="code-block">
+        <div class="code-label">Prompt</div>
+        <pre><code>{cursorPromptLookup}</code></pre>
+      </div>
+      <p>
+        Direct lookup via the <code>lookup</code> tool. Useful when you already know which
+        tool you're considering and want a quick quality check.
+      </p>
+
+      <h3>Score-gated workflow</h3>
+      <div class="code-block">
+        <div class="code-label">Prompt</div>
+        <pre><code>{cursorPromptWorkflow}</code></pre>
+      </div>
+      <p>
+        This pattern uses AgentRank as a quality gate: Cursor checks the score first and only
+        proceeds if the threshold is met. Useful when evaluating new dependencies.
+      </p>
+
+      <h3>Consolidate overlapping tools</h3>
+      <div class="code-block">
+        <div class="code-label">Prompt</div>
+        <pre><code>{cursorPromptRefactor}</code></pre>
+      </div>
+      <p>
+        Pass multiple candidates and ask Cursor to look them all up and compare. Good for
+        reducing MCP server sprawl in a project.
+      </p>
+
+      <div class="info-box">
+        <strong>Agent mode vs Chat mode</strong>
+        <p>
+          Both modes support MCP tools. In Chat mode, tools are called when explicitly relevant.
+          In Agent mode, Cursor can chain multiple tool calls autonomously — for example,
+          searching for options, looking up each candidate's score, and writing the integration
+          code, all in one run.
+        </p>
+      </div>
+    </section>
+
+    <section id="cursorrules">
+      <h2>Step 4 — Add to .cursorrules</h2>
+      <p>
+        To make AgentRank lookups automatic — without having to ask explicitly — add an
+        instruction to your <code>.cursorrules</code> file. Cursor applies these rules to every
+        chat session in the project.
+      </p>
+      <div class="code-block">
+        <div class="code-label">.cursorrules (excerpt)</div>
+        <pre><code>{cursorRulesSnippet}</code></pre>
+      </div>
+      <p>
+        With this rule, any time you ask Cursor about MCP servers — even in a passing question
+        like "what should I use for file access?" — it will call AgentRank before responding.
+      </p>
+    </section>
+
+    <section id="sdk">
+      <h2>Step 5 — Use the SDK in your project</h2>
+      <p>
+        For programmatic access — build scripts, CI checks, runtime tool selection — use the
+        official <code>@agentrank/sdk</code>. Cursor can read the type definitions and help you
+        write code against it.
+      </p>
+      <div class="code-block">
+        <div class="code-label">Install</div>
+        <pre><code>{sdkInstall}</code></pre>
+      </div>
+
+      <h3>TypeScript — search</h3>
+      <div class="code-block">
+        <div class="code-label">TypeScript — search for tools</div>
+        <pre><code>{sdkSearchTs}</code></pre>
+      </div>
+
+      <h3>TypeScript — look up a specific tool</h3>
+      <div class="code-block">
+        <div class="code-label">TypeScript — getTool</div>
+        <pre><code>{sdkLookupTs}</code></pre>
+      </div>
+
+      <h3>TypeScript — trending this week</h3>
+      <div class="code-block">
+        <div class="code-label">TypeScript — getMovers</div>
+        <pre><code>{sdkMoversTs}</code></pre>
+      </div>
+
+      <h3>Python — search</h3>
+      <p>
+        If you're working in Python, use the REST API directly with <code>requests</code>:
+      </p>
+      <div class="code-block">
+        <div class="code-label">Python — search with requests</div>
+        <pre><code>{sdkSearchPython}</code></pre>
+      </div>
+    </section>
+
+    <section id="api-key">
+      <h2>Get richer data with an API key</h2>
+      <p>
+        The public v1 API returns rank, score, name, and description. With a free API key you
+        unlock the v2 API: full signal breakdown (individual sub-scores for each of the five
+        signals), rank history, and higher rate limits.
+      </p>
+      <div class="code-block">
+        <div class="code-label">~/.cursor/mcp.json — with API key</div>
+        <pre><code>{cursorMcpWithKey}</code></pre>
+      </div>
+      <p>
+        Get a free key at <a href="/docs/" class="inline-link">agentrank-ai.com/docs</a>.
+        The free tier covers 1,000 v2 requests per day.
+      </p>
+      <p>
+        With the API key set, the <code>lookup</code> tool returns a full signal breakdown instead
+        of just the composite score — helpful when you want to understand <em>why</em> a tool
+        scored the way it did.
+      </p>
+
+      <div class="info-box">
+        <strong>Score interpretation quick reference</strong>
+        <p>
+          80+ &mdash; highly recommended: active development, strong community, low risk.<br />
+          60&ndash;79 &mdash; solid: maintained and used, minor concerns at worst.<br />
+          40&ndash;59 &mdash; proceed with caution: may be early-stage or slow to respond to issues.<br />
+          Below 40 &mdash; higher risk: check the GitHub repo manually before depending on it.
+        </p>
+      </div>
+    </section>
+
+    <section id="next">
+      <h2>What's next</h2>
+      <ul class="feature-list">
+        <li><strong>Claude Code users</strong> — see the <a href="/blog/agentrank-claude-code-integration-guide/" class="inline-link">Claude Code integration guide</a> for the same workflow with Claude Code config</li>
+        <li><strong>Build a custom agent</strong> — the <a href="/blog/integrate-agentrank-ai-agent-tutorial/" class="inline-link">full integration tutorial</a> covers OpenAI function calling, LangChain, and the Claude API</li>
+        <li><strong>Browse the leaderboard</strong> — <a href="/tools/" class="inline-link">agentrank-ai.com/tools</a> for the full ranked index</li>
+        <li><strong>Submit a tool</strong> — <a href="/submit/" class="inline-link">agentrank-ai.com/submit</a> to add any GitHub repo</li>
+      </ul>
+    </section>
+
+    <BlogSubscribeCTA />
+    <RelatedPosts posts={relatedPosts} />
+  </article>
+</Base>
+
+<style>
+  .blog-post {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 2rem 1rem 4rem;
+  }
+
+  .breadcrumb {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    margin-bottom: 0.75rem;
+  }
+
+  .breadcrumb a {
+    color: var(--text-muted);
+    text-decoration: none;
+  }
+
+  .breadcrumb a:hover { color: var(--text); }
+
+  .breadcrumb span { margin: 0 0.3rem; }
+
+  .post-header {
+    margin-bottom: 2.5rem;
+    padding-bottom: 2rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  h1 {
+    font-size: 1.9rem;
+    font-weight: 700;
+    line-height: 1.25;
+    margin: 0 0 0.75rem;
+    color: var(--text);
+    letter-spacing: -0.02em;
+  }
+
+  .post-meta {
+    font-size: 0.82rem;
+    color: var(--text-muted);
+    margin-bottom: 1.25rem;
+  }
+
+  .sep { margin: 0 0.4rem; }
+
+  .lede {
+    font-size: 1.05rem;
+    line-height: 1.65;
+    color: var(--text-secondary);
+    margin: 0;
+  }
+
+  .toc {
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 1rem 1.25rem;
+    margin-bottom: 2.5rem;
+    font-size: 0.85rem;
+  }
+
+  .toc strong {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-muted);
+  }
+
+  .toc ol {
+    margin: 0;
+    padding-left: 1.25rem;
+    line-height: 1.9;
+  }
+
+  .toc a {
+    color: var(--text-secondary);
+    text-decoration: none;
+  }
+
+  .toc a:hover { color: var(--text); }
+
+  section { margin-bottom: 3rem; }
+
+  h2 {
+    font-size: 1.3rem;
+    font-weight: 700;
+    margin: 0 0 1rem;
+    padding-top: 0.5rem;
+    color: var(--text);
+    letter-spacing: -0.01em;
+  }
+
+  h3 {
+    font-size: 1rem;
+    font-weight: 600;
+    margin: 1.5rem 0 0.5rem;
+    color: var(--text);
+  }
+
+  p {
+    font-size: 0.92rem;
+    line-height: 1.7;
+    color: var(--text-secondary);
+    margin: 0 0 1rem;
+  }
+
+  ul, ol {
+    font-size: 0.92rem;
+    line-height: 1.7;
+    color: var(--text-secondary);
+    margin: 0 0 1rem;
+    padding-left: 1.5rem;
+  }
+
+  a {
+    color: var(--text);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  .inline-link {
+    color: var(--text);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  code {
+    font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+    font-size: 0.82em;
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    padding: 0.1em 0.35em;
+  }
+
+  .code-block {
+    margin: 1rem 0 1.25rem;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .code-label {
+    background: var(--bg-surface);
+    border-bottom: 1px solid var(--border);
+    padding: 0.4rem 0.75rem;
+    font-size: 0.72rem;
+    font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  .code-block pre {
+    margin: 0;
+    padding: 1rem 0.875rem;
+    overflow-x: auto;
+    background: transparent;
+  }
+
+  .code-block pre code {
+    font-size: 0.78rem;
+    background: none;
+    border: none;
+    padding: 0;
+    line-height: 1.6;
+    color: var(--text);
+    white-space: pre;
+  }
+
+  .data-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.82rem;
+    margin: 1rem 0 1.25rem;
+  }
+
+  .data-table th {
+    text-align: left;
+    font-weight: 600;
+    color: var(--text-muted);
+    border-bottom: 1px solid var(--border);
+    padding: 0.4rem 0.75rem 0.4rem 0;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+
+  .data-table td {
+    padding: 0.45rem 0.75rem 0.45rem 0;
+    border-bottom: 1px solid var(--border);
+    color: var(--text);
+    vertical-align: top;
+  }
+
+  .data-table tr:last-child td { border-bottom: none; }
+
+  .feature-list {
+    padding-left: 0;
+    list-style: none;
+  }
+
+  .feature-list li {
+    padding: 0.4rem 0 0.4rem 1rem;
+    border-left: 2px solid var(--border);
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+    line-height: 1.6;
+  }
+
+  .info-box {
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--text-muted);
+    border-radius: 4px;
+    padding: 0.875rem 1rem;
+    margin: 1.25rem 0;
+    font-size: 0.88rem;
+  }
+
+  .info-box strong {
+    display: block;
+    margin-bottom: 0.35rem;
+    color: var(--text);
+  }
+
+  .info-box p {
+    margin: 0;
+    font-size: 0.88rem;
+    line-height: 1.6;
+  }
+
+  kbd {
+    font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+    font-size: 0.8em;
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    padding: 0.1em 0.35em;
+  }
+</style>

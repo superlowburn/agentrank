@@ -1,0 +1,648 @@
+---
+import Base from '../../layouts/Base.astro';
+export const prerender = true;
+
+const SITE_URL = 'https://agentrank-ai.com';
+---
+
+<Base
+  title="SDK Reference — AgentRank"
+  description="AgentRank TypeScript/JavaScript SDK (@agentrank/sdk). Installation, configuration, and full method reference."
+  keywords="AgentRank SDK, TypeScript MCP API client, @agentrank/sdk, JavaScript"
+  canonicalUrl={`${SITE_URL}/docs/sdk/`}
+  activeTab="api"
+>
+  <div class="page-header">
+    <div class="breadcrumb"><a href="/docs/">Docs</a> / SDK Reference</div>
+    <h1>SDK Reference</h1>
+    <p class="subtitle">Official TypeScript/JavaScript client for the AgentRank API. Works in Node.js, Deno, Bun, and modern browsers.</p>
+  </div>
+
+  <nav class="docs-nav">
+    <a href="/docs/">Overview</a>
+    <a href="/docs/quickstart/">Quick Start</a>
+    <a href="/docs/authentication/">Auth</a>
+    <a href="/docs/rate-limits/">Rate Limits</a>
+    <a href="/docs/api/">API Reference</a>
+    <a href="/docs/sdk/" class="active">SDK</a>
+    <a href="/docs/embed/">Embed</a>
+  </nav>
+
+  <div class="divider"></div>
+
+  <section class="method" id="install">
+    <h2>Installation</h2>
+    <div class="install-grid">
+      <div class="code-block-wrap">
+        <div class="code-label">npm</div>
+        <pre class="code-block">npm install @agentrank/sdk</pre>
+        <button class="copy-btn" data-copy="npm install @agentrank/sdk">Copy</button>
+      </div>
+      <div class="code-block-wrap">
+        <div class="code-label">pnpm</div>
+        <pre class="code-block">pnpm add @agentrank/sdk</pre>
+        <button class="copy-btn" data-copy="pnpm add @agentrank/sdk">Copy</button>
+      </div>
+      <div class="code-block-wrap">
+        <div class="code-label">yarn</div>
+        <pre class="code-block">yarn add @agentrank/sdk</pre>
+        <button class="copy-btn" data-copy="yarn add @agentrank/sdk">Copy</button>
+      </div>
+    </div>
+    <p>Requires TypeScript 4.5+ or any modern JavaScript runtime with <code>fetch</code> support.</p>
+  </section>
+
+  <div class="divider"></div>
+
+  <section class="method" id="constructor">
+    <h2>Constructor</h2>
+    <div class="code-block-wrap">
+      <div class="code-label">TS</div>
+      <pre class="code-block">new AgentRank(options?: AgentRankOptions)</pre>
+    </div>
+
+    <h3>Options</h3>
+    <div class="param-table">
+      <div class="param-row header-row">
+        <span>Option</span>
+        <span>Type</span>
+        <span>Default</span>
+        <span>Description</span>
+      </div>
+      <div class="param-row">
+        <code class="param-name">apiKey</code>
+        <span class="param-type">string?</span>
+        <code>undefined</code>
+        <span>Pro API key. Omit for free-tier (v1) access.</span>
+      </div>
+      <div class="param-row">
+        <code class="param-name">baseUrl</code>
+        <span class="param-type">string?</span>
+        <code>"https://agentrank-ai.com"</code>
+        <span>Override the API base URL. Useful for local dev.</span>
+      </div>
+    </div>
+
+    <h3>Examples</h3>
+    <div class="code-block-wrap">
+      <div class="code-label">TS</div>
+      <pre class="code-block multiline">{`import { AgentRank } from '@agentrank/sdk';
+
+// Free tier (no key)
+const ar = new AgentRank();
+
+// Pro tier
+const ar = new AgentRank({ apiKey: process.env.AGENTRANK_API_KEY });
+
+// Custom base URL
+const ar = new AgentRank({ baseUrl: 'http://localhost:4321' });`}</pre>
+      <button class="copy-btn" data-copy={`import { AgentRank } from '@agentrank/sdk';\n\n// Free tier (no key)\nconst ar = new AgentRank();\n\n// Pro tier\nconst ar = new AgentRank({ apiKey: process.env.AGENTRANK_API_KEY });\n\n// Custom base URL\nconst ar = new AgentRank({ baseUrl: 'http://localhost:4321' });`}>Copy</button>
+    </div>
+
+    <p>When <code>apiKey</code> is provided, the SDK automatically routes all requests to <code>/api/v2/*</code>. Without a key, it uses <code>/api/v1/*</code>.</p>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- search() -->
+  <section class="method" id="search">
+    <h2><code>ar.search(query, options?)</code></h2>
+    <p>Search the index for tools, skills, and agents. Returns ranked results.</p>
+
+    <div class="sig-block">
+      <pre class="sig-code">{`search(query: string, options?: SearchOptions): Promise<SearchResponse>`}</pre>
+    </div>
+
+    <h3>Parameters</h3>
+    <div class="param-table">
+      <div class="param-row header-row">
+        <span>Param</span>
+        <span>Type</span>
+        <span>Description</span>
+      </div>
+      <div class="param-row three-col">
+        <code class="param-name">query</code>
+        <span class="param-type">string</span>
+        <span>Search query. Pass empty string for top-ranked results.</span>
+      </div>
+      <div class="param-row three-col">
+        <code class="param-name">options.category</code>
+        <span class="param-type">Category?</span>
+        <span><code>"all"</code> | <code>"tool"</code> | <code>"skill"</code> | <code>"agent"</code></span>
+      </div>
+      <div class="param-row three-col">
+        <code class="param-name">options.sort</code>
+        <span class="param-type">SortBy?</span>
+        <span><code>"score"</code> | <code>"rank"</code> | <code>"stars"</code> | <code>"freshness"</code></span>
+      </div>
+      <div class="param-row three-col">
+        <code class="param-name">options.limit</code>
+        <span class="param-type">number?</span>
+        <span>Max results to return. Default 20, max 100.</span>
+      </div>
+      <div class="param-row three-col">
+        <code class="param-name">options.offset</code>
+        <span class="param-type">number?</span>
+        <span>Pagination offset. Default 0.</span>
+      </div>
+    </div>
+
+    <h3>Example</h3>
+    <div class="code-block-wrap">
+      <div class="code-label">TS</div>
+      <pre class="code-block multiline">{`const res = await ar.search('filesystem', {
+  category: 'tool',
+  sort: 'score',
+  limit: 10,
+});
+
+for (const result of res.results) {
+  console.log(result.name, result.score, result.rank);
+}
+
+// Pagination
+const page2 = await ar.search('filesystem', { limit: 10, offset: 10 });`}</pre>
+      <button class="copy-btn" data-copy={`const res = await ar.search('filesystem', {\n  category: 'tool',\n  sort: 'score',\n  limit: 10,\n});\n\nfor (const result of res.results) {\n  console.log(result.name, result.score, result.rank);\n}\n\n// Pagination\nconst page2 = await ar.search('filesystem', { limit: 10, offset: 10 });`}>Copy</button>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- getTool() -->
+  <section class="method" id="getTool">
+    <h2><code>ar.getTool(id)</code></h2>
+    <p>Get full detail for one tool, including score, rank, and signal breakdown. Pass the GitHub <code>owner/repo</code> — the SDK handles URL encoding.</p>
+
+    <div class="sig-block">
+      <pre class="sig-code">{`getTool(id: string): Promise<ToolDetail>`}</pre>
+    </div>
+
+    <h3>Parameters</h3>
+    <div class="param-table">
+      <div class="param-row header-row">
+        <span>Param</span>
+        <span>Type</span>
+        <span>Description</span>
+      </div>
+      <div class="param-row three-col">
+        <code class="param-name">id</code>
+        <span class="param-type">string</span>
+        <span>GitHub <code>owner/repo</code> format. The SDK converts <code>/</code> to <code>--</code> automatically.</span>
+      </div>
+    </div>
+
+    <h3>Example</h3>
+    <div class="code-block-wrap">
+      <div class="code-label">TS</div>
+      <pre class="code-block multiline">{`const tool = await ar.getTool('modelcontextprotocol/servers');
+
+console.log(tool.score);   // 97.4
+console.log(tool.rank);    // 1
+console.log(tool.signals); // { stars, freshness, issueHealth, ... }
+
+// With Pro key: includes rankHistory
+if (tool.rankHistory) {
+  const trend = tool.rankHistory.slice(0, 7);
+  console.log('7-day rank trend:', trend.map(h => h.rank));
+}`}</pre>
+      <button class="copy-btn" data-copy={`const tool = await ar.getTool('modelcontextprotocol/servers');\n\nconsole.log(tool.score);   // 97.4\nconsole.log(tool.rank);    // 1\nconsole.log(tool.signals); // { stars, freshness, issueHealth, ... }\n\n// With Pro key: includes rankHistory\nif (tool.rankHistory) {\n  const trend = tool.rankHistory.slice(0, 7);\n  console.log('7-day rank trend:', trend.map(h => h.rank));\n}`}>Copy</button>
+    </div>
+
+    <div class="field-note">Throws <code>NotFoundError</code> if the tool is not in the index.</div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- getMovers() -->
+  <section class="method" id="getMovers">
+    <h2><code>ar.getMovers(options?)</code></h2>
+    <p>Get tools with the largest rank changes over a recent window.</p>
+
+    <div class="sig-block">
+      <pre class="sig-code">{`getMovers(options?: MoversOptions): Promise<MoversResponse>`}</pre>
+    </div>
+
+    <h3>Parameters</h3>
+    <div class="param-table">
+      <div class="param-row header-row">
+        <span>Param</span>
+        <span>Type</span>
+        <span>Description</span>
+      </div>
+      <div class="param-row three-col">
+        <code class="param-name">options.days</code>
+        <span class="param-type">number?</span>
+        <span>Lookback window in days. Default 7, max 30.</span>
+      </div>
+      <div class="param-row three-col">
+        <code class="param-name">options.limit</code>
+        <span class="param-type">number?</span>
+        <span>Number of results. Default 10, max 50.</span>
+      </div>
+    </div>
+
+    <h3>Example</h3>
+    <div class="code-block-wrap">
+      <div class="code-label">TS</div>
+      <pre class="code-block multiline">{`const { movers, meta } = await ar.getMovers({ days: 7, limit: 10 });
+
+movers.forEach(m => {
+  const dir = m.rankDelta > 0 ? 'up' : 'down';
+  console.log(\`\${m.fullName} moved \${dir} \${Math.abs(m.rankDelta)} spots\`);
+});`}</pre>
+      <button class="copy-btn" data-copy={`const { movers, meta } = await ar.getMovers({ days: 7, limit: 10 });\n\nmovers.forEach(m => {\n  const dir = m.rankDelta > 0 ? 'up' : 'down';\n  console.log(\`\${m.fullName} moved \${dir} \${Math.abs(m.rankDelta)} spots\`);\n});`}>Copy</button>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- getNewTools() -->
+  <section class="method" id="getNewTools">
+    <h2><code>ar.getNewTools(options?)</code></h2>
+    <p>Get tools that appeared in the index for the first time within the last N days.</p>
+
+    <div class="sig-block">
+      <pre class="sig-code">{`getNewTools(options?: NewToolsOptions): Promise<NewToolsResponse>`}</pre>
+    </div>
+
+    <h3>Parameters</h3>
+    <div class="param-table">
+      <div class="param-row header-row">
+        <span>Param</span>
+        <span>Type</span>
+        <span>Description</span>
+      </div>
+      <div class="param-row three-col">
+        <code class="param-name">options.days</code>
+        <span class="param-type">number?</span>
+        <span>Lookback window in days. Default 7, max 30.</span>
+      </div>
+      <div class="param-row three-col">
+        <code class="param-name">options.limit</code>
+        <span class="param-type">number?</span>
+        <span>Number of results. Default 20, max 100.</span>
+      </div>
+    </div>
+
+    <h3>Example</h3>
+    <div class="code-block-wrap">
+      <div class="code-label">TS</div>
+      <pre class="code-block multiline">{`const { tools } = await ar.getNewTools({ days: 7 });
+
+tools.forEach(t => {
+  console.log(\`\${t.fullName} — first indexed \${t.firstSeen} — rank \${t.rank}\`);
+});`}</pre>
+      <button class="copy-btn" data-copy={`const { tools } = await ar.getNewTools({ days: 7 });\n\ntools.forEach(t => {\n  console.log(\`\${t.fullName} — first indexed \${t.firstSeen} — rank \${t.rank}\`);\n});`}>Copy</button>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <section class="method" id="errors">
+    <h2>Error handling</h2>
+    <p>The SDK exports typed error classes. Catch them to handle specific failure modes:</p>
+    <div class="code-block-wrap">
+      <div class="code-label">TS</div>
+      <pre class="code-block multiline">{`import { AgentRank, NotFoundError, RateLimitError, AuthError } from '@agentrank/sdk';
+
+try {
+  const tool = await ar.getTool('owner/does-not-exist');
+} catch (err) {
+  if (err instanceof NotFoundError) {
+    console.log('Tool not in index');
+  } else if (err instanceof RateLimitError) {
+    // err.retryAfter is an ISO timestamp or undefined
+    console.log('Rate limited. Retry after:', err.retryAfter);
+  } else if (err instanceof AuthError) {
+    console.log('Invalid API key');
+  }
+}`}</pre>
+      <button class="copy-btn" data-copy={`import { AgentRank, NotFoundError, RateLimitError, AuthError } from '@agentrank/sdk';\n\ntry {\n  const tool = await ar.getTool('owner/does-not-exist');\n} catch (err) {\n  if (err instanceof NotFoundError) {\n    console.log('Tool not in index');\n  } else if (err instanceof RateLimitError) {\n    console.log('Rate limited. Retry after:', err.retryAfter);\n  } else if (err instanceof AuthError) {\n    console.log('Invalid API key');\n  }\n}`}>Copy</button>
+    </div>
+
+    <div class="error-table">
+      <div class="error-row header-row">
+        <span>Class</span>
+        <span>HTTP Status</span>
+        <span>Description</span>
+      </div>
+      <div class="error-row">
+        <code>AgentRankError</code>
+        <span>Any</span>
+        <span>Base class for all SDK errors. Has <code>status</code> and <code>code</code> fields.</span>
+      </div>
+      <div class="error-row">
+        <code>AuthError</code>
+        <span>401</span>
+        <span>Invalid or missing API key.</span>
+      </div>
+      <div class="error-row">
+        <code>NotFoundError</code>
+        <span>404</span>
+        <span>Tool not found in the index.</span>
+      </div>
+      <div class="error-row">
+        <code>RateLimitError</code>
+        <span>429</span>
+        <span>Rate limit hit. Has optional <code>retryAfter</code> string.</span>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <section class="method" id="types">
+    <h2>Type reference</h2>
+    <p>The SDK exports all types used in request and response objects. Import as needed:</p>
+    <div class="code-block-wrap">
+      <div class="code-label">TS</div>
+      <pre class="code-block multiline">{`import type {
+  AgentRankOptions,
+  SearchOptions,
+  SearchResponse,
+  SearchResult,
+  ToolDetail,
+  ToolSignals,
+  RankHistoryEntry,
+  MoversOptions,
+  MoversResponse,
+  Mover,
+  NewToolsOptions,
+  NewToolsResponse,
+  NewTool,
+  Category,
+  SortBy,
+  ResultType,
+} from '@agentrank/sdk';`}</pre>
+      <button class="copy-btn" data-copy={`import type {\n  AgentRankOptions,\n  SearchOptions,\n  SearchResponse,\n  SearchResult,\n  ToolDetail,\n  ToolSignals,\n  RankHistoryEntry,\n  MoversOptions,\n  MoversResponse,\n  Mover,\n  NewToolsOptions,\n  NewToolsResponse,\n  NewTool,\n  Category,\n  SortBy,\n  ResultType,\n} from '@agentrank/sdk';`}>Copy</button>
+    </div>
+  </section>
+
+  <script>
+    document.querySelectorAll<HTMLButtonElement>('.copy-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const text = btn.dataset.copy || btn.previousElementSibling?.textContent || '';
+        if (!text) return;
+        navigator.clipboard.writeText(text.trim()).then(() => {
+          const orig = btn.textContent;
+          btn.textContent = 'Copied!';
+          setTimeout(() => { btn.textContent = orig; }, 2000);
+        });
+      });
+    });
+  </script>
+</Base>
+
+<style>
+  .page-header { margin-bottom: 1.5rem; }
+
+  .breadcrumb { font-size: 0.75rem; color: var(--text-muted); margin-bottom: 0.5rem; }
+  .breadcrumb a { color: var(--text-muted); text-decoration: none; }
+  .breadcrumb a:hover { color: var(--accent); }
+
+  h1 { font-size: 1.5rem; font-weight: 700; margin-bottom: 0.5rem; }
+  .subtitle { color: var(--text-muted); font-size: 0.88rem; }
+
+  .docs-nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem;
+  }
+
+  .docs-nav a {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    text-decoration: none;
+    padding: 0.25rem 0.6rem;
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    background: var(--bg-surface);
+    transition: color 0.15s, border-color 0.15s;
+  }
+
+  .docs-nav a:hover { color: var(--text); text-decoration: none; }
+  .docs-nav a.active { color: var(--accent); border-color: var(--accent); font-weight: 600; }
+
+  .divider { border-top: 1px solid var(--border); margin: 2rem 0; }
+
+  .method { margin-bottom: 0.5rem; }
+
+  h2 {
+    font-size: 1rem;
+    font-weight: 700;
+    margin-bottom: 0.75rem;
+    font-family: ui-monospace, 'Cascadia Code', 'Source Code Pro', monospace;
+  }
+
+  h2 code {
+    font-size: inherit;
+    font-family: inherit;
+    background: none;
+  }
+
+  h3 { font-size: 0.85rem; font-weight: 700; color: var(--text); margin: 0.9rem 0 0.4rem; }
+
+  p {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    margin-bottom: 0.6rem;
+    line-height: 1.5;
+  }
+
+  p code {
+    background: var(--bg-surface);
+    padding: 0.1rem 0.3rem;
+    border-radius: 2px;
+    font-size: 0.7rem;
+    color: var(--text);
+  }
+
+  .install-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .code-block-wrap {
+    position: relative;
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 0.6rem 0.75rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .code-label {
+    font-size: 0.65rem;
+    color: var(--text-muted);
+    font-weight: 600;
+    flex-shrink: 0;
+    padding-top: 2px;
+    width: 3rem;
+  }
+
+  .code-block {
+    flex: 1;
+    font-size: 0.72rem;
+    color: var(--text);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-family: ui-monospace, 'Cascadia Code', 'Source Code Pro', monospace;
+    background: none;
+    border: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .code-block.multiline {
+    white-space: pre;
+    overflow-x: auto;
+    text-overflow: unset;
+  }
+
+  .copy-btn {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    padding: 0.2rem 0.45rem;
+    font-size: 0.65rem;
+    cursor: pointer;
+    color: var(--text-muted);
+    font-family: inherit;
+    flex-shrink: 0;
+    white-space: nowrap;
+    align-self: flex-start;
+  }
+
+  .copy-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+  .sig-block {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 0.5rem 0.75rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .sig-code {
+    font-size: 0.72rem;
+    color: var(--accent);
+    white-space: pre;
+    font-family: ui-monospace, 'Cascadia Code', 'Source Code Pro', monospace;
+    background: none;
+    border: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .param-table {
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 0.75rem;
+  }
+
+  .param-row {
+    display: grid;
+    grid-template-columns: 9rem 4rem 4rem 1fr;
+    gap: 0.75rem;
+    align-items: baseline;
+    padding: 0.45rem 0.75rem;
+    font-size: 0.78rem;
+    border-bottom: 1px solid var(--border);
+    color: var(--text-muted);
+  }
+
+  .param-row.three-col {
+    grid-template-columns: 9rem 4rem 1fr;
+  }
+
+  .param-row:last-child { border-bottom: none; }
+
+  .header-row {
+    font-size: 0.65rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    background: var(--bg-surface);
+    color: var(--text-muted);
+  }
+
+  .param-name {
+    color: var(--accent);
+    font-size: 0.72rem;
+    background: none;
+    font-family: ui-monospace, 'Cascadia Code', 'Source Code Pro', monospace;
+  }
+
+  .param-type {
+    color: var(--text-muted);
+    font-size: 0.72rem;
+    font-style: italic;
+  }
+
+  .param-row code {
+    font-size: 0.7rem;
+    color: var(--text);
+    background: none;
+    font-family: ui-monospace, 'Cascadia Code', 'Source Code Pro', monospace;
+  }
+
+  .param-row span code {
+    background: var(--bg-surface);
+    padding: 0.05rem 0.25rem;
+    border-radius: 2px;
+  }
+
+  .field-note {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    margin-top: 0.4rem;
+  }
+
+  .field-note code {
+    background: var(--bg-surface);
+    padding: 0.1rem 0.3rem;
+    border-radius: 2px;
+    font-size: 0.7rem;
+    color: var(--text);
+  }
+
+  .error-table {
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+    margin-top: 0.75rem;
+  }
+
+  .error-row {
+    display: grid;
+    grid-template-columns: 9rem 4rem 1fr;
+    gap: 0.75rem;
+    align-items: center;
+    padding: 0.45rem 0.75rem;
+    font-size: 0.78rem;
+    border-bottom: 1px solid var(--border);
+    color: var(--text-muted);
+  }
+
+  .error-row:last-child { border-bottom: none; }
+
+  .error-row code {
+    font-size: 0.72rem;
+    color: var(--text);
+    background: none;
+    font-family: ui-monospace, 'Cascadia Code', 'Source Code Pro', monospace;
+  }
+
+  .error-row span code {
+    background: var(--bg-surface);
+    padding: 0.05rem 0.25rem;
+    border-radius: 2px;
+  }
+</style>

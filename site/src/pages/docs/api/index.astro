@@ -1,0 +1,859 @@
+---
+import Base from '../../../layouts/Base.astro';
+export const prerender = true;
+
+const SITE_URL = 'https://agentrank-ai.com';
+---
+
+<Base
+  title="API Reference — AgentRank"
+  description="Complete AgentRank API reference. All endpoints: search, tool lookup, movers, new tools, batch. Free v1 and Pro v2 APIs documented."
+  keywords="AgentRank API reference, MCP server API endpoints, agent tools API"
+  canonicalUrl={`${SITE_URL}/docs/api/`}
+  activeTab="api"
+>
+  <div class="page-header">
+    <div class="breadcrumb"><a href="/docs/">Docs</a> / API Reference</div>
+    <h1>API Reference</h1>
+    <p class="subtitle">Base URL: <code>https://agentrank-ai.com</code> &mdash; All responses are JSON &mdash; <a href="/docs/authentication/">Auth guide</a></p>
+  </div>
+
+  <nav class="docs-nav">
+    <a href="/docs/">Overview</a>
+    <a href="/docs/quickstart/">Quick Start</a>
+    <a href="/docs/authentication/">Auth</a>
+    <a href="/docs/rate-limits/">Rate Limits</a>
+    <a href="/docs/api/" class="active">API Reference</a>
+    <a href="/docs/sdk/">SDK</a>
+    <a href="/docs/embed/">Embed</a>
+  </nav>
+
+  <div class="divider"></div>
+
+  <nav class="section-nav">
+    <span class="section-nav-label">On this page</span>
+    <a href="#v1">Free (v1)</a>
+    <a href="#search">Search</a>
+    <a href="#tool">Tool Detail</a>
+    <a href="#movers">Movers</a>
+    <a href="#new-tools">New Tools</a>
+    <a href="#v2">Pro (v2)</a>
+    <a href="#v2-search">v2 Search</a>
+    <a href="#v2-tool">v2 Tool</a>
+    <a href="#batch">Batch</a>
+  </nav>
+
+  <div class="divider"></div>
+
+  <!-- ─────────── FREE (v1) ─────────── -->
+
+  <section id="v1">
+    <div class="tier-header free">
+      <span class="tier-badge free">Free (v1)</span>
+      <span>No API key required &mdash; 100 req/min per IP</span>
+    </div>
+  </section>
+
+  <!-- Search v1 -->
+  <section class="endpoint" id="search">
+    <div class="endpoint-sig">
+      <span class="method-badge get">GET</span>
+      <code class="endpoint-path">/api/v1/search</code>
+    </div>
+    <p>Search across tools, skills, and agents. Returns ranked results sorted by score.</p>
+
+    <h3>Query Parameters</h3>
+    <div class="param-table">
+      <div class="param-row header-row">
+        <span>Parameter</span>
+        <span>Type</span>
+        <span>Default</span>
+        <span>Description</span>
+      </div>
+      <div class="param-row">
+        <code class="param-name">q</code>
+        <span class="param-type">string</span>
+        <code>""</code>
+        <span>Search query. Empty returns top-ranked results.</span>
+      </div>
+      <div class="param-row">
+        <code class="param-name">category</code>
+        <span class="param-type">string</span>
+        <code>"all"</code>
+        <span>Filter by type: <code>tool</code>, <code>skill</code>, <code>agent</code>, or omit for all.</span>
+      </div>
+      <div class="param-row">
+        <code class="param-name">sort</code>
+        <span class="param-type">string</span>
+        <code>"score"</code>
+        <span>Sort order: <code>score</code>, <code>rank</code>, <code>stars</code>, <code>freshness</code>.</span>
+      </div>
+      <div class="param-row">
+        <code class="param-name">limit</code>
+        <span class="param-type">integer</span>
+        <code>20</code>
+        <span>Results per page. Max 100.</span>
+      </div>
+      <div class="param-row">
+        <code class="param-name">offset</code>
+        <span class="param-type">integer</span>
+        <code>0</code>
+        <span>Pagination offset.</span>
+      </div>
+    </div>
+
+    <h3>Example</h3>
+    <div class="code-block-wrap">
+      <div class="code-label">curl</div>
+      <pre class="code-block">curl "https://agentrank-ai.com/api/v1/search?q=database&category=tool&limit=5"</pre>
+      <button class="copy-btn" data-copy={`curl "https://agentrank-ai.com/api/v1/search?q=database&category=tool&limit=5"`}>Copy</button>
+    </div>
+
+    <h3>Response</h3>
+    <div class="response-block">
+      <div class="code-label">JSON</div>
+      <pre class="response-code">{`{
+  "query": "database",
+  "category": "tool",
+  "sort": "score",
+  "results": [
+    {
+      "type": "tool",
+      "id": "owner--repo",
+      "name": "owner/repo",
+      "description": "A database MCP server",
+      "score": 82.5,
+      "rank": 14,
+      "url": "https://agentrank-ai.com/tool/owner--repo/",
+      "raw": {
+        "stars": 1240,
+        "contributors": 8,
+        "dependents": 23,
+        "lastCommitAt": "2026-03-10T00:00:00Z",
+        "language": "TypeScript",
+        "license": "MIT",
+        "isArchived": false,
+        "topics": ["mcp", "database", "sqlite"]
+      }
+    }
+  ],
+  "meta": { "total": 87, "limit": 5, "offset": 0 }
+}`}</pre>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- Tool v1 -->
+  <section class="endpoint" id="tool">
+    <div class="endpoint-sig">
+      <span class="method-badge get">GET</span>
+      <code class="endpoint-path">/api/v1/tool/{'{id}'}</code>
+    </div>
+    <p>Get full detail for a single tool, skill, or agent. Includes score, rank, and signal breakdown.</p>
+
+    <h3>Path Parameters</h3>
+    <div class="param-table">
+      <div class="param-row header-row">
+        <span>Parameter</span>
+        <span>Type</span>
+        <span>Description</span>
+      </div>
+      <div class="param-row three-col">
+        <code class="param-name">id</code>
+        <span class="param-type">string</span>
+        <span>GitHub <code>owner--repo</code> (use <code>--</code> in place of <code>/</code>). Also accepts skill slugs.</span>
+      </div>
+    </div>
+
+    <h3>Example</h3>
+    <div class="code-block-wrap">
+      <div class="code-label">curl</div>
+      <pre class="code-block">curl "https://agentrank-ai.com/api/v1/tool/modelcontextprotocol--servers"</pre>
+      <button class="copy-btn" data-copy={`curl "https://agentrank-ai.com/api/v1/tool/modelcontextprotocol--servers"`}>Copy</button>
+    </div>
+
+    <h3>Response</h3>
+    <div class="response-block">
+      <div class="code-label">JSON</div>
+      <pre class="response-code">{`{
+  "type": "tool",
+  "id": "modelcontextprotocol--servers",
+  "name": "modelcontextprotocol/servers",
+  "description": "Model Context Protocol servers",
+  "score": 97.4,
+  "rank": 1,
+  "githubUrl": "https://github.com/modelcontextprotocol/servers",
+  "signals": {
+    "stars": 1.0,
+    "freshness": 0.98,
+    "issueHealth": 0.82,
+    "contributors": 1.0,
+    "dependents": 1.0,
+    "descriptionQuality": 0.9,
+    "licenseHealth": 1.0
+  },
+  "weights": {
+    "stars": 0.15,
+    "freshness": 0.25,
+    "issueHealth": 0.20,
+    "contributors": 0.10,
+    "dependents": 0.25,
+    "descriptionQuality": 0.03,
+    "licenseHealth": 0.02
+  },
+  "raw": { ... }
+}`}</pre>
+    </div>
+
+    <div class="field-note">Returns <code>404</code> if the tool is not in the index.</div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- Movers v1 -->
+  <section class="endpoint" id="movers">
+    <div class="endpoint-sig">
+      <span class="method-badge get">GET</span>
+      <code class="endpoint-path">/api/v1/movers</code>
+    </div>
+    <p>Returns tools with the largest rank changes over a lookback window. Useful for "biggest movers" content.</p>
+
+    <h3>Query Parameters</h3>
+    <div class="param-table">
+      <div class="param-row header-row">
+        <span>Parameter</span>
+        <span>Type</span>
+        <span>Default</span>
+        <span>Description</span>
+      </div>
+      <div class="param-row">
+        <code class="param-name">days</code>
+        <span class="param-type">integer</span>
+        <code>7</code>
+        <span>Lookback window in days. Max 30.</span>
+      </div>
+      <div class="param-row">
+        <code class="param-name">limit</code>
+        <span class="param-type">integer</span>
+        <code>10</code>
+        <span>Number of results. Max 50.</span>
+      </div>
+      <div class="param-row">
+        <code class="param-name">type</code>
+        <span class="param-type">string</span>
+        <code>"tool"</code>
+        <span>Filter by type: <code>tool</code>, <code>skill</code>, or omit for all.</span>
+      </div>
+    </div>
+
+    <h3>Example</h3>
+    <div class="code-block-wrap">
+      <div class="code-label">curl</div>
+      <pre class="code-block">curl "https://agentrank-ai.com/api/v1/movers?days=7&limit=10"</pre>
+      <button class="copy-btn" data-copy={`curl "https://agentrank-ai.com/api/v1/movers?days=7&limit=10"`}>Copy</button>
+    </div>
+
+    <h3>Response</h3>
+    <div class="response-block">
+      <div class="code-label">JSON</div>
+      <pre class="response-code">{`{
+  "movers": [
+    {
+      "full_name": "owner/repo",
+      "tool_type": "tool",
+      "current_rank": 12,
+      "prev_rank": 31,
+      "rank_delta": 19,
+      "current_score": 78.3,
+      "stars": 842,
+      "url": "https://agentrank-ai.com/tool/owner--repo/"
+    }
+  ],
+  "meta": {
+    "today": "2026-03-18",
+    "prev_date": "2026-03-11",
+    "days": 7,
+    "count": 10
+  }
+}`}</pre>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- New Tools v1 -->
+  <section class="endpoint" id="new-tools">
+    <div class="endpoint-sig">
+      <span class="method-badge get">GET</span>
+      <code class="endpoint-path">/api/v1/new-tools</code>
+    </div>
+    <p>Returns tools newly added to the index within the last N days.</p>
+
+    <h3>Query Parameters</h3>
+    <div class="param-table">
+      <div class="param-row header-row">
+        <span>Parameter</span>
+        <span>Type</span>
+        <span>Default</span>
+        <span>Description</span>
+      </div>
+      <div class="param-row">
+        <code class="param-name">days</code>
+        <span class="param-type">integer</span>
+        <code>7</code>
+        <span>Lookback window in days. Max 30.</span>
+      </div>
+      <div class="param-row">
+        <code class="param-name">limit</code>
+        <span class="param-type">integer</span>
+        <code>20</code>
+        <span>Number of results. Max 100.</span>
+      </div>
+      <div class="param-row">
+        <code class="param-name">type</code>
+        <span class="param-type">string</span>
+        <code>"tool"</code>
+        <span>Filter by type: <code>tool</code>, <code>skill</code>, or omit for all.</span>
+      </div>
+    </div>
+
+    <h3>Example</h3>
+    <div class="code-block-wrap">
+      <div class="code-label">curl</div>
+      <pre class="code-block">curl "https://agentrank-ai.com/api/v1/new-tools?days=14&limit=20"</pre>
+      <button class="copy-btn" data-copy={`curl "https://agentrank-ai.com/api/v1/new-tools?days=14&limit=20"`}>Copy</button>
+    </div>
+
+    <h3>Response</h3>
+    <div class="response-block">
+      <div class="code-label">JSON</div>
+      <pre class="response-code">{`{
+  "tools": [
+    {
+      "full_name": "owner/new-tool",
+      "tool_type": "tool",
+      "rank": 284,
+      "score": 41.2,
+      "stars": 87,
+      "first_seen": "2026-03-15",
+      "url": "https://agentrank-ai.com/tool/owner--new-tool/"
+    }
+  ],
+  "meta": {
+    "today": "2026-03-18",
+    "cutoff": "2026-03-04",
+    "days": 14,
+    "count": 18
+  }
+}`}</pre>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ─────────── PRO (v2) ─────────── -->
+
+  <section id="v2">
+    <div class="tier-header pro">
+      <span class="tier-badge pro">Pro (v2)</span>
+      <span>Requires API key &mdash; 10,000 req/day &mdash; <a href="/pricing/">Get a key</a></span>
+    </div>
+    <p>All v2 endpoints require an API key in the Authorization header:</p>
+    <div class="code-block-wrap" style="margin-bottom:0">
+      <div class="code-label">HTTP</div>
+      <pre class="code-block">Authorization: Bearer ark_pro_your_key_here</pre>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- Search v2 -->
+  <section class="endpoint" id="v2-search">
+    <div class="endpoint-sig">
+      <span class="method-badge get">GET</span>
+      <code class="endpoint-path">/api/v2/search</code>
+      <span class="pro-badge">Pro</span>
+    </div>
+    <p>Same as v1 search, but with an additional <code>history</code> parameter and tier metadata in responses.</p>
+
+    <h3>Additional Parameters</h3>
+    <div class="param-table">
+      <div class="param-row header-row">
+        <span>Parameter</span>
+        <span>Type</span>
+        <span>Default</span>
+        <span>Description</span>
+      </div>
+      <div class="param-row">
+        <code class="param-name">history</code>
+        <span class="param-type">string</span>
+        <code>0</code>
+        <span>Set to <code>1</code> to include 30-day rank history for each result.</span>
+      </div>
+    </div>
+    <p>All v1 search parameters (<code>q</code>, <code>category</code>, <code>sort</code>, <code>limit</code>, <code>offset</code>) are also supported.</p>
+
+    <h3>Example</h3>
+    <div class="code-block-wrap">
+      <div class="code-label">curl</div>
+      <pre class="code-block multiline">{`curl -H "Authorization: Bearer ark_pro_your_key" \\
+  "https://agentrank-ai.com/api/v2/search?q=filesystem&history=1"`}</pre>
+      <button class="copy-btn" data-copy={`curl -H "Authorization: Bearer ark_pro_your_key" \\\n  "https://agentrank-ai.com/api/v2/search?q=filesystem&history=1"`}>Copy</button>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- Tool v2 -->
+  <section class="endpoint" id="v2-tool">
+    <div class="endpoint-sig">
+      <span class="method-badge get">GET</span>
+      <code class="endpoint-path">/api/v2/tool/{'{id}'}</code>
+      <span class="pro-badge">Pro</span>
+    </div>
+    <p>Same as v1 tool detail, but includes <code>rankHistory</code> — a 30-day array of <code>{'{date, rank, score}'}</code> entries.</p>
+
+    <h3>Example</h3>
+    <div class="code-block-wrap">
+      <div class="code-label">curl</div>
+      <pre class="code-block multiline">{`curl -H "Authorization: Bearer ark_pro_your_key" \\
+  "https://agentrank-ai.com/api/v2/tool/modelcontextprotocol--servers"`}</pre>
+      <button class="copy-btn" data-copy={`curl -H "Authorization: Bearer ark_pro_your_key" \\\n  "https://agentrank-ai.com/api/v2/tool/modelcontextprotocol--servers"`}>Copy</button>
+    </div>
+
+    <h3>Additional Response Field</h3>
+    <div class="response-block">
+      <div class="code-label">JSON</div>
+      <pre class="response-code">{`{
+  // ... all v1 fields ...
+  "rankHistory": [
+    { "date": "2026-03-18", "rank": 1,  "score": 97.4 },
+    { "date": "2026-03-17", "rank": 1,  "score": 97.2 },
+    { "date": "2026-03-16", "rank": 2,  "score": 96.8 }
+    // up to 30 entries
+  ]
+}`}</pre>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- Batch v2 -->
+  <section class="endpoint" id="batch">
+    <div class="endpoint-sig">
+      <span class="method-badge post">POST</span>
+      <code class="endpoint-path">/api/v2/batch</code>
+      <span class="pro-badge">Pro</span>
+    </div>
+    <p>Resolve up to 50 tool IDs in a single request. Returns a map of <code>id &rarr; tool | null</code>. Null means the tool is not in the index.</p>
+
+    <h3>Request Body</h3>
+    <div class="param-table">
+      <div class="param-row header-row">
+        <span>Field</span>
+        <span>Type</span>
+        <span>Description</span>
+      </div>
+      <div class="param-row three-col">
+        <code class="param-name">ids</code>
+        <span class="param-type">string[]</span>
+        <span>Array of tool IDs in <code>owner--repo</code> format. Max 50.</span>
+      </div>
+    </div>
+
+    <h3>Example</h3>
+    <div class="code-block-wrap">
+      <div class="code-label">curl</div>
+      <pre class="code-block multiline">{`curl -X POST \\
+  -H "Authorization: Bearer ark_pro_your_key" \\
+  -H "Content-Type: application/json" \\
+  -d '{"ids": ["modelcontextprotocol--servers", "owner--repo2"]}' \\
+  "https://agentrank-ai.com/api/v2/batch"`}</pre>
+      <button class="copy-btn" data-copy={`curl -X POST \\\n  -H "Authorization: Bearer ark_pro_your_key" \\\n  -H "Content-Type: application/json" \\\n  -d '{"ids": ["modelcontextprotocol--servers", "owner--repo2"]}' \\\n  "https://agentrank-ai.com/api/v2/batch"`}>Copy</button>
+    </div>
+
+    <h3>Response</h3>
+    <div class="response-block">
+      <div class="code-label">JSON</div>
+      <pre class="response-code">{`{
+  "results": {
+    "modelcontextprotocol--servers": {
+      "type": "tool",
+      "id": "modelcontextprotocol--servers",
+      "score": 97.4,
+      "rank": 1
+      // ... full tool detail
+    },
+    "owner--repo2": null
+  }
+}`}</pre>
+    </div>
+    <div class="field-note">Returns <code>403</code> for free-tier keys. Pro and Enterprise only.</div>
+  </section>
+
+  <div class="divider"></div>
+
+  <section class="method">
+    <h2>Error responses</h2>
+    <p>All errors return a JSON body with an <code>error</code> field:</p>
+    <div class="response-block">
+      <div class="code-label">JSON</div>
+      <pre class="response-code">{"{ \"error\": \"Tool not found: owner--bad-repo\" }"}</pre>
+    </div>
+    <div class="error-codes">
+      <div class="error-row header-row">
+        <span>Status</span>
+        <span>Meaning</span>
+      </div>
+      <div class="error-row"><span class="err">400</span><span>Bad request (invalid parameter)</span></div>
+      <div class="error-row"><span class="err">401</span><span>Missing or invalid API key</span></div>
+      <div class="error-row"><span class="err">403</span><span>Insufficient tier for this endpoint</span></div>
+      <div class="error-row"><span class="err">404</span><span>Tool not found in index</span></div>
+      <div class="error-row"><span class="err">429</span><span>Rate limit exceeded</span></div>
+      <div class="error-row"><span class="err">500</span><span>Internal server error</span></div>
+    </div>
+  </section>
+
+  <script>
+    document.querySelectorAll<HTMLButtonElement>('.copy-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const text = btn.dataset.copy || btn.previousElementSibling?.textContent || '';
+        if (!text) return;
+        navigator.clipboard.writeText(text.trim()).then(() => {
+          const orig = btn.textContent;
+          btn.textContent = 'Copied!';
+          setTimeout(() => { btn.textContent = orig; }, 2000);
+        });
+      });
+    });
+  </script>
+</Base>
+
+<style>
+  .page-header { margin-bottom: 1.5rem; }
+
+  .breadcrumb { font-size: 0.75rem; color: var(--text-muted); margin-bottom: 0.5rem; }
+  .breadcrumb a { color: var(--text-muted); text-decoration: none; }
+  .breadcrumb a:hover { color: var(--accent); }
+
+  h1 { font-size: 1.5rem; font-weight: 700; margin-bottom: 0.5rem; }
+  .subtitle { color: var(--text-muted); font-size: 0.85rem; }
+  .subtitle code { background: var(--bg-surface); padding: 0.1rem 0.3rem; border-radius: 2px; font-size: 0.75rem; }
+
+  .docs-nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem;
+  }
+
+  .docs-nav a {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    text-decoration: none;
+    padding: 0.25rem 0.6rem;
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    background: var(--bg-surface);
+    transition: color 0.15s, border-color 0.15s;
+  }
+
+  .docs-nav a:hover { color: var(--text); text-decoration: none; }
+  .docs-nav a.active { color: var(--accent); border-color: var(--accent); font-weight: 600; }
+
+  .section-nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    align-items: center;
+  }
+
+  .section-nav-label {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    font-weight: 600;
+    margin-right: 0.25rem;
+  }
+
+  .section-nav a {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    text-decoration: none;
+    padding: 0.15rem 0.4rem;
+    border-radius: 3px;
+    transition: color 0.15s;
+  }
+
+  .section-nav a:hover { color: var(--accent); }
+
+  .divider { border-top: 1px solid var(--border); margin: 2rem 0; }
+
+  .tier-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.6rem 0.75rem;
+    border-radius: 4px;
+    border: 1px solid var(--border);
+    font-size: 0.82rem;
+    color: var(--text-muted);
+    margin-bottom: 0.75rem;
+  }
+
+  .tier-header.free { border-color: rgba(34, 197, 94, 0.3); background: rgba(34, 197, 94, 0.04); }
+  .tier-header.pro { border-color: rgba(96, 165, 250, 0.3); background: rgba(96, 165, 250, 0.04); }
+
+  .tier-badge {
+    font-size: 0.72rem;
+    font-weight: 700;
+    padding: 0.1rem 0.5rem;
+    border-radius: 3px;
+    flex-shrink: 0;
+  }
+
+  .tier-badge.free { background: rgba(34, 197, 94, 0.15); color: var(--accent); }
+  .tier-badge.pro { background: rgba(96, 165, 250, 0.15); color: #60a5fa; }
+
+  .endpoint { margin-bottom: 0.5rem; }
+
+  .endpoint-sig {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin-bottom: 0.6rem;
+  }
+
+  .method-badge {
+    font-size: 0.65rem;
+    font-weight: 700;
+    padding: 0.15rem 0.45rem;
+    border-radius: 3px;
+    flex-shrink: 0;
+  }
+
+  .method-badge.get { background: rgba(34, 197, 94, 0.15); color: var(--accent); }
+  .method-badge.post { background: rgba(96, 165, 250, 0.15); color: #60a5fa; }
+
+  .endpoint-path {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--text);
+    font-family: ui-monospace, 'Cascadia Code', 'Source Code Pro', monospace;
+    background: none;
+  }
+
+  .pro-badge {
+    font-size: 0.65rem;
+    font-weight: 600;
+    padding: 0.1rem 0.35rem;
+    border-radius: 3px;
+    background: rgba(96, 165, 250, 0.1);
+    color: #60a5fa;
+    border: 1px solid rgba(96, 165, 250, 0.3);
+  }
+
+  p {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    margin-bottom: 0.6rem;
+    line-height: 1.5;
+  }
+
+  p code {
+    background: var(--bg-surface);
+    padding: 0.1rem 0.3rem;
+    border-radius: 2px;
+    font-size: 0.7rem;
+    color: var(--text);
+  }
+
+  h2 { font-size: 1rem; font-weight: 700; margin-bottom: 0.6rem; }
+  h3 { font-size: 0.85rem; font-weight: 700; color: var(--text); margin: 0.9rem 0 0.4rem; }
+
+  .param-table {
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 0.75rem;
+  }
+
+  .param-row {
+    display: grid;
+    grid-template-columns: 6rem 4rem 4rem 1fr;
+    gap: 0.75rem;
+    align-items: baseline;
+    padding: 0.45rem 0.75rem;
+    font-size: 0.78rem;
+    border-bottom: 1px solid var(--border);
+    color: var(--text-muted);
+  }
+
+  .param-row.three-col {
+    grid-template-columns: 6rem 4rem 1fr;
+  }
+
+  .param-row:last-child { border-bottom: none; }
+
+  .header-row {
+    font-size: 0.65rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    background: var(--bg-surface);
+    color: var(--text-muted);
+  }
+
+  .param-name {
+    color: var(--accent);
+    font-size: 0.72rem;
+    background: none;
+    font-family: ui-monospace, 'Cascadia Code', 'Source Code Pro', monospace;
+  }
+
+  .param-type {
+    color: var(--text-muted);
+    font-size: 0.72rem;
+    font-style: italic;
+  }
+
+  .param-row code {
+    font-size: 0.7rem;
+    color: var(--text);
+    background: none;
+    font-family: ui-monospace, 'Cascadia Code', 'Source Code Pro', monospace;
+  }
+
+  .param-row span code {
+    background: var(--bg-surface);
+    padding: 0.05rem 0.25rem;
+    border-radius: 2px;
+  }
+
+  .code-block-wrap {
+    position: relative;
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 0.6rem 0.75rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .code-label {
+    font-size: 0.65rem;
+    color: var(--text-muted);
+    font-weight: 600;
+    flex-shrink: 0;
+    padding-top: 2px;
+    width: 3rem;
+  }
+
+  .code-block {
+    flex: 1;
+    font-size: 0.72rem;
+    color: var(--text);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-family: ui-monospace, 'Cascadia Code', 'Source Code Pro', monospace;
+    background: none;
+    border: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .code-block.multiline {
+    white-space: pre;
+    overflow-x: auto;
+    text-overflow: unset;
+  }
+
+  .copy-btn {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    padding: 0.2rem 0.45rem;
+    font-size: 0.65rem;
+    cursor: pointer;
+    color: var(--text-muted);
+    font-family: inherit;
+    flex-shrink: 0;
+    white-space: nowrap;
+    align-self: flex-start;
+  }
+
+  .copy-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+  .response-block {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 0.6rem 0.75rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .response-code {
+    flex: 1;
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    white-space: pre;
+    overflow-x: auto;
+    font-family: ui-monospace, 'Cascadia Code', 'Source Code Pro', monospace;
+    background: none;
+    border: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .field-note {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    margin-top: 0.4rem;
+  }
+
+  .field-note code {
+    background: var(--bg-surface);
+    padding: 0.1rem 0.3rem;
+    border-radius: 2px;
+    font-size: 0.7rem;
+    color: var(--text);
+  }
+
+  .error-codes {
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .error-row {
+    display: grid;
+    grid-template-columns: 3.5rem 1fr;
+    gap: 0.75rem;
+    align-items: center;
+    padding: 0.4rem 0.75rem;
+    font-size: 0.78rem;
+    border-bottom: 1px solid var(--border);
+    color: var(--text-muted);
+  }
+
+  .error-row:last-child { border-bottom: none; }
+
+  .err {
+    font-weight: 700;
+    color: #ef4444;
+    font-family: ui-monospace, 'Cascadia Code', 'Source Code Pro', monospace;
+    font-size: 0.72rem;
+  }
+
+  @media (max-width: 600px) {
+    .param-row {
+      grid-template-columns: 5rem 3rem 1fr;
+    }
+    .param-row > :nth-child(3):not(.param-type) { display: none; }
+  }
+</style>

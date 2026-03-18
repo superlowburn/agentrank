@@ -1,0 +1,724 @@
+---
+export const prerender = true;
+
+import Base from '../../layouts/Base.astro';
+import BlogSubscribeCTA from '../../components/BlogSubscribeCTA.astro';
+import RelatedPosts from '../../components/RelatedPosts.astro';
+
+const relatedPosts = [
+  { href: '/blog/integrate-agentrank-ai-agent-tutorial/', title: 'How to Integrate AgentRank Scores Into Your AI Agent' },
+  { href: '/blog/agentrank-cursor-integration-guide/', title: 'How to Use AgentRank in Cursor' },
+  { href: '/blog/mcp-setup-guide-claude-cursor-windsurf/', title: 'How to Set Up MCP Servers in Claude Desktop, Cursor, and Windsurf' },
+  { href: '/blog/how-to-choose-an-mcp-server/', title: 'How to Choose an MCP Server in 2026' },
+  { href: '/blog/top-mcp-servers-2026/', title: 'Top 10 MCP Servers for AI Agents in 2026' },
+];
+
+const publishDate = '2026-03-18';
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'TechArticle',
+  headline: 'How to Use AgentRank Scores in Claude Code',
+  description: 'Step-by-step guide to installing the AgentRank MCP server in Claude Code. Query tool rankings, look up scores, and use AgentRank data to pick the best MCP server for your project — from inside your editor.',
+  datePublished: publishDate,
+  dateModified: publishDate,
+  author: {
+    '@type': 'Organization',
+    name: 'AgentRank',
+    url: 'https://agentrank-ai.com',
+  },
+  publisher: {
+    '@type': 'Organization',
+    name: 'AgentRank',
+    logo: {
+      '@type': 'ImageObject',
+      url: 'https://agentrank-ai.com/og-image.png',
+    },
+  },
+  mainEntityOfPage: {
+    '@type': 'WebPage',
+    '@id': 'https://agentrank-ai.com/blog/agentrank-claude-code-integration-guide/',
+  },
+  image: 'https://agentrank-ai.com/og/agentrank-claude-code-integration-guide.png',
+  keywords: 'agentrank claude code, claude code mcp server, agentrank mcp integration, claude code tool rankings, mcp server discovery claude code, agentrank sdk, best mcp server claude',
+  proficiencyLevel: 'Beginner',
+  dependencies: 'Node.js 18+, Claude Code',
+};
+
+const faqJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: [
+    {
+      '@type': 'Question',
+      name: 'How do I add AgentRank to Claude Code?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Add AgentRank to your .mcp.json file with the command "npx" and args ["-y", "agentrank-mcp-server"]. Claude Code will launch the server automatically and you can query MCP rankings from any chat session.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'What can AgentRank do inside Claude Code?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'The AgentRank MCP server exposes three tools: search (find MCP servers by keyword), lookup (get the AgentRank score for a specific GitHub repo), and get_badge_url (generate an embeddable score badge). Claude can call these automatically during development.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Is the AgentRank MCP server free to use?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Yes. The MCP server uses the public v1 API with no authentication required. Rate limit is 100 requests per minute per IP. For higher limits and richer data (score breakdowns, rank history), get a free API key at agentrank-ai.com/docs.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Can I use AgentRank with the @agentrank/sdk in Claude Code projects?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Yes. Install @agentrank/sdk from npm and use the AgentRank client to search tools, look up scores, and fetch movers programmatically. Works in any Node.js or TypeScript project.',
+      },
+    },
+  ],
+};
+
+// ── code samples ──────────────────────────────────────────────────────────────
+
+const mcpJsonConfig = `{
+  "mcpServers": {
+    "agentrank": {
+      "command": "npx",
+      "args": ["-y", "agentrank-mcp-server"]
+    }
+  }
+}`;
+
+const mcpJsonConfigApiKey = `{
+  "mcpServers": {
+    "agentrank": {
+      "command": "npx",
+      "args": ["-y", "agentrank-mcp-server"],
+      "env": {
+        "AGENTRANK_API_KEY": "your_api_key_here"
+      }
+    }
+  }
+}`;
+
+const sdkInstall = `npm install @agentrank/sdk`;
+
+const sdkSearch = `import { AgentRank } from '@agentrank/sdk';
+
+const ar = new AgentRank();
+
+// Search for the best browser automation MCP servers
+const results = await ar.search('browser automation', { limit: 5 });
+
+for (const tool of results.results) {
+  console.log(\`#\${tool.rank}  \${tool.name}  score=\${tool.score.toFixed(1)}\`);
+}
+// #1   microsoft/playwright-mcp    score=71.3
+// #2   browserbase/mcp-server-browserbase    score=67.8
+// #3   MarkusPfundstein/mcp-server-puppeteer score=61.2`;
+
+const sdkLookup = `import { AgentRank } from '@agentrank/sdk';
+
+const ar = new AgentRank();
+
+// Check a specific tool before adding it to your project
+const tool = await ar.getTool('jlowin/fastmcp');
+
+console.log(\`Score: \${tool.score}\`);    // Score: 89.4
+console.log(\`Rank: #\${tool.rank}\`);    // Rank: #1
+// Verdict: highly recommended — active maintainer, 6700+ stars, 89% issue close rate`;
+
+const sdkMovers = `import { AgentRank } from '@agentrank/sdk';
+
+const ar = new AgentRank();
+
+// See what's trending this week
+const movers = await ar.getMovers({ direction: 'up', limit: 5 });
+
+for (const mover of movers.results) {
+  const delta = mover.rankDelta > 0 ? \`+\${mover.rankDelta}\` : String(mover.rankDelta);
+  console.log(\`\${delta.padStart(4)} spots  \${mover.name}  score=\${mover.score.toFixed(1)}\`);
+}`;
+
+const sdkWithApiKey = `import { AgentRank } from '@agentrank/sdk';
+
+// With API key: gets richer data (score breakdown, rank history)
+const ar = new AgentRank({ apiKey: process.env.AGENTRANK_API_KEY });
+
+const tool = await ar.getTool('modelcontextprotocol/python-sdk');
+// Returns full signal breakdown: stars score, freshness score, issue health, contributors, dependents`;
+
+const claudePromptSearch = `What's the best MCP server for querying a PostgreSQL database?
+Use AgentRank to find and compare the top options.`;
+
+const claudePromptLookup = `I'm considering adding benborla29/mcp-server-mysql to my project.
+Can you look up its AgentRank score and tell me if it's well-maintained?`;
+
+const claudePromptDecision = `I need to add web scraping capability to my agent.
+Search AgentRank for the top browser automation MCP servers and recommend one
+based on the scores and my use case (headless Chrome, need JavaScript rendering).`;
+
+const claudePromptWorkflow = `Before I commit to using modelcontextprotocol/servers for filesystem access,
+check its AgentRank score. If it's below 50, suggest alternatives.`;
+---
+
+<Base
+  title="How to Use AgentRank Scores in Claude Code — Integration Guide"
+  description="Step-by-step guide to installing the AgentRank MCP server in Claude Code. Query MCP tool rankings, look up scores, and pick the best server for your project — from inside your editor."
+  activeTab="blog"
+  keywords="agentrank claude code, claude code mcp server, agentrank mcp integration, claude code tool rankings, mcp server discovery, agentrank sdk typescript"
+  canonicalUrl="https://agentrank-ai.com/blog/agentrank-claude-code-integration-guide/"
+  jsonLd={[jsonLd, faqJsonLd]}
+  ogImage="/og/agentrank-claude-code-integration-guide.png"
+>
+  <article class="blog-post">
+    <header class="post-header">
+      <div class="breadcrumb"><a href="/blog/">Blog</a> <span>/</span></div>
+      <h1>How to Use AgentRank Scores in Claude Code</h1>
+      <div class="post-meta">
+        <time datetime={publishDate}>March 18, 2026</time>
+        <span class="sep">&middot;</span>
+        <span>8 min read</span>
+        <span class="sep">&middot;</span>
+        <span>Integration Guide</span>
+      </div>
+      <p class="lede">
+        Claude Code supports MCP servers — which means you can give it live access to
+        <strong>25,000+ ranked MCP server scores</strong> while you work. This guide walks through
+        installing the AgentRank MCP server, the prompts that work best, and using the
+        <code>@agentrank/sdk</code> to query rankings programmatically from your projects.
+      </p>
+    </header>
+
+    <nav class="toc">
+      <strong>Contents</strong>
+      <ol>
+        <li><a href="#why">Why this is useful</a></li>
+        <li><a href="#install">Step 1 — Install the MCP server</a></li>
+        <li><a href="#verify">Step 2 — Verify it's working</a></li>
+        <li><a href="#prompts">Step 3 — Prompts that work</a></li>
+        <li><a href="#sdk">Step 4 — Use the SDK in your project</a></li>
+        <li><a href="#workflows">Real workflows</a></li>
+        <li><a href="#api-key">Get an API key for richer data</a></li>
+      </ol>
+    </nav>
+
+    <section id="why">
+      <h2>Why this is useful</h2>
+      <p>
+        The hardest part of building with MCP isn't writing the code — it's knowing which servers
+        are worth depending on. There are over 25,000 on GitHub, they vary wildly in quality, and
+        many haven't been touched in months.
+      </p>
+      <p>
+        AgentRank scores every server daily on five signals: stars, freshness (days since last
+        commit), issue health (close rate), contributor count, and downstream dependents.
+        The composite score runs 0&ndash;100. A score above 60 means actively maintained and
+        community-validated. Below 40 means proceed carefully.
+      </p>
+      <p>
+        With the AgentRank MCP server installed in Claude Code, you can ask Claude to check a
+        server's score before adding it as a dependency, search for the highest-ranked option in
+        a category, or surface what's trending this week — all without leaving your editor.
+      </p>
+    </section>
+
+    <section id="install">
+      <h2>Step 1 — Install the MCP server</h2>
+      <p>
+        Claude Code reads MCP server configuration from a <code>.mcp.json</code> file. You can
+        place this at the project root (project-level) or in your home directory as
+        <code>~/.mcp.json</code> (user-level, available in every project).
+      </p>
+      <p>
+        Add the <code>agentrank</code> entry to your <code>.mcp.json</code>:
+      </p>
+      <div class="code-block">
+        <div class="code-label">.mcp.json</div>
+        <pre><code>{mcpJsonConfig}</code></pre>
+      </div>
+      <p>
+        No npm install required. The <code>npx -y</code> flag downloads and runs the latest
+        version automatically on first use. Subsequent runs use the cached version.
+      </p>
+      <div class="info-box">
+        <strong>Where does Claude Code look for .mcp.json?</strong>
+        <p>
+          Claude Code checks for <code>.mcp.json</code> in the current working directory first,
+          then walks up the directory tree. A file at <code>~/.mcp.json</code> applies globally.
+          Project-level files take precedence over user-level ones.
+        </p>
+      </div>
+    </section>
+
+    <section id="verify">
+      <h2>Step 2 — Verify it's working</h2>
+      <p>
+        After saving <code>.mcp.json</code>, start or restart Claude Code in that directory.
+        The AgentRank MCP server starts as a background process. To verify it loaded correctly,
+        ask Claude:
+      </p>
+      <div class="code-block">
+        <div class="code-label">Verification prompt</div>
+        <pre><code>List the MCP tools you have available. Do you have an agentrank tool?</code></pre>
+      </div>
+      <p>
+        You should see three tools listed under <code>agentrank</code>:
+      </p>
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Tool</th>
+            <th>What it does</th>
+            <th>Auth required</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>search</code></td>
+            <td>Keyword search across 25,000+ MCP servers, returns ranked results</td>
+            <td>No</td>
+          </tr>
+          <tr>
+            <td><code>lookup</code></td>
+            <td>Get the AgentRank score and verdict for a specific GitHub repo</td>
+            <td>No</td>
+          </tr>
+          <tr>
+            <td><code>get_badge_url</code></td>
+            <td>Generate an embeddable score badge URL for a README</td>
+            <td>No</td>
+          </tr>
+        </tbody>
+      </table>
+      <p>
+        All three tools use the public v1 API — no API key, no sign-up required. Rate limit is
+        100 requests per minute per IP, which is more than enough for interactive use.
+      </p>
+    </section>
+
+    <section id="prompts">
+      <h2>Step 3 — Prompts that work</h2>
+      <p>
+        Claude calls the AgentRank tools automatically when your prompt is about tool selection
+        or quality. Here are the prompt patterns that work best.
+      </p>
+
+      <h3>Finding the best tool for a task</h3>
+      <div class="code-block">
+        <div class="code-label">Prompt</div>
+        <pre><code>{claudePromptSearch}</code></pre>
+      </div>
+      <p>
+        Claude will call <code>search("postgresql database")</code>, get back the top-ranked
+        results, and explain the differences — score, stars, freshness, and what each server does.
+      </p>
+
+      <h3>Checking a specific tool before adding it</h3>
+      <div class="code-block">
+        <div class="code-label">Prompt</div>
+        <pre><code>{claudePromptLookup}</code></pre>
+      </div>
+      <p>
+        Claude calls <code>lookup("benborla29/mcp-server-mysql")</code> and returns the score
+        with a plain-English verdict: "score 58.4 — solid, active maintainer, 1,800+ stars".
+      </p>
+
+      <h3>Comparative selection</h3>
+      <div class="code-block">
+        <div class="code-label">Prompt</div>
+        <pre><code>{claudePromptDecision}</code></pre>
+      </div>
+      <p>
+        This is the highest-value use case: Claude searches for options, compares scores, and
+        makes a recommendation grounded in real data rather than training knowledge that may be
+        months out of date.
+      </p>
+
+      <h3>Gate-check before adding a dependency</h3>
+      <div class="code-block">
+        <div class="code-label">Prompt</div>
+        <pre><code>{claudePromptWorkflow}</code></pre>
+      </div>
+      <p>
+        You can use this as a quality gate in your development workflow — Claude checks the score
+        and only proceeds if it meets a threshold you define.
+      </p>
+
+      <div class="info-box">
+        <strong>Tip: be explicit about AgentRank</strong>
+        <p>
+          Phrasing like "use AgentRank to check" or "look up the AgentRank score" reliably
+          triggers tool use. Generic questions like "what's the best MCP server?" may or may not
+          invoke the tool depending on context. Explicit references are more consistent.
+        </p>
+      </div>
+    </section>
+
+    <section id="sdk">
+      <h2>Step 4 — Use the SDK in your project</h2>
+      <p>
+        For programmatic use — scripts, CI checks, agent pipelines — install the official
+        TypeScript SDK. It's a thin wrapper around the AgentRank REST API with full type coverage.
+      </p>
+      <div class="code-block">
+        <div class="code-label">Install</div>
+        <pre><code>{sdkInstall}</code></pre>
+      </div>
+
+      <h3>Search for tools</h3>
+      <div class="code-block">
+        <div class="code-label">TypeScript — search</div>
+        <pre><code>{sdkSearch}</code></pre>
+      </div>
+
+      <h3>Look up a specific tool</h3>
+      <div class="code-block">
+        <div class="code-label">TypeScript — getTool</div>
+        <pre><code>{sdkLookup}</code></pre>
+      </div>
+
+      <h3>See what's trending</h3>
+      <div class="code-block">
+        <div class="code-label">TypeScript — getMovers</div>
+        <pre><code>{sdkMovers}</code></pre>
+      </div>
+    </section>
+
+    <section id="workflows">
+      <h2>Real workflows</h2>
+
+      <h3>Pre-commit MCP quality check</h3>
+      <p>
+        Add a script to your project that checks the AgentRank score of every MCP server in your
+        <code>.mcp.json</code> before you commit. Tools below your threshold fail the check.
+      </p>
+      <div class="code-block">
+        <div class="code-label">scripts/check-mcp-scores.ts</div>
+        <pre><code>{`import { AgentRank } from '@agentrank/sdk';
+import mcpConfig from '../.mcp.json' assert { type: 'json' };
+
+const ar = new AgentRank();
+const MIN_SCORE = 50;
+let failed = false;
+
+for (const [name, config] of Object.entries(mcpConfig.mcpServers)) {
+  // Skip servers that aren't GitHub repos (local paths, etc.)
+  const pkg = (config as any).args?.find((a: string) => a.includes('/'));
+  if (!pkg) continue;
+
+  try {
+    const tool = await ar.getTool(pkg);
+    const status = tool.score >= MIN_SCORE ? 'PASS' : 'FAIL';
+    console.log(\`[\${status}] \${name}: score=\${tool.score.toFixed(1)} (threshold: \${MIN_SCORE})\`);
+    if (tool.score < MIN_SCORE) failed = true;
+  } catch {
+    console.log(\`[SKIP] \${name}: not in AgentRank index\`);
+  }
+}
+
+if (failed) process.exit(1);`}</code></pre>
+      </div>
+
+      <h3>Agent tool selection at runtime</h3>
+      <p>
+        If you're building an AI agent that dynamically selects MCP servers at runtime, use
+        the SDK to rank candidates and pick the best one:
+      </p>
+      <div class="code-block">
+        <div class="code-label">TypeScript — dynamic tool selection</div>
+        <pre><code>{`import { AgentRank } from '@agentrank/sdk';
+
+const ar = new AgentRank();
+
+async function pickBestTool(task: string): Promise<string> {
+  const results = await ar.search(task, { limit: 3 });
+  if (!results.results.length) throw new Error('No tools found for: ' + task);
+
+  const best = results.results[0];
+  console.log(\`Selected: \${best.name} (score: \${best.score.toFixed(1)}, rank: #\${best.rank})\`);
+  return best.name;
+}
+
+// Use it:
+const tool = await pickBestTool('query postgres database');
+// Selected: benborla29/mcp-server-mysql (score: 58.4, rank: #18)`}</code></pre>
+      </div>
+    </section>
+
+    <section id="api-key">
+      <h2>Get an API key for richer data</h2>
+      <p>
+        The public API returns rank, score, name, and description. With a free API key you get
+        the full signal breakdown — individual sub-scores for stars, freshness, issue health,
+        contributors, and dependents — plus rank history.
+      </p>
+      <div class="code-block">
+        <div class="code-label">.mcp.json — with API key</div>
+        <pre><code>{mcpJsonConfigApiKey}</code></pre>
+      </div>
+      <div class="code-block">
+        <div class="code-label">TypeScript SDK — with API key</div>
+        <pre><code>{sdkWithApiKey}</code></pre>
+      </div>
+      <p>
+        Get a free API key at <a href="/docs/" class="inline-link">agentrank-ai.com/docs</a>.
+        The free tier supports 1,000 v2 requests per day, which covers most development workflows.
+      </p>
+    </section>
+
+    <section id="next">
+      <h2>What's next</h2>
+      <ul class="feature-list">
+        <li><strong>Cursor users</strong> — see the <a href="/blog/agentrank-cursor-integration-guide/" class="inline-link">Cursor integration guide</a> for the same workflow with Cursor-specific config</li>
+        <li><strong>Build your own agent</strong> — the <a href="/blog/integrate-agentrank-ai-agent-tutorial/" class="inline-link">full API integration tutorial</a> covers OpenAI function calling and LangChain</li>
+        <li><strong>Browse the index</strong> — <a href="/tools/" class="inline-link">agentrank-ai.com/tools</a> for the full ranked leaderboard</li>
+        <li><strong>Submit a tool</strong> — <a href="/submit/" class="inline-link">agentrank-ai.com/submit</a> to add any GitHub repo to the index</li>
+      </ul>
+    </section>
+
+    <BlogSubscribeCTA />
+    <RelatedPosts posts={relatedPosts} />
+  </article>
+</Base>
+
+<style>
+  .blog-post {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 2rem 1rem 4rem;
+  }
+
+  .breadcrumb {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    margin-bottom: 0.75rem;
+  }
+
+  .breadcrumb a {
+    color: var(--text-muted);
+    text-decoration: none;
+  }
+
+  .breadcrumb a:hover { color: var(--text); }
+
+  .breadcrumb span { margin: 0 0.3rem; }
+
+  .post-header {
+    margin-bottom: 2.5rem;
+    padding-bottom: 2rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  h1 {
+    font-size: 1.9rem;
+    font-weight: 700;
+    line-height: 1.25;
+    margin: 0 0 0.75rem;
+    color: var(--text);
+    letter-spacing: -0.02em;
+  }
+
+  .post-meta {
+    font-size: 0.82rem;
+    color: var(--text-muted);
+    margin-bottom: 1.25rem;
+  }
+
+  .sep { margin: 0 0.4rem; }
+
+  .lede {
+    font-size: 1.05rem;
+    line-height: 1.65;
+    color: var(--text-secondary);
+    margin: 0;
+  }
+
+  .toc {
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 1rem 1.25rem;
+    margin-bottom: 2.5rem;
+    font-size: 0.85rem;
+  }
+
+  .toc strong {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-muted);
+  }
+
+  .toc ol {
+    margin: 0;
+    padding-left: 1.25rem;
+    line-height: 1.9;
+  }
+
+  .toc a {
+    color: var(--text-secondary);
+    text-decoration: none;
+  }
+
+  .toc a:hover { color: var(--text); }
+
+  section { margin-bottom: 3rem; }
+
+  h2 {
+    font-size: 1.3rem;
+    font-weight: 700;
+    margin: 0 0 1rem;
+    padding-top: 0.5rem;
+    color: var(--text);
+    letter-spacing: -0.01em;
+  }
+
+  h3 {
+    font-size: 1rem;
+    font-weight: 600;
+    margin: 1.5rem 0 0.5rem;
+    color: var(--text);
+  }
+
+  p {
+    font-size: 0.92rem;
+    line-height: 1.7;
+    color: var(--text-secondary);
+    margin: 0 0 1rem;
+  }
+
+  ul, ol {
+    font-size: 0.92rem;
+    line-height: 1.7;
+    color: var(--text-secondary);
+    margin: 0 0 1rem;
+    padding-left: 1.5rem;
+  }
+
+  a {
+    color: var(--text);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  .inline-link {
+    color: var(--text);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  code {
+    font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+    font-size: 0.82em;
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    padding: 0.1em 0.35em;
+  }
+
+  .code-block {
+    margin: 1rem 0 1.25rem;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .code-label {
+    background: var(--bg-surface);
+    border-bottom: 1px solid var(--border);
+    padding: 0.4rem 0.75rem;
+    font-size: 0.72rem;
+    font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  .code-block pre {
+    margin: 0;
+    padding: 1rem 0.875rem;
+    overflow-x: auto;
+    background: transparent;
+  }
+
+  .code-block pre code {
+    font-size: 0.78rem;
+    background: none;
+    border: none;
+    padding: 0;
+    line-height: 1.6;
+    color: var(--text);
+    white-space: pre;
+  }
+
+  .data-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.82rem;
+    margin: 1rem 0 1.25rem;
+  }
+
+  .data-table th {
+    text-align: left;
+    font-weight: 600;
+    color: var(--text-muted);
+    border-bottom: 1px solid var(--border);
+    padding: 0.4rem 0.75rem 0.4rem 0;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+
+  .data-table td {
+    padding: 0.45rem 0.75rem 0.45rem 0;
+    border-bottom: 1px solid var(--border);
+    color: var(--text);
+    vertical-align: top;
+  }
+
+  .data-table tr:last-child td { border-bottom: none; }
+
+  .feature-list {
+    padding-left: 0;
+    list-style: none;
+  }
+
+  .feature-list li {
+    padding: 0.4rem 0 0.4rem 1rem;
+    border-left: 2px solid var(--border);
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+    line-height: 1.6;
+  }
+
+  .info-box {
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--text-muted);
+    border-radius: 4px;
+    padding: 0.875rem 1rem;
+    margin: 1.25rem 0;
+    font-size: 0.88rem;
+  }
+
+  .info-box strong {
+    display: block;
+    margin-bottom: 0.35rem;
+    color: var(--text);
+  }
+
+  .info-box p {
+    margin: 0;
+    font-size: 0.88rem;
+    line-height: 1.6;
+  }
+</style>

@@ -150,6 +150,20 @@ const PAGES = [
   },
   // Blog posts
   {
+    slug: 'agentrank-claude-code-integration-guide',
+    title: 'AgentRank in Claude Code',
+    subtitle: 'Install once, get live MCP rankings in every project',
+    label: 'agentrank-ai.com/blog',
+    type: 'blog',
+  },
+  {
+    slug: 'agentrank-cursor-integration-guide',
+    title: 'AgentRank in Cursor',
+    subtitle: 'Live tool rankings in Chat and Agent mode',
+    label: 'agentrank-ai.com/blog',
+    type: 'blog',
+  },
+  {
     slug: 'how-to-build-an-mcp-server',
     title: 'How to Build an MCP Server in 2026',
     subtitle: 'Step-by-step: Python SDK, TypeScript SDK, FastMCP, and getting indexed',
