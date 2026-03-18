@@ -202,6 +202,20 @@ const PAGES = [
     label: 'agentrank-ai.com/blog',
     type: 'blog',
   },
+  {
+    slug: 'best-mcp-servers-data-science',
+    title: 'Best MCP Servers for Data Science',
+    subtitle: 'Jupyter, DuckDB, dbt, Spark — top tools ranked for 2026',
+    label: 'agentrank-ai.com/blog',
+    type: 'blog',
+  },
+  {
+    slug: 'best-mcp-servers-api-integration',
+    title: 'Best MCP Servers for API Integration',
+    subtitle: 'Slack, GitHub, Notion, Google Workspace — ranked for 2026',
+    label: 'agentrank-ai.com/blog',
+    type: 'blog',
+  },
 ];
 
 function buildHtml(page) {

@@ -1,0 +1,612 @@
+---
+export const prerender = true;
+
+import Base from '../../layouts/Base.astro';
+import BlogSubscribeCTA from '../../components/BlogSubscribeCTA.astro';
+import RelatedPosts from '../../components/RelatedPosts.astro';
+
+const relatedPosts = [
+  { href: '/blog/best-mcp-servers-communication/', title: 'Best MCP Servers for Communication' },
+  { href: '/blog/best-mcp-servers-productivity/', title: 'Best MCP Servers for Productivity' },
+  { href: '/blog/how-to-choose-an-mcp-server/', title: 'How to Choose an MCP Server in 2026' },
+];
+
+const publishDate = '2026-03-18';
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: 'Best MCP Servers for API Integration in 2026',
+  description: 'Top-ranked MCP servers for connecting AI agents to Slack, GitHub, Notion, Google Workspace, Atlassian, and Airtable. Scored by real signals from the AgentRank index.',
+  datePublished: publishDate,
+  dateModified: publishDate,
+  author: {
+    '@type': 'Organization',
+    name: 'AgentRank',
+    url: 'https://agentrank-ai.com',
+  },
+  publisher: {
+    '@type': 'Organization',
+    name: 'AgentRank',
+    url: 'https://agentrank-ai.com',
+    logo: {
+      '@type': 'ImageObject',
+      url: 'https://agentrank-ai.com/og-image.png',
+    },
+  },
+  mainEntityOfPage: {
+    '@type': 'WebPage',
+    '@id': 'https://agentrank-ai.com/blog/best-mcp-servers-api-integration/',
+  },
+  image: 'https://agentrank-ai.com/og/best-mcp-servers-api-integration.png',
+  keywords: 'best MCP servers API integration, Slack MCP server, GitHub MCP server, Notion MCP, Google Workspace MCP, Atlassian MCP, Airtable MCP server 2026',
+};
+
+const tools = [
+  {
+    rank: 1,
+    name: 'taylorwilsdon/google_workspace_mcp',
+    slug: 'taylorwilsdon--google_workspace_mcp',
+    score: 90.94,
+    stars: 1806,
+    lang: 'Python',
+    contributors: 78,
+    lastCommit: '2026-03-13',
+    desc: 'Control Gmail, Calendar, Docs, Sheets, Slides, Chat, Forms, Tasks, Search',
+    useCase: 'Google Workspace',
+    highlight: 'Broadest Google coverage in the index. 78 contributors and active through March 2026.',
+  },
+  {
+    rank: 2,
+    name: 'github/github-mcp-server',
+    slug: 'github--github-mcp-server',
+    score: 85.44,
+    stars: 27865,
+    lang: 'Go',
+    contributors: 111,
+    lastCommit: '2026-03-13',
+    desc: "GitHub's official MCP server",
+    useCase: 'GitHub',
+    highlight: 'Official GitHub server. 111 contributors, most-starred API integration server in the index.',
+  },
+  {
+    rank: 3,
+    name: 'korotovsky/slack-mcp-server',
+    slug: 'korotovsky--slack-mcp-server',
+    score: 83.01,
+    stars: 1448,
+    lang: 'Go',
+    contributors: 40,
+    lastCommit: '2026-03-12',
+    desc: 'Powerful MCP Slack server — no permission requirements, Apps support',
+    useCase: 'Slack',
+    highlight: 'Top Slack server. Works without elevated Slack app permissions, with full Apps support.',
+  },
+  {
+    rank: 4,
+    name: 'idosal/git-mcp',
+    slug: 'idosal--git-mcp',
+    score: 75.44,
+    stars: 7759,
+    lang: 'TypeScript',
+    contributors: 16,
+    lastCommit: '2026-03-13',
+    desc: 'Remote MCP server for any GitHub/GitLab repo — eliminates code hallucinations',
+    useCase: 'Git / Code Search',
+    highlight: 'Free, open-source, remote MCP. Serves any public repo over the wire — no local setup.',
+  },
+  {
+    rank: 5,
+    name: 'makenotion/notion-mcp-server',
+    slug: 'makenotion--notion-mcp-server',
+    score: 74.87,
+    stars: 4039,
+    lang: 'TypeScript',
+    contributors: 22,
+    lastCommit: '2026-03-13',
+    desc: 'Official Notion MCP server',
+    useCase: 'Notion',
+    highlight: 'Official from Notion. 4,000+ stars, actively maintained, covers pages, databases, and search.',
+  },
+  {
+    rank: 6,
+    name: 'domdomegg/airtable-mcp-server',
+    slug: 'domdomegg--airtable-mcp-server',
+    score: 74.68,
+    stars: 428,
+    lang: 'TypeScript',
+    contributors: 10,
+    lastCommit: '2026-03-07',
+    desc: 'Airtable MCP server — lets AI systems interact with Airtable bases and records',
+    useCase: 'Airtable',
+    highlight: 'Best Airtable integration in the index. 10 contributors, active through early March 2026.',
+  },
+  {
+    rank: 7,
+    name: 'sooperset/mcp-atlassian',
+    slug: 'sooperset--mcp-atlassian',
+    score: 72.75,
+    stars: 4608,
+    lang: 'Python',
+    contributors: 96,
+    lastCommit: '2026-03-02',
+    desc: 'MCP server for Atlassian tools — Confluence and Jira',
+    useCase: 'Jira / Confluence',
+    highlight: '96 contributors — second highest in this list. Best community Atlassian server.',
+  },
+];
+
+const stats = {
+  totalApiTools: 876,
+  avgApiScore: 28.9,
+  topScore: 90.94,
+};
+---
+
+<Base
+  title="Best MCP Servers for API Integration in 2026 — AgentRank"
+  description="Top-ranked MCP servers for connecting agents to Slack, GitHub, Notion, Google Workspace, Jira, and Airtable. Real scores from the AgentRank index, updated March 2026."
+  activeTab="blog"
+  keywords="best MCP servers API integration, slack MCP server, github MCP server official, notion MCP server, google workspace MCP, jira confluence MCP, airtable MCP 2026"
+  canonicalUrl="https://agentrank-ai.com/blog/best-mcp-servers-api-integration/"
+  jsonLd={jsonLd}
+  ogImage="/og/best-mcp-servers-api-integration.png"
+>
+  <article class="blog-post">
+    <header class="post-header">
+      <div class="breadcrumb"><a href="/blog/">Blog</a> <span>/</span></div>
+      <h1>Best MCP Servers for API Integration in 2026</h1>
+      <div class="post-meta">
+        <time datetime={publishDate}>March 18, 2026</time>
+        <span class="sep">&middot;</span>
+        <span>6 min read</span>
+        <span class="sep">&middot;</span>
+        <span>AgentRank Index</span>
+      </div>
+      <p class="lede">
+        API integration is where most agent workflows start. An agent that can read a Slack message,
+        open a GitHub issue, update a Notion page, and create a Jira ticket is useful enough to replace
+        real manual work. We scored <strong>{stats.totalApiTools} API integration tools</strong> in the
+        AgentRank index. These seven are the ones worth building on.
+      </p>
+    </header>
+
+    <nav class="toc">
+      <strong>Contents</strong>
+      <ol>
+        <li><a href="#rankings">Rankings by score</a></li>
+        <li><a href="#by-use-case">Choosing by use case</a></li>
+        <li><a href="#what-to-watch">What to watch for</a></li>
+        <li><a href="#methodology">Methodology</a></li>
+      </ol>
+    </nav>
+
+    <section id="rankings">
+      <h2>Top API integration MCP servers</h2>
+      <p>
+        Ranked by the composite AgentRank score — a weighted blend of stars (15%), freshness (25%),
+        issue health (25%), contributors (10%), and inbound dependents (25%).
+        Average score across all {stats.totalApiTools} API integration tools is <strong>{stats.avgApiScore}</strong>.
+        The tools below are the top tier.
+      </p>
+
+      <table class="data-table top-table">
+        <thead>
+          <tr>
+            <th class="num">#</th>
+            <th>Repository</th>
+            <th class="num">Score</th>
+            <th class="num">Stars</th>
+            <th>Use Case</th>
+            <th>Lang</th>
+          </tr>
+        </thead>
+        <tbody>
+          {tools.map((tool) => (
+            <tr>
+              <td class="num rank-num">{tool.rank}</td>
+              <td class="tool-cell">
+                <a href={`/tool/${tool.slug}/`} class="tool-link">{tool.name}</a>
+                <span class="tool-desc">{tool.desc}</span>
+              </td>
+              <td class="num score-cell">{tool.score}</td>
+              <td class="num">{tool.stars.toLocaleString('en-US')}</td>
+              <td class="use-case">{tool.useCase}</td>
+              <td class="lang-badge">{tool.lang}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </section>
+
+    <section id="by-use-case">
+      <h2>Choosing by use case</h2>
+
+      <h3>Google Workspace (Gmail, Calendar, Docs, Sheets)</h3>
+      <p>
+        <a href="/tool/taylorwilsdon--google_workspace_mcp/" class="inline-link">taylorwilsdon/google_workspace_mcp</a> is
+        the top-scoring API integration tool at <strong>90.94</strong>. It covers the full Google Workspace
+        surface — Gmail, Calendar, Docs, Sheets, Slides, Chat, Forms, and Tasks — from a single server.
+        78 contributors and active commits through mid-March 2026. If your agent needs to interact with
+        any Google productivity tool, this server covers it.
+      </p>
+
+      <h3>GitHub</h3>
+      <p>
+        <a href="/tool/github--github-mcp-server/" class="inline-link">github/github-mcp-server</a> is
+        GitHub's official MCP server, scoring <strong>85.44</strong> with 27,865 stars and 111 contributors —
+        the most-starred API integration server in the entire index. Issues, pull requests, repositories,
+        code search, actions — all exposed through MCP. For any agent workflow that touches GitHub,
+        this is the only server worth considering.
+      </p>
+
+      <h3>Slack</h3>
+      <p>
+        <a href="/tool/korotovsky--slack-mcp-server/" class="inline-link">korotovsky/slack-mcp-server</a> scores
+        <strong>83.01</strong> with 1,448 stars and 40 contributors. The standout feature is that it works
+        without elevated Slack app permissions — most Slack MCP servers require broad OAuth scopes that
+        workspace admins resist approving. This one is designed to work with standard user-level access,
+        making actual deployment far less painful.
+      </p>
+
+      <h3>Git repositories (remote, any host)</h3>
+      <p>
+        <a href="/tool/idosal--git-mcp/" class="inline-link">idosal/git-mcp</a> takes a different approach:
+        it's a remote MCP server (score <strong>75.44</strong>, 7,759 stars) that serves any public GitHub or
+        GitLab repository over the wire without local setup. The original problem it solves is code
+        hallucinations — give an agent access to the actual repo source instead of its training data.
+        Useful for agents that need to reference external libraries, documentation repos, or any
+        codebase they don't own locally.
+      </p>
+
+      <h3>Notion</h3>
+      <p>
+        <a href="/tool/makenotion--notion-mcp-server/" class="inline-link">makenotion/notion-mcp-server</a> is
+        the official server from Notion, scoring <strong>74.87</strong> with 4,039 stars and 22 contributors.
+        Active through March 2026. It covers pages, databases, blocks, and search.
+        If your team's knowledge base lives in Notion, this server gives agents the same access
+        a human has through the Notion UI.
+      </p>
+
+      <h3>Airtable</h3>
+      <p>
+        <a href="/tool/domdomegg--airtable-mcp-server/" class="inline-link">domdomegg/airtable-mcp-server</a> scores
+        <strong>74.68</strong> with 428 stars and 10 contributors, last committed March 7, 2026.
+        It's the best Airtable integration in the index — lets agents read and write records, query views,
+        and manage bases. Airtable is often the database of choice for non-engineering teams,
+        making this a useful bridge between agents and operational data that lives outside engineering tooling.
+      </p>
+
+      <h3>Atlassian (Jira + Confluence)</h3>
+      <p>
+        <a href="/tool/sooperset--mcp-atlassian/" class="inline-link">sooperset/mcp-atlassian</a> covers both
+        Jira and Confluence from one server, scoring <strong>72.75</strong> with 4,608 stars and
+        96 contributors — the second-highest contributor count in this list. If your engineering org
+        runs on Atlassian, this server connects agents to your issue tracker and wiki simultaneously.
+        The Atlassian team also maintains their own official server
+        (<a href="/tool/atlassian--atlassian-mcp-server/" class="inline-link">atlassian/atlassian-mcp-server</a> at 71.88),
+        but the community server currently scores higher due to stronger contributor activity.
+      </p>
+
+      <div class="cta-box">
+        <p>
+          <strong>Browse all API integration tools:</strong> <a href="/tools/">Full AgentRank index</a> —
+          {stats.totalApiTools} integration tools indexed, updated daily.
+        </p>
+        <p>
+          <strong>Built an integration MCP server?</strong> <a href="/submit/">Submit it</a> to get indexed and scored.
+        </p>
+      </div>
+    </section>
+
+    <section id="what-to-watch">
+      <h2>What to watch for</h2>
+
+      <h3>Official vs community servers</h3>
+      <p>
+        Three of the top seven are official servers: GitHub, Notion, and the Atlassian team.
+        Official servers track API version changes and deprecations — critical for external APIs that
+        change without warning. In the Atlassian case, the community server
+        (<a href="/tool/sooperset--mcp-atlassian/" class="inline-link">sooperset/mcp-atlassian</a>) currently
+        outscores the official one on contributor activity, but both are worth tracking.
+      </p>
+
+      <h3>OAuth and permissions complexity</h3>
+      <p>
+        API integration servers require OAuth setup in ways that database or file servers don't.
+        Slack in particular has a notoriously complex permissions model — it's why
+        <a href="/tool/korotovsky--slack-mcp-server/" class="inline-link">korotovsky/slack-mcp-server</a>'s
+        "no elevated permissions" design is a meaningful differentiator, not just a feature.
+        Before depending on any integration server, audit what OAuth scopes it requires and whether
+        your workspace or org admin will approve them.
+      </p>
+
+      <h3>Rate limits hit differently with agents</h3>
+      <p>
+        Agents make API calls at machine speed. A GitHub MCP server used by an agent running in a loop
+        can exhaust the GitHub API rate limit (5,000 requests/hour for authenticated users) in minutes.
+        Build rate limit handling — backoff, caching, request batching — into your agent workflows,
+        not into the MCP server after the fact.
+      </p>
+
+      <h3>The category has the most competition</h3>
+      <p>
+        API integration has 876 tools in the index — by far the largest category. That means more choices,
+        but also more abandoned forks and stale clones. The average score across the category is
+        <strong>28.9</strong>, compared to 32.5 for data science. Use the AgentRank score to cut through
+        the noise — it surfaces maintainer quality and freshness rather than raw star counts.
+      </p>
+    </section>
+
+    <section id="methodology">
+      <h2>Methodology</h2>
+      <p>
+        Tools classified as "API integration" via keyword matching on description, topics, and repo name —
+        covering Slack, GitHub, Notion, Google Workspace, Google Drive, Gmail, Jira, Confluence, Airtable,
+        Linear, Zapier, n8n, and related SaaS tool names. Only non-archived repositories with a computed
+        score included. Data from the AgentRank index crawled March 2026.
+      </p>
+      <p>
+        Score weights: stars 15%, freshness (days since last commit) 25%, issue health (closed/total ratio)
+        25%, contributors 10%, inbound dependents 25%.
+      </p>
+    </section>
+
+    <RelatedPosts posts={relatedPosts} />
+    <BlogSubscribeCTA source="blog" />
+    <footer class="post-footer">
+      <p class="methodology">
+        <strong>Methodology:</strong> Data from the AgentRank index crawled March 2026.
+        Scores computed using: stars 15%, freshness 25%, issue health 25%, contributors 10%, inbound dependents 25%.
+        Tools classified via keyword matching on description, topics, and repo name.
+        Only non-archived repositories included.
+      </p>
+      <p class="share-line">
+        Found this useful? <a href="https://x.com/AgentRank_ai" target="_blank" rel="noopener noreferrer">Follow @AgentRank_ai</a> for
+        weekly ecosystem updates, biggest movers, and new tool spotlights.
+      </p>
+    </footer>
+  </article>
+
+  <style>
+    .blog-post {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 2rem 0 3rem;
+    }
+
+    .breadcrumb {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      margin-bottom: 0.75rem;
+    }
+
+    .breadcrumb span {
+      margin: 0 0.25rem;
+      opacity: 0.5;
+    }
+
+    .post-header {
+      margin-bottom: 2rem;
+      padding-bottom: 1.5rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .post-header h1 {
+      font-size: 1.6rem;
+      font-weight: 700;
+      line-height: 1.3;
+      margin-bottom: 0.75rem;
+    }
+
+    .post-meta {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      flex-wrap: wrap;
+      margin-bottom: 1rem;
+    }
+
+    .sep {
+      opacity: 0.4;
+    }
+
+    .lede {
+      font-size: 1rem;
+      line-height: 1.7;
+      color: var(--text);
+      opacity: 0.9;
+    }
+
+    .toc {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 1rem 1.25rem;
+      margin-bottom: 2.5rem;
+      font-size: 0.82rem;
+    }
+
+    .toc strong {
+      display: block;
+      margin-bottom: 0.6rem;
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+    }
+
+    .toc ol {
+      margin: 0;
+      padding-left: 1.2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+    }
+
+    .toc a {
+      color: var(--text-muted);
+    }
+
+    .toc a:hover {
+      color: var(--accent);
+    }
+
+    section {
+      margin-bottom: 3rem;
+    }
+
+    section h2 {
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin-bottom: 0.75rem;
+      padding-bottom: 0.4rem;
+      border-bottom: 2px solid var(--accent);
+      display: inline-block;
+    }
+
+    section h3 {
+      font-size: 0.95rem;
+      font-weight: 700;
+      margin: 1.5rem 0 0.5rem;
+      color: var(--text);
+    }
+
+    section p {
+      font-size: 0.9rem;
+      line-height: 1.75;
+      color: var(--text);
+      opacity: 0.9;
+      margin-bottom: 0.9rem;
+    }
+
+    .inline-link {
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.82rem;
+      margin: 1rem 0 1.25rem;
+    }
+
+    .data-table th {
+      text-align: left;
+      font-weight: 600;
+      color: var(--text-muted);
+      border-bottom: 1px solid var(--border);
+      padding: 0.4rem 0.75rem 0.4rem 0;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+
+    .data-table td {
+      padding: 0.45rem 0.75rem 0.45rem 0;
+      border-bottom: 1px solid var(--border);
+      color: var(--text);
+      vertical-align: top;
+    }
+
+    .data-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .num {
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .rank-num {
+      color: var(--text-muted);
+      font-weight: 700;
+    }
+
+    .top-table .tool-cell {
+      display: flex;
+      flex-direction: column;
+      gap: 0.2rem;
+    }
+
+    .tool-link {
+      font-weight: 600;
+      color: var(--accent);
+      font-size: 0.82rem;
+    }
+
+    .tool-desc {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      font-weight: 400;
+    }
+
+    .score-cell {
+      color: var(--accent);
+      font-weight: 700;
+    }
+
+    .use-case {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      white-space: nowrap;
+    }
+
+    .lang-badge {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      white-space: nowrap;
+    }
+
+    .cta-box {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      border-radius: 4px;
+      padding: 1rem 1.25rem;
+      margin-top: 1.5rem;
+    }
+
+    .cta-box p {
+      margin-bottom: 0.5rem;
+    }
+
+    .cta-box p:last-child {
+      margin-bottom: 0;
+    }
+
+    .post-footer {
+      margin-top: 3rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--border);
+    }
+
+    .methodology {
+      font-size: 0.75rem !important;
+      color: var(--text-muted) !important;
+      opacity: 1 !important;
+    }
+
+    .share-line {
+      font-size: 0.82rem !important;
+      margin-top: 0.75rem;
+    }
+
+    @media (max-width: 640px) {
+      .post-header h1 {
+        font-size: 1.3rem;
+      }
+
+      .data-table {
+        font-size: 0.75rem;
+      }
+
+      .use-case {
+        display: none;
+      }
+    }
+  </style>
+</Base>
