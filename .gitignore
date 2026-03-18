@@ -11,6 +11,7 @@ data/movers.json
 *.log
 site/dist/
 site/.astro/
+.astro/
 site/.wrangler/
 .wrangler/
 .DS_Store

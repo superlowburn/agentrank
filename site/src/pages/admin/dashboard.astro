@@ -1,0 +1,364 @@
+---
+export const prerender = false;
+import Base from '../../layouts/Base.astro';
+
+const { env } = (Astro.locals as any).runtime;
+const token = Astro.url.searchParams.get('token') || '';
+
+let metrics: any = null;
+let error: string | null = null;
+
+if (!env.DASH_TOKEN) {
+  error = 'DASH_TOKEN not configured.';
+} else if (!token || token !== env.DASH_TOKEN) {
+  error = 'Unauthorized. Add ?token=YOUR_DASH_TOKEN to the URL.';
+} else {
+  try {
+    const db = env.DB;
+    const [
+      totals24h,
+      totals7d,
+      totals30d,
+      errorRates24h,
+      topEndpoints30d,
+      topReferrers30d,
+      skillInstalls,
+      dailyTraffic30d,
+      emailSubscribers,
+    ] = await Promise.all([
+      db.prepare(`
+        SELECT
+          SUM(CASE WHEN type='page' THEN 1 ELSE 0 END) AS page_visits,
+          SUM(CASE WHEN type='api' THEN 1 ELSE 0 END) AS api_calls,
+          SUM(CASE WHEN type='mcp' THEN 1 ELSE 0 END) AS mcp_calls,
+          COUNT(*) AS total
+        FROM request_log WHERE ts > datetime('now', '-1 day')
+      `).first(),
+      db.prepare(`
+        SELECT
+          SUM(CASE WHEN type='page' THEN 1 ELSE 0 END) AS page_visits,
+          SUM(CASE WHEN type='api' THEN 1 ELSE 0 END) AS api_calls,
+          SUM(CASE WHEN type='mcp' THEN 1 ELSE 0 END) AS mcp_calls,
+          COUNT(*) AS total
+        FROM request_log WHERE ts > datetime('now', '-7 days')
+      `).first(),
+      db.prepare(`
+        SELECT
+          SUM(CASE WHEN type='page' THEN 1 ELSE 0 END) AS page_visits,
+          SUM(CASE WHEN type='api' THEN 1 ELSE 0 END) AS api_calls,
+          SUM(CASE WHEN type='mcp' THEN 1 ELSE 0 END) AS mcp_calls,
+          COUNT(*) AS total
+        FROM request_log WHERE ts > datetime('now', '-30 days')
+      `).first(),
+      db.prepare(`
+        SELECT path, COUNT(*) AS errors
+        FROM request_log
+        WHERE ts > datetime('now', '-1 day') AND status >= 400
+        GROUP BY path ORDER BY errors DESC LIMIT 15
+      `).all(),
+      db.prepare(`
+        SELECT path, COUNT(*) AS calls, ROUND(AVG(duration_ms), 0) AS avg_ms
+        FROM request_log
+        WHERE ts > datetime('now', '-30 days') AND type IN ('api', 'mcp')
+        GROUP BY path ORDER BY calls DESC LIMIT 15
+      `).all(),
+      db.prepare(`
+        SELECT referrer, COUNT(*) AS visits
+        FROM request_log
+        WHERE ts > datetime('now', '-30 days')
+          AND type = 'page'
+          AND referrer IS NOT NULL AND referrer != ''
+          AND referrer NOT LIKE '%agentrank-ai.com%'
+        GROUP BY referrer ORDER BY visits DESC LIMIT 15
+      `).all(),
+      db.prepare(`
+        SELECT slug, COUNT(*) AS pings, COUNT(DISTINCT ip_hash) AS unique_installs
+        FROM skill_pings
+        WHERE ts > datetime('now', '-30 days')
+        GROUP BY slug ORDER BY unique_installs DESC
+      `).all().catch(() => ({ results: [] })),
+      db.prepare(`
+        SELECT date(ts) AS day,
+          SUM(CASE WHEN type='page' THEN 1 ELSE 0 END) AS page_visits,
+          SUM(CASE WHEN type='api' THEN 1 ELSE 0 END) AS api_calls,
+          SUM(CASE WHEN type='mcp' THEN 1 ELSE 0 END) AS mcp_calls,
+          COUNT(*) AS total
+        FROM request_log WHERE ts > datetime('now', '-30 days')
+        GROUP BY day ORDER BY day ASC
+      `).all(),
+      db.prepare(`SELECT COUNT(*) AS total FROM email_subscribers`).first(),
+    ]);
+
+    metrics = {
+      totals24h,
+      totals7d,
+      totals30d,
+      errorRates24h: errorRates24h.results,
+      topEndpoints30d: topEndpoints30d.results,
+      topReferrers30d: topReferrers30d.results,
+      skillInstalls: skillInstalls.results,
+      dailyTraffic30d: dailyTraffic30d.results,
+      emailSubscribers: emailSubscribers?.total ?? 0,
+    };
+  } catch (e: any) {
+    error = e.message;
+  }
+}
+
+function fmtNum(n: any) {
+  return n != null ? Number(n).toLocaleString() : '—';
+}
+---
+
+<Base title="Admin Dashboard — AgentRank">
+  <style>
+    .dash-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+    .stat-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 1rem;
+    }
+    .stat-card .label {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-bottom: 0.25rem;
+    }
+    .stat-card .value {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--accent);
+    }
+    .stat-card .sub {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      margin-top: 0.25rem;
+    }
+    section {
+      margin-bottom: 2.5rem;
+    }
+    h2 {
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 0.75rem;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 0.4rem;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.82rem;
+    }
+    th {
+      text-align: left;
+      padding: 0.4rem 0.6rem;
+      color: var(--text-muted);
+      font-weight: 500;
+      border-bottom: 1px solid var(--border);
+    }
+    td {
+      padding: 0.4rem 0.6rem;
+      border-bottom: 1px solid var(--border);
+      word-break: break-all;
+    }
+    tr:last-child td { border-bottom: none; }
+    .error-box {
+      background: #2a1212;
+      border: 1px solid #7f1d1d;
+      border-radius: 6px;
+      padding: 1.25rem;
+      color: #fca5a5;
+      margin-bottom: 1.5rem;
+    }
+    .chart-bar-row { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.35rem; }
+    .chart-bar-label { width: 80px; font-size: 0.75rem; color: var(--text-muted); text-align: right; flex-shrink: 0; }
+    .chart-bar-track { flex: 1; height: 12px; background: var(--bg-surface); border-radius: 3px; overflow: hidden; }
+    .chart-bar-fill { height: 100%; background: var(--accent); border-radius: 3px; transition: width 0.3s; }
+    .chart-bar-val { font-size: 0.72rem; color: var(--text-muted); width: 40px; text-align: right; flex-shrink: 0; }
+    .page-header { margin-bottom: 1.5rem; }
+    .page-header h1 { font-size: 1.1rem; font-weight: 700; }
+    .page-header p { color: var(--text-muted); font-size: 0.82rem; margin-top: 0.25rem; }
+  </style>
+
+  <div class="page-header">
+    <h1>Admin Dashboard</h1>
+    <p>Request metrics, referral sources, and skill installs. Updated on page load.</p>
+  </div>
+
+  {error && (
+    <div class="error-box">{error}</div>
+  )}
+
+  {metrics && (
+    <>
+      <!-- Summary Stats -->
+      <section>
+        <h2>Traffic Overview</h2>
+        <div class="dash-grid">
+          <div class="stat-card">
+            <div class="label">Total requests (24h)</div>
+            <div class="value">{fmtNum(metrics.totals24h?.total)}</div>
+            <div class="sub">
+              {fmtNum(metrics.totals24h?.page_visits)} pages &middot;
+              {fmtNum(metrics.totals24h?.api_calls)} API &middot;
+              {fmtNum(metrics.totals24h?.mcp_calls)} MCP
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="label">Total requests (7d)</div>
+            <div class="value">{fmtNum(metrics.totals7d?.total)}</div>
+            <div class="sub">
+              {fmtNum(metrics.totals7d?.page_visits)} pages &middot;
+              {fmtNum(metrics.totals7d?.api_calls)} API &middot;
+              {fmtNum(metrics.totals7d?.mcp_calls)} MCP
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="label">Total requests (30d)</div>
+            <div class="value">{fmtNum(metrics.totals30d?.total)}</div>
+            <div class="sub">
+              {fmtNum(metrics.totals30d?.page_visits)} pages &middot;
+              {fmtNum(metrics.totals30d?.api_calls)} API &middot;
+              {fmtNum(metrics.totals30d?.mcp_calls)} MCP
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="label">Email subscribers</div>
+            <div class="value">{fmtNum(metrics.emailSubscribers)}</div>
+            <div class="sub">all time</div>
+          </div>
+          <div class="stat-card">
+            <div class="label">Skill installs (30d)</div>
+            <div class="value">
+              {fmtNum(metrics.skillInstalls?.reduce((s: number, r: any) => s + (r.unique_installs || 0), 0))}
+            </div>
+            <div class="sub">unique IPs across all slugs</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Daily Traffic Chart -->
+      {metrics.dailyTraffic30d?.length > 0 && (
+        <section>
+          <h2>Daily Traffic (30d)</h2>
+          {(() => {
+            const max = Math.max(...metrics.dailyTraffic30d.map((r: any) => r.total || 0), 1);
+            return (
+              <div>
+                {metrics.dailyTraffic30d.map((r: any) => (
+                  <div class="chart-bar-row">
+                    <span class="chart-bar-label">{String(r.day).slice(5)}</span>
+                    <div class="chart-bar-track">
+                      <div class="chart-bar-fill" style={`width: ${Math.round((r.total / max) * 100)}%`}></div>
+                    </div>
+                    <span class="chart-bar-val">{fmtNum(r.total)}</span>
+                  </div>
+                ))}
+              </div>
+            );
+          })()}
+        </section>
+      )}
+
+      <!-- Top Referrers -->
+      <section>
+        <h2>Top Referral Sources (30d)</h2>
+        {metrics.topReferrers30d?.length > 0 ? (
+          <table>
+            <thead>
+              <tr><th>Referrer</th><th>Visits</th></tr>
+            </thead>
+            <tbody>
+              {metrics.topReferrers30d.map((r: any) => (
+                <tr>
+                  <td>{r.referrer}</td>
+                  <td>{fmtNum(r.visits)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        ) : (
+          <p style="color: var(--text-muted); font-size: 0.82rem;">No external referrers recorded yet.</p>
+        )}
+      </section>
+
+      <!-- Top API Endpoints -->
+      <section>
+        <h2>Top API Endpoints (30d)</h2>
+        {metrics.topEndpoints30d?.length > 0 ? (
+          <table>
+            <thead>
+              <tr><th>Endpoint</th><th>Calls</th><th>Avg ms</th></tr>
+            </thead>
+            <tbody>
+              {metrics.topEndpoints30d.map((r: any) => (
+                <tr>
+                  <td>{r.path}</td>
+                  <td>{fmtNum(r.calls)}</td>
+                  <td>{r.avg_ms ?? '—'}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        ) : (
+          <p style="color: var(--text-muted); font-size: 0.82rem;">No API requests recorded yet.</p>
+        )}
+      </section>
+
+      <!-- Error Rates -->
+      <section>
+        <h2>Errors by Endpoint (24h)</h2>
+        {metrics.errorRates24h?.length > 0 ? (
+          <table>
+            <thead>
+              <tr><th>Endpoint</th><th>Errors (4xx/5xx)</th></tr>
+            </thead>
+            <tbody>
+              {metrics.errorRates24h.map((r: any) => (
+                <tr>
+                  <td>{r.path}</td>
+                  <td>{fmtNum(r.errors)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        ) : (
+          <p style="color: var(--text-muted); font-size: 0.82rem;">No errors in the last 24h.</p>
+        )}
+      </section>
+
+      <!-- Skill Installs -->
+      <section>
+        <h2>Skill Installs (30d)</h2>
+        {metrics.skillInstalls?.length > 0 ? (
+          <table>
+            <thead>
+              <tr><th>Slug</th><th>Total Pings</th><th>Unique Installs</th></tr>
+            </thead>
+            <tbody>
+              {metrics.skillInstalls.map((r: any) => (
+                <tr>
+                  <td>{r.slug}</td>
+                  <td>{fmtNum(r.pings)}</td>
+                  <td>{fmtNum(r.unique_installs)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        ) : (
+          <p style="color: var(--text-muted); font-size: 0.82rem;">No skill pings recorded yet. Pings arrive when the AgentRank skill loads.</p>
+        )}
+      </section>
+
+      <p style="color: var(--text-muted); font-size: 0.75rem;">
+        Note: Site visitor counts are also tracked via Cloudflare Web Analytics (real-time, privacy-friendly).
+        API request metrics above come from the request_log D1 table.
+      </p>
+    </>
+  )}
+</Base>

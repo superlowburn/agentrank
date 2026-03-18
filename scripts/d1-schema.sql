@@ -262,6 +262,19 @@ CREATE INDEX IF NOT EXISTS idx_subscriptions_status ON subscriptions(status);
 -- CREATE INDEX IF NOT EXISTS idx_subscriptions_stripe ON subscriptions(stripe_subscription_id);
 -- CREATE INDEX IF NOT EXISTS idx_subscriptions_status ON subscriptions(status);
 
+-- Skill pings table — tracks AgentRank skill loads/installs; survives pipeline cycles
+CREATE TABLE IF NOT EXISTS skill_pings (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  slug TEXT NOT NULL DEFAULT 'agentrank',    -- skill slug
+  ip_hash TEXT,                               -- SHA-256 of IP for dedup (no PII stored)
+  user_agent TEXT,                            -- first 200 chars of UA
+  ts TEXT NOT NULL DEFAULT (datetime('now'))
+);
+CREATE INDEX IF NOT EXISTS idx_sp_slug_ts ON skill_pings(slug, ts);
+-- Migration (run once on existing D1):
+-- CREATE TABLE IF NOT EXISTS skill_pings (id INTEGER PRIMARY KEY AUTOINCREMENT, slug TEXT NOT NULL DEFAULT 'agentrank', ip_hash TEXT, user_agent TEXT, ts TEXT NOT NULL DEFAULT (datetime('now')));
+-- CREATE INDEX IF NOT EXISTS idx_sp_slug_ts ON skill_pings(slug, ts);
+
 -- Submissions table — survives pipeline DROP/CREATE cycles
 CREATE TABLE IF NOT EXISTS submissions (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
