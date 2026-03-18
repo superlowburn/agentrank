@@ -1,0 +1,217 @@
+---
+export const prerender = false;
+import Base from '../../layouts/Base.astro';
+
+const sessionId = Astro.url.searchParams.get('session_id');
+
+// Fetch session from Stripe to get tier/billing details
+let tier: string | null = null;
+let email: string | null = null;
+
+if (sessionId) {
+  try {
+    const { env } = (Astro.locals as any).runtime;
+    const stripeKey = env?.STRIPE_SECRET_KEY;
+    if (stripeKey) {
+      const resp = await fetch(
+        `https://api.stripe.com/v1/checkout/sessions/${sessionId}?expand[]=customer_details`,
+        { headers: { Authorization: `Bearer ${stripeKey}` } }
+      );
+      if (resp.ok) {
+        const session = await resp.json() as {
+          metadata?: { tier?: string };
+          customer_details?: { email?: string };
+          customer_email?: string;
+        };
+        tier = session.metadata?.tier ?? null;
+        email = session.customer_details?.email ?? session.customer_email ?? null;
+      }
+    }
+  } catch {
+    // Non-fatal — show generic success
+  }
+}
+
+const isVerifiedPublisher = tier === 'verified_publisher';
+const isProApi = tier === 'pro_api';
+const tierLabel = isVerifiedPublisher ? 'Verified Publisher' : isProApi ? 'Pro API' : null;
+---
+
+<Base
+  title="Subscription Confirmed — AgentRank"
+  description="Your AgentRank subscription is confirmed."
+  canonicalUrl="https://agentrank-ai.com/checkout/success/"
+>
+
+  <div class="success-wrap">
+    <div class="success-card">
+      <div class="check-icon">&#10003;</div>
+
+      <h1>
+        {tierLabel ? `${tierLabel} activated` : 'Subscription confirmed'}
+      </h1>
+
+      {email && (
+        <p class="sub-email">Confirmation sent to <strong>{email}</strong></p>
+      )}
+
+      <div class="next-steps">
+        <h2>What happens next</h2>
+        <ol>
+          {isVerifiedPublisher && (
+            <>
+              <li>Your Verified Publisher badge will appear on your listing within 1 hour.</li>
+              <li>We'll email you a link to your publisher dashboard once it's ready.</li>
+              <li>From the dashboard you can update your logo, description, and links.</li>
+            </>
+          )}
+          {isProApi && (
+            <>
+              <li>Your API key has been generated and will be emailed to you shortly.</li>
+              <li>Base URL: <code>https://agentrank-ai.com/api/v2/</code></li>
+              <li>Include your key as <code>Authorization: Bearer &lt;key&gt;</code> on all requests.</li>
+              <li>You have 10,000 calls/month and a 60 req/min rate limit.</li>
+            </>
+          )}
+          {!isVerifiedPublisher && !isProApi && (
+            <>
+              <li>Your subscription is now active.</li>
+              <li>You'll receive a confirmation email with details shortly.</li>
+            </>
+          )}
+        </ol>
+      </div>
+
+      <div class="actions">
+        <a href="/" class="btn-primary">Back to leaderboard</a>
+        <a href="/pricing/" class="btn-secondary">View pricing</a>
+      </div>
+    </div>
+  </div>
+
+</Base>
+
+<style>
+  .success-wrap {
+    display: flex;
+    justify-content: center;
+    padding: 3rem 1rem;
+  }
+
+  .success-card {
+    max-width: 520px;
+    width: 100%;
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-top: 3px solid var(--accent);
+    border-radius: 8px;
+    padding: 2.5rem 2rem;
+    text-align: center;
+  }
+
+  .check-icon {
+    width: 3rem;
+    height: 3rem;
+    background: color-mix(in srgb, var(--accent) 15%, transparent);
+    color: var(--accent);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin: 0 auto 1.25rem;
+  }
+
+  h1 {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 0.5rem;
+  }
+
+  .sub-email {
+    font-size: 0.82rem;
+    color: var(--text-muted);
+    margin-bottom: 1.75rem;
+  }
+
+  .next-steps {
+    text-align: left;
+    background: var(--bg-hover);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 1.25rem 1.5rem;
+    margin-bottom: 2rem;
+  }
+
+  .next-steps h2 {
+    font-size: 0.68rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-muted);
+    font-weight: 700;
+    margin-bottom: 0.9rem;
+  }
+
+  .next-steps ol {
+    padding-left: 1.25rem;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .next-steps li {
+    font-size: 0.82rem;
+    color: var(--text);
+    line-height: 1.5;
+  }
+
+  .next-steps code {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    padding: 0.1rem 0.3rem;
+    border-radius: 2px;
+    font-size: 0.72rem;
+  }
+
+  .actions {
+    display: flex;
+    gap: 0.75rem;
+    justify-content: center;
+  }
+
+  .btn-primary,
+  .btn-secondary {
+    display: inline-block;
+    padding: 0.55rem 1.1rem;
+    border-radius: 4px;
+    font-size: 0.82rem;
+    font-weight: 700;
+    text-decoration: none;
+    transition: opacity 0.15s;
+  }
+
+  .btn-primary:hover,
+  .btn-secondary:hover {
+    opacity: 0.82;
+    text-decoration: none;
+  }
+
+  .btn-primary {
+    background: var(--accent);
+    color: var(--bg);
+  }
+
+  .btn-secondary {
+    background: transparent;
+    color: var(--text);
+    border: 1px solid var(--border);
+  }
+
+  .btn-secondary:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+</style>

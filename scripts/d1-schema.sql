@@ -239,6 +239,29 @@ CREATE INDEX IF NOT EXISTS idx_sh_date ON score_history(recorded_at);
 -- CREATE INDEX IF NOT EXISTS idx_sh_slug ON score_history(tool_slug, tool_type, recorded_at);
 -- CREATE INDEX IF NOT EXISTS idx_sh_date ON score_history(recorded_at);
 
+-- Subscriptions table — paid tier subscriptions via Stripe
+-- survives pipeline DROP/CREATE cycles
+CREATE TABLE IF NOT EXISTS subscriptions (
+  id TEXT PRIMARY KEY,                              -- UUID
+  user_email TEXT NOT NULL,
+  stripe_customer_id TEXT NOT NULL,
+  stripe_subscription_id TEXT NOT NULL UNIQUE,
+  tier TEXT NOT NULL,                               -- 'verified_publisher' | 'pro_api'
+  status TEXT NOT NULL DEFAULT 'active',            -- 'active' | 'past_due' | 'cancelled'
+  billing TEXT NOT NULL DEFAULT 'monthly',          -- 'monthly' | 'annual'
+  current_period_end INTEGER NOT NULL,              -- unix timestamp
+  created_at INTEGER NOT NULL,
+  updated_at INTEGER NOT NULL
+);
+CREATE INDEX IF NOT EXISTS idx_subscriptions_email ON subscriptions(user_email);
+CREATE INDEX IF NOT EXISTS idx_subscriptions_stripe ON subscriptions(stripe_subscription_id);
+CREATE INDEX IF NOT EXISTS idx_subscriptions_status ON subscriptions(status);
+-- Migration (run once on existing D1):
+-- CREATE TABLE IF NOT EXISTS subscriptions (id TEXT PRIMARY KEY, user_email TEXT NOT NULL, stripe_customer_id TEXT NOT NULL, stripe_subscription_id TEXT NOT NULL UNIQUE, tier TEXT NOT NULL, status TEXT NOT NULL DEFAULT 'active', billing TEXT NOT NULL DEFAULT 'monthly', current_period_end INTEGER NOT NULL, created_at INTEGER NOT NULL, updated_at INTEGER NOT NULL);
+-- CREATE INDEX IF NOT EXISTS idx_subscriptions_email ON subscriptions(user_email);
+-- CREATE INDEX IF NOT EXISTS idx_subscriptions_stripe ON subscriptions(stripe_subscription_id);
+-- CREATE INDEX IF NOT EXISTS idx_subscriptions_status ON subscriptions(status);
+
 -- Submissions table — survives pipeline DROP/CREATE cycles
 CREATE TABLE IF NOT EXISTS submissions (
   id INTEGER PRIMARY KEY AUTOINCREMENT,

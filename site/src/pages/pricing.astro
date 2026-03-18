@@ -4,79 +4,117 @@ import Base from '../layouts/Base.astro';
 ---
 
 <Base
-  title="Pricing — AgentRank API"
-  description="AgentRank API pricing. Free tier for exploration, Pro at $49/mo for production use, Enterprise for teams."
+  title="Pricing — AgentRank"
+  description="Claim your listing, access ranked data, or sponsor your category. Verified Publisher at $29/mo, Pro API at $49/mo, Sponsored Listings from $199/mo."
   activeTab="pricing"
-  keywords="AgentRank pricing, MCP API pricing, agent tool API, Pro API key"
+  keywords="AgentRank pricing, MCP tool listing, verified publisher badge, agent tool API pricing, sponsored listing MCP"
   canonicalUrl="https://agentrank-ai.com/pricing/"
 >
-  <div class="pricing-header">
-    <h1>API Pricing</h1>
-    <p class="subtitle">Live, scored data on 25,000+ MCP servers and agent tools. Use it in your agent, your app, or your pipeline.</p>
+
+  <div class="pricing-hero">
+    <p class="eyebrow">For Maintainers &amp; Builders</p>
+    <h1>Get Found by Developers Building with MCP</h1>
+    <p class="hero-sub">Index your tool. Prove it works. Sponsor your category.</p>
+  </div>
+
+  <div class="billing-toggle-wrap">
+    <div class="billing-toggle" role="group" aria-label="Billing period">
+      <button class="toggle-btn" id="btn-monthly" data-period="monthly" type="button">Monthly</button>
+      <button class="toggle-btn active" id="btn-annual" data-period="annual" type="button">Annual <span class="save-badge">save 17%</span></button>
+    </div>
   </div>
 
   <div class="tiers">
+
+    <!-- Verified Publisher -->
     <div class="tier">
       <div class="tier-header">
-        <span class="tier-name">Free</span>
-        <span class="tier-price">$0<span class="tier-per">/mo</span></span>
-        <p class="tier-desc">Good for exploration, prototyping, and hobby projects.</p>
+        <span class="tier-name">Verified Publisher</span>
+        <div class="tier-price-block">
+          <span class="tier-price">
+            $<span class="price-amount" data-monthly="29" data-annual="24">24</span><span class="tier-per">/mo</span>
+          </span>
+          <span class="tier-billing-note billing-annual">billed $290/yr &mdash; 2 months free</span>
+          <span class="tier-billing-note billing-monthly" style="display:none">billed monthly</span>
+        </div>
+        <p class="tier-best-for">For maintainers who want to claim their listing and build trust.</p>
       </div>
       <ul class="tier-features">
-        <li class="check">Search the full index</li>
-        <li class="check">Tool &amp; skill lookup</li>
-        <li class="check">Movers &amp; new-tools endpoints</li>
-        <li class="check">SVG badge embeds</li>
-        <li class="check">MCP server (npx agentrank-mcp-server)</li>
-        <li class="check">CORS-enabled, no auth</li>
-        <li class="muted">100 req/min per IP</li>
-        <li class="muted">No historical data</li>
-        <li class="muted">No batch lookups</li>
+        <li class="check">Verified Publisher badge on your listing</li>
+        <li class="check">Enhanced listing: logo, description, docs &amp; Discord links</li>
+        <li class="check">Monthly analytics: views, installs, referral sources</li>
+        <li class="check">Priority indexing — commits reflected within 24h</li>
+        <li class="check">One featured category tag of your choice</li>
+        <li class="check">Email alerts on 10+ point score changes</li>
       </ul>
-      <a href="/api-docs/" class="cta cta-secondary">View Free Endpoints</a>
+      <button class="cta cta-secondary checkout-btn" data-tier="verified_publisher" id="btn-vp">Claim your listing &rarr;</button>
+      <p class="cta-note" id="note-vp">&nbsp;</p>
     </div>
 
+    <!-- Pro API (featured) -->
     <div class="tier tier-featured">
       <div class="tier-badge">Most Popular</div>
       <div class="tier-header">
-        <span class="tier-name">Pro</span>
-        <span class="tier-price">$49<span class="tier-per">/mo</span></span>
-        <p class="tier-desc">For developers building with real agent tool data.</p>
+        <span class="tier-name">Pro API</span>
+        <div class="tier-price-block">
+          <span class="tier-price">
+            $<span class="price-amount" data-monthly="49" data-annual="41">41</span><span class="tier-per">/mo</span>
+          </span>
+          <span class="tier-billing-note billing-annual">billed $490/yr &mdash; save $98</span>
+          <span class="tier-billing-note billing-monthly" style="display:none">billed monthly</span>
+        </div>
+        <p class="tier-best-for">For developers building agents, plugins, and orchestration layers.</p>
       </div>
       <ul class="tier-features">
-        <li class="check">Everything in Free</li>
-        <li class="check">API key authentication</li>
-        <li class="check">1,000 req/min rate limit</li>
-        <li class="check">v2/search — richer signal data</li>
-        <li class="check">v2/tool — full signal breakdown</li>
-        <li class="check">v2/batch — up to 50 tools per call</li>
-        <li class="check">Historical score &amp; rank data</li>
-        <li class="check">Webhook notifications (score changes)</li>
-        <li class="check">Usage dashboard</li>
-        <li class="check">Rate limit headers on all responses</li>
+        <li class="check">10,000 API calls/month</li>
+        <li class="check">60 req/min rate limit</li>
+        <li class="check">Full endpoints: /tools, /search, /categories, /skills</li>
+        <li class="check">JSON responses with complete score breakdowns</li>
+        <li class="check">30-day historical score data</li>
+        <li class="check">API dashboard: usage, call logs, error rates</li>
+        <li class="check">Email support (best effort)</li>
       </ul>
-      <a href="mailto:api@agentrank-ai.com?subject=Pro%20API%20Key%20Request&body=Hi%2C%20I%27d%20like%20to%20request%20a%20Pro%20API%20key.%0A%0AUse%20case%3A%20" class="cta cta-primary">Get API Key</a>
+      <button class="cta cta-primary checkout-btn" data-tier="pro_api" id="btn-pro">Get API access &rarr;</button>
+      <p class="cta-note" id="note-pro">&nbsp;</p>
     </div>
 
+    <!-- Sponsored Listing -->
     <div class="tier">
       <div class="tier-header">
-        <span class="tier-name">Enterprise</span>
-        <span class="tier-price">$199<span class="tier-per">/mo</span></span>
-        <p class="tier-desc">For teams that need scale, SLAs, and custom integrations.</p>
+        <span class="tier-name">Sponsored Listing</span>
+        <div class="tier-price-block">
+          <span class="tier-price">from $<span class="tier-per-inline">199</span><span class="tier-per">/mo</span></span>
+          <span class="tier-billing-note">2 months free on annual — invoiced</span>
+        </div>
+        <p class="tier-best-for">For commercial tools competing for developer mindshare.</p>
+      </div>
+      <div class="subtier-table">
+        <div class="subtier-row">
+          <span class="subtier-name">Category Sponsor</span>
+          <span class="subtier-price">$199/mo</span>
+          <span class="subtier-desc">Top of one category page</span>
+        </div>
+        <div class="subtier-row">
+          <span class="subtier-name">Featured Sponsor</span>
+          <span class="subtier-price">$299/mo</span>
+          <span class="subtier-desc">Category + homepage sidebar</span>
+        </div>
+        <div class="subtier-row">
+          <span class="subtier-name">Premium Sponsor</span>
+          <span class="subtier-price">$499/mo</span>
+          <span class="subtier-desc">Category + banner + newsletter</span>
+        </div>
       </div>
       <ul class="tier-features">
-        <li class="check">Everything in Pro</li>
-        <li class="check">Unlimited rate limits</li>
-        <li class="check">Multiple API keys</li>
-        <li class="check">Custom integrations</li>
-        <li class="check">Priority support (24h response)</li>
-        <li class="check">SLA guarantee</li>
-        <li class="check">Custom data exports</li>
-        <li class="check">Dedicated account contact</li>
-        <li class="check">Billing &amp; usage reports</li>
+        <li class="check">Everything in Verified Publisher</li>
+        <li class="check">Featured placement — "Sponsored" label, prominently placed</li>
+        <li class="check">Full analytics: views, click-throughs, comparison events</li>
+        <li class="check">Slack channel for listing updates and data questions</li>
       </ul>
-      <a href="mailto:api@agentrank-ai.com?subject=Enterprise%20API%20Inquiry" class="cta cta-secondary">Contact Us</a>
+      <a href="mailto:hello@agentrank-ai.com?subject=Sponsored%20Listing%20Inquiry" class="cta cta-secondary">Contact us &rarr;</a>
+      <p class="cta-note">Manual qualification &rarr; invoice &rarr; listing live in 1 business day</p>
     </div>
+
   </div>
 
   <section class="comparison">
@@ -86,116 +124,98 @@ import Base from '../layouts/Base.astro';
         <thead>
           <tr>
             <th>Feature</th>
-            <th>Free</th>
-            <th class="col-pro">Pro</th>
-            <th>Enterprise</th>
+            <th>Verified Publisher</th>
+            <th class="col-featured">Pro API</th>
+            <th>Sponsored</th>
           </tr>
         </thead>
         <tbody>
-          <tr class="row-group"><td colspan="4">Core Endpoints</td></tr>
+          <tr class="row-group"><td colspan="4">Listing &amp; Visibility</td></tr>
           <tr>
-            <td>/api/search <span class="tag">legacy</span></td>
+            <td>Verified badge on listing</td>
             <td class="yes">yes</td>
-            <td class="yes col-pro">yes</td>
+            <td class="no col-featured">&mdash;</td>
             <td class="yes">yes</td>
           </tr>
           <tr>
-            <td>/api/lookup <span class="tag">legacy</span></td>
+            <td>Custom logo, description, links</td>
             <td class="yes">yes</td>
-            <td class="yes col-pro">yes</td>
-            <td class="yes">yes</td>
-          </tr>
-          <tr>
-            <td>/api/v1/search</td>
-            <td class="yes">yes</td>
-            <td class="yes col-pro">yes</td>
+            <td class="no col-featured">&mdash;</td>
             <td class="yes">yes</td>
           </tr>
           <tr>
-            <td>/api/v1/tool/{'{id}'}</td>
+            <td>Priority indexing (24h)</td>
             <td class="yes">yes</td>
-            <td class="yes col-pro">yes</td>
-            <td class="yes">yes</td>
-          </tr>
-          <tr>
-            <td>/api/v1/movers</td>
-            <td class="yes">yes</td>
-            <td class="yes col-pro">yes</td>
+            <td class="no col-featured">&mdash;</td>
             <td class="yes">yes</td>
           </tr>
           <tr>
-            <td>/api/v1/new-tools</td>
-            <td class="yes">yes</td>
-            <td class="yes col-pro">yes</td>
-            <td class="yes">yes</td>
-          </tr>
-          <tr>
-            <td>/api/badge/*</td>
-            <td class="yes">yes</td>
-            <td class="yes col-pro">yes</td>
-            <td class="yes">yes</td>
-          </tr>
-          <tr class="row-group"><td colspan="4">Pro Endpoints</td></tr>
-          <tr>
-            <td>/api/v2/search <span class="tag tag-pro">Pro</span></td>
-            <td class="no">—</td>
-            <td class="yes col-pro">yes</td>
+            <td>Featured category placement</td>
+            <td class="no">&mdash;</td>
+            <td class="no col-featured">&mdash;</td>
             <td class="yes">yes</td>
           </tr>
           <tr>
-            <td>/api/v2/tool/{'{id}'} <span class="tag tag-pro">Pro</span></td>
-            <td class="no">—</td>
-            <td class="yes col-pro">yes</td>
+            <td>Homepage placement</td>
+            <td class="no">&mdash;</td>
+            <td class="no col-featured">&mdash;</td>
+            <td class="yes">Featured+</td>
+          </tr>
+          <tr>
+            <td>Newsletter feature</td>
+            <td class="no">&mdash;</td>
+            <td class="no col-featured">&mdash;</td>
+            <td class="yes">Premium only</td>
+          </tr>
+          <tr class="row-group"><td colspan="4">Analytics</td></tr>
+          <tr>
+            <td>Monthly views &amp; install data</td>
+            <td class="yes">yes</td>
+            <td class="no col-featured">&mdash;</td>
             <td class="yes">yes</td>
           </tr>
           <tr>
-            <td>/api/v2/batch <span class="tag tag-pro">Pro</span></td>
-            <td class="no">—</td>
-            <td class="yes col-pro">yes</td>
+            <td>Referral sources</td>
+            <td class="yes">yes</td>
+            <td class="no col-featured">&mdash;</td>
             <td class="yes">yes</td>
           </tr>
           <tr>
-            <td>Historical rank data</td>
-            <td class="no">—</td>
-            <td class="yes col-pro">yes</td>
+            <td>Click-through &amp; comparison events</td>
+            <td class="no">&mdash;</td>
+            <td class="no col-featured">&mdash;</td>
             <td class="yes">yes</td>
           </tr>
+          <tr class="row-group"><td colspan="4">API Access</td></tr>
           <tr>
-            <td>Webhook notifications</td>
-            <td class="no">—</td>
-            <td class="yes col-pro">yes</td>
-            <td class="yes">yes</td>
-          </tr>
-          <tr class="row-group"><td colspan="4">Limits &amp; Access</td></tr>
-          <tr>
-            <td>Authentication</td>
-            <td>None</td>
-            <td class="col-pro">API key</td>
-            <td>API key</td>
+            <td>API calls/month</td>
+            <td class="no">&mdash;</td>
+            <td class="yes col-featured">10,000</td>
+            <td class="no">&mdash;</td>
           </tr>
           <tr>
             <td>Rate limit</td>
-            <td>100 req/min</td>
-            <td class="col-pro">1,000 req/min</td>
-            <td>Unlimited</td>
+            <td class="no">&mdash;</td>
+            <td class="yes col-featured">60 req/min</td>
+            <td class="no">&mdash;</td>
           </tr>
           <tr>
-            <td>Multiple API keys</td>
-            <td class="no">—</td>
-            <td class="no col-pro">—</td>
-            <td class="yes">yes</td>
+            <td>Historical score data (30 days)</td>
+            <td class="no">&mdash;</td>
+            <td class="yes col-featured">yes</td>
+            <td class="no">&mdash;</td>
           </tr>
           <tr>
-            <td>SLA</td>
-            <td class="no">—</td>
-            <td class="no col-pro">—</td>
-            <td class="yes">yes</td>
+            <td>Full score breakdown in responses</td>
+            <td class="no">&mdash;</td>
+            <td class="yes col-featured">yes</td>
+            <td class="no">&mdash;</td>
           </tr>
           <tr>
-            <td>Priority support</td>
-            <td class="no">—</td>
-            <td class="no col-pro">—</td>
-            <td class="yes">yes</td>
+            <td>Usage dashboard</td>
+            <td class="no">&mdash;</td>
+            <td class="yes col-featured">yes</td>
+            <td class="no">&mdash;</td>
           </tr>
         </tbody>
       </table>
@@ -205,54 +225,116 @@ import Base from '../layouts/Base.astro';
   <section class="faq">
     <h2 class="section-header">FAQ</h2>
     <dl class="faq-list">
-      <dt>How do I get a Pro API key?</dt>
-      <dd>Email <a href="mailto:api@agentrank-ai.com">api@agentrank-ai.com</a> with your use case. Keys are provisioned manually while Stripe integration is in progress.</dd>
+      <dt>Is my tool already in the index?</dt>
+      <dd>Yes, almost certainly. AgentRank crawls GitHub nightly and indexes every repo matching MCP server and agent tool patterns. Search the <a href="/">leaderboard</a> to find your listing. Free listings are auto-generated — paid tiers let you claim and enhance them.</dd>
 
-      <dt>Is there a free trial for Pro?</dt>
-      <dd>Yes — mention it in your email. We offer a 14-day Pro trial for serious use cases.</dd>
+      <dt>Do I need to pay to be indexed?</dt>
+      <dd>No. The index is free. Listings are auto-generated from public GitHub data. Paid tiers are for maintainers who want to claim their listing, add context, see analytics, or get premium placement.</dd>
 
-      <dt>What does "historical data" include?</dt>
-      <dd>Daily score and rank snapshots going back 90 days. Accessible via the <code>history=1</code> param on <code>/api/v2/search</code> and the full breakdown on <code>/api/v2/tool/{'{id}'}</code>.</dd>
+      <dt>When can I actually subscribe?</dt>
+      <dd>Stripe integration launches at the Phase 2 gate — 5,000+ monthly API requests or 500+ skill installs. Until then, join the waitlist and you'll be first notified. <a href="/subscribe/">Join the waitlist &rarr;</a></dd>
 
-      <dt>What's the batch endpoint?</dt>
-      <dd><code>POST /api/v2/batch</code> accepts up to 50 tool IDs and returns full signal data for all of them in one request. Useful for enriching your own datasets.</dd>
+      <dt>How does the Verified Publisher badge work?</dt>
+      <dd>After subscribing, you verify ownership of the GitHub repo (contributor or org member). The badge appears on your listing within 1 hour. It signals to developers that a real maintainer is actively behind the tool — not a dead fork.</dd>
 
-      <dt>Do you support webhooks?</dt>
-      <dd>Pro includes webhook notifications when a tool's rank changes by more than 10 positions. Configure your endpoint URL in the usage dashboard.</dd>
+      <dt>What's included in the Pro API rate limits?</dt>
+      <dd>10,000 calls/month and 60 requests/minute. All core endpoints: <code>/tools</code>, <code>/tools/:id</code>, <code>/search</code>, <code>/categories</code>, <code>/skills</code>. Full JSON signal breakdowns and 30-day historical score data on every response.</dd>
 
-      <dt>Can I use the free API in production?</dt>
-      <dd>Yes, with caveats. The free tier enforces a 100 req/min IP-based rate limit. If you need reliable production throughput, use Pro.</dd>
-
-      <dt>Is the data fresh?</dt>
-      <dd>The index updates daily. Score and rank changes are reflected within 24 hours of the nightly crawl completing.</dd>
+      <dt>How are Sponsored Listings labeled?</dt>
+      <dd>Sponsored placements are labeled "Sponsored" — transparently and prominently. We don't hide paid placements as organic rankings. We'll show you real traffic data before you commit. If the category numbers don't justify the spend, we'll tell you.</dd>
     </dl>
   </section>
 
-  <section class="mcp-note">
-    <p>The AgentRank MCP server is always free. Install it once and your AI agent queries the live index automatically — no API key needed.</p>
-    <pre class="code-block">claude mcp add agentrank -- npx -y agentrank-mcp-server</pre>
+  <section class="free-note">
+    <div class="free-note-inner">
+      <span class="free-note-label">free forever</span>
+      <p>The public API and MCP server are always free. No key needed. 100 req/min per IP. Search, lookup, badges, movers.</p>
+      <pre class="code-snippet">claude mcp add agentrank -- npx -y agentrank-mcp-server</pre>
+    </div>
   </section>
+
 </Base>
 
 <style>
-  .pricing-header {
-    margin-bottom: 2rem;
+  /* Hero */
+  .pricing-hero {
     text-align: center;
-  }
-
-  .pricing-header h1 {
-    font-size: 1.5rem;
-    font-weight: 700;
-    margin-bottom: 0.5rem;
-  }
-
-  .subtitle {
-    font-size: 0.9rem;
-    color: var(--text-muted);
-    max-width: 500px;
+    padding: 2.5rem 0 2rem;
+    max-width: 600px;
     margin: 0 auto;
   }
 
+  .eyebrow {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--accent);
+    font-weight: 700;
+    margin-bottom: 0.75rem;
+  }
+
+  .pricing-hero h1 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text);
+    line-height: 1.2;
+    margin-bottom: 0.6rem;
+  }
+
+  .hero-sub {
+    font-size: 0.88rem;
+    color: var(--text-muted);
+  }
+
+  /* Billing toggle */
+  .billing-toggle-wrap {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 1.75rem;
+  }
+
+  .billing-toggle {
+    display: inline-flex;
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 0.2rem;
+    gap: 0.2rem;
+  }
+
+  .toggle-btn {
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    font-family: inherit;
+    font-size: 0.8rem;
+    font-weight: 600;
+    padding: 0.35rem 0.9rem;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+  }
+
+  .toggle-btn.active {
+    background: var(--bg-hover);
+    color: var(--text);
+  }
+
+  .save-badge {
+    font-size: 0.62rem;
+    font-weight: 700;
+    background: color-mix(in srgb, var(--accent) 15%, transparent);
+    color: var(--accent);
+    border-radius: 3px;
+    padding: 0.1rem 0.35rem;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+
+  /* Tier grid */
   .tiers {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
@@ -280,66 +362,117 @@ import Base from '../layouts/Base.astro';
     transform: translateX(-50%);
     background: var(--accent);
     color: var(--bg);
-    font-size: 0.65rem;
+    font-size: 0.6rem;
     font-weight: 700;
-    padding: 0.2rem 0.6rem;
+    padding: 0.18rem 0.6rem;
     border-radius: 20px;
     text-transform: uppercase;
-    letter-spacing: 0.05em;
+    letter-spacing: 0.06em;
     white-space: nowrap;
   }
 
   .tier-header {
     margin-bottom: 1.25rem;
+    padding-bottom: 1.25rem;
+    border-bottom: 1px solid var(--border);
   }
 
   .tier-name {
     display: block;
-    font-size: 0.75rem;
+    font-size: 0.68rem;
     text-transform: uppercase;
-    letter-spacing: 0.08em;
+    letter-spacing: 0.1em;
     color: var(--text-muted);
-    margin-bottom: 0.4rem;
-  }
-
-  .tier-price {
-    display: block;
-    font-size: 2rem;
-    font-weight: 700;
-    line-height: 1;
     margin-bottom: 0.6rem;
   }
 
+  .tier-price-block {
+    margin-bottom: 0.6rem;
+  }
+
+  .tier-price {
+    font-size: 2rem;
+    font-weight: 700;
+    line-height: 1;
+    display: block;
+    margin-bottom: 0.3rem;
+  }
+
   .tier-per {
-    font-size: 0.85rem;
+    font-size: 0.82rem;
     font-weight: 400;
     color: var(--text-muted);
   }
 
-  .tier-desc {
-    font-size: 0.8rem;
+  .tier-per-inline {
+    font-size: 2rem;
+    font-weight: 700;
+  }
+
+  .tier-billing-note {
+    display: block;
+    font-size: 0.72rem;
     color: var(--text-muted);
     line-height: 1.4;
   }
 
+  .tier-best-for {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    line-height: 1.4;
+    margin-top: 0.5rem;
+  }
+
+  /* Sub-tier breakdown for Sponsored */
+  .subtier-table {
+    margin-bottom: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+
+  .subtier-row {
+    display: grid;
+    grid-template-columns: auto auto 1fr;
+    gap: 0.5rem 0.75rem;
+    align-items: baseline;
+    font-size: 0.78rem;
+    padding: 0.35rem 0.5rem;
+    background: var(--bg-hover);
+    border-radius: 4px;
+  }
+
+  .subtier-name {
+    color: var(--text);
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  .subtier-price {
+    color: var(--accent);
+    font-weight: 700;
+    white-space: nowrap;
+  }
+
+  .subtier-desc {
+    color: var(--text-muted);
+    font-size: 0.72rem;
+  }
+
+  /* Feature list */
   .tier-features {
     list-style: none;
     padding: 0;
     margin-bottom: 1.5rem;
-    border-top: 1px solid var(--border);
-    padding-top: 1rem;
   }
 
   .tier-features li {
-    font-size: 0.82rem;
-    padding: 0.25rem 0;
-    padding-left: 1.25rem;
+    font-size: 0.8rem;
+    padding: 0.22rem 0;
+    padding-left: 1.2rem;
     position: relative;
     color: var(--text);
-  }
-
-  .tier-features li.muted {
-    color: var(--text-muted);
+    line-height: 1.4;
   }
 
   .tier-features li.check::before {
@@ -347,38 +480,23 @@ import Base from '../layouts/Base.astro';
     position: absolute;
     left: 0;
     color: var(--accent);
-    font-size: 0.75rem;
+    font-size: 0.72rem;
   }
 
-  .tier-features li.no::before {
-    content: '\2014';
-    position: absolute;
-    left: 0;
-    color: var(--border);
-    font-size: 0.75rem;
-  }
-
-  .tier-features li.muted::before {
-    content: '\2014';
-    position: absolute;
-    left: 0;
-    color: var(--border);
-    font-size: 0.75rem;
-  }
-
+  /* CTAs */
   .cta {
     display: block;
     text-align: center;
     padding: 0.6rem 1rem;
     border-radius: 4px;
     font-size: 0.82rem;
-    font-weight: 600;
+    font-weight: 700;
     text-decoration: none;
     transition: opacity 0.15s;
   }
 
   .cta:hover {
-    opacity: 0.85;
+    opacity: 0.82;
     text-decoration: none;
   }
 
@@ -398,18 +516,40 @@ import Base from '../layouts/Base.astro';
     color: var(--accent);
   }
 
-  .section-header {
-    font-size: 0.75rem;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
+  .cta-note {
+    font-size: 0.68rem;
     color: var(--text-muted);
+    text-align: center;
+    margin-top: 0.5rem;
+    line-height: 1.4;
+    min-height: 1.2em;
+  }
+
+  button.cta {
+    width: 100%;
+    cursor: pointer;
+    font-family: inherit;
+  }
+
+  button.cta:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  /* Comparison table */
+  .comparison {
+    margin-bottom: 2.5rem;
+  }
+
+  .section-header {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-muted);
+    font-weight: 700;
     margin-bottom: 1rem;
     padding-bottom: 0.5rem;
     border-bottom: 1px solid var(--border);
-  }
-
-  .comparison {
-    margin-bottom: 2.5rem;
   }
 
   .table-wrap {
@@ -419,26 +559,27 @@ import Base from '../layouts/Base.astro';
   .compare-table {
     width: 100%;
     border-collapse: collapse;
-    font-size: 0.8rem;
+    font-size: 0.78rem;
   }
 
   .compare-table th {
     text-align: left;
-    padding: 0.5rem 0.75rem;
+    padding: 0.45rem 0.75rem;
     border-bottom: 2px solid var(--border);
     color: var(--text-muted);
-    font-size: 0.75rem;
+    font-size: 0.68rem;
     text-transform: uppercase;
-    letter-spacing: 0.04em;
+    letter-spacing: 0.06em;
     white-space: nowrap;
   }
 
-  .compare-table th.col-pro {
+  .compare-table th.col-featured {
     color: var(--accent);
+    background: color-mix(in srgb, var(--accent) 5%, transparent);
   }
 
   .compare-table td {
-    padding: 0.4rem 0.75rem;
+    padding: 0.38rem 0.75rem;
     border-bottom: 1px solid var(--border);
     color: var(--text-muted);
   }
@@ -447,11 +588,7 @@ import Base from '../layouts/Base.astro';
     color: var(--text);
   }
 
-  .compare-table td.col-pro {
-    background: color-mix(in srgb, var(--accent) 5%, transparent);
-  }
-
-  .compare-table th.col-pro {
+  .compare-table td.col-featured {
     background: color-mix(in srgb, var(--accent) 5%, transparent);
   }
 
@@ -467,31 +604,14 @@ import Base from '../layouts/Base.astro';
   .row-group td {
     background: var(--bg-hover);
     color: var(--text-muted);
-    font-size: 0.7rem;
+    font-size: 0.65rem;
     text-transform: uppercase;
-    letter-spacing: 0.06em;
-    padding: 0.3rem 0.75rem;
-    font-weight: 600;
+    letter-spacing: 0.07em;
+    padding: 0.28rem 0.75rem;
+    font-weight: 700;
   }
 
-  .tag {
-    display: inline-block;
-    font-size: 0.6rem;
-    padding: 0.05rem 0.3rem;
-    border-radius: 2px;
-    border: 1px solid var(--border);
-    color: var(--text-muted);
-    vertical-align: middle;
-    margin-left: 0.25rem;
-    text-transform: uppercase;
-    letter-spacing: 0.03em;
-  }
-
-  .tag-pro {
-    border-color: var(--accent);
-    color: var(--accent);
-  }
-
+  /* FAQ */
   .faq {
     margin-bottom: 2.5rem;
   }
@@ -503,72 +623,185 @@ import Base from '../layouts/Base.astro';
   }
 
   .faq-list dt {
-    font-size: 0.9rem;
-    font-weight: 600;
+    font-size: 0.88rem;
+    font-weight: 700;
     color: var(--text);
     margin-bottom: 0.3rem;
   }
 
   .faq-list dd {
-    font-size: 0.82rem;
+    font-size: 0.8rem;
     color: var(--text-muted);
     margin-left: 0;
-    line-height: 1.5;
+    line-height: 1.6;
+  }
+
+  .faq-list dd a {
+    color: var(--accent);
+    text-decoration: none;
+  }
+
+  .faq-list dd a:hover {
+    text-decoration: underline;
   }
 
   .faq-list dd code {
-    background: var(--bg-surface);
+    background: var(--bg-hover);
     border: 1px solid var(--border);
     padding: 0.1rem 0.3rem;
     border-radius: 2px;
-    font-size: 0.75rem;
+    font-size: 0.72rem;
   }
 
-  .mcp-note {
-    background: var(--bg-surface);
-    border: 1px solid var(--border);
-    border-left: 3px solid var(--accent);
-    border-radius: 6px;
-    padding: 1.25rem 1.5rem;
+  /* Free note */
+  .free-note {
     margin-bottom: 2rem;
   }
 
-  .mcp-note p {
-    font-size: 0.85rem;
-    color: var(--text-muted);
-    margin-bottom: 0.75rem;
+  .free-note-inner {
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    border-radius: 0 6px 6px 0;
+    padding: 1.25rem 1.5rem;
   }
 
-  .code-block {
+  .free-note-label {
+    display: inline-block;
+    font-size: 0.62rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-weight: 700;
+    color: var(--accent);
+    margin-bottom: 0.5rem;
+  }
+
+  .free-note-inner p {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    margin-bottom: 0.75rem;
+    line-height: 1.5;
+  }
+
+  .code-snippet {
     background: var(--bg);
     border: 1px solid var(--border);
     border-radius: 4px;
-    padding: 0.6rem 0.9rem;
-    font-size: 0.78rem;
+    padding: 0.55rem 0.9rem;
+    font-size: 0.76rem;
     overflow-x: auto;
     white-space: pre;
     color: var(--text);
   }
 
-  @media (max-width: 768px) {
+  /* Responsive */
+  @media (max-width: 900px) {
+    .tiers {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .tier:last-child {
+      grid-column: 1 / -1;
+    }
+  }
+
+  @media (max-width: 600px) {
     .tiers {
       grid-template-columns: 1fr;
+    }
+
+    .tier:last-child {
+      grid-column: auto;
     }
 
     .tier-featured {
       order: -1;
     }
-  }
 
-  @media (max-width: 480px) {
-    .pricing-header h1 {
+    .pricing-hero h1 {
       font-size: 1.2rem;
     }
 
-    .compare-table th,
-    .compare-table td {
-      padding: 0.35rem 0.5rem;
-      font-size: 0.75rem;
+    .subtier-row {
+      grid-template-columns: 1fr auto;
+    }
+
+    .subtier-desc {
+      grid-column: 1 / -1;
+      margin-top: -0.2rem;
     }
   }
 </style>
+
+<script>
+  const btnMonthly = document.getElementById('btn-monthly') as HTMLButtonElement;
+  const btnAnnual = document.getElementById('btn-annual') as HTMLButtonElement;
+  const priceAmounts = document.querySelectorAll<HTMLElement>('.price-amount');
+  const billingAnnual = document.querySelectorAll<HTMLElement>('.billing-annual');
+  const billingMonthly = document.querySelectorAll<HTMLElement>('.billing-monthly');
+
+  let currentPeriod: 'monthly' | 'annual' = 'annual';
+
+  function setPeriod(period: 'monthly' | 'annual') {
+    currentPeriod = period;
+    const isAnnual = period === 'annual';
+
+    btnMonthly.classList.toggle('active', !isAnnual);
+    btnAnnual.classList.toggle('active', isAnnual);
+
+    priceAmounts.forEach(el => {
+      el.textContent = isAnnual
+        ? (el.dataset.annual ?? el.textContent)
+        : (el.dataset.monthly ?? el.textContent);
+    });
+
+    billingAnnual.forEach(el => { el.style.display = isAnnual ? '' : 'none'; });
+    billingMonthly.forEach(el => { el.style.display = isAnnual ? 'none' : ''; });
+  }
+
+  btnMonthly.addEventListener('click', () => setPeriod('monthly'));
+  btnAnnual.addEventListener('click', () => setPeriod('annual'));
+
+  // Defaults to annual — already set in HTML; ensure JS state matches
+  setPeriod('annual');
+
+  // Checkout button handlers
+  async function startCheckout(tier: string, btn: HTMLButtonElement, noteEl: HTMLElement | null) {
+    btn.disabled = true;
+    btn.textContent = 'Redirecting...';
+    if (noteEl) noteEl.textContent = '';
+
+    try {
+      const resp = await fetch('/api/checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ tier, billing: currentPeriod }),
+      });
+
+      const data = await resp.json() as { url?: string; error?: string };
+
+      if (!resp.ok || !data.url) {
+        throw new Error(data.error ?? 'Checkout unavailable');
+      }
+
+      window.location.href = data.url;
+    } catch (err: any) {
+      btn.disabled = false;
+      btn.textContent = tier === 'verified_publisher' ? 'Claim your listing \u2192' : 'Get API access \u2192';
+      if (noteEl) {
+        noteEl.textContent = err?.message === 'Payment processing not configured'
+          ? 'Checkout coming soon — join the waitlist.'
+          : 'Something went wrong. Please try again.';
+      }
+    }
+  }
+
+  document.querySelectorAll<HTMLButtonElement>('.checkout-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const tier = btn.dataset.tier ?? '';
+      const noteId = btn.id.replace('btn-', 'note-');
+      const noteEl = document.getElementById(noteId);
+      startCheckout(tier, btn, noteEl);
+    });
+  });
+</script>
