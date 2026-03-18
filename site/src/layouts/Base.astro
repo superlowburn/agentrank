@@ -38,6 +38,7 @@ const {
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content="https://agentrank-ai.com/og-image.png" />
     <title>{title}</title>
+    <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
     <link rel="alternate" type="application/atom+xml" title="AgentRank Rankings" href="/feed.xml" />
     {keywords && <meta name="keywords" content={keywords} />}
     {canonicalUrl && <link rel="canonical" href={canonicalUrl} />}
@@ -280,7 +281,7 @@ const {
             <a href="/movers/" class={activeTab === 'movers' ? 'active' : ''}>Movers</a>
             <a href="/agents/" class={activeTab === 'agents' ? 'active' : ''}>Agents <span class="badge-beta">beta</span></a>
             <a href="/submit/" class={activeTab === 'submit' ? 'active' : ''}>Submit</a>
-            <a href="/api-docs/" class={activeTab === 'api' ? 'active' : ''}>API</a>
+            <a href="/docs/" class={activeTab === 'api' ? 'active' : ''}>API</a>
             <a href="/pricing/" class={activeTab === 'pricing' ? 'active' : ''}>Pricing</a>
             <a href="/blog/" class={activeTab === 'blog' ? 'active' : ''}>Blog</a>
           </nav>

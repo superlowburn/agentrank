@@ -15,10 +15,15 @@ const STATIC_PAGES = [
   { path: '/tools/', changefreq: 'daily' },
   { path: '/movers/', changefreq: 'daily' },
   { path: '/agents/', changefreq: 'weekly' },
+  { path: '/compare/', changefreq: 'weekly' },
   { path: '/submit/', changefreq: 'weekly' },
-  { path: '/api-docs/', changefreq: 'weekly' },
+  { path: '/docs/', changefreq: 'weekly' },
   { path: '/blog/', changefreq: 'weekly' },
   { path: '/category/', changefreq: 'weekly' },
+  { path: '/pricing/', changefreq: 'weekly' },
+  { path: '/methodology/', changefreq: 'monthly' },
+  { path: '/integrations/', changefreq: 'weekly' },
+  { path: '/embed/', changefreq: 'monthly' },
 ];
 
 // Auto-discover blog posts at build time via Vite glob
