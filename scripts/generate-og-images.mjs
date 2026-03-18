@@ -7,7 +7,7 @@
  */
 
 import { chromium } from 'playwright';
-import { writeFileSync, mkdirSync, readFileSync } from 'fs';
+import { writeFileSync, mkdirSync, readFileSync, readdirSync, existsSync } from 'fs';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 
@@ -247,20 +247,8 @@ const PAGES = [
     label: 'agentrank-ai.com/blog',
     type: 'blog',
   },
-  {
-    slug: 'this-week-in-mcp-2026-03-17',
-    title: 'This Week in MCP',
-    subtitle: 'March 17, 2026 — top movers, new tools, ecosystem news',
-    label: 'agentrank-ai.com/blog',
-    type: 'blog',
-  },
-  {
-    slug: 'this-week-in-mcp-2026-03-24',
-    title: 'This Week in MCP',
-    subtitle: 'March 24, 2026 — top movers, new tools, ecosystem news',
-    label: 'agentrank-ai.com/blog',
-    type: 'blog',
-  },
+  // Weekly "This Week in MCP" entries are auto-discovered below from data/weekly/
+
   {
     slug: 'best-mcp-servers-ai-ml',
     title: 'Best MCP Servers for AI & Machine Learning',
@@ -360,6 +348,34 @@ const PAGES = [
     type: 'blog',
   },
 ];
+
+// ── Auto-discover weekly "This Week in MCP" posts ────────────────────────────
+// Reads data/weekly/*.json to find all weekly report dates and adds OG image
+// entries for any that aren't already in PAGES (by slug).
+const WEEKLY_DATA_DIR = join(__dirname, '../data/weekly');
+if (existsSync(WEEKLY_DATA_DIR)) {
+  const weeklyFiles = readdirSync(WEEKLY_DATA_DIR)
+    .filter(f => /^\d{4}-\d{2}-\d{2}\.json$/.test(f))
+    .sort();
+  for (const file of weeklyFiles) {
+    const date = file.replace('.json', '');
+    const slug = `this-week-in-mcp-${date}`;
+    if (!PAGES.find(p => p.slug === slug)) {
+      try {
+        const data = JSON.parse(readFileSync(join(WEEKLY_DATA_DIR, file), 'utf-8'));
+        const d = new Date(date + 'T00:00:00Z');
+        const shortDate = d.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric', timeZone: 'UTC' });
+        const newCount = data.stats?.new_tools_this_week ?? 0;
+        const subtitle = newCount > 0
+          ? `${shortDate} — ${newCount} new tools, top movers, ecosystem news`
+          : `${shortDate} — top movers, new tools, ecosystem news`;
+        PAGES.push({ slug, title: 'This Week in MCP', subtitle, label: 'agentrank-ai.com/blog', type: 'blog' });
+      } catch {
+        // Malformed JSON — skip
+      }
+    }
+  }
+}
 
 function buildHtml(page) {
   const isBlog = page.type === 'blog';

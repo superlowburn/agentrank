@@ -17,13 +17,13 @@ cd "$ROOT_DIR/scorer"
 npx tsx src/index.ts
 echo ""
 
-echo "Step 2b: Weekly report (Mondays only)"
+echo "Step 2b: Weekly roundup (Mondays only)"
 cd "$ROOT_DIR"
 if [ "$(date +%u)" = "1" ]; then
-  npx tsx scripts/weekly-report.ts
-  echo "Weekly report generated."
+  node scripts/generate-weekly-roundup.mjs
+  echo "Weekly roundup generated."
 else
-  echo "Not Monday, skipping weekly report."
+  echo "Not Monday, skipping weekly roundup."
 fi
 echo ""
 
