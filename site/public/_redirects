@@ -1,0 +1,28 @@
+# Cloudflare Pages redirect rules
+# Format: /old-path /new-path [status-code]
+
+# Singular/alternate URL patterns for main sections
+/integration         /integrations/    301
+/integration/        /integrations/    301
+/badge               /badges/          301
+/badge/              /badges/          301
+/agent               /agents/          301
+/agent/              /agents/          301
+
+# Common leaderboard/rankings URL patterns (inbound links from social)
+/leaderboard         /                 301
+/leaderboard/        /                 301
+/rankings            /                 301
+/rankings/           /                 301
+/ranking             /                 301
+/ranking/            /                 301
+/mcp                 /                 301
+/mcp/                /                 301
+/top                 /                 301
+/top/                /                 301
+
+# Old docs URL (was /docs.astro, now /docs/index.astro)
+/docs.html           /docs/            301
+
+# Old /how-to-choose-mcp-server slug (corrected to include "an")
+/blog/how-to-choose-mcp-server/    /blog/how-to-choose-an-mcp-server/    301

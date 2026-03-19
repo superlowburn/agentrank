@@ -25,8 +25,9 @@ const jsonLd = {
 <Base
   title="Integrations — AgentRank"
   description="Connect AgentRank to Cursor, VS Code, Cline, Claude Code, and Windsurf. One install and your AI coding assistant queries live ranked tool data instead of guessing."
-  keywords="AgentRank integrations, Cursor MCP, VS Code MCP, Cline MCP, Claude Code MCP, agentrank-mcp-server, AI coding assistant tool lookup"
+  keywords="AgentRank integrations, agentrank api, mcp server recommendations api, integrate agentrank, Cursor MCP, VS Code MCP, Cline MCP, Claude Code MCP, agentrank-mcp-server, AI coding assistant tool lookup"
   canonicalUrl="https://agentrank-ai.com/integrations/"
+  activeTab="integrations"
   jsonLd={jsonLd}
 >
   <div class="page-header">
@@ -41,6 +42,7 @@ const jsonLd = {
     <a href="#claude-code">Claude Code</a>
     <a href="#windsurf">Windsurf</a>
     <a href="#claude-desktop">Claude Desktop</a>
+    <a href="#api-quickstart">API Quickstart</a>
   </nav>
 
   <section class="how-it-works">
@@ -58,11 +60,15 @@ const jsonLd = {
 
     <h3 class="method-label">Option 1 — MCP server (recommended)</h3>
     <p class="method-desc">Add to <code>~/.cursor/mcp.json</code> for global use, or <code>.cursor/mcp.json</code> in your project for project-scoped access.</p>
-    <pre class="code-block">mkdir -p .cursor && curl -o .cursor/mcp.json https://raw.githubusercontent.com/superlowburn/agentrank/main/skill/agentrank/cursor/mcp.json</pre>
+    <div class="code-block-wrap">
+      <pre class="code-block">mkdir -p .cursor && curl -o .cursor/mcp.json https://raw.githubusercontent.com/superlowburn/agentrank/main/skill/agentrank/cursor/mcp.json</pre>
+      <button class="copy-btn" data-copy="mkdir -p .cursor && curl -o .cursor/mcp.json https://raw.githubusercontent.com/superlowburn/agentrank/main/skill/agentrank/cursor/mcp.json">Copy</button>
+    </div>
 
     <details class="show-config">
       <summary>Show config</summary>
-      <pre class="code-block">{`{
+      <div class="code-block-wrap">
+        <pre class="code-block">{`{
   "mcpServers": {
     "agentrank": {
       "command": "npx",
@@ -70,14 +76,22 @@ const jsonLd = {
     }
   }
 }`}</pre>
+        <button class="copy-btn" data-copy={`{\n  "mcpServers": {\n    "agentrank": {\n      "command": "npx",\n      "args": ["-y", "agentrank-mcp-server"]\n    }\n  }\n}`}>Copy</button>
+      </div>
     </details>
 
     <h3 class="method-label">Option 2 — Rules file</h3>
     <p class="method-desc">If you prefer cursor rules over MCP, copy <code>.cursorrules</code> to your project root or <code>~/.cursorrules</code> for global use.</p>
-    <pre class="code-block">curl -o .cursorrules https://raw.githubusercontent.com/superlowburn/agentrank/main/skill/agentrank/cursor/.cursorrules</pre>
+    <div class="code-block-wrap">
+      <pre class="code-block">curl -o .cursorrules https://raw.githubusercontent.com/superlowburn/agentrank/main/skill/agentrank/cursor/.cursorrules</pre>
+      <button class="copy-btn" data-copy="curl -o .cursorrules https://raw.githubusercontent.com/superlowburn/agentrank/main/skill/agentrank/cursor/.cursorrules">Copy</button>
+    </div>
 
     <p class="method-desc">For the new <code>.cursor/rules/</code> format (Cursor 0.43+):</p>
-    <pre class="code-block">mkdir -p .cursor/rules && curl -o .cursor/rules/agentrank.mdc https://raw.githubusercontent.com/superlowburn/agentrank/main/skill/agentrank/cursor/rules/agentrank.mdc</pre>
+    <div class="code-block-wrap">
+      <pre class="code-block">mkdir -p .cursor/rules && curl -o .cursor/rules/agentrank.mdc https://raw.githubusercontent.com/superlowburn/agentrank/main/skill/agentrank/cursor/rules/agentrank.mdc</pre>
+      <button class="copy-btn" data-copy="mkdir -p .cursor/rules && curl -o .cursor/rules/agentrank.mdc https://raw.githubusercontent.com/superlowburn/agentrank/main/skill/agentrank/cursor/rules/agentrank.mdc">Copy</button>
+    </div>
   </section>
 
   <!-- VS CODE -->
@@ -90,11 +104,15 @@ const jsonLd = {
 
     <h3 class="method-label">Option 1 — MCP server (recommended)</h3>
     <p class="method-desc">Add to <code>.vscode/mcp.json</code> in your project. VS Code picks this up automatically in agent mode.</p>
-    <pre class="code-block">mkdir -p .vscode && curl -o .vscode/mcp.json https://raw.githubusercontent.com/superlowburn/agentrank/main/skill/agentrank/vscode/mcp.json</pre>
+    <div class="code-block-wrap">
+      <pre class="code-block">mkdir -p .vscode && curl -o .vscode/mcp.json https://raw.githubusercontent.com/superlowburn/agentrank/main/skill/agentrank/vscode/mcp.json</pre>
+      <button class="copy-btn" data-copy="mkdir -p .vscode && curl -o .vscode/mcp.json https://raw.githubusercontent.com/superlowburn/agentrank/main/skill/agentrank/vscode/mcp.json">Copy</button>
+    </div>
 
     <details class="show-config">
       <summary>Show config</summary>
-      <pre class="code-block">{`{
+      <div class="code-block-wrap">
+        <pre class="code-block">{`{
   "inputs": [],
   "servers": {
     "agentrank": {
@@ -104,11 +122,16 @@ const jsonLd = {
     }
   }
 }`}</pre>
+        <button class="copy-btn" data-copy={`{\n  "inputs": [],\n  "servers": {\n    "agentrank": {\n      "type": "stdio",\n      "command": "npx",\n      "args": ["-y", "agentrank-mcp-server"]\n    }\n  }\n}`}>Copy</button>
+      </div>
     </details>
 
     <h3 class="method-label">Option 2 — Copilot instructions</h3>
     <p class="method-desc">Copy <code>copilot-instructions.md</code> to <code>.github/</code> — Copilot reads this automatically for workspace-level context.</p>
-    <pre class="code-block">mkdir -p .github && curl -o .github/copilot-instructions.md https://raw.githubusercontent.com/superlowburn/agentrank/main/skill/agentrank/vscode/copilot-instructions.md</pre>
+    <div class="code-block-wrap">
+      <pre class="code-block">mkdir -p .github && curl -o .github/copilot-instructions.md https://raw.githubusercontent.com/superlowburn/agentrank/main/skill/agentrank/vscode/copilot-instructions.md</pre>
+      <button class="copy-btn" data-copy="mkdir -p .github && curl -o .github/copilot-instructions.md https://raw.githubusercontent.com/superlowburn/agentrank/main/skill/agentrank/vscode/copilot-instructions.md">Copy</button>
+    </div>
   </section>
 
   <!-- CLINE -->
@@ -121,7 +144,8 @@ const jsonLd = {
 
     <h3 class="method-label">Option 1 — MCP server (recommended)</h3>
     <p class="method-desc">Open Cline in VS Code, go to <strong>MCP Servers</strong>, click <strong>Configure MCP Servers</strong>, and add the following to <code>cline_mcp_settings.json</code>:</p>
-    <pre class="code-block">{`{
+    <div class="code-block-wrap">
+      <pre class="code-block">{`{
   "mcpServers": {
     "agentrank": {
       "command": "npx",
@@ -131,10 +155,15 @@ const jsonLd = {
     }
   }
 }`}</pre>
+      <button class="copy-btn" data-copy={`{\n  "mcpServers": {\n    "agentrank": {\n      "command": "npx",\n      "args": ["-y", "agentrank-mcp-server"],\n      "disabled": false,\n      "autoApprove": ["search", "lookup", "get_badge_url"]\n    }\n  }\n}`}>Copy</button>
+    </div>
 
     <h3 class="method-label">Option 2 — Rules file</h3>
     <p class="method-desc">Copy <code>.clinerules</code> to your project root or <code>~/.clinerules</code> for global use.</p>
-    <pre class="code-block">curl -o .clinerules https://raw.githubusercontent.com/superlowburn/agentrank/main/skill/agentrank/cline/.clinerules</pre>
+    <div class="code-block-wrap">
+      <pre class="code-block">curl -o .clinerules https://raw.githubusercontent.com/superlowburn/agentrank/main/skill/agentrank/cline/.clinerules</pre>
+      <button class="copy-btn" data-copy="curl -o .clinerules https://raw.githubusercontent.com/superlowburn/agentrank/main/skill/agentrank/cline/.clinerules">Copy</button>
+    </div>
   </section>
 
   <!-- CLAUDE CODE -->
@@ -146,10 +175,16 @@ const jsonLd = {
     <p class="platform-desc">Claude Code has native MCP support. One command installs the server globally.</p>
 
     <h3 class="method-label">MCP server</h3>
-    <pre class="code-block">claude mcp add agentrank -- npx -y agentrank-mcp-server</pre>
+    <div class="code-block-wrap">
+      <pre class="code-block">claude mcp add agentrank -- npx -y agentrank-mcp-server</pre>
+      <button class="copy-btn" data-copy="claude mcp add agentrank -- npx -y agentrank-mcp-server">Copy</button>
+    </div>
 
     <p class="method-desc">Or install the skill (includes both MCP and instructions):</p>
-    <pre class="code-block">npx skills add superlowburn/agentrank --skill skill/agentrank</pre>
+    <div class="code-block-wrap">
+      <pre class="code-block">npx skills add superlowburn/agentrank --skill skill/agentrank</pre>
+      <button class="copy-btn" data-copy="npx skills add superlowburn/agentrank --skill skill/agentrank">Copy</button>
+    </div>
   </section>
 
   <!-- WINDSURF -->
@@ -161,7 +196,10 @@ const jsonLd = {
     <p class="platform-desc">Windsurf uses <code>.windsurfrules</code> for AI instructions. Copy to your project root or global rules location.</p>
 
     <h3 class="method-label">Rules file</h3>
-    <pre class="code-block">curl -o .windsurfrules https://raw.githubusercontent.com/superlowburn/agentrank/main/skill/agentrank/windsurf/.windsurfrules</pre>
+    <div class="code-block-wrap">
+      <pre class="code-block">curl -o .windsurfrules https://raw.githubusercontent.com/superlowburn/agentrank/main/skill/agentrank/windsurf/.windsurfrules</pre>
+      <button class="copy-btn" data-copy="curl -o .windsurfrules https://raw.githubusercontent.com/superlowburn/agentrank/main/skill/agentrank/windsurf/.windsurfrules">Copy</button>
+    </div>
     <p class="method-desc">For global use, add to <code>~/.codeium/windsurf/memories/global_rules.md</code>.</p>
   </section>
 
@@ -175,7 +213,8 @@ const jsonLd = {
 
     <h3 class="method-label">MCP server</h3>
     <p class="method-desc">Add to <code>~/Library/Application Support/Claude/claude_desktop_config.json</code> (macOS) or <code>%APPDATA%\Claude\claude_desktop_config.json</code> (Windows):</p>
-    <pre class="code-block">{`{
+    <div class="code-block-wrap">
+      <pre class="code-block">{`{
   "mcpServers": {
     "agentrank": {
       "command": "npx",
@@ -183,6 +222,8 @@ const jsonLd = {
     }
   }
 }`}</pre>
+      <button class="copy-btn" data-copy={`{\n  "mcpServers": {\n    "agentrank": {\n      "command": "npx",\n      "args": ["-y", "agentrank-mcp-server"]\n    }\n  }\n}`}>Copy</button>
+    </div>
     <p class="method-desc">Restart Claude Desktop after saving.</p>
   </section>
 
@@ -208,14 +249,117 @@ const jsonLd = {
     </div>
   </section>
 
+  <!-- API QUICKSTART -->
+  <section class="api-quickstart" id="api-quickstart">
+    <h2 class="section-header">API quickstart</h2>
+    <p class="api-intro">Prefer direct API calls? The REST API is free to use, no key required. <strong>Free tier: 100 requests/min per IP.</strong> <a href="/pricing/">Pro keys</a> unlock 10,000 req/day.</p>
+
+    <div class="api-endpoint">
+      <div class="endpoint-header">
+        <span class="http-method">GET</span>
+        <code class="endpoint-path">/api/v1/search</code>
+        <span class="endpoint-desc">Search tools by keyword</span>
+      </div>
+      <div class="code-block-wrap">
+        <div class="code-label">curl</div>
+        <pre class="code-block">curl "https://agentrank-ai.com/api/v1/search?q=browser+automation&limit=5"</pre>
+        <button class="copy-btn" data-copy={`curl "https://agentrank-ai.com/api/v1/search?q=browser+automation&limit=5"`}>Copy</button>
+      </div>
+      <div class="response-block">
+        <div class="code-label response-label">Response</div>
+        <pre class="code-block response-code">{`{
+  "query": "browser automation",
+  "results": [
+    {
+      "type": "tool",
+      "id": "microsoft--playwright-mcp",
+      "name": "microsoft/playwright-mcp",
+      "description": "Playwright MCP server for browser automation",
+      "score": 94.2,
+      "rank": 3,
+      "url": "https://agentrank-ai.com/tool/microsoft--playwright-mcp/"
+    }
+  ],
+  "meta": { "total": 127, "limit": 5, "offset": 0 }
+}`}</pre>
+      </div>
+    </div>
+
+    <div class="api-endpoint">
+      <div class="endpoint-header">
+        <span class="http-method">GET</span>
+        <code class="endpoint-path">/api/v1/tool/:slug</code>
+        <span class="endpoint-desc">Get a specific tool's score and signals</span>
+      </div>
+      <div class="code-block-wrap">
+        <div class="code-label">curl</div>
+        <pre class="code-block">curl "https://agentrank-ai.com/api/v1/tool/microsoft--playwright-mcp"</pre>
+        <button class="copy-btn" data-copy={`curl "https://agentrank-ai.com/api/v1/tool/microsoft--playwright-mcp"`}>Copy</button>
+      </div>
+      <div class="response-block">
+        <div class="code-label response-label">Response</div>
+        <pre class="code-block response-code">{`{
+  "slug": "microsoft--playwright-mcp",
+  "name": "microsoft/playwright-mcp",
+  "score": 94.2,
+  "rank": 3,
+  "signals": {
+    "stars": 8200,
+    "starsScore": 22,
+    "freshnessScore": 25,
+    "issueHealthScore": 20,
+    "contributorsScore": 10,
+    "dependentsScore": 17.2
+  },
+  "lastCommitDate": "2026-03-17"
+}`}</pre>
+      </div>
+    </div>
+
+    <div class="api-endpoint">
+      <div class="endpoint-header">
+        <span class="http-method">GET</span>
+        <code class="endpoint-path">/api/v1/top</code>
+        <span class="endpoint-desc">Top-ranked tools (default: top 20)</span>
+      </div>
+      <div class="code-block-wrap">
+        <div class="code-label">curl</div>
+        <pre class="code-block">curl "https://agentrank-ai.com/api/v1/top?limit=10&category=tools"</pre>
+        <button class="copy-btn" data-copy={`curl "https://agentrank-ai.com/api/v1/top?limit=10&category=tools"`}>Copy</button>
+      </div>
+    </div>
+
+    <p class="rate-limit-note">Rate limit headers: <code>X-RateLimit-Limit</code>, <code>X-RateLimit-Remaining</code>, <code>X-RateLimit-Reset</code> on every response. See <a href="/docs/rate-limits/">rate limit docs</a> for details.</p>
+  </section>
+
   <section class="footer-links">
-    <a href="/api-docs/">API docs</a>
+    <a href="/docs/">API docs</a>
     <span class="sep">&bull;</span>
     <a href="https://github.com/superlowburn/agentrank/tree/main/skill/agentrank" target="_blank" rel="noopener">All configs on GitHub</a>
     <span class="sep">&bull;</span>
     <a href="https://www.npmjs.com/package/agentrank-mcp-server" target="_blank" rel="noopener">npm package</a>
   </section>
 </Base>
+
+<script>
+  document.querySelectorAll<HTMLButtonElement>('.copy-btn').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const text = btn.dataset.copy ?? '';
+      try {
+        await navigator.clipboard.writeText(text);
+        const orig = btn.textContent;
+        btn.textContent = 'Copied!';
+        btn.classList.add('copied');
+        setTimeout(() => {
+          btn.textContent = orig;
+          btn.classList.remove('copied');
+        }, 1500);
+      } catch {
+        btn.textContent = 'Error';
+      }
+    });
+  });
+</script>
 
 <style>
   .page-header {
@@ -357,17 +501,68 @@ const jsonLd = {
     font-size: 0.75rem;
   }
 
+  .code-block-wrap {
+    position: relative;
+    margin-bottom: 0.5rem;
+  }
+
   .code-block {
     background: var(--bg-surface);
     border: 1px solid var(--border);
     border-radius: 6px;
     padding: 0.75rem 1rem;
+    padding-right: 4.5rem;
     font-size: 0.75rem;
     overflow-x: auto;
     white-space: pre;
     line-height: 1.5;
-    margin-bottom: 0.5rem;
     font-family: 'Cascadia Code', 'Source Code Pro', Menlo, monospace;
+    margin: 0;
+  }
+
+  .copy-btn {
+    position: absolute;
+    top: 0.4rem;
+    right: 0.4rem;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+    font-family: inherit;
+    font-size: 0.68rem;
+    padding: 0.2rem 0.55rem;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: color 0.15s, border-color 0.15s;
+  }
+
+  .copy-btn:hover {
+    color: var(--text);
+    border-color: var(--text-muted);
+  }
+
+  .copy-btn.copied {
+    color: var(--accent);
+    border-color: var(--accent);
+  }
+
+  .code-label {
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-muted);
+    margin-bottom: 0.3rem;
+  }
+
+  .response-label {
+    margin-top: 0.5rem;
+  }
+
+  .response-block {
+    margin-bottom: 0.5rem;
+  }
+
+  .response-code {
+    padding-right: 1rem;
   }
 
   .show-config {
@@ -431,6 +626,77 @@ const jsonLd = {
     margin: 0;
   }
 
+  /* API Quickstart */
+  .api-quickstart {
+    margin-bottom: 2.5rem;
+  }
+
+  .api-intro {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    margin-bottom: 1.5rem;
+    line-height: 1.6;
+  }
+
+  .api-intro a {
+    color: var(--accent);
+  }
+
+  .api-endpoint {
+    margin-bottom: 2rem;
+    padding-left: 1rem;
+    border-left: 2px solid var(--border);
+  }
+
+  .endpoint-header {
+    display: flex;
+    align-items: baseline;
+    gap: 0.6rem;
+    margin-bottom: 0.75rem;
+    flex-wrap: wrap;
+  }
+
+  .http-method {
+    font-size: 0.65rem;
+    font-weight: 700;
+    color: var(--bg);
+    background: var(--accent);
+    padding: 0.1rem 0.4rem;
+    border-radius: 2px;
+    letter-spacing: 0.04em;
+    flex-shrink: 0;
+  }
+
+  .endpoint-path {
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: var(--text);
+  }
+
+  .endpoint-desc {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+  }
+
+  .rate-limit-note {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    margin-top: 1rem;
+    line-height: 1.5;
+  }
+
+  .rate-limit-note code {
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    padding: 0.1rem 0.3rem;
+    border-radius: 2px;
+    font-size: 0.72rem;
+  }
+
+  .rate-limit-note a {
+    color: var(--accent);
+  }
+
   .footer-links {
     font-size: 0.82rem;
     color: var(--text-muted);
@@ -465,6 +731,18 @@ const jsonLd = {
 
     .tools-grid {
       grid-template-columns: 1fr;
+    }
+
+    .code-block {
+      padding-right: 1rem;
+    }
+
+    .copy-btn {
+      position: static;
+      display: block;
+      margin-top: 0.4rem;
+      width: 100%;
+      text-align: center;
     }
   }
 </style>
