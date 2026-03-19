@@ -1,0 +1,397 @@
+---
+export const prerender = false;
+
+import Base from '../../layouts/Base.astro';
+import { scoreColor } from '../../data/tools';
+
+const { slug } = Astro.params;
+if (!slug) return Astro.redirect('/embed/');
+
+const fullName = slug.replace('--', '/');
+const { env } = Astro.locals.runtime;
+
+const row = await env.DB.prepare(
+  'SELECT full_name, score, rank, stars, description FROM tools WHERE full_name = ?'
+)
+  .bind(fullName)
+  .first();
+
+if (!row) {
+  return Astro.redirect('/embed/');
+}
+
+const SITE_URL = 'https://agentrank-ai.com';
+const score = row.score as number;
+const rank = row.rank as number | null;
+const stars = row.stars as number;
+const description = row.description as string | null;
+const displayName = fullName;
+const toolUrl = `${SITE_URL}/tool/${slug}/`;
+const badgeUrl = `${SITE_URL}/api/badge/tool/${slug}`;
+const widgetSvgUrl = `${SITE_URL}/api/embed/${slug}.svg`;
+const widgetHtmlUrl = `${SITE_URL}/api/embed/${slug}.html`;
+
+const mdBadge = `[![AgentRank](${badgeUrl})](${toolUrl})`;
+const htmlBadge = `<a href="${toolUrl}"><img src="${badgeUrl}" alt="AgentRank"></a>`;
+const mdWidget = `[![AgentRank](${widgetSvgUrl})](${toolUrl})`;
+const htmlWidget = `<a href="${toolUrl}"><img src="${widgetSvgUrl}" alt="AgentRank" height="148"></a>`;
+const iframeSnippet = `<iframe src="${widgetHtmlUrl}" width="340" height="170" frameborder="0" style="border-radius:6px;border:none;overflow:hidden;"></iframe>`;
+const scriptSnippet = `<script src="${SITE_URL}/embed.js" data-tool="${fullName}"><\/script>`;
+
+const color = scoreColor(score);
+---
+
+<Base
+  title={`Embed AgentRank Score — ${displayName}`}
+  description={`Embed the AgentRank score for ${displayName} in your README or website. ${score.toFixed(0)}/100 — updated daily from real signals.`}
+  keywords={`AgentRank badge ${displayName}, MCP server score badge, embed agent rank`}
+  canonicalUrl={`${SITE_URL}/embed/${slug}/`}
+>
+  <div class="header">
+    <div class="breadcrumb">
+      <a href="/embed/">Embed</a> / <a href={toolUrl}>{displayName}</a>
+    </div>
+    <div class="title-row">
+      <h1>Embed Score</h1>
+      <div class="score-chip" style={`color:${color};border-color:${color}20;background:${color}12;`}>
+        {score.toFixed(0)}<span class="score-denom">/100</span>
+      </div>
+    </div>
+    <p class="subtitle">
+      {description ? description.slice(0, 120) + (description.length > 120 ? '…' : '') : displayName}
+    </p>
+    <div class="meta-row">
+      {rank && <span class="meta-chip">Rank #{rank}</span>}
+      <span class="meta-chip">{stars.toLocaleString()} stars</span>
+      <a href={toolUrl} class="tool-link">View full profile →</a>
+    </div>
+  </div>
+
+  <!-- Badge section -->
+  <section class="section">
+    <h2>Score Badge <span class="format-badge">shields.io style</span></h2>
+    <p class="section-desc">Minimal inline badge — best for README tables and lists.</p>
+    <div class="preview-row">
+      <img src={badgeUrl} alt={`AgentRank score for ${displayName}`} height="20" />
+    </div>
+    <div class="snippets">
+      <div class="snippet-group">
+        <div class="snippet-label">Markdown</div>
+        <div class="snippet-row">
+          <code class="snippet-code" id="badge-md">{mdBadge}</code>
+          <button class="copy-btn" data-copy={mdBadge}>Copy</button>
+        </div>
+      </div>
+      <div class="snippet-group">
+        <div class="snippet-label">HTML</div>
+        <div class="snippet-row">
+          <code class="snippet-code" id="badge-html">{htmlBadge}</code>
+          <button class="copy-btn" data-copy={htmlBadge}>Copy</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- SVG Widget section -->
+  <section class="section">
+    <h2>Score Widget — SVG <span class="format-badge">GitHub README</span></h2>
+    <p class="section-desc">Rich widget with signal breakdown. Use in GitHub READMEs where iframes aren't allowed.</p>
+    <div class="widget-preview">
+      <img src={widgetSvgUrl} alt={`AgentRank widget for ${displayName}`} height="148" />
+    </div>
+    <div class="snippets">
+      <div class="snippet-group">
+        <div class="snippet-label">Markdown</div>
+        <div class="snippet-row">
+          <code class="snippet-code" id="widget-md">{mdWidget}</code>
+          <button class="copy-btn" data-copy={mdWidget}>Copy</button>
+        </div>
+      </div>
+      <div class="snippet-group">
+        <div class="snippet-label">HTML</div>
+        <div class="snippet-row">
+          <code class="snippet-code" id="widget-html">{htmlWidget}</code>
+          <button class="copy-btn" data-copy={htmlWidget}>Copy</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- iframe / JS section -->
+  <section class="section">
+    <h2>Score Widget — Live <span class="format-badge">blogs &amp; sites</span></h2>
+    <p class="section-desc">Interactive widget with light/dark mode. Use in blogs, newsletters, or any site that supports iframes.</p>
+    <div class="iframe-preview">
+      <iframe
+        src={widgetHtmlUrl}
+        width="340"
+        height="170"
+        frameborder="0"
+        scrolling="no"
+        title={`AgentRank widget for ${displayName}`}
+        style="border:none;border-radius:6px;display:block;"
+      />
+    </div>
+    <div class="snippets">
+      <div class="snippet-group">
+        <div class="snippet-label">HTML iframe</div>
+        <div class="snippet-row">
+          <code class="snippet-code" id="iframe-code">{iframeSnippet}</code>
+          <button class="copy-btn" data-copy={iframeSnippet}>Copy</button>
+        </div>
+      </div>
+      <div class="snippet-group">
+        <div class="snippet-label">JS snippet</div>
+        <div class="snippet-row">
+          <code class="snippet-code" id="script-code">{scriptSnippet}</code>
+          <button class="copy-btn" data-copy={scriptSnippet}>Copy</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <div class="footer-links">
+    <a href={toolUrl} class="footer-link">View full profile for {displayName}</a>
+    <a href="/embed/" class="footer-link secondary">Browse all embed codes</a>
+    <a href="/docs/embed/" class="footer-link secondary">Embed documentation</a>
+  </div>
+
+  <script>
+    document.querySelectorAll<HTMLButtonElement>('.copy-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const text = btn.dataset.copy || '';
+        navigator.clipboard.writeText(text).then(() => {
+          const orig = btn.textContent;
+          btn.textContent = 'Copied!';
+          setTimeout(() => { btn.textContent = orig; }, 2000);
+        });
+      });
+    });
+  </script>
+</Base>
+
+<style>
+  .header {
+    margin-bottom: 2rem;
+  }
+
+  .breadcrumb {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    margin-bottom: 0.5rem;
+  }
+
+  .breadcrumb a {
+    color: var(--text-muted);
+    text-decoration: none;
+  }
+
+  .breadcrumb a:hover {
+    color: var(--accent);
+  }
+
+  .title-row {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.4rem;
+  }
+
+  h1 {
+    font-size: 1.4rem;
+    font-weight: 700;
+  }
+
+  .score-chip {
+    font-size: 0.85rem;
+    font-weight: 700;
+    padding: 0.15rem 0.5rem;
+    border-radius: 4px;
+    border: 1px solid;
+    line-height: 1;
+  }
+
+  .score-denom {
+    font-size: 0.65rem;
+    font-weight: 400;
+    opacity: 0.7;
+  }
+
+  .subtitle {
+    font-size: 0.82rem;
+    color: var(--text-muted);
+    margin-bottom: 0.5rem;
+    line-height: 1.4;
+  }
+
+  .meta-row {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+
+  .meta-chip {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    padding: 0.15rem 0.45rem;
+  }
+
+  .tool-link {
+    font-size: 0.75rem;
+    color: var(--accent);
+    text-decoration: none;
+    font-weight: 600;
+  }
+
+  .tool-link:hover {
+    text-decoration: underline;
+  }
+
+  .section {
+    margin-bottom: 0.5rem;
+  }
+
+  h2 {
+    font-size: 1rem;
+    font-weight: 700;
+    margin-bottom: 0.3rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+
+  .format-badge {
+    font-size: 0.65rem;
+    font-weight: 600;
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+    padding: 0.1rem 0.4rem;
+    border-radius: 3px;
+  }
+
+  .section-desc {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    margin-bottom: 0.75rem;
+  }
+
+  .preview-row {
+    margin-bottom: 0.75rem;
+  }
+
+  .widget-preview {
+    margin-bottom: 0.75rem;
+  }
+
+  .widget-preview img {
+    display: block;
+    border-radius: 6px;
+    max-width: 100%;
+  }
+
+  .iframe-preview {
+    margin-bottom: 0.75rem;
+    max-width: 340px;
+  }
+
+  .snippets {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .snippet-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+  }
+
+  .snippet-label {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  .snippet-row {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  .snippet-code {
+    flex: 1;
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    padding: 0.35rem 0.5rem;
+    font-size: 0.68rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: var(--text-muted);
+    display: block;
+    min-width: 0;
+  }
+
+  .copy-btn {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    padding: 0.3rem 0.6rem;
+    font-size: 0.7rem;
+    cursor: pointer;
+    color: var(--text-muted);
+    font-family: inherit;
+    flex-shrink: 0;
+    white-space: nowrap;
+  }
+
+  .copy-btn:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  .divider {
+    border-top: 1px solid var(--border);
+    margin: 1.75rem 0;
+  }
+
+  .footer-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    align-items: center;
+    padding-top: 0.5rem;
+  }
+
+  .footer-link {
+    font-size: 0.82rem;
+    color: var(--accent);
+    text-decoration: none;
+    font-weight: 600;
+  }
+
+  .footer-link.secondary {
+    color: var(--text-muted);
+    font-weight: 400;
+    font-size: 0.78rem;
+  }
+
+  .footer-link:hover {
+    text-decoration: underline;
+  }
+</style>
