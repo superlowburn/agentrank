@@ -6,11 +6,11 @@ import BlogSubscribeCTA from '../../components/BlogSubscribeCTA.astro';
 import RelatedPosts from '../../components/RelatedPosts.astro';
 
 const relatedPosts = [
+  { href: '/blog/mcp-server-framework-comparison/', title: 'MCP Server Framework Comparison: SDK vs FastMCP vs MCP-Go' },
   { href: '/blog/mcp-server-comparison-top-10/', title: 'MCP Server Comparison: Top 10 Head-to-Head' },
   { href: '/blog/best-mcp-servers-database/', title: 'Best MCP Servers for Database Management in 2026' },
   { href: '/blog/best-mcp-servers-devops/', title: 'Best MCP Servers for DevOps & Infrastructure in 2026' },
   { href: '/blog/best-mcp-servers-code-generation/', title: 'Best MCP Servers for Code Generation in 2026' },
-  { href: '/blog/mcp-server-landscape-q1-2026/', title: 'The MCP Server Landscape: Q1 2026' },
   { href: '/blog/state-of-mcp-2026/', title: 'The State of MCP Servers & Agent Tools in 2026' },
 ];
 
@@ -42,7 +42,7 @@ const jsonLd = {
     '@id': 'https://agentrank-ai.com/blog/how-to-choose-an-mcp-server/',
   },
   image: 'https://agentrank-ai.com/og-image.png',
-  keywords: 'how to choose MCP server, best MCP server 2026, MCP server evaluation, MCP server comparison, picking MCP server, MCP server quality signals',
+  keywords: 'how to choose MCP server, best MCP server, MCP server comparison, MCP server guide, MCP server evaluation, best MCP server 2026, picking MCP server, MCP server quality signals',
 };
 
 const signals = [
@@ -216,7 +216,7 @@ const faqJsonLd = {
   title="How to Choose an MCP Server in 2026 — AgentRank"
   description="A decision framework for evaluating MCP servers. Five signals separate reliable tools from abandoned experiments — real data from 25K+ indexed tools."
   activeTab="blog"
-  keywords="how to choose MCP server, MCP server evaluation, best MCP server 2026, MCP server quality, picking MCP server, MCP server comparison guide"
+  keywords="how to choose MCP server, best MCP server, MCP server comparison, MCP server guide, MCP server evaluation, MCP server quality 2026, picking MCP server"
   canonicalUrl="https://agentrank-ai.com/blog/how-to-choose-an-mcp-server/"
   jsonLd={[jsonLd, faqJsonLd]}
 
@@ -229,7 +229,7 @@ const faqJsonLd = {
       <div class="post-meta">
         <time datetime={publishDate}>March 17, 2026</time>
         <span class="sep">&middot;</span>
-        <span>7 min read</span>
+        <span>10 min read</span>
         <span class="sep">&middot;</span>
         <span>AgentRank Index</span>
       </div>
@@ -245,6 +245,8 @@ const faqJsonLd = {
       <ol>
         <li><a href="#five-signals">The five signals</a></li>
         <li><a href="#questions">Five questions to ask before committing</a></li>
+        <li><a href="#language-support">Language and runtime fit</a></li>
+        <li><a href="#use-case-fit">Use case fit</a></li>
         <li><a href="#tiers">Score tiers and what they mean</a></li>
         <li><a href="#top-picks">Top picks by category</a></li>
         <li><a href="#official-vs-community">Official vs community servers</a></li>
@@ -305,6 +307,85 @@ const faqJsonLd = {
           </div>
         ))}
       </div>
+    </section>
+
+    <section id="language-support">
+      <h2>Language and runtime fit</h2>
+      <p>
+        MCP servers are available in TypeScript, Python, Go, and a handful of other languages.
+        The right choice depends on your agent stack — mismatched runtimes add operational overhead.
+      </p>
+
+      <h3>TypeScript / Node.js</h3>
+      <p>
+        The largest share of the AgentRank index — roughly 58% of indexed servers — are TypeScript or JavaScript.
+        The official Anthropic SDK is TypeScript-first, so TS servers get the most ecosystem support and are
+        typically the fastest to update when the MCP spec changes. If you're building in Node, prefer TS servers.
+      </p>
+
+      <h3>Python</h3>
+      <p>
+        Python servers dominate the data/ML/AI category. If your agent stack is Python-heavy — LangChain,
+        LlamaIndex, CrewAI — Python MCP servers integrate naturally. FastMCP has become the de facto
+        Python framework; servers built on it tend to be well-structured and easy to extend.
+        See our <a href="/blog/mcp-server-framework-comparison/" class="inline-link">MCP server framework comparison</a>
+        for how FastMCP compares to the official SDK.
+      </p>
+
+      <h3>Go and others</h3>
+      <p>
+        Go servers are less common but appear in infrastructure and DevOps tooling.
+        They compile to single binaries, which simplifies deployment — useful for Kubernetes or
+        Docker environments where you don't want a Node or Python runtime dependency.
+        Rust servers exist but are rare; treat them as experimental unless the repo has strong signals.
+      </p>
+
+      <p class="note">
+        Language is a filter, not a rank signal. A well-maintained Python server beats a stale TypeScript server.
+        Filter by language to match your runtime, then rank by AgentRank score within that set.
+      </p>
+    </section>
+
+    <section id="use-case-fit">
+      <h2>Use case fit</h2>
+      <p>
+        The AgentRank score tells you how healthy a server is. It doesn't tell you whether it's the
+        right tool for your specific use case. Run this fit check after the quality check.
+      </p>
+
+      <h3>Scope: read vs read-write</h3>
+      <p>
+        Some servers expose full read-write access; others are deliberately read-only for safety.
+        For data exploration and analytics agents, read-only is often preferable —
+        <a href="/tool/benborla--mcp-server-mysql/" class="inline-link">benborla/mcp-server-mysql</a>
+        is read-only by design, which reduces blast radius when agents make mistakes.
+        Check the README for explicit scope documentation before deploying.
+      </p>
+
+      <h3>Transport: local vs remote</h3>
+      <p>
+        Local servers (stdio transport) run as subprocesses on the same machine as the agent.
+        Remote servers (HTTP/SSE) run independently and can serve multiple agents.
+        If you're deploying multiple agents that need the same tool, a remote server reduces
+        duplication. If you're running a single local agent, stdio is simpler and has no auth surface.
+      </p>
+
+      <h3>Auth requirements</h3>
+      <p>
+        Check what the server needs to authenticate. OAuth-based servers (Notion, Slack, Google Workspace)
+        require token management. API-key servers (most database tools) are simpler.
+        Unofficial servers may store credentials in ways that require security review.
+        Official servers from vendors tend to follow their existing auth patterns — safer by default.
+      </p>
+
+      <h3>Does it match your agent's intent surface?</h3>
+      <p>
+        A tool that exposes 40 capabilities is not better than one that exposes 5 targeted ones.
+        More tools increase the probability of an agent calling the wrong one. Prefer servers
+        that are scoped to the operations your agent actually needs. The
+        <a href="/blog/mcp-server-comparison-top-10/" class="inline-link">MCP Server Comparison: Top 10 Head-to-Head</a>
+        walks through capability-by-capability comparisons for the most common categories.
+      </p>
     </section>
 
     <section id="tiers">
@@ -465,6 +546,18 @@ const faqJsonLd = {
         <div class="check-item">
           <span class="check">&#x25A1;</span>
           <span>At least one other repo depending on it</span>
+        </div>
+        <div class="check-item">
+          <span class="check">&#x25A1;</span>
+          <span>Language matches your agent runtime (TS for Node, Python for ML stacks, Go for infra)</span>
+        </div>
+        <div class="check-item">
+          <span class="check">&#x25A1;</span>
+          <span>Scope is appropriate — read-only vs read-write for your agent's use case</span>
+        </div>
+        <div class="check-item">
+          <span class="check">&#x25A1;</span>
+          <span>Auth model is acceptable (API key vs OAuth vs token management)</span>
         </div>
       </div>
 

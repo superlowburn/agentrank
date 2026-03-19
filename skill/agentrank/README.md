@@ -11,7 +11,7 @@ npx skills add https://agentrank-ai.com
 Or from GitHub:
 
 ```bash
-npx skills add superlowburn/agentrank --skill skill/agentrank
+npx skills add superlowburn/agentrank --skill agentrank
 ```
 
 See [SKILL.md](SKILL.md) for the full Claude Code skill.
