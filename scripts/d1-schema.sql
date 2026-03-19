@@ -25,14 +25,20 @@ CREATE TABLE tools (
   npm_package TEXT,
   pypi_weekly_downloads INTEGER NOT NULL DEFAULT 0,
   pypi_package TEXT,
-  category TEXT
+  category TEXT,
+  sponsored INTEGER NOT NULL DEFAULT 0,
+  sponsor_tier TEXT
 );
 
 CREATE INDEX idx_tools_full_name ON tools(full_name);
 CREATE INDEX idx_tools_rank ON tools(rank);
 CREATE INDEX idx_tools_score ON tools(score DESC);
+CREATE INDEX idx_tools_sponsored ON tools(sponsored) WHERE sponsored = 1;
 -- Migration (run once on existing D1 if pipeline hasn't rebuilt the table):
 -- ALTER TABLE tools ADD COLUMN category TEXT;
+-- ALTER TABLE tools ADD COLUMN sponsored INTEGER NOT NULL DEFAULT 0;
+-- ALTER TABLE tools ADD COLUMN sponsor_tier TEXT;
+-- CREATE INDEX IF NOT EXISTS idx_tools_sponsored ON tools(sponsored) WHERE sponsored = 1;
 -- ALTER TABLE tools ADD COLUMN npm_weekly_downloads INTEGER NOT NULL DEFAULT 0;
 -- ALTER TABLE tools ADD COLUMN npm_package TEXT;
 -- ALTER TABLE tools ADD COLUMN pypi_weekly_downloads INTEGER NOT NULL DEFAULT 0;
@@ -260,21 +266,25 @@ CREATE TABLE IF NOT EXISTS subscriptions (
   user_email TEXT NOT NULL,
   stripe_customer_id TEXT NOT NULL,
   stripe_subscription_id TEXT NOT NULL UNIQUE,
-  tier TEXT NOT NULL,                               -- 'verified_publisher' | 'pro_api'
+  tier TEXT NOT NULL,                               -- 'verified_publisher' | 'pro_api' | 'sponsored_basic' | 'sponsored_pro' | 'sponsored_enterprise'
   status TEXT NOT NULL DEFAULT 'active',            -- 'active' | 'past_due' | 'cancelled'
   billing TEXT NOT NULL DEFAULT 'monthly',          -- 'monthly' | 'annual'
   current_period_end INTEGER NOT NULL,              -- unix timestamp
   created_at INTEGER NOT NULL,
-  updated_at INTEGER NOT NULL
+  updated_at INTEGER NOT NULL,
+  tool_full_name TEXT                               -- for sponsored tiers: "owner/repo" of the sponsored tool
 );
 CREATE INDEX IF NOT EXISTS idx_subscriptions_email ON subscriptions(user_email);
 CREATE INDEX IF NOT EXISTS idx_subscriptions_stripe ON subscriptions(stripe_subscription_id);
 CREATE INDEX IF NOT EXISTS idx_subscriptions_status ON subscriptions(status);
+CREATE INDEX IF NOT EXISTS idx_subscriptions_tool ON subscriptions(tool_full_name) WHERE tool_full_name IS NOT NULL;
 -- Migration (run once on existing D1):
 -- CREATE TABLE IF NOT EXISTS subscriptions (id TEXT PRIMARY KEY, user_email TEXT NOT NULL, stripe_customer_id TEXT NOT NULL, stripe_subscription_id TEXT NOT NULL UNIQUE, tier TEXT NOT NULL, status TEXT NOT NULL DEFAULT 'active', billing TEXT NOT NULL DEFAULT 'monthly', current_period_end INTEGER NOT NULL, created_at INTEGER NOT NULL, updated_at INTEGER NOT NULL);
 -- CREATE INDEX IF NOT EXISTS idx_subscriptions_email ON subscriptions(user_email);
 -- CREATE INDEX IF NOT EXISTS idx_subscriptions_stripe ON subscriptions(stripe_subscription_id);
 -- CREATE INDEX IF NOT EXISTS idx_subscriptions_status ON subscriptions(status);
+-- ALTER TABLE subscriptions ADD COLUMN tool_full_name TEXT;
+-- CREATE INDEX IF NOT EXISTS idx_subscriptions_tool ON subscriptions(tool_full_name) WHERE tool_full_name IS NOT NULL;
 
 -- Skill pings table — tracks AgentRank skill loads/installs; survives pipeline cycles
 CREATE TABLE IF NOT EXISTS skill_pings (

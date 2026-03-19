@@ -1,0 +1,660 @@
+---
+export const prerender = false;
+import Base from '../../../layouts/Base.astro';
+
+// Pre-fill tier from query string e.g. /pricing/checkout/?tier=sponsored_pro
+const tierParam = Astro.url.searchParams.get('tier') ?? '';
+const validTiers = ['sponsored_basic', 'sponsored_pro', 'sponsored_enterprise'];
+const initialTier = validTiers.includes(tierParam) ? tierParam : 'sponsored_basic';
+---
+
+<Base
+  title="Sponsored Listing Checkout — AgentRank"
+  description="Get priority placement and a Sponsored badge on AgentRank. Reach developers actively evaluating MCP tools."
+  activeTab="pricing"
+  canonicalUrl="https://agentrank-ai.com/pricing/checkout/"
+>
+
+  <div class="checkout-wrap">
+    <div class="checkout-header">
+      <p class="back-link"><a href="/pricing/">&larr; Pricing</a></p>
+      <h1>Sponsored Listing</h1>
+      <p class="subtitle">Priority placement + "Sponsored" badge for your MCP tool or agent.</p>
+    </div>
+
+    <div class="checkout-grid">
+
+      <!-- Left: form -->
+      <div class="checkout-form-col">
+        <form id="checkout-form" novalidate>
+
+          <fieldset>
+            <legend>Your tool</legend>
+            <div class="field">
+              <label for="tool-url">GitHub repository URL</label>
+              <input
+                type="url"
+                id="tool-url"
+                name="tool_url"
+                placeholder="https://github.com/owner/repo"
+                autocomplete="off"
+                required
+              />
+              <span class="field-hint">Must be in the AgentRank index. <a href="/tools/" target="_blank">Browse indexed tools</a></span>
+            </div>
+          </fieldset>
+
+          <fieldset>
+            <legend>Sponsorship tier</legend>
+
+            <div class="tier-cards">
+              <label class="tier-card" data-tier="sponsored_basic">
+                <input type="radio" name="tier" value="sponsored_basic" />
+                <div class="tier-card-inner">
+                  <div class="tier-card-top">
+                    <span class="tier-card-name">Basic</span>
+                    <span class="tier-card-price">
+                      <span class="price-monthly">$199<span class="per">/mo</span></span>
+                      <span class="price-annual hidden">$166<span class="per">/mo</span></span>
+                    </span>
+                  </div>
+                  <ul class="tier-card-features">
+                    <li>Sponsored badge on your listing</li>
+                    <li>Featured in your primary category</li>
+                    <li>Monthly analytics report</li>
+                  </ul>
+                </div>
+              </label>
+
+              <label class="tier-card" data-tier="sponsored_pro">
+                <input type="radio" name="tier" value="sponsored_pro" />
+                <div class="tier-card-inner">
+                  <div class="tier-top-badge">Most popular</div>
+                  <div class="tier-card-top">
+                    <span class="tier-card-name">Pro</span>
+                    <span class="tier-card-price">
+                      <span class="price-monthly">$299<span class="per">/mo</span></span>
+                      <span class="price-annual hidden">$249<span class="per">/mo</span></span>
+                    </span>
+                  </div>
+                  <ul class="tier-card-features">
+                    <li>Everything in Basic</li>
+                    <li>Featured across all related categories</li>
+                    <li>Weekly analytics + click-through data</li>
+                    <li>Priority placement on homepage</li>
+                  </ul>
+                </div>
+              </label>
+
+              <label class="tier-card" data-tier="sponsored_enterprise">
+                <input type="radio" name="tier" value="sponsored_enterprise" />
+                <div class="tier-card-inner">
+                  <div class="tier-card-top">
+                    <span class="tier-card-name">Enterprise</span>
+                    <span class="tier-card-price">
+                      <span class="price-monthly">$499<span class="per">/mo</span></span>
+                      <span class="price-annual hidden">$416<span class="per">/mo</span></span>
+                    </span>
+                  </div>
+                  <ul class="tier-card-features">
+                    <li>Everything in Pro</li>
+                    <li>Slack channel for listing updates</li>
+                    <li>Custom category sponsorship</li>
+                    <li>Dedicated account manager</li>
+                  </ul>
+                </div>
+              </label>
+            </div>
+          </fieldset>
+
+          <fieldset>
+            <legend>Billing period</legend>
+            <div class="billing-toggle" role="group">
+              <button type="button" class="toggle-btn active" id="btn-monthly" data-period="monthly">Monthly</button>
+              <button type="button" class="toggle-btn" id="btn-annual" data-period="annual">Annual <span class="save-pill">save 17%</span></button>
+            </div>
+          </fieldset>
+
+          <div class="submit-row">
+            <button type="submit" class="submit-btn" id="submit-btn">
+              Continue to payment &rarr;
+            </button>
+            <p id="form-error" class="form-error" aria-live="polite"></p>
+          </div>
+
+          <p class="stripe-note">
+            Secured by Stripe. Cancel any time. Test mode — no real charges.
+          </p>
+
+        </form>
+      </div>
+
+      <!-- Right: what you get -->
+      <div class="checkout-summary-col">
+        <div class="summary-card">
+          <h2>What you get</h2>
+
+          <div class="summary-section">
+            <div class="summary-icon">&#9650;</div>
+            <div>
+              <strong>Priority placement</strong>
+              <p>Your tool appears above organic results in its category. Developers see you first.</p>
+            </div>
+          </div>
+
+          <div class="summary-section">
+            <div class="summary-icon">&#9670;</div>
+            <div>
+              <strong>Sponsored badge</strong>
+              <p>Clear "Sponsored" label — transparent to developers, prominent to eyeballs.</p>
+            </div>
+          </div>
+
+          <div class="summary-section">
+            <div class="summary-icon">&#9632;</div>
+            <div>
+              <strong>Real traffic data</strong>
+              <p>Category view counts, click-through rates, comparison events. You'll know if it's working.</p>
+            </div>
+          </div>
+
+          <div class="summary-section">
+            <div class="summary-icon">&#9675;</div>
+            <div>
+              <strong>Goes live in &lt;1 hour</strong>
+              <p>Stripe webhook activates your listing automatically after payment.</p>
+            </div>
+          </div>
+
+          <div class="summary-divider"></div>
+
+          <div class="summary-fine-print">
+            <p>Sponsorship is transparent — we never disguise paid placements as organic rankings. All sponsored tools are labeled.</p>
+            <p>Need to evaluate traffic numbers before committing? <a href="mailto:hello@agentrank-ai.com">Email us</a> for category analytics.</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</Base>
+
+<script define:vars={{ initialTier }}>
+  // Initialize selected tier
+  let selectedTier = initialTier;
+  let selectedBilling = 'monthly';
+
+  function selectTier(tier) {
+    selectedTier = tier;
+    document.querySelectorAll('.tier-card').forEach(card => {
+      card.classList.toggle('selected', card.dataset.tier === tier);
+    });
+    // Sync radio
+    const radio = document.querySelector(`input[name="tier"][value="${tier}"]`);
+    if (radio) radio.checked = true;
+  }
+
+  function selectBilling(period) {
+    selectedBilling = period;
+    document.querySelectorAll('.toggle-btn').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.period === period);
+    });
+    document.querySelectorAll('.price-monthly').forEach(el => {
+      el.classList.toggle('hidden', period === 'annual');
+    });
+    document.querySelectorAll('.price-annual').forEach(el => {
+      el.classList.toggle('hidden', period === 'monthly');
+    });
+  }
+
+  // Set initial selection
+  selectTier(initialTier);
+
+  // Tier card clicks
+  document.querySelectorAll('.tier-card').forEach(card => {
+    card.addEventListener('click', () => selectTier(card.dataset.tier));
+  });
+
+  // Radio changes (keyboard nav)
+  document.querySelectorAll('input[name="tier"]').forEach(radio => {
+    radio.addEventListener('change', () => selectTier(radio.value));
+  });
+
+  // Billing toggle
+  document.querySelectorAll('.toggle-btn').forEach(btn => {
+    btn.addEventListener('click', () => selectBilling(btn.dataset.period));
+  });
+
+  // Parse GitHub URL to owner/repo
+  function parseGitHubRepo(url) {
+    try {
+      const u = new URL(url.trim());
+      if (u.hostname !== 'github.com') return null;
+      const parts = u.pathname.replace(/^\//, '').replace(/\/$/, '').split('/');
+      if (parts.length < 2) return null;
+      return `${parts[0]}/${parts[1]}`;
+    } catch {
+      return null;
+    }
+  }
+
+  // Form submission
+  const form = document.getElementById('checkout-form');
+  const submitBtn = document.getElementById('submit-btn');
+  const formError = document.getElementById('form-error');
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    formError.textContent = '';
+
+    const toolUrl = document.getElementById('tool-url').value.trim();
+    const toolFullName = parseGitHubRepo(toolUrl);
+
+    if (!toolFullName) {
+      formError.textContent = 'Enter a valid GitHub repository URL (e.g. https://github.com/owner/repo)';
+      return;
+    }
+
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Redirecting to Stripe…';
+
+    try {
+      const resp = await fetch('/api/checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          tier: selectedTier,
+          billing: selectedBilling,
+          tool_full_name: toolFullName,
+        }),
+      });
+
+      const data = await resp.json();
+
+      if (!resp.ok || !data.url) {
+        formError.textContent = data.error || 'Something went wrong. Please try again.';
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Continue to payment →';
+        return;
+      }
+
+      window.location.href = data.url;
+    } catch {
+      formError.textContent = 'Network error. Please check your connection and try again.';
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Continue to payment →';
+    }
+  });
+</script>
+
+<style>
+  .checkout-wrap {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 2rem 1rem 4rem;
+  }
+
+  .checkout-header {
+    margin-bottom: 2rem;
+  }
+
+  .back-link {
+    margin-bottom: 1rem;
+    font-size: 0.78rem;
+  }
+
+  .back-link a {
+    color: var(--text-muted);
+    text-decoration: none;
+  }
+
+  .back-link a:hover {
+    color: var(--accent);
+  }
+
+  h1 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 0.4rem;
+  }
+
+  .subtitle {
+    font-size: 0.82rem;
+    color: var(--text-muted);
+  }
+
+  .checkout-grid {
+    display: grid;
+    grid-template-columns: 1fr 340px;
+    gap: 2rem;
+    align-items: start;
+  }
+
+  @media (max-width: 700px) {
+    .checkout-grid {
+      grid-template-columns: 1fr;
+    }
+    .checkout-summary-col {
+      order: -1;
+    }
+  }
+
+  /* Form */
+  fieldset {
+    border: none;
+    padding: 0;
+    margin: 0 0 1.75rem;
+  }
+
+  legend {
+    font-size: 0.68rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-muted);
+    margin-bottom: 0.75rem;
+    padding: 0;
+  }
+
+  .field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+  }
+
+  label[for="tool-url"] {
+    font-size: 0.78rem;
+    color: var(--text);
+    font-weight: 600;
+  }
+
+  input[type="url"] {
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-family: inherit;
+    font-size: 0.82rem;
+    padding: 0.55rem 0.75rem;
+    border-radius: 4px;
+    width: 100%;
+    box-sizing: border-box;
+    outline: none;
+    transition: border-color 0.15s;
+  }
+
+  input[type="url"]:focus {
+    border-color: var(--accent);
+  }
+
+  .field-hint {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+  }
+
+  .field-hint a {
+    color: var(--accent);
+  }
+
+  /* Tier cards */
+  .tier-cards {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+  }
+
+  .tier-card {
+    display: block;
+    cursor: pointer;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: var(--bg-surface);
+    transition: border-color 0.15s, background 0.15s;
+    position: relative;
+  }
+
+  .tier-card input[type="radio"] {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+
+  .tier-card.selected {
+    border-color: var(--accent);
+    background: color-mix(in srgb, var(--accent) 6%, var(--bg-surface));
+  }
+
+  .tier-card-inner {
+    padding: 0.9rem 1rem;
+    position: relative;
+  }
+
+  .tier-top-badge {
+    position: absolute;
+    top: -1px;
+    right: 0.8rem;
+    background: var(--accent);
+    color: var(--bg);
+    font-size: 0.6rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    padding: 0.15rem 0.4rem;
+    border-radius: 0 0 3px 3px;
+  }
+
+  .tier-card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 0.6rem;
+  }
+
+  .tier-card-name {
+    font-weight: 700;
+    font-size: 0.88rem;
+    color: var(--text);
+  }
+
+  .tier-card-price {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text);
+  }
+
+  .tier-card.selected .tier-card-price {
+    color: var(--accent);
+  }
+
+  .per {
+    font-size: 0.7rem;
+    font-weight: 400;
+    color: var(--text-muted);
+  }
+
+  .tier-card-features {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  .tier-card-features li {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    padding-left: 0.9rem;
+    position: relative;
+  }
+
+  .tier-card-features li::before {
+    content: '–';
+    position: absolute;
+    left: 0;
+    color: var(--accent);
+  }
+
+  .hidden {
+    display: none !important;
+  }
+
+  /* Billing toggle */
+  .billing-toggle {
+    display: flex;
+    gap: 0;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+    width: fit-content;
+  }
+
+  .toggle-btn {
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    font-family: inherit;
+    font-size: 0.78rem;
+    padding: 0.45rem 0.9rem;
+    cursor: pointer;
+    transition: background 0.12s, color 0.12s;
+  }
+
+  .toggle-btn.active {
+    background: var(--accent);
+    color: var(--bg);
+  }
+
+  .save-pill {
+    background: color-mix(in srgb, var(--accent) 20%, transparent);
+    color: var(--accent);
+    font-size: 0.6rem;
+    font-weight: 700;
+    padding: 0.1rem 0.3rem;
+    border-radius: 2px;
+    margin-left: 0.25rem;
+    vertical-align: middle;
+  }
+
+  .toggle-btn.active .save-pill {
+    background: rgba(255,255,255,0.2);
+    color: var(--bg);
+  }
+
+  /* Submit */
+  .submit-row {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .submit-btn {
+    background: var(--accent);
+    color: var(--bg);
+    border: none;
+    font-family: inherit;
+    font-size: 0.88rem;
+    font-weight: 700;
+    padding: 0.75rem 1.5rem;
+    border-radius: 4px;
+    cursor: pointer;
+    width: 100%;
+    transition: opacity 0.15s;
+  }
+
+  .submit-btn:hover {
+    opacity: 0.88;
+  }
+
+  .submit-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .form-error {
+    font-size: 0.75rem;
+    color: #ef4444;
+    min-height: 1rem;
+  }
+
+  .stripe-note {
+    font-size: 0.68rem;
+    color: var(--text-muted);
+    text-align: center;
+    margin-top: 0.75rem;
+  }
+
+  /* Summary card */
+  .summary-card {
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-top: 3px solid var(--accent);
+    border-radius: 6px;
+    padding: 1.5rem;
+    position: sticky;
+    top: 1.5rem;
+  }
+
+  .summary-card h2 {
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-muted);
+    margin-bottom: 1.25rem;
+  }
+
+  .summary-section {
+    display: flex;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+  }
+
+  .summary-icon {
+    font-size: 0.7rem;
+    color: var(--accent);
+    margin-top: 0.25rem;
+    flex-shrink: 0;
+    width: 1rem;
+    text-align: center;
+  }
+
+  .summary-section strong {
+    display: block;
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 0.2rem;
+  }
+
+  .summary-section p {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    line-height: 1.5;
+    margin: 0;
+  }
+
+  .summary-divider {
+    border-top: 1px solid var(--border);
+    margin: 1.25rem 0;
+  }
+
+  .summary-fine-print {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+  }
+
+  .summary-fine-print p {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    line-height: 1.5;
+    margin: 0;
+  }
+
+  .summary-fine-print a {
+    color: var(--accent);
+  }
+</style>

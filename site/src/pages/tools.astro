@@ -76,7 +76,7 @@ const itemListJsonLd = {
       </thead>
       <tbody id="tbody">
         {tools.map((tool) => (
-          <tr data-category={tool.category || ''}>
+          <tr data-category={tool.category || ''} data-full-name={tool.full_name}>
             <td class="rank">{tool.rank}</td>
             <td class="name">
               <a href={`/tool/${toSlug(tool.full_name)}/`}>{tool.full_name}</a>
@@ -282,6 +282,18 @@ const itemListJsonLd = {
       color: #92400e;
     }
   }
+
+  .badge.sponsored {
+    background: color-mix(in srgb, var(--accent) 18%, transparent);
+    color: var(--accent);
+    border: 1px solid color-mix(in srgb, var(--accent) 40%, transparent);
+  }
+
+  @media (prefers-color-scheme: light) {
+    .badge.sponsored {
+      background: color-mix(in srgb, var(--accent) 12%, transparent);
+    }
+  }
 </style>
 
 <script>
@@ -363,4 +375,30 @@ const itemListJsonLd = {
       rows.forEach((row) => tbody.appendChild(row));
     });
   });
+
+  // Sponsored badge injection — non-blocking, best-effort
+  (async () => {
+    try {
+      const resp = await fetch('/api/sponsored');
+      if (!resp.ok) return;
+      const { sponsored } = await resp.json() as { sponsored: Array<{ full_name: string }> };
+      if (!sponsored.length) return;
+
+      const sponsoredSet = new Set(sponsored.map((s) => s.full_name));
+      document.querySelectorAll<HTMLTableRowElement>('tr[data-full-name]').forEach((row) => {
+        const fullName = row.dataset.fullName;
+        if (fullName && sponsoredSet.has(fullName)) {
+          const nameCell = row.querySelector('.name');
+          if (nameCell && !nameCell.querySelector('.sponsored')) {
+            const badge = document.createElement('span');
+            badge.className = 'badge sponsored';
+            badge.textContent = 'Sponsored';
+            nameCell.appendChild(badge);
+          }
+        }
+      });
+    } catch {
+      // Non-fatal — sponsored badges are cosmetic
+    }
+  })();
 </script>

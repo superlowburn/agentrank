@@ -46,6 +46,8 @@ const npmWeeklyDownloads = (row.npm_weekly_downloads as number) || 0;
 const npmPackage = row.npm_package as string | null;
 const pypiWeeklyDownloads = (row.pypi_weekly_downloads as number) || 0;
 const pypiPackage = row.pypi_package as string | null;
+const isSponsored = (row.sponsored as number) === 1;
+const sponsorTier = row.sponsor_tier as string | null;
 
 const totalIssues = tool.open_issues + tool.closed_issues;
 const issueHealth = totalIssues > 0 ? (tool.closed_issues / totalIssues) : 0.5;
@@ -359,6 +361,7 @@ Astro.response.headers.set('Cache-Control', 'public, max-age=60, s-maxage=3600, 
       )}
       <span class="rank-badge">Rank #{tool.rank}</span>
       {tool.is_archived && <span class="badge archived">Archived</span>}
+      {isSponsored && <span class="badge sponsored" title={sponsorTier ? `Sponsored (${sponsorTier})` : 'Sponsored'}>Sponsored</span>}
     </div>
     {claim && (
       <div class="claimed-badge">
@@ -776,6 +779,12 @@ Astro.response.headers.set('Cache-Control', 'public, max-age=60, s-maxage=3600, 
   .archived {
     background: #78350f;
     color: #fbbf24;
+  }
+
+  .sponsored {
+    background: color-mix(in srgb, var(--accent) 20%, transparent);
+    color: var(--accent);
+    border: 1px solid color-mix(in srgb, var(--accent) 40%, transparent);
   }
 
   .description {

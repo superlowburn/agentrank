@@ -87,16 +87,21 @@ export const POST: APIRoute = async ({ request, locals }) => {
         const billing = obj.metadata?.billing ?? 'monthly';
         const now = nowUnix();
 
+        const toolFullName = obj.metadata?.tool_full_name ?? null;
+        const isSponsored = typeof tier === 'string' && tier.startsWith('sponsored_');
+        // sponsor_tier is the short label: basic | pro | enterprise
+        const sponsorTier = isSponsored ? tier.replace('sponsored_', '') : null;
+
         if (email && customerId && subscriptionId) {
           const id = uuid();
           // current_period_end: approximate — webhook should update via invoice events
           const periodEnd = billing === 'annual' ? now + 365 * 86400 : now + 30 * 86400;
 
           await env.DB.prepare(`
-            INSERT INTO subscriptions (id, user_email, stripe_customer_id, stripe_subscription_id, tier, status, billing, current_period_end, created_at, updated_at)
-            VALUES (?, ?, ?, ?, ?, 'active', ?, ?, ?, ?)
+            INSERT INTO subscriptions (id, user_email, stripe_customer_id, stripe_subscription_id, tier, status, billing, current_period_end, created_at, updated_at, tool_full_name)
+            VALUES (?, ?, ?, ?, ?, 'active', ?, ?, ?, ?, ?)
             ON CONFLICT(stripe_subscription_id) DO UPDATE SET status='active', updated_at=excluded.updated_at
-          `).bind(id, email, customerId, subscriptionId, tier, billing, periodEnd, now, now).run();
+          `).bind(id, email, customerId, subscriptionId, tier, billing, periodEnd, now, now, toolFullName ?? null).run();
 
           // For pro_api: generate and store an API key
           if (tier === 'pro_api') {
@@ -113,6 +118,14 @@ export const POST: APIRoute = async ({ request, locals }) => {
             // TODO: send email with rawKey to customer (requires email provider)
             console.log(`[stripe] Pro API key provisioned for ${email}: ${keyPrefix}...`);
           }
+
+          // For sponsored tiers: flag the tool in the tools table
+          if (isSponsored && toolFullName) {
+            await env.DB.prepare(`
+              UPDATE tools SET sponsored=1, sponsor_tier=? WHERE full_name=?
+            `).bind(sponsorTier, toolFullName).run();
+            console.log(`[stripe] Sponsored listing activated for ${toolFullName} (tier: ${sponsorTier})`);
+          }
         }
         break;
       }
@@ -120,6 +133,12 @@ export const POST: APIRoute = async ({ request, locals }) => {
       case 'customer.subscription.deleted': {
         const subscriptionId = obj.id;
         const now = nowUnix();
+
+        // Before cancelling, capture the tier and tool so we can clear sponsored flag
+        const subRow = await env.DB.prepare(`
+          SELECT tier, user_email, tool_full_name FROM subscriptions WHERE stripe_subscription_id=?
+        `).bind(subscriptionId).first() as { tier: string; user_email: string; tool_full_name: string | null } | null;
+
         await env.DB.prepare(`
           UPDATE subscriptions SET status='cancelled', updated_at=? WHERE stripe_subscription_id=?
         `).bind(now, subscriptionId).run();
@@ -130,6 +149,23 @@ export const POST: APIRoute = async ({ request, locals }) => {
           WHERE owner_email=(SELECT user_email FROM subscriptions WHERE stripe_subscription_id=?)
           AND tier='pro' AND revoked_at IS NULL
         `).bind(subscriptionId).run();
+
+        // Clear sponsored flag if this was a sponsored subscription
+        if (subRow && typeof subRow.tier === 'string' && subRow.tier.startsWith('sponsored_') && subRow.tool_full_name) {
+          // Only clear if no OTHER active sponsored subscription covers this tool
+          const otherActive = await env.DB.prepare(`
+            SELECT COUNT(*) as cnt FROM subscriptions
+            WHERE tool_full_name=? AND tier LIKE 'sponsored_%' AND status='active'
+              AND stripe_subscription_id != ?
+          `).bind(subRow.tool_full_name, subscriptionId).first() as { cnt: number } | null;
+
+          if (!otherActive || otherActive.cnt === 0) {
+            await env.DB.prepare(`
+              UPDATE tools SET sponsored=0, sponsor_tier=NULL WHERE full_name=?
+            `).bind(subRow.tool_full_name).run();
+            console.log(`[stripe] Sponsored listing cleared for ${subRow.tool_full_name}`);
+          }
+        }
         break;
       }
 
