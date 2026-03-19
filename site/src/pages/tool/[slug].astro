@@ -405,15 +405,22 @@ Astro.response.headers.set('Cache-Control', 'public, max-age=60, s-maxage=3600, 
     )}
   </div>
 
+  {!claim && (
+    <div class="claim-cta-inline">
+      <span class="claim-cta-inline-text">Are you the maintainer of <strong>{tool.full_name}</strong>?</span>
+      <a href={`/claim/${slug}/`} class="claim-cta-inline-btn">Claim this listing &rarr;</a>
+    </div>
+  )}
+
   {tool.description && <p class="description">{tool.description}</p>}
 
   <div class="install-cta-box">
     <div class="install-cta-content">
       <div class="install-cta-left">
-        <strong class="install-cta-title">Use {tool.full_name} in Claude Code</strong>
-        <span class="install-cta-sub">Install AgentRank MCP — your AI finds the right tool automatically</span>
+        <strong class="install-cta-title">Add AgentRank to Claude Code</strong>
+        <span class="install-cta-sub">Discover and compare tools like {tool.full_name} — your AI finds the right one automatically</span>
       </div>
-      <a href="/pricing/" class="api-key-btn">Get API Access &rarr;</a>
+      <a href="/developer/dashboard/" class="api-key-btn">Get API Access &rarr;</a>
     </div>
     <div class="install-cta-cmd-wrap">
       <code class="install-cta-cmd">claude mcp add agentrank -- npx -y agentrank-mcp-server</code>
@@ -671,18 +678,6 @@ Astro.response.headers.set('Cache-Control', 'public, max-age=60, s-maxage=3600, 
       <button class="share-btn copy-link-btn" data-copy={pageUrl}>Copy link</button>
     </div>
   </div>
-
-  {!claim && (
-    <section class="claim-cta-section">
-      <div class="claim-cta-box">
-        <div class="claim-cta-text">
-          <strong>Are you the maintainer of {tool.full_name}?</strong>
-          <p>Claim this listing to add a tagline, mark deprecation status, and get a verified maintainer badge.</p>
-        </div>
-        <a href={`/claim/${slug}/`} class="claim-cta-btn">Claim this tool &rarr;</a>
-      </div>
-    </section>
-  )}
 
   <BlogSubscribeCTA source="tool" />
 
@@ -1308,6 +1303,36 @@ Astro.response.headers.set('Cache-Control', 'public, max-age=60, s-maxage=3600, 
     border-color: var(--accent);
     color: var(--accent);
     text-decoration: none;
+  }
+
+  .claim-cta-inline {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    background: var(--bg-surface);
+    border: 1px dashed var(--border);
+    border-radius: 4px;
+    padding: 0.5rem 0.85rem;
+    margin-bottom: 0.75rem;
+    flex-wrap: wrap;
+  }
+
+  .claim-cta-inline-text {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    flex: 1;
+  }
+
+  .claim-cta-inline-btn {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--accent);
+    text-decoration: none;
+    white-space: nowrap;
+  }
+
+  .claim-cta-inline-btn:hover {
+    text-decoration: underline;
   }
 
   .claim-cta-section {

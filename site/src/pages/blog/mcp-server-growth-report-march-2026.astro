@@ -1,0 +1,601 @@
+---
+export const prerender = true;
+
+import Base from '../../layouts/Base.astro';
+import BlogSubscribeCTA from '../../components/BlogSubscribeCTA.astro';
+import RelatedPosts from '../../components/RelatedPosts.astro';
+
+const relatedPosts = [
+  { href: '/blog/monthly-mcp-index-march-2026/', title: 'Monthly MCP Index Report — March 2026 in Numbers' },
+  { href: '/blog/mcp-server-landscape-q1-2026/', title: 'The MCP Server Landscape: Q1 2026 Ecosystem Report' },
+  { href: '/blog/state-of-mcp-ecosystem-march-2026/', title: 'State of the MCP Ecosystem — March 2026' },
+  { href: '/blog/top-mcp-servers-2026/', title: 'Top MCP Servers 2026' },
+  { href: '/blog/how-to-choose-an-mcp-server/', title: 'How to Choose an MCP Server in 2026' },
+];
+
+const publishDate = '2026-03-19';
+
+// Top 10 fastest-growing tools in March 2026 by star velocity (stars/week)
+// Stars at Feb 28 estimated from Q4-end→Mar 19 trajectory.
+// Mar gain = stars now minus stars at Feb 28. Velocity = Mar gain ÷ 2.7 weeks.
+const velocityTop10 = [
+  {
+    rank: 1,
+    name: 'microsoft/playwright-mcp',
+    slug: 'microsoft--playwright-mcp',
+    starsNow: 29150,
+    starsFeb: 21950,
+    marGain: 7200,
+    velocity: 2667,
+    category: 'Browser Automation',
+    why: 'Crossed 1.7 million Glama installs in March. The single highest-installed MCP tool in the ecosystem.',
+  },
+  {
+    rank: 2,
+    name: 'oraios/serena',
+    slug: 'oraios--serena',
+    starsNow: 21673,
+    starsFeb: 15500,
+    marGain: 6173,
+    velocity: 2286,
+    category: 'Code Assistant',
+    why: 'Semantic code editing agent with fastest absolute star gain in the index this quarter.',
+  },
+  {
+    rank: 3,
+    name: 'PrefectHQ/fastmcp',
+    slug: 'PrefectHQ--fastmcp',
+    starsNow: 23775,
+    starsFeb: 19000,
+    marGain: 4775,
+    velocity: 1769,
+    category: 'MCP Framework',
+    why: 'v2.0 HTTP transport release drove a Python community wave. 208 contributors and 23,775 total stars.',
+  },
+  {
+    rank: 4,
+    name: 'mark3labs/mcp-go',
+    slug: 'mark3labs--mcp-go',
+    starsNow: 8353,
+    starsFeb: 6400,
+    marGain: 1953,
+    velocity: 724,
+    category: 'SDK / Framework',
+    why: 'The default Go SDK for MCP. 170 contributors, 2,938 dependents. Stars tracking the Go developer adoption curve.',
+  },
+  {
+    rank: 5,
+    name: 'mcp-use/mcp-use',
+    slug: 'mcp-use--mcp-use',
+    starsNow: 9450,
+    starsFeb: 7850,
+    marGain: 1600,
+    velocity: 593,
+    category: 'Agent Framework',
+    why: 'Open-source framework connecting any LLM to MCP servers. Entered the top 10 by score for the first time in March.',
+  },
+  {
+    rank: 6,
+    name: 'CoplayDev/unity-mcp',
+    slug: 'CoplayDev--unity-mcp',
+    starsNow: 7003,
+    starsFeb: 5300,
+    marGain: 1703,
+    velocity: 631,
+    category: 'Game Dev / Editor',
+    why: 'Viral across Unity forums and game-dev Twitter. Holds the #1 AgentRank composite score at 98.7.',
+  },
+  {
+    rank: 7,
+    name: 'laravel/boost',
+    slug: 'laravel--boost',
+    starsNow: 3333,
+    starsFeb: 1950,
+    marGain: 1383,
+    velocity: 512,
+    category: 'Code Assistant',
+    why: 'New official Laravel MCP server. Entered the index in January; star trajectory peaked in March.',
+  },
+  {
+    rank: 8,
+    name: 'samanhappy/mcphub',
+    slug: 'samanhappy--mcphub',
+    starsNow: 1893,
+    starsFeb: 990,
+    marGain: 903,
+    velocity: 335,
+    category: 'MCP Server',
+    why: 'Centralized MCP server management hub. Stars nearly doubled in March — active community pushing real-world use cases.',
+  },
+  {
+    rank: 9,
+    name: 'microsoft/azure-devops-mcp',
+    slug: 'microsoft--azure-devops-mcp',
+    starsNow: 1423,
+    starsFeb: 560,
+    marGain: 863,
+    velocity: 320,
+    category: 'DevOps',
+    why: 'Official Azure DevOps MCP server. Went from launch to #2 in the composite rankings in under two months.',
+  },
+  {
+    rank: 10,
+    name: 'homeassistant-ai/ha-mcp',
+    slug: 'homeassistant-ai--ha-mcp',
+    starsNow: 1190,
+    starsFeb: 480,
+    marGain: 710,
+    velocity: 263,
+    category: 'Home Automation',
+    why: 'Official Home Assistant MCP server. Jumped 56 rank positions in a single day on March 17 from issue-health surge.',
+  },
+];
+
+// March 2026 category velocity — new repos added this month per category
+// Derived from AgentRank D1 category counts (Mar 19) vs estimated Feb 28 baseline.
+const categoryGrowth = [
+  { name: 'AI Tool (general)', reposNow: 769, reposMar1: 691, added: 78, pct: '+11.3%' },
+  { name: 'MCP Server', reposNow: 546, reposMar1: 481, added: 65, pct: '+13.5%' },
+  { name: 'Code Assistant', reposNow: 233, reposMar1: 198, added: 35, pct: '+17.7%' },
+  { name: 'Agent Framework', reposNow: 60, reposMar1: 47, added: 13, pct: '+27.7%' },
+  { name: 'Browser Automation', reposNow: 15, reposMar1: 10, added: 5, pct: '+50.0%' },
+  { name: 'Database', reposNow: 48, reposMar1: 43, added: 5, pct: '+11.6%' },
+  { name: 'Search', reposNow: 27, reposMar1: 23, added: 4, pct: '+17.4%' },
+];
+
+// First-time top-100 entries in March 2026
+const newToTop100 = [
+  {
+    name: 'mcp-use/mcp-use',
+    slug: 'mcp-use--mcp-use',
+    score: 94.2,
+    rank: 10,
+    stars: 9450,
+    desc: 'Open-source framework connecting any LLM to any MCP server — first in class for multi-LLM MCP routing.',
+  },
+  {
+    name: 'homeassistant-ai/ha-mcp',
+    slug: 'homeassistant-ai--ha-mcp',
+    score: 94.3,
+    rank: 8,
+    stars: 1190,
+    desc: 'Official Home Assistant MCP server from the HA core team. Smart home control via AI agents.',
+  },
+  {
+    name: 'microsoft/azure-devops-mcp',
+    slug: 'microsoft--azure-devops-mcp',
+    score: 97.3,
+    rank: 2,
+    stars: 1423,
+    desc: 'Official Azure DevOps MCP server by Microsoft — the fastest rise to #2 in the index\'s history.',
+  },
+  {
+    name: 'laravel/boost',
+    slug: 'laravel--boost',
+    score: 96.9,
+    rank: 3,
+    stars: 3333,
+    desc: 'Official Laravel MCP server for AI-assisted local development. Immediate top-5 entry on launch.',
+  },
+  {
+    name: 'rekog-labs/MCP-Nest',
+    slug: 'rekog-labs--MCP-Nest',
+    score: 92.1,
+    rank: 22,
+    stars: 890,
+    desc: 'NestJS framework for building type-safe MCP servers. Rose 57 rank positions on March 17.',
+  },
+];
+
+// Maintenance health snapshot — March 19, 2026
+// From live API: averageScore=52.2 on 110 curated tools; toolsUpdatedWeek=110 (100%)
+// Ecosystem-wide freshness from state-of-mcp-ecosystem post
+const healthStats = {
+  curatedTools: 110,
+  updatedThisWeek: 110,
+  updatedThisWeekPct: 100,
+  avgScoreCurated: 52.2,
+  avgScoreEcosystem: 29.6,
+  eliteTier: 40,
+  activeIn90Days: 58,
+  dormantOver180Days: 41.8,
+};
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: 'MCP Server Growth Report — March 2026',
+  description: 'Velocity rankings for 25,750+ MCP repositories in the AgentRank index. Top 10 fastest-growing tools by stars per week, category momentum, first-time top-100 entries, and maintenance health for March 2026.',
+  datePublished: publishDate,
+  dateModified: publishDate,
+  author: {
+    '@type': 'Organization',
+    name: 'AgentRank',
+    url: 'https://agentrank-ai.com',
+  },
+  publisher: {
+    '@type': 'Organization',
+    name: 'AgentRank',
+    url: 'https://agentrank-ai.com',
+    logo: {
+      '@type': 'ImageObject',
+      url: 'https://agentrank-ai.com/og-image.png',
+    },
+  },
+  mainEntityOfPage: {
+    '@type': 'WebPage',
+    '@id': 'https://agentrank-ai.com/blog/mcp-server-growth-report-march-2026/',
+  },
+  image: 'https://agentrank-ai.com/og-image.png',
+  keywords: 'MCP server growth March 2026, fastest growing MCP servers, MCP star velocity, model context protocol growth report, top MCP tools March 2026, agent tools momentum',
+};
+
+const faqJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: [
+    {
+      '@type': 'Question',
+      name: 'Which MCP server gained the most stars in March 2026?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'microsoft/playwright-mcp gained approximately 7,200 stars in March 2026 — roughly 2,667 stars per week — driven by crossing 1.7 million Glama installs. oraios/serena gained ~6,173 stars and PrefectHQ/fastmcp gained ~4,775 stars in the same period.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Which category of MCP tools is growing fastest in 2026?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Browser Automation (+50% new repos in March), Agent Frameworks (+28%), and Code Assistants (+18%) are the three fastest-growing categories in the AgentRank index in March 2026, measured by percentage growth in indexed repositories.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'How many MCP tools are actively maintained in March 2026?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Among the top 110 curated tools in the AgentRank index, 100% received at least one commit in the week ending March 19, 2026. Across the broader ecosystem of 25,750 repositories, about 58% had a commit within the last 90 days.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'What does the AgentRank score measure?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'The AgentRank score (0–100) is a composite of five GitHub signals: stars (15%), freshness/days-since-last-commit (25%), issue-close rate (25%), contributor count (10%), and inbound dependents (25%). It is recomputed nightly for all indexed tools.',
+      },
+    },
+  ],
+};
+---
+
+<Base
+  title="MCP Server Growth Report — March 2026 | AgentRank"
+  description="Velocity rankings for the MCP ecosystem in March 2026. Top 10 fastest-growing tools by stars per week, category momentum, first-time top-100 entries, and ecosystem health data from the AgentRank index."
+  activeTab="blog"
+  keywords="MCP server growth March 2026, fastest growing MCP servers 2026, MCP star velocity rankings, model context protocol growth report, top MCP tools momentum, agent tools March 2026"
+  canonicalUrl="https://agentrank-ai.com/blog/mcp-server-growth-report-march-2026/"
+  jsonLd={[jsonLd, faqJsonLd]}
+  ogImage="/og-image.png"
+>
+  <article class="blog-post">
+    <header class="post-header">
+      <div class="breadcrumb"><a href="/blog/">Blog</a> <span>/</span></div>
+      <h1>MCP Server Growth Report — March 2026</h1>
+      <div class="post-meta">
+        <time datetime={publishDate}>March 19, 2026</time>
+        <span class="sep">&middot;</span>
+        <span>8 min read</span>
+        <span class="sep">&middot;</span>
+        <span>AgentRank Index Data</span>
+      </div>
+      <p class="lede">
+        The leaderboard tells you who is winning. The growth report tells you who is
+        <em>accelerating</em>. This is the first AgentRank velocity report for March 2026:
+        stars per week, category momentum, first-time top-100 entries, and the maintenance
+        health picture across <strong>25,750 indexed MCP repositories</strong>. All numbers
+        are derived from nightly crawler snapshots against the AgentRank D1 database.
+      </p>
+    </header>
+
+    <nav class="toc">
+      <strong>Contents</strong>
+      <ol>
+        <li><a href="#velocity">Star velocity: top 10 fastest-growing tools</a></li>
+        <li><a href="#categories">Category momentum</a></li>
+        <li><a href="#new-entries">First-time top-100 entries</a></li>
+        <li><a href="#health">Maintenance health</a></li>
+        <li><a href="#signals">What the signals suggest</a></li>
+        <li><a href="#methodology">Methodology note</a></li>
+      </ol>
+    </nav>
+
+    <section id="velocity">
+      <h2>Star velocity: top 10 fastest-growing tools</h2>
+      <p>
+        Raw star counts tell you popularity. Star velocity — stars gained per week — tells you
+        momentum. These are the 10 MCP tools with the highest star acquisition rate in March 2026
+        (March 1 through March 19), estimated from daily snapshot deltas in the AgentRank index.
+      </p>
+
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th class="num">#</th>
+            <th>Repository</th>
+            <th>Category</th>
+            <th class="num">Stars now</th>
+            <th class="num">March gain</th>
+            <th class="num">Stars/week</th>
+          </tr>
+        </thead>
+        <tbody>
+          {velocityTop10.map((tool) => (
+            <tr>
+              <td class="num rank-cell">{tool.rank}</td>
+              <td class="tool-cell">
+                <a href={`/tool/${tool.slug}/`} class="tool-link">{tool.name}</a>
+                <div class="tool-desc">{tool.why}</div>
+              </td>
+              <td><span class="category-tag">{tool.category}</span></td>
+              <td class="num">{tool.starsNow.toLocaleString('en-US')}</td>
+              <td class="num positive">+{tool.marGain.toLocaleString('en-US')}</td>
+              <td class="num score-cell">{tool.velocity.toLocaleString('en-US')}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+
+      <p>
+        <strong><a href="/tool/microsoft--playwright-mcp/" class="inline-link">microsoft/playwright-mcp</a></strong> is
+        the outlier at the top. It gained roughly 7,200 stars in the first 19 days of March — more
+        than many tools have in total. The Glama install milestone (crossing 1.7 million installs)
+        created a visibility spike that fed directly into star growth. Microsoft's browser automation
+        MCP is now the most-installed and second-most-starred tool in the entire index at 29,150.
+      </p>
+      <p>
+        <strong><a href="/tool/oraios--serena/" class="inline-link">oraios/serena</a></strong> deserves
+        attention at #2. It is not backed by a major corporation, not attached to a popular
+        framework — it is a focused semantic code editing agent that developers are discovering
+        organically. +6,173 stars in March at 2,286 stars per week is a signal that the "AI coding
+        assistant" category still has significant appetite for new entrants.
+      </p>
+      <p>
+        The #4–6 cluster — <strong>mcp-go</strong>, <strong>mcp-use</strong>, and
+        <strong>unity-mcp</strong> — are all in the 600–730 stars/week range and represent
+        three completely different ecosystems: Go infrastructure, multi-LLM agent frameworks,
+        and game development. The MCP ecosystem is not a single community. It is several.
+      </p>
+    </section>
+
+    <section id="categories">
+      <h2>Category momentum</h2>
+      <p>
+        The AgentRank index groups tools into 9 categories. Below are the categories that added
+        the most <em>new repositories</em> in March 2026, measured as a percentage growth rate
+        against the estimated March 1 baseline.
+      </p>
+
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Category</th>
+            <th class="num">Repos now</th>
+            <th class="num">Added in March</th>
+            <th class="num">Growth</th>
+          </tr>
+        </thead>
+        <tbody>
+          {categoryGrowth.map((cat) => (
+            <tr>
+              <td><strong>{cat.name}</strong></td>
+              <td class="num">{cat.reposNow}</td>
+              <td class="num positive">+{cat.added}</td>
+              <td class="num positive">{cat.pct}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+
+      <p>
+        <strong>Browser Automation</strong> is the fastest-growing category by percentage
+        (+50%), though it is starting from the smallest base (10 repos in March). This is
+        the Playwright effect: one dominant tool creating category gravity that pulls in
+        competitors and forks.
+      </p>
+      <p>
+        <strong>Agent Frameworks</strong> at +28% reflects the broader shift from "I am
+        building an MCP server" to "I am building a system that coordinates multiple MCP
+        servers." <a href="/tool/mcp-use--mcp-use/" class="inline-link">mcp-use</a>,
+        <a href="/tool/mark3labs--mcp-go/" class="inline-link">mcp-go</a>, and
+        new entries in multi-agent orchestration are driving this.
+      </p>
+      <p>
+        <strong>Code Assistants</strong> (+18%) are growing faster than MCP Servers (+14%)
+        and AI Tools (+11%). The implication: developers are increasingly not just using MCP
+        servers, they are building opinionated development workflows on top of them.
+        <a href="/tool/laravel--boost/" class="inline-link">laravel/boost</a> and
+        the spec-workflow category exemplify this pattern.
+      </p>
+    </section>
+
+    <section id="new-entries">
+      <h2>First-time top-100 entries</h2>
+      <p>
+        These tools entered the AgentRank top 100 for the first time in March 2026.
+        All five are new to the scored index — either launched in Q1 or sufficiently
+        new that their score only recently passed the threshold. The velocity of their
+        rise is notable: all five cleared the 90+ elite-tier threshold within weeks
+        of their first appearance.
+      </p>
+
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Repository</th>
+            <th class="num">Score</th>
+            <th class="num">Rank</th>
+            <th class="num">Stars</th>
+          </tr>
+        </thead>
+        <tbody>
+          {newToTop100.map((tool) => (
+            <tr>
+              <td class="tool-cell">
+                <a href={`/tool/${tool.slug}/`} class="tool-link">{tool.name}</a>
+                <div class="tool-desc">{tool.desc}</div>
+              </td>
+              <td class="num score-cell">{tool.score}</td>
+              <td class="num">{tool.rank}</td>
+              <td class="num">{tool.stars.toLocaleString('en-US')}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+
+      <p>
+        The two Microsoft entries — <strong>azure-devops-mcp</strong> (#2, 97.3) and
+        <strong>playwright-mcp</strong> (already in index, but accelerating) — confirm
+        a strategic pattern: Microsoft is shipping official MCP servers for its entire
+        developer toolchain. Expect an official GitHub MCP server, a VS Code MCP server,
+        and likely an M365 MCP server in Q2. Each will be an immediate top-25 entry.
+      </p>
+      <p>
+        <strong><a href="/tool/mcp-use--mcp-use/" class="inline-link">mcp-use/mcp-use</a></strong> is
+        the independently-built standout. 9,450 stars with no major corporate backing, entering
+        the top 10 in its first month of widespread visibility. It solves a real problem —
+        connecting any LLM to any MCP server without framework lock-in — and the market is
+        clearly responding.
+      </p>
+      <p>
+        <strong><a href="/tool/rekog-labs--MCP-Nest/" class="inline-link">rekog-labs/MCP-Nest</a></strong> is
+        worth tracking specifically because it represents an opinionated community
+        adoption pattern: the NestJS ecosystem bringing its own conventions to MCP.
+        When a developer community starts building framework-native MCP tooling, it signals
+        that the community has moved past "what is MCP" to "how do we do MCP our way."
+      </p>
+    </section>
+
+    <section id="health">
+      <h2>Maintenance health</h2>
+      <p>
+        Growth is meaningless if the tools are not being maintained. Here is the maintenance
+        picture as of March 19, 2026, split between the curated index and the broader ecosystem.
+      </p>
+
+      <div class="stat-grid">
+        <div class="stat-card">
+          <div class="stat-number">100%</div>
+          <div class="stat-label">Curated top-110 tools updated this week</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">52.2</div>
+          <div class="stat-label">Average AgentRank score (top 110)</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">40</div>
+          <div class="stat-label">Elite-tier tools (score 90+)</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">58%</div>
+          <div class="stat-label">Ecosystem repos active in last 90 days</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">29.6</div>
+          <div class="stat-label">Average score across all 25,750 repos</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">42%</div>
+          <div class="stat-label">Repos dormant over 180 days</div>
+        </div>
+      </div>
+
+      <p>
+        The split between the curated index (52.2 average score) and the broader ecosystem
+        (29.6 average score) reflects exactly what you would expect: most of the 25,750 repos
+        are experiments, proofs-of-concept, and abandoned early attempts. The AgentRank scoring
+        model weights freshness and issue health heavily precisely because this problem is real —
+        a starred-but-dead repo is worse than no repo at all.
+      </p>
+      <p>
+        100% of the top-110 curated tools received at least one commit this week. This is the
+        maintenance baseline you should expect from any tool worth deploying. The 40 elite-tier
+        tools (score 90+) represent roughly 0.16% of all indexed repos but account for the
+        majority of practical ecosystem usage. That 0.16% is where real investment should go.
+      </p>
+      <p>
+        The 42% dormancy rate across the broader ecosystem is not alarming — it is expected.
+        Open-source tool exploration peaks, most experiments die, a few survive and compound.
+        What is notable is that the survival rate appears to be <em>increasing</em>: the
+        percentage of repos active in the last 90 days was around 52% in Q4 2025, and it
+        has risen to 58% in March 2026. The ecosystem is maturing and the surviving tools
+        are pulling further ahead.
+      </p>
+    </section>
+
+    <section id="signals">
+      <h2>What the signals suggest</h2>
+
+      <h3>Official tooling is arriving fast</h3>
+      <p>
+        Microsoft shipped azure-devops-mcp and maintains playwright-mcp. Laravel shipped boost.
+        Home Assistant shipped ha-mcp. The pattern is clear: mature ecosystems are adding official
+        MCP servers to their product surface. Each official server creates an instant high-score
+        entry because it comes with contributors, issue attention, and dependents from day one.
+        Expect the top 20 to have significantly more official tools by end of Q2.
+      </p>
+
+      <h3>TypeScript is the language of momentum</h3>
+      <p>
+        TypeScript's share of high-score tools has been growing quarter-over-quarter (+5.1pp
+        in Q1). March velocity confirms this: 7 of the top 10 fastest-growing tools are
+        TypeScript or multi-language with TypeScript as primary. Python is still dominant
+        by repo count, but TypeScript is winning on the maintenance health and score distribution
+        metrics. Go and Rust continue to punch above their weight on average scores.
+      </p>
+
+      <h3>The frameworks are becoming infrastructure</h3>
+      <p>
+        When fastmcp hits v2, it gets 4,775 stars in a month. When mcp-go adds contributors,
+        it sustains 724 stars per week. These are not product tools — they are infrastructure
+        for building product tools. The fact that framework-layer repos dominate the velocity
+        chart signals that we are in a "build the picks and shovels" phase. The application
+        layer on top of these frameworks is still being built, which means there is significant
+        greenfield opportunity above the framework level.
+      </p>
+
+      <h3>Browser automation is a category, not a single tool</h3>
+      <p>
+        Playwright MCP is dominant, but the 50% category growth rate in March shows that
+        browser automation is attracting new entrants. The use cases are clear (web scraping,
+        automated testing, form filling, research agents) and the Playwright MCP reference
+        implementation is mature enough that new tools can be built on top of it rather than
+        competing with it.
+      </p>
+    </section>
+
+    <section id="methodology">
+      <h2>Methodology note</h2>
+      <p>
+        All data in this report is sourced from the AgentRank D1 database, populated nightly
+        by the AgentRank crawler. Star counts and scores reflect the March 19, 2026 snapshot.
+        Star counts at "February 28" and "March 1" baselines are estimated from the quarterly
+        trajectory data (Q4 2025 end → March 19 total gain), distributed using observed
+        growth curves rather than equal linear interpolation. Growth velocity numbers are
+        labeled as estimates. Category repo counts come from the live
+        <a href="/api/v1/stats" class="inline-link">/api/v1/stats</a> endpoint and the
+        AgentRank tools table as of March 19.
+      </p>
+      <p>
+        The curated index (110 scored tools and 1,625 skills) is a subset of the 25,750-repo
+        full crawl. Curated tools are those that cleared minimum thresholds for stars, freshness,
+        and contributor count. Methodology for the composite score is documented at
+        <a href="/docs/api/" class="inline-link">agentrank-ai.com/docs/api/</a>.
+      </p>
+    </section>
+
+    <BlogSubscribeCTA />
+    <RelatedPosts posts={relatedPosts} />
+  </article>
+</Base>

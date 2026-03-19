@@ -2,6 +2,12 @@ export const prerender = true;
 
 const posts = [
   {
+    slug: 'mcp-server-growth-report-march-2026',
+    title: 'MCP Server Growth Report — March 2026',
+    description: 'Velocity rankings for the MCP ecosystem. Top 10 fastest-growing tools by stars per week, category momentum, first-time top-100 entries, and maintenance health from 25,750+ indexed repositories.',
+    date: '2026-03-19',
+  },
+  {
     slug: 'fastmcp-tutorial-python-mcp-server',
     title: 'FastMCP Tutorial: Build a Python MCP Server in 20 Minutes',
     description: 'Step-by-step FastMCP 3.0 tutorial: tools, resources, prompts, MCP Inspector testing, Claude Desktop setup, and Cloudflare Workers deployment. Covers composability, OpenAPI mounting, proxy mode, OAuth, and OpenTelemetry.',

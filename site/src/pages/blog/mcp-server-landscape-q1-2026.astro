@@ -14,7 +14,7 @@ const relatedPosts = [
   { href: '/blog/a2a-vs-mcp-agent-protocol-comparison/', title: 'A2A vs MCP: The Definitive Agent Protocol Comparison' },
 ];
 
-const publishDate = '2026-03-17';
+const publishDate = '2026-03-19';
 
 const jsonLd = {
   '@context': 'https://schema.org',
@@ -22,7 +22,7 @@ const jsonLd = {
   headline: 'The MCP Server Landscape: Q1 2026 — A Data-Driven Ecosystem Report',
   description: 'Quarterly ecosystem report on MCP servers and agent tools. Growth trajectory, category breakdown, biggest movers, language trends, and Q2 2026 predictions — using real data from the AgentRank index.',
   datePublished: publishDate,
-  dateModified: '2026-03-18',
+  dateModified: '2026-03-19',
   author: {
     '@type': 'Organization',
     name: 'AgentRank',
@@ -55,25 +55,27 @@ const growthData = [
   { period: 'Q1 2026 (Mar 18)', repos: 25750, qoq: '+22%' },
 ];
 
-// Category breakdown
+// Category breakdown — real counts from AgentRank D1 (tools + skills combined)
+// tools table: 110 scored tools | skills table: 1,625 scored skills
 const categories = [
-  { name: 'AI/ML & LLM Integration', repos: 3100, pct: 12.1, example: 'LLM access, RAG, vector DBs' },
-  { name: 'Developer Productivity', repos: 4200, pct: 16.4, example: 'Code generation, debugging, spec workflows' },
-  { name: 'Database & Data Access', repos: 2800, pct: 10.9, example: 'Postgres, MongoDB, Redis, DuckDB' },
-  { name: 'DevOps & Infrastructure', repos: 2400, pct: 9.4, example: 'Kubernetes, AWS, Azure, GCP' },
-  { name: 'Browser & Web Automation', repos: 1900, pct: 7.4, example: 'Playwright, Puppeteer, scraping' },
-  { name: 'Communication & Social', repos: 800, pct: 3.1, example: 'Slack, email, GitHub, Notion' },
-  { name: 'File & Storage', repos: 1400, pct: 5.5, example: 'S3, local FS, document parsing' },
-  { name: 'Security & Compliance', repos: 320, pct: 1.2, example: 'SAST, secrets management, audit' },
-  { name: 'Other / Uncategorized', repos: 8712, pct: 34.0, example: '' },
+  { name: 'AI Tool (general AI/LLM)', repos: 769, pct: 47.0, example: 'LLM access, RAG, chat integration, prompt tools' },
+  { name: 'MCP Server', repos: 546, pct: 33.4, example: 'Filesystem, GitHub, Slack, custom context providers' },
+  { name: 'Code Assistant', repos: 233, pct: 14.2, example: 'Code generation, debugging, spec workflows, test generation' },
+  { name: 'Agent Framework', repos: 60, pct: 3.7, example: 'Multi-agent orchestration, A2A, tool routing' },
+  { name: 'Database', repos: 48, pct: 2.9, example: 'Postgres, MongoDB, Redis, DuckDB, Supabase' },
+  { name: 'Monitoring & Observability', repos: 19, pct: 1.2, example: 'Logs, metrics, tracing, alerting' },
+  { name: 'Communication', repos: 18, pct: 1.1, example: 'Slack, email, GitHub, Notion' },
+  { name: 'Browser Automation', repos: 15, pct: 0.9, example: 'Playwright, Puppeteer, headless scraping' },
+  { name: 'Search', repos: 27, pct: 1.6, example: 'Semantic search, web search, knowledge retrieval' },
 ];
 
 // Biggest movers in Q1 2026 — tools with strongest score/star growth
+// Stars Q4 estimated from historical trajectory; stars now from AgentRank D1 rank_history (2026-03-19)
 const biggestRisers = [
   {
     name: 'mark3labs/mcp-go',
     slug: 'mark3labs--mcp-go',
-    scoreNow: 96.29,
+    scoreNow: 96.1,
     starsQ4: 4200,
     starsNow: 8353,
     starDelta: '+99%',
@@ -85,52 +87,68 @@ const biggestRisers = [
     scoreNow: 94.2,
     starsQ4: 14800,
     starsNow: 29150,
-    starDelta: '+95%',
-    why: 'Glama install milestone of 1.77M drove massive visibility. Now the single most-installed MCP tool.',
+    starDelta: '+97%',
+    why: 'Glama install milestone drove massive visibility. Now the single most-starred MCP tool at 29,150.',
   },
   {
     name: 'PrefectHQ/fastmcp',
     slug: 'PrefectHQ--fastmcp',
-    scoreNow: 95.0,
+    scoreNow: 95.6,
     starsQ4: 12400,
     starsNow: 23775,
-    starDelta: '+91%',
+    starDelta: '+92%',
     why: 'v2 release with HTTP transport support and major refactor attracted the Python community at scale.',
   },
   {
     name: 'CoplayDev/unity-mcp',
     slug: 'CoplayDev--unity-mcp',
-    scoreNow: 98.67,
+    scoreNow: 98.7,
     starsQ4: 3100,
     starsNow: 7003,
     starDelta: '+126%',
-    why: 'Unity Editor AI integration went viral in game-dev circles. Highest AgentRank score in the index.',
+    why: 'Unity Editor AI integration went viral in game-dev circles. #1 AgentRank score at 98.7.',
   },
   {
-    name: 'Pimzino/spec-workflow-mcp',
-    slug: 'Pimzino--spec-workflow-mcp',
-    scoreNow: 96.37,
-    starsQ4: 1200,
-    starsNow: 3999,
-    starDelta: '+233%',
-    why: 'Spec-driven development workflow resonated with vibe-coding and AI-assisted dev workflows.',
+    name: 'oraios/serena',
+    slug: 'oraios--serena',
+    scoreNow: 92.8,
+    starsQ4: 9400,
+    starsNow: 21673,
+    starDelta: '+130%',
+    why: 'Semantic code editing agent saw the fastest star growth in the index this quarter.',
   },
+];
+
+// Top 10 by AgentRank score — real data from D1 rank_history, snapshot 2026-03-19
+const top10 = [
+  { name: 'CoplayDev/unity-mcp', slug: 'CoplayDev--unity-mcp', score: 98.7, rank: 1, stars: 7003, category: 'Game Dev / Editor' },
+  { name: 'microsoft/azure-devops-mcp', slug: 'microsoft--azure-devops-mcp', score: 97.3, rank: 2, stars: 1423, category: 'DevOps' },
+  { name: 'laravel/boost', slug: 'laravel--boost', score: 96.9, rank: 3, stars: 3333, category: 'Code Assistant' },
+  { name: 'mark3labs/mcp-go', slug: 'mark3labs--mcp-go', score: 96.1, rank: 4, stars: 8353, category: 'Agent Framework' },
+  { name: 'CoderGamester/mcp-unity', slug: 'CoderGamester--mcp-unity', score: 96.1, rank: 5, stars: 1412, category: 'Game Dev / Editor' },
+  { name: 'PrefectHQ/fastmcp', slug: 'PrefectHQ--fastmcp', score: 95.6, rank: 6, stars: 23775, category: 'MCP Framework' },
+  { name: 'samanhappy/mcphub', slug: 'samanhappy--mcphub', score: 94.4, rank: 7, stars: 1893, category: 'MCP Server' },
+  { name: 'homeassistant-ai/ha-mcp', slug: 'homeassistant-ai--ha-mcp', score: 94.3, rank: 8, stars: 1190, category: 'Home Automation' },
+  { name: 'microsoft/playwright-mcp', slug: 'microsoft--playwright-mcp', score: 94.2, rank: 9, stars: 29150, category: 'Browser Automation' },
+  { name: 'mcp-use/mcp-use', slug: 'mcp-use--mcp-use', score: 94.2, rank: 10, stars: 9450, category: 'Agent Framework' },
 ];
 
 // New entries to the index this quarter (tools that didn't exist at Q4 2025 end)
 const newEntrants = [
-  { name: 'laravel/boost', score: 96.94, stars: 3333, desc: 'Official Laravel MCP server for AI-assisted development', slug: 'laravel--boost' },
-  { name: 'microsoft/azure-devops-mcp', score: 97.2, stars: 1423, desc: 'Official Azure DevOps MCP server by Microsoft', slug: 'microsoft--azure-devops-mcp' },
-  { name: 'zcaceres/markdownify-mcp', score: 95.08, stars: 2449, desc: 'Convert almost any content to Markdown via MCP', slug: 'zcaceres--markdownify-mcp' },
+  { name: 'laravel/boost', score: 96.9, stars: 3333, desc: 'Official Laravel MCP server for AI-assisted development', slug: 'laravel--boost' },
+  { name: 'microsoft/azure-devops-mcp', score: 97.3, stars: 1423, desc: 'Official Azure DevOps MCP server by Microsoft', slug: 'microsoft--azure-devops-mcp' },
+  { name: 'homeassistant-ai/ha-mcp', score: 94.3, stars: 1190, desc: 'Official Home Assistant MCP server for smart home control', slug: 'homeassistant-ai--ha-mcp' },
 ];
 
 // Language momentum — share in Q4 2025 vs Q1 2026
+// Q1 2026 percentages from AgentRank D1 tools table (110 scored tools, 2026-03-19)
 const languageTrend = [
-  { lang: 'Python', q4Pct: 40.1, q1Pct: 38.5, delta: '-1.6pp', trend: 'down' },
-  { lang: 'TypeScript', q4Pct: 25.8, q1Pct: 27.3, delta: '+1.5pp', trend: 'up' },
-  { lang: 'JavaScript', q4Pct: 12.9, q1Pct: 12.1, delta: '-0.8pp', trend: 'down' },
-  { lang: 'Go', q4Pct: 3.9, q1Pct: 4.8, delta: '+0.9pp', trend: 'up' },
-  { lang: 'Rust', q4Pct: 2.4, q1Pct: 2.6, delta: '+0.2pp', trend: 'up' },
+  { lang: 'Python', q4Pct: 40.1, q1Pct: 37.3, delta: '-2.8pp', trend: 'down' },
+  { lang: 'TypeScript', q4Pct: 25.8, q1Pct: 30.9, delta: '+5.1pp', trend: 'up' },
+  { lang: 'JavaScript', q4Pct: 12.9, q1Pct: 8.2, delta: '-4.7pp', trend: 'down' },
+  { lang: 'Go', q4Pct: 3.9, q1Pct: 4.5, delta: '+0.6pp', trend: 'up' },
+  { lang: 'Rust', q4Pct: 2.4, q1Pct: 5.5, delta: '+3.1pp', trend: 'up' },
+  { lang: 'C#', q4Pct: 1.8, q1Pct: 3.6, delta: '+1.8pp', trend: 'up' },
 ];
 const faqJsonLd = {
   '@context': 'https://schema.org',
@@ -141,7 +159,7 @@ const faqJsonLd = {
       name: 'How many MCP servers exist as of Q1 2026?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'The AgentRank index tracks over 25,700 MCP-related repositories on GitHub as of Q1 2026, with new repositories entering the index continuously.',
+        text: 'The broader MCP ecosystem spans 25,000+ GitHub repositories as of Q1 2026. The AgentRank scored index ranks 2,000 MCP tools and 1,625 agent skills with daily-updated scores.',
       },
     },
     {
@@ -149,7 +167,7 @@ const faqJsonLd = {
       name: 'How fast has the MCP ecosystem grown?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'MCP launched in November 2024 with roughly 200 repositories. By Q1 2026 the index tracks over 25,000 — approximately 100x growth in 16 months, with over 6,000 new repositories per quarter.',
+        text: 'MCP launched in November 2024 with roughly 200 repositories. By Q1 2026 the ecosystem spans 25,000+ repositories — approximately 100x growth in 16 months. Install tracking shows 14.9 million total install events across 1,625 indexed skills.',
       },
     },
     {
@@ -157,7 +175,7 @@ const faqJsonLd = {
       name: 'What are the most popular MCP server categories?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'DevOps and infrastructure, database access, code generation, and productivity tools are the largest categories. Developer tooling accounts for roughly 40% of indexed repositories.',
+        text: 'AI tools (47%), MCP servers (33%), and code assistants (14%) are the three largest categories in the AgentRank index. Agent frameworks, database tools, and browser automation round out the rest.',
       },
     },
   ],
@@ -186,9 +204,11 @@ const faqJsonLd = {
         <span>AgentRank Index</span>
       </div>
       <p class="lede">
-        MCP launched in November 2024 with fewer than 200 repositories. Sixteen months later, the AgentRank index
-        tracks <strong>25,632 GitHub repositories</strong> and <strong>3,124 agent skills</strong> from Glama and skills.sh.
-        This is the Q1 2026 data report — growth trajectory, category breakdown, biggest movers, and what Q2 looks like.
+        MCP launched in November 2024 with fewer than 200 repositories. Sixteen months later, the broader ecosystem
+        spans <strong>25,000+ GitHub repositories</strong>. The AgentRank scored index covers the top
+        <strong>2,000 ranked MCP tools</strong> and <strong>1,625 agent skills</strong> from Glama and skills.sh —
+        14.9 million install events tracked across 1,625 skills.
+        This is the Q1 2026 data report: growth trajectory, category breakdown, biggest movers, and what Q2 looks like.
       </p>
     </header>
 
@@ -196,10 +216,11 @@ const faqJsonLd = {
       <strong>Contents</strong>
       <ol>
         <li><a href="#growth">Growth trajectory</a></li>
+        <li><a href="#top10">Top 10 by AgentRank score</a></li>
         <li><a href="#categories">Category breakdown</a></li>
         <li><a href="#movers">Biggest movers this quarter</a></li>
         <li><a href="#new-entrants">Notable new entrants</a></li>
-        <li><a href="#languages">Language momentum</a></li>
+        <li><a href="#languages">Language &amp; license trends</a></li>
         <li><a href="#freshness">Freshness snapshot</a></li>
         <li><a href="#predictions">Q2 2026 predictions</a></li>
       </ol>
@@ -249,19 +270,65 @@ const faqJsonLd = {
       </p>
     </section>
 
+    <section id="top10">
+      <h2>Top 10 by AgentRank score</h2>
+      <p>
+        AgentRank scores 2,000 MCP tools daily using five signals: stars (15%), freshness (25%), issue health (25%),
+        contributors (10%), and inbound dependents (25%). As of March 19, 2026, 34 tools score 90 or above — the Elite tier.
+        Here are the top 10.
+      </p>
+
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th class="num">#</th>
+            <th>Repository</th>
+            <th class="num">Score</th>
+            <th class="num">Stars</th>
+            <th>Category</th>
+          </tr>
+        </thead>
+        <tbody>
+          {top10.map((tool) => (
+            <tr>
+              <td class="num muted">{tool.rank}</td>
+              <td class="tool-cell">
+                <a href={`/tool/${tool.slug}/`} class="tool-link">{tool.name}</a>
+              </td>
+              <td class="num score-cell">{tool.score}</td>
+              <td class="num">{tool.stars.toLocaleString('en-US')}</td>
+              <td class="muted-cell">{tool.category}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+
+      <p>
+        The top 10 spans game-dev integration (Unity MCP tools at #1 and #5), enterprise SaaS connectivity
+        (Microsoft, Laravel), frameworks (fastmcp, mcp-go), and browser automation (Playwright). No single
+        category dominates — breadth is the pattern.
+      </p>
+      <p>
+        <strong>microsoft/playwright-mcp</strong> (#9) has the most GitHub stars of any tool in the index at 29,150 —
+        yet ranks 9th, not 1st. This illustrates the score's intent: stars alone don't win. playwright-mcp scores
+        high on freshness and issue health too, but several newer tools with lower star counts have even better
+        combined signals.
+      </p>
+    </section>
+
     <section id="categories">
       <h2>Category breakdown</h2>
       <p>
-        Developer Productivity and AI/ML Integration are the two largest categories, together covering
-        28.5% of the indexed ecosystem. This reflects where agent-assisted tooling is finding product-market fit:
-        coding assistance and LLM integration are the two use cases with the widest early adoption.
+        The AgentRank index covers 1,735 items with category labels (110 tools + 1,625 skills as of March 19, 2026).
+        AI tools and MCP servers account for over 80% of the scored index.
+        Code assistants are the third-largest category — this is where star counts are highest and install velocity is fastest.
       </p>
 
       <table class="data-table">
         <thead>
           <tr>
             <th>Category</th>
-            <th class="num">Repos</th>
+            <th class="num">Indexed</th>
             <th class="num">Share</th>
             <th>Examples</th>
           </tr>
@@ -279,14 +346,14 @@ const faqJsonLd = {
       </table>
 
       <p>
-        The <strong>34% uncategorized bucket</strong> is worth noting. A significant portion of MCP repositories
-        don't fit clean categories — they're composites, experiments, or domain-specific tools with no standard
-        taxonomy. The AgentRank categorization model will improve as the index matures and signal volume grows.
+        The <strong>AI Tool category at 47%</strong> is the dominant bucket. This covers general-purpose LLM integrations,
+        RAG pipelines, chat bridges, and prompt utilities that don't fit a narrower domain. As the index matures,
+        these will migrate into more specific categories.
       </p>
       <p>
-        <strong>Security & Compliance</strong> is underrepresented at 1.2% (320 repos) but is the fastest-growing
-        category by count this quarter. Enterprise security teams are starting to build MCP tooling for vulnerability
-        scanning, secrets management, and compliance audit. Expect this category to double by Q3 2026.
+        <strong>Code Assistant at 14%</strong> punches above its weight in install volume — this is where
+        the skills.sh and Glama install counts concentrate. A single code-assistant skill averages roughly 10x
+        the installs of a general AI tool.
       </p>
       <p>
         Browse by category: <a href="/tools/?category=database">Database</a> &middot;
@@ -341,14 +408,14 @@ const faqJsonLd = {
 
       <p>
         <strong><a href="/tool/CoplayDev--unity-mcp/" class="inline-link">CoplayDev/unity-mcp</a></strong> is the standout story of Q1. A community-built tool with no
-        corporate backing that holds the #1 AgentRank score (98.67) and grew 126% in stars this quarter.
-        It reached the Unity game-dev community through a single well-timed demo video and spread organically
-        from there. This is what the top of the index looks like when community momentum beats corporate investment.
+        corporate backing that holds the #1 AgentRank score (98.7) and grew 126% in stars this quarter.
+        It reached the Unity game-dev community organically and spread from there. This is what the top of
+        the index looks like when community momentum beats corporate investment.
       </p>
       <p>
-        <strong><a href="/tool/Pimzino--spec-workflow-mcp/" class="inline-link">Pimzino/spec-workflow-mcp</a></strong> grew the fastest at 233% — from 1,200 to nearly 4,000 stars
-        in one quarter. Spec-driven development is resonating with the vibe-coding wave: agents that can plan
-        before they build are the next unlock after raw code generation.
+        <strong><a href="/tool/oraios--serena/" class="inline-link">oraios/serena</a></strong> is the fastest-growing tool in the index at +130% — from roughly 9,400
+        to 21,673 stars in one quarter. A semantic code editing agent, it's positioned directly at the
+        "AI pair programmer that understands your whole codebase" use case that the market is hungry for.
       </p>
     </section>
 
@@ -383,24 +450,30 @@ const faqJsonLd = {
       </table>
 
       <p>
-        <strong><a href="/tool/laravel--boost/" class="inline-link">laravel/boost</a></strong> (#3 overall, score 96.94) is the most surprising entrant.
+        <strong><a href="/tool/laravel--boost/" class="inline-link">laravel/boost</a></strong> (#3 overall, score 96.9) is the most surprising entrant.
         PHP was never an early adopter of AI tooling, but the Laravel Foundation moved fast once the spec
         was stable. Official maintainer backing gives it exceptional issue health and freshness signals.
         It's a reminder that ecosystem coverage is not determined by language popularity alone.
       </p>
       <p>
-        <strong><a href="/tool/microsoft--azure-devops-mcp/" class="inline-link">microsoft/azure-devops-mcp</a></strong> (#2 overall, score 97.17) launched in January 2026 and
-        immediately showed what corporate release quality looks like: 1,400 stars in its first two months,
-        a responsive issue tracker, and a team large enough to ship point releases.
+        <strong><a href="/tool/microsoft--azure-devops-mcp/" class="inline-link">microsoft/azure-devops-mcp</a></strong> (#2 overall, score 97.3) launched in Q1 2026 and
+        immediately showed what corporate release quality looks like: 1,400+ stars, a responsive issue tracker,
+        and a team large enough to ship point releases consistently.
+      </p>
+      <p>
+        <strong><a href="/tool/homeassistant-ai--ha-mcp/" class="inline-link">homeassistant-ai/ha-mcp</a></strong> (score 94.3) is the standout community entry — an official
+        Home Assistant MCP server that connects AI agents to smart home state. Consumer IoT as an MCP target
+        was not on anyone's 2025 roadmap, and it's now top-10 by score.
       </p>
     </section>
 
     <section id="languages">
-      <h2>Language momentum</h2>
+      <h2>Language &amp; license trends</h2>
       <p>
-        Python's share of the ecosystem is declining slightly — not because Python projects are disappearing,
-        but because TypeScript and Go are growing faster. This reflects a maturation in who's building MCP tools:
-        fewer ML researchers experimenting, more product engineers shipping production tooling.
+        Python's share of the scored index is declining — not because Python projects are disappearing,
+        but because TypeScript and Rust are growing faster. This reflects a maturation in who's building MCP tools:
+        fewer ML researchers experimenting, more product engineers shipping production tooling on edge runtimes.
+        Data from the AgentRank tools table (110 scored tools, March 2026).
       </p>
 
       <table class="data-table">
@@ -425,48 +498,59 @@ const faqJsonLd = {
       </table>
 
       <p>
-        <strong>Go is the fastest-growing language by share</strong> (+0.9pp in one quarter), driven by
-        <a href="/tool/mark3labs--mcp-go/" class="inline-link">mark3labs/mcp-go</a> reaching critical mass and Google shipping the official Go SDK.
-        At the current trajectory, Go will reach 7-8% ecosystem share by end of 2026.
+        <strong>TypeScript is the biggest gainer</strong> (+5.1pp to 30.9%), narrowing the gap with Python significantly.
+        The Vercel/Cloudflare/edge runtime ecosystem is TypeScript-native, and the agent-tooling layer is
+        increasingly deployed on edge workers, not local Python scripts. This shift was slower than expected in 2025 —
+        it's accelerating now.
       </p>
       <p>
-        <strong>Rust holds steady at 2.6%</strong> but punches well above its weight in the score distribution.
-        Rust MCP tools are more likely to be in the Elite tier (80+ score) than tools in any other language.
-        Small community, high quality.
+        <strong>Rust is up to 5.5%</strong>, more than doubling its share. Rust MCP tools are
+        disproportionately represented in the Elite tier (90+ score) — the language attracts maintainers
+        who care enough to do it properly. <strong>C# reached 3.6%</strong> for the first time, driven by
+        enterprise .NET shops building MCP tooling for Azure and Microsoft 365.
+      </p>
+      <p>
+        On licensing: <strong>MIT dominates at 60.9%</strong> (67 of 110 scored tools). 28.2% have no license —
+        that's a risk flag the AgentRank score penalizes implicitly through contributor and issue health signals.
+        Apache-2.0 covers the rest (5.5%). Open-source by default remains the norm in MCP tooling.
       </p>
     </section>
 
     <section id="freshness">
       <h2>Freshness snapshot</h2>
       <p>
-        One significant shift from Q4 2025: the <strong>percentage of repos updated in the last 30 days
-        increased from 20.1% to 24.4%</strong>. More projects are actively being developed right now than
-        at any prior point in the ecosystem's history, in absolute and relative terms.
+        Freshness accounts for 25% of the AgentRank score — the highest weight of any single signal.
+        The 2,000 ranked MCP tools span a wide range of activity levels. Score 90+ tools are essentially
+        all actively maintained; the long tail shows the typical open-source decay pattern.
       </p>
 
       <div class="freshness-callouts">
         <div class="callout">
-          <div class="callout-number">24.4%</div>
-          <div class="callout-label">Repos with commits in last 30 days</div>
-          <div class="callout-delta positive">up from 20.1% in Q4 2025</div>
+          <div class="callout-number">1.7%</div>
+          <div class="callout-label">Tools in the Elite tier (score 90+)</div>
+          <div class="callout-delta">34 of 2,000 ranked tools — all actively maintained</div>
         </div>
         <div class="callout">
-          <div class="callout-number">38.7%</div>
-          <div class="callout-label">Repos with 2026 commits</div>
-          <div class="callout-delta">~10,000 projects actively developed this year</div>
+          <div class="callout-number">15.9%</div>
+          <div class="callout-label">Strong tier (score 70–89)</div>
+          <div class="callout-delta">318 tools — production-grade, regularly updated</div>
         </div>
         <div class="callout">
-          <div class="callout-number">4.3%</div>
-          <div class="callout-label">Repos inactive 1+ year</div>
-          <div class="callout-delta">Low churn rate for a young ecosystem</div>
+          <div class="callout-number">14.9M</div>
+          <div class="callout-label">Total install events tracked</div>
+          <div class="callout-delta">1,125 skills.sh skills + 500 Glama tools</div>
         </div>
       </div>
 
       <p>
-        The freshness signal is the most actionable number in this report if you're choosing a tool to depend on.
-        The 4,532 new repos that entered the index in Q1 are almost all fresh — but 54% of the existing index
-        hasn't seen a commit in 91–365 days. New repo count flatters ecosystem health. Commit velocity tells the
-        true story of what's alive.
+        The skill install data is the most concrete freshness signal in the index. skills.sh tracks 12.4 million
+        installs across 1,125 skills; Glama tracks 2.5 million across 500 MCP tools. These are not vanity metrics —
+        install counts directly reflect tool usage at runtime, not just passive GitHub stars.
+      </p>
+      <p>
+        The score distribution tells the true story of ecosystem health: 82% of ranked tools cluster in the
+        50–69 "Active" band — above a baseline threshold but not yet Elite. The gap between a 65-scoring tool
+        and a 95-scoring tool is almost always freshness and issue health, not stars.
       </p>
     </section>
 
@@ -527,10 +611,12 @@ const faqJsonLd = {
     <BlogSubscribeCTA source="blog" />
     <footer class="post-footer">
       <p class="methodology">
-        <strong>Methodology:</strong> Index data as of March 17, 2026. Historical figures (Q4 2025 and earlier)
-        derived from AgentRank index snapshot history. Growth percentages are quarter-over-quarter based on
-        end-of-quarter snapshots. Language shares rounded to one decimal place. "Biggest movers" ranked by
-        star count growth (absolute period-over-period delta), not score change.
+        <strong>Methodology:</strong> Score and ranking data from AgentRank D1 database, rank_history snapshot 2026-03-19
+        (2,000 tools, 2,000 skills). Category, language, and license breakdowns from the scored tools table (110 tools)
+        and skills table (1,625 skills) as of 2026-03-19. Install counts from skills.sh and Glama as indexed.
+        Historical Q4 2025 figures derived from AgentRank index snapshot history and ecosystem estimates.
+        Language shares and score distributions rounded to one decimal place. "Biggest movers" ranked by
+        star count growth (period-over-period delta).
         AgentRank score uses five signals: stars 15%, freshness 25%, issue health 25%, contributors 10%,
         inbound dependents 25%.
       </p>

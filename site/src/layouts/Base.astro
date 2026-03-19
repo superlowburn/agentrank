@@ -2,7 +2,7 @@
 interface Props {
   title: string;
   description?: string;
-  activeTab?: 'skills' | 'tools' | 'agents' | 'movers' | 'trends' | 'submit' | 'api' | 'blog' | 'pricing' | 'changelog' | 'news' | 'integrations' | 'check';
+  activeTab?: 'skills' | 'tools' | 'agents' | 'movers' | 'trends' | 'submit' | 'api' | 'blog' | 'pricing' | 'changelog' | 'news' | 'integrations' | 'check' | 'methodology';
   jsonLd?: object | object[];
   keywords?: string;
   canonicalUrl?: string;
@@ -333,6 +333,7 @@ const ogImageHeight = ogImage ? '630' : '500';
             <a href="/news/" class={activeTab === 'news' ? 'active' : ''}>News</a>
             <a href="/blog/" class={activeTab === 'blog' ? 'active' : ''}>Blog</a>
             <a href="/changelog/" class={activeTab === 'changelog' ? 'active' : ''}>Changelog</a>
+            <a href="/methodology/" class={activeTab === 'methodology' ? 'active' : ''}>Methodology</a>
           </nav>
         </div>
         <span class="tagline">Google PageRank for AI agents. 25,000+ tools indexed.</span>

@@ -7,7 +7,7 @@ const jsonLd = {
   '@type': 'WebPage',
   name: 'AgentRank Pricing',
   url: 'https://agentrank-ai.com/pricing/',
-  description: 'AgentRank pricing for MCP server maintainers and builders. Claim your listing, access ranked data via API, or sponsor your category.',
+  description: 'AgentRank API pricing. Start free with 100 requests/day. Pro API at $49/mo for 10,000 requests/day. Sponsored listings at $299/mo for featured placement.',
   mainEntity: {
     '@type': 'ItemList',
     itemListElement: [
@@ -16,11 +16,10 @@ const jsonLd = {
         position: 1,
         item: {
           '@type': 'Offer',
-          name: 'Verified Publisher',
-          description: 'Claim your MCP server listing, add logo and tagline, get a verified badge, and access monthly analytics.',
-          price: '29',
+          name: 'Free',
+          description: 'Public API access. 100 requests/day, no key required.',
+          price: '0',
           priceCurrency: 'USD',
-          priceSpecification: { '@type': 'UnitPriceSpecification', billingIncrement: 1, unitCode: 'MON' },
           url: 'https://agentrank-ai.com/pricing/',
         },
       },
@@ -30,7 +29,7 @@ const jsonLd = {
         item: {
           '@type': 'Offer',
           name: 'Pro API',
-          description: 'Programmatic access to the full AgentRank index. Paginated leaderboard, search, categories, and score data for 25,000+ tools.',
+          description: 'Programmatic access to the full AgentRank index. 10,000 requests/day, all endpoints, full score breakdowns.',
           price: '49',
           priceCurrency: 'USD',
           priceSpecification: { '@type': 'UnitPriceSpecification', billingIncrement: 1, unitCode: 'MON' },
@@ -42,9 +41,9 @@ const jsonLd = {
         position: 3,
         item: {
           '@type': 'Offer',
-          name: 'Sponsored Listings',
+          name: 'Sponsored',
           description: 'Featured category placement for commercial MCP tools. Reach developers actively evaluating tools in your category.',
-          price: '199',
+          price: '299',
           priceCurrency: 'USD',
           priceSpecification: { '@type': 'UnitPriceSpecification', billingIncrement: 1, unitCode: 'MON' },
           url: 'https://agentrank-ai.com/pricing/',
@@ -57,51 +56,41 @@ const jsonLd = {
 
 <Base
   title="Pricing — AgentRank"
-  description="Claim your listing, access ranked data, or sponsor your category. Verified Publisher at $29/mo, Pro API at $49/mo, Sponsored Listings from $199/mo."
+  description="Start free with 100 requests/day. Pro API at $49/mo for 10,000 requests/day and all endpoints. Sponsored listings at $299/mo for featured placement and analytics."
   activeTab="pricing"
-  keywords="AgentRank pricing, MCP tool listing, verified publisher badge, agent tool API pricing, sponsored listing MCP"
+  keywords="AgentRank pricing, MCP API pricing, agent tool API, sponsored listing MCP, Pro API access"
   canonicalUrl="https://agentrank-ai.com/pricing/"
   jsonLd={jsonLd}
 >
 
   <div class="pricing-hero">
-    <p class="eyebrow">For Maintainers &amp; Builders</p>
-    <h1>Get Found by Developers Building with MCP</h1>
-    <p class="hero-sub">Index your tool. Prove it works. Sponsor your category.</p>
-  </div>
-
-  <div class="billing-toggle-wrap">
-    <div class="billing-toggle" role="group" aria-label="Billing period">
-      <button class="toggle-btn" id="btn-monthly" data-period="monthly" type="button">Monthly</button>
-      <button class="toggle-btn active" id="btn-annual" data-period="annual" type="button">Annual <span class="save-badge">save 17%</span></button>
-    </div>
+    <p class="eyebrow">API Pricing</p>
+    <h1>Simple, transparent pricing</h1>
+    <p class="hero-sub">Start free. Upgrade when you need more. No surprises.</p>
   </div>
 
   <div class="tiers">
 
-    <!-- Verified Publisher -->
+    <!-- Free -->
     <div class="tier">
       <div class="tier-header">
-        <span class="tier-name">Verified Publisher</span>
+        <span class="tier-name">Free</span>
         <div class="tier-price-block">
-          <span class="tier-price">
-            $<span class="price-amount" data-monthly="29" data-annual="24">24</span><span class="tier-per">/mo</span>
-          </span>
-          <span class="tier-billing-note billing-annual">billed $290/yr &mdash; 2 months free</span>
-          <span class="tier-billing-note billing-monthly" style="display:none">billed monthly</span>
+          <span class="tier-price">$0<span class="tier-per">/mo</span></span>
+          <span class="tier-billing-note">no account needed &mdash; always free</span>
         </div>
-        <p class="tier-best-for">For maintainers who want to claim their listing and build trust.</p>
+        <p class="tier-best-for">For developers exploring the index or building hobby projects.</p>
       </div>
       <ul class="tier-features">
-        <li class="check">Verified Publisher badge on your listing</li>
-        <li class="check">Enhanced listing: logo, description, docs &amp; Discord links</li>
-        <li class="check">Monthly analytics: views, installs, referral sources</li>
-        <li class="check">Priority indexing — commits reflected within 24h</li>
-        <li class="check">One featured category tag of your choice</li>
-        <li class="check">Email alerts on 10+ point score changes</li>
+        <li class="check">100 requests/day per IP</li>
+        <li class="check">Core endpoints: <code>/tools</code>, <code>/search</code>, <code>/badge</code></li>
+        <li class="check">JSON responses with AgentRank scores</li>
+        <li class="check">MCP server install: one command</li>
+        <li class="check">No API key required</li>
       </ul>
-      <button class="cta cta-secondary checkout-btn" data-tier="verified_publisher" id="btn-vp">Claim your listing &rarr;</button>
-      <p class="cta-note" id="note-vp">&nbsp;</p>
+      <a href="/docs/" class="cta cta-secondary">Read the API docs &rarr;</a>
+      <p class="cta-note">Free tier is live now &middot; <a href="/docs/rate-limits/">rate limit docs</a></p>
+      <p class="cta-note">Already have a key? <a href="/developer/dashboard/">Manage in dashboard &rarr;</a></p>
     </div>
 
     <!-- Pro API (featured) -->
@@ -110,62 +99,77 @@ const jsonLd = {
       <div class="tier-header">
         <span class="tier-name">Pro API</span>
         <div class="tier-price-block">
-          <span class="tier-price">
-            $<span class="price-amount" data-monthly="49" data-annual="41">41</span><span class="tier-per">/mo</span>
-          </span>
-          <span class="tier-billing-note billing-annual">billed $490/yr &mdash; save $98</span>
-          <span class="tier-billing-note billing-monthly" style="display:none">billed monthly</span>
+          <span class="tier-price">$49<span class="tier-per">/mo</span></span>
+          <span class="tier-billing-note">launching Phase 2 &mdash; join waitlist for early access</span>
         </div>
         <p class="tier-best-for">For developers building agents, plugins, and orchestration layers.</p>
       </div>
       <ul class="tier-features">
-        <li class="check">10,000 API calls/month</li>
-        <li class="check">60 req/min rate limit</li>
-        <li class="check">Full endpoints: /tools, /search, /categories, /skills</li>
-        <li class="check">JSON responses with complete score breakdowns</li>
+        <li class="check">10,000 requests/day</li>
+        <li class="check">All endpoints: <code>/tools</code>, <code>/search</code>, <code>/categories</code>, <code>/skills</code>, <code>/score</code></li>
+        <li class="check">API key &mdash; no IP restrictions</li>
+        <li class="check">Full score breakdowns in every response</li>
         <li class="check">30-day historical score data</li>
-        <li class="check">API dashboard: usage, call logs, error rates</li>
-        <li class="check">Email support (best effort)</li>
+        <li class="check">Usage dashboard &amp; call logs</li>
+        <li class="check">Email support</li>
       </ul>
-      <button class="cta cta-primary checkout-btn" data-tier="pro_api" id="btn-pro">Get API access &rarr;</button>
-      <p class="cta-note" id="note-pro">&nbsp;</p>
+      <div class="waitlist-form-wrap" id="pro-form-wrap">
+        <form class="waitlist-form" id="pro-waitlist-form" novalidate>
+          <input type="text" name="_hp" class="hp-field" tabindex="-1" autocomplete="off" aria-hidden="true" />
+          <div class="waitlist-row">
+            <input
+              type="email"
+              id="pro-waitlist-email"
+              name="email"
+              placeholder="you@example.com"
+              autocomplete="email"
+              required
+            />
+            <button type="submit" id="pro-waitlist-btn">Join waitlist &rarr;</button>
+          </div>
+          <span id="pro-waitlist-msg" class="waitlist-msg" aria-live="polite"></span>
+        </form>
+      </div>
+      <p class="cta-note">First notified when Pro launches &middot; no commitment</p>
     </div>
 
-    <!-- Sponsored Listing -->
+    <!-- Sponsored -->
     <div class="tier">
       <div class="tier-header">
-        <span class="tier-name">Sponsored Listing</span>
+        <span class="tier-name">Sponsored</span>
         <div class="tier-price-block">
-          <span class="tier-price">from $<span class="tier-per-inline">199</span><span class="tier-per">/mo</span></span>
-          <span class="tier-billing-note">2 months free on annual — invoiced</span>
+          <span class="tier-price">$299<span class="tier-per">/mo</span></span>
+          <span class="tier-billing-note">launching Phase 2 &mdash; limited slots available</span>
         </div>
-        <p class="tier-best-for">For commercial tools competing for developer mindshare.</p>
-      </div>
-      <div class="subtier-table">
-        <div class="subtier-row">
-          <span class="subtier-name">Category Sponsor</span>
-          <span class="subtier-price">$199/mo</span>
-          <span class="subtier-desc">Top of one category page</span>
-        </div>
-        <div class="subtier-row">
-          <span class="subtier-name">Featured Sponsor</span>
-          <span class="subtier-price">$299/mo</span>
-          <span class="subtier-desc">Category + homepage sidebar</span>
-        </div>
-        <div class="subtier-row">
-          <span class="subtier-name">Premium Sponsor</span>
-          <span class="subtier-price">$499/mo</span>
-          <span class="subtier-desc">Category + banner + newsletter</span>
-        </div>
+        <p class="tier-best-for">For commercial tools competing for developer mindshare in their category.</p>
       </div>
       <ul class="tier-features">
-        <li class="check">Everything in Verified Publisher</li>
-        <li class="check">Featured placement — "Sponsored" label, prominently placed</li>
+        <li class="check">Featured placement at top of category page</li>
+        <li class="check">Homepage sidebar placement</li>
         <li class="check">Full analytics: views, click-throughs, comparison events</li>
-        <li class="check">Slack channel for listing updates and data questions</li>
+        <li class="check">Verified Publisher badge on listing</li>
+        <li class="check">Enhanced listing: logo, description, docs links</li>
+        <li class="check">Priority indexing &mdash; commits reflected within 24h</li>
+        <li class="check">Slack channel for listing updates</li>
       </ul>
-      <a href="/pricing/checkout/" class="cta cta-primary checkout-btn" data-tier="sponsored_basic">Get sponsored listing &rarr;</a>
-      <p class="cta-note">Stripe checkout &rarr; active within 1 hour &middot; <a href="mailto:hello@agentrank-ai.com?subject=Sponsored%20Listing%20Inquiry">questions? email us</a></p>
+      <div class="waitlist-form-wrap" id="sponsored-form-wrap">
+        <form class="waitlist-form" id="sponsored-waitlist-form" novalidate>
+          <input type="text" name="_hp" class="hp-field" tabindex="-1" autocomplete="off" aria-hidden="true" />
+          <div class="waitlist-row">
+            <input
+              type="email"
+              id="sponsored-waitlist-email"
+              name="email"
+              placeholder="you@company.com"
+              autocomplete="email"
+              required
+            />
+            <button type="submit" id="sponsored-waitlist-btn">Get featured &rarr;</button>
+          </div>
+          <span id="sponsored-waitlist-msg" class="waitlist-msg" aria-live="polite"></span>
+        </form>
+      </div>
+      <p class="cta-note">or email <a href="mailto:hello@agentrank-ai.com?subject=Sponsored%20Listing%20Inquiry">hello@agentrank-ai.com</a></p>
     </div>
 
   </div>
@@ -177,83 +181,33 @@ const jsonLd = {
         <thead>
           <tr>
             <th>Feature</th>
-            <th>Verified Publisher</th>
+            <th>Free</th>
             <th class="col-featured">Pro API</th>
             <th>Sponsored</th>
           </tr>
         </thead>
         <tbody>
-          <tr class="row-group"><td colspan="4">Listing &amp; Visibility</td></tr>
-          <tr>
-            <td>Verified badge on listing</td>
-            <td class="yes">yes</td>
-            <td class="no col-featured">&mdash;</td>
-            <td class="yes">yes</td>
-          </tr>
-          <tr>
-            <td>Custom logo, description, links</td>
-            <td class="yes">yes</td>
-            <td class="no col-featured">&mdash;</td>
-            <td class="yes">yes</td>
-          </tr>
-          <tr>
-            <td>Priority indexing (24h)</td>
-            <td class="yes">yes</td>
-            <td class="no col-featured">&mdash;</td>
-            <td class="yes">yes</td>
-          </tr>
-          <tr>
-            <td>Featured category placement</td>
-            <td class="no">&mdash;</td>
-            <td class="no col-featured">&mdash;</td>
-            <td class="yes">yes</td>
-          </tr>
-          <tr>
-            <td>Homepage placement</td>
-            <td class="no">&mdash;</td>
-            <td class="no col-featured">&mdash;</td>
-            <td class="yes">Featured+</td>
-          </tr>
-          <tr>
-            <td>Newsletter feature</td>
-            <td class="no">&mdash;</td>
-            <td class="no col-featured">&mdash;</td>
-            <td class="yes">Premium only</td>
-          </tr>
-          <tr class="row-group"><td colspan="4">Analytics</td></tr>
-          <tr>
-            <td>Monthly views &amp; install data</td>
-            <td class="yes">yes</td>
-            <td class="no col-featured">&mdash;</td>
-            <td class="yes">yes</td>
-          </tr>
-          <tr>
-            <td>Referral sources</td>
-            <td class="yes">yes</td>
-            <td class="no col-featured">&mdash;</td>
-            <td class="yes">yes</td>
-          </tr>
-          <tr>
-            <td>Click-through &amp; comparison events</td>
-            <td class="no">&mdash;</td>
-            <td class="no col-featured">&mdash;</td>
-            <td class="yes">yes</td>
-          </tr>
           <tr class="row-group"><td colspan="4">API Access</td></tr>
           <tr>
-            <td>API calls/month</td>
-            <td class="no">&mdash;</td>
+            <td>Requests/day</td>
+            <td>100</td>
             <td class="yes col-featured">10,000</td>
             <td class="no">&mdash;</td>
           </tr>
           <tr>
-            <td>Rate limit</td>
+            <td>API key (no IP restriction)</td>
             <td class="no">&mdash;</td>
-            <td class="yes col-featured">60 req/min</td>
+            <td class="yes col-featured">yes</td>
             <td class="no">&mdash;</td>
           </tr>
           <tr>
-            <td>Historical score data (30 days)</td>
+            <td><code>/tools</code>, <code>/search</code>, <code>/badge</code></td>
+            <td class="yes">yes</td>
+            <td class="yes col-featured">yes</td>
+            <td class="no">&mdash;</td>
+          </tr>
+          <tr>
+            <td><code>/categories</code>, <code>/skills</code>, <code>/score</code></td>
             <td class="no">&mdash;</td>
             <td class="yes col-featured">yes</td>
             <td class="no">&mdash;</td>
@@ -265,10 +219,47 @@ const jsonLd = {
             <td class="no">&mdash;</td>
           </tr>
           <tr>
-            <td>Usage dashboard</td>
+            <td>30-day historical score data</td>
             <td class="no">&mdash;</td>
             <td class="yes col-featured">yes</td>
             <td class="no">&mdash;</td>
+          </tr>
+          <tr>
+            <td>Usage dashboard &amp; call logs</td>
+            <td class="no">&mdash;</td>
+            <td class="yes col-featured">yes</td>
+            <td class="no">&mdash;</td>
+          </tr>
+          <tr class="row-group"><td colspan="4">Listing &amp; Visibility</td></tr>
+          <tr>
+            <td>Auto-indexed listing</td>
+            <td class="yes">yes</td>
+            <td class="no col-featured">&mdash;</td>
+            <td class="yes">yes</td>
+          </tr>
+          <tr>
+            <td>Verified Publisher badge</td>
+            <td class="no">&mdash;</td>
+            <td class="no col-featured">&mdash;</td>
+            <td class="yes">yes</td>
+          </tr>
+          <tr>
+            <td>Featured category placement</td>
+            <td class="no">&mdash;</td>
+            <td class="no col-featured">&mdash;</td>
+            <td class="yes">yes</td>
+          </tr>
+          <tr>
+            <td>Homepage sidebar placement</td>
+            <td class="no">&mdash;</td>
+            <td class="no col-featured">&mdash;</td>
+            <td class="yes">yes</td>
+          </tr>
+          <tr>
+            <td>Full analytics dashboard</td>
+            <td class="no">&mdash;</td>
+            <td class="no col-featured">&mdash;</td>
+            <td class="yes">yes</td>
           </tr>
         </tbody>
       </table>
@@ -278,30 +269,32 @@ const jsonLd = {
   <section class="faq">
     <h2 class="section-header">FAQ</h2>
     <dl class="faq-list">
-      <dt>Is my tool already in the index?</dt>
-      <dd>Yes, almost certainly. AgentRank crawls GitHub nightly and indexes every repo matching MCP server and agent tool patterns. Search the <a href="/">leaderboard</a> to find your listing. Free listings are auto-generated — paid tiers let you claim and enhance them.</dd>
 
-      <dt>Do I need to pay to be indexed?</dt>
-      <dd>No. The index is free. Listings are auto-generated from public GitHub data. Paid tiers are for maintainers who want to claim their listing, add context, see analytics, or get premium placement.</dd>
+      <dt>What counts as a request?</dt>
+      <dd>One API call to any endpoint counts as one request. Fetching a tool by ID (<code>GET /tools/:id</code>), running a search (<code>GET /search</code>), listing a category, or pulling score history — each is one request. MCP server calls made by your AI assistant also count. Requests that return errors (4xx, 5xx) do not count against your limit.</dd>
 
-      <dt>When can I actually subscribe?</dt>
-      <dd>Stripe integration launches at the Phase 2 gate — 5,000+ monthly API requests or 500+ skill installs. Until then, join the waitlist and you'll be first notified. <a href="/subscribe/">Join the waitlist &rarr;</a></dd>
+      <dt>What is the rate limit on the free tier?</dt>
+      <dd>The public free tier allows 100 requests per day, enforced per IP address. There is no per-minute burst limit for typical usage. If you hit the daily limit, requests return a <code>429 Too Many Requests</code> response and the limit resets at midnight UTC. For higher volume, join the Pro waitlist.</dd>
 
-      <dt>How does the Verified Publisher badge work?</dt>
-      <dd>After subscribing, you verify ownership of the GitHub repo (contributor or org member). The badge appears on your listing within 1 hour. It signals to developers that a real maintainer is actively behind the tool — not a dead fork.</dd>
+      <dt>How does billing work for Pro API?</dt>
+      <dd>Pro API is billed monthly at $49/mo via Stripe. Your billing cycle starts the day you activate. You can cancel anytime — your key stays active through the end of the current period. Annual billing (2 months free) will be available at launch. Billing launches with Phase 2 — join the waitlist to be first notified.</dd>
 
-      <dt>What's included in the Pro API rate limits?</dt>
-      <dd>10,000 calls/month and 60 requests/minute. All core endpoints: <code>/tools</code>, <code>/tools/:id</code>, <code>/search</code>, <code>/categories</code>, <code>/skills</code>. Full JSON signal breakdowns and 30-day historical score data on every response.</dd>
+      <dt>Is my MCP tool already in the index?</dt>
+      <dd>Almost certainly yes. AgentRank crawls GitHub nightly and indexes every repo matching MCP server and agent tool patterns. <a href="/">Search the leaderboard</a> to find your listing. All indexed tools are visible for free — paid tiers add enhanced listings, analytics, and featured placement.</dd>
+
+      <dt>Do I need to pay to appear in the index?</dt>
+      <dd>No. The index is free and automatic. Listings are generated from public GitHub data. Sponsored tiers are for maintainers who want featured placement, analytics, and verified badges — not for basic indexing.</dd>
 
       <dt>How are Sponsored Listings labeled?</dt>
-      <dd>Sponsored placements are labeled "Sponsored" — transparently and prominently. We don't hide paid placements as organic rankings. We'll show you real traffic data before you commit. If the category numbers don't justify the spend, we'll tell you.</dd>
+      <dd>Sponsored placements are labeled "Sponsored" — transparently and prominently. We don't hide paid placements as organic rankings. Traffic data is available before you commit. If the numbers don't justify the spend, we'll tell you.</dd>
+
     </dl>
   </section>
 
   <section class="free-note">
     <div class="free-note-inner">
       <span class="free-note-label">free forever</span>
-      <p>The public API and MCP server are always free. No key needed. 100 req/min per IP. Search, lookup, badges, movers.</p>
+      <p>The public API and MCP server are always free. No key needed. Install once, your AI finds the right tool automatically.</p>
       <pre class="code-snippet">claude mcp add agentrank -- npx -y agentrank-mcp-server</pre>
     </div>
   </section>
@@ -337,54 +330,6 @@ const jsonLd = {
   .hero-sub {
     font-size: 0.88rem;
     color: var(--text-muted);
-  }
-
-  /* Billing toggle */
-  .billing-toggle-wrap {
-    display: flex;
-    justify-content: center;
-    margin-bottom: 1.75rem;
-  }
-
-  .billing-toggle {
-    display: inline-flex;
-    background: var(--bg-surface);
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    padding: 0.2rem;
-    gap: 0.2rem;
-  }
-
-  .toggle-btn {
-    background: transparent;
-    border: none;
-    color: var(--text-muted);
-    font-family: inherit;
-    font-size: 0.8rem;
-    font-weight: 600;
-    padding: 0.35rem 0.9rem;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background 0.15s, color 0.15s;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.45rem;
-  }
-
-  .toggle-btn.active {
-    background: var(--bg-hover);
-    color: var(--text);
-  }
-
-  .save-badge {
-    font-size: 0.62rem;
-    font-weight: 700;
-    background: color-mix(in srgb, var(--accent) 15%, transparent);
-    color: var(--accent);
-    border-radius: 3px;
-    padding: 0.1rem 0.35rem;
-    text-transform: uppercase;
-    letter-spacing: 0.03em;
   }
 
   /* Tier grid */
@@ -457,11 +402,6 @@ const jsonLd = {
     color: var(--text-muted);
   }
 
-  .tier-per-inline {
-    font-size: 2rem;
-    font-weight: 700;
-  }
-
   .tier-billing-note {
     display: block;
     font-size: 0.72rem;
@@ -474,42 +414,6 @@ const jsonLd = {
     color: var(--text-muted);
     line-height: 1.4;
     margin-top: 0.5rem;
-  }
-
-  /* Sub-tier breakdown for Sponsored */
-  .subtier-table {
-    margin-bottom: 1.25rem;
-    display: flex;
-    flex-direction: column;
-    gap: 0.4rem;
-  }
-
-  .subtier-row {
-    display: grid;
-    grid-template-columns: auto auto 1fr;
-    gap: 0.5rem 0.75rem;
-    align-items: baseline;
-    font-size: 0.78rem;
-    padding: 0.35rem 0.5rem;
-    background: var(--bg-hover);
-    border-radius: 4px;
-  }
-
-  .subtier-name {
-    color: var(--text);
-    font-weight: 600;
-    white-space: nowrap;
-  }
-
-  .subtier-price {
-    color: var(--accent);
-    font-weight: 700;
-    white-space: nowrap;
-  }
-
-  .subtier-desc {
-    color: var(--text-muted);
-    font-size: 0.72rem;
   }
 
   /* Feature list */
@@ -536,6 +440,15 @@ const jsonLd = {
     font-size: 0.72rem;
   }
 
+  .tier-features code {
+    background: var(--bg-hover);
+    border: 1px solid var(--border);
+    padding: 0.08rem 0.28rem;
+    border-radius: 2px;
+    font-size: 0.7rem;
+    font-family: inherit;
+  }
+
   /* CTAs */
   .cta {
     display: block;
@@ -551,11 +464,6 @@ const jsonLd = {
   .cta:hover {
     opacity: 0.82;
     text-decoration: none;
-  }
-
-  .cta-primary {
-    background: var(--accent);
-    color: var(--bg);
   }
 
   .cta-secondary {
@@ -575,18 +483,84 @@ const jsonLd = {
     text-align: center;
     margin-top: 0.5rem;
     line-height: 1.4;
-    min-height: 1.2em;
   }
 
-  button.cta {
-    width: 100%;
-    cursor: pointer;
+  .cta-note a {
+    color: var(--text-muted);
+    text-decoration: underline;
+  }
+
+  .cta-note a:hover {
+    color: var(--accent);
+  }
+
+  /* Waitlist forms */
+  .waitlist-form-wrap {
+    margin-bottom: 0;
+  }
+
+  .waitlist-form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+  }
+
+  .waitlist-row {
+    display: flex;
+    gap: 0.35rem;
+  }
+
+  .waitlist-row input[type="email"] {
+    flex: 1;
+    min-width: 0;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 0.5rem 0.65rem;
+    border-radius: 4px;
     font-family: inherit;
+    font-size: 0.78rem;
   }
 
-  button.cta:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
+  .waitlist-row input[type="email"]:focus {
+    outline: 1px solid var(--accent);
+    border-color: var(--accent);
+  }
+
+  .waitlist-row button {
+    background: var(--accent);
+    color: var(--bg);
+    border: none;
+    border-radius: 4px;
+    padding: 0.5rem 0.85rem;
+    font-family: inherit;
+    font-size: 0.78rem;
+    font-weight: 700;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: opacity 0.15s;
+  }
+
+  .waitlist-row button:hover { opacity: 0.85; }
+  .waitlist-row button:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  .waitlist-msg {
+    display: block;
+    font-size: 0.72rem;
+    min-height: 1em;
+    line-height: 1.4;
+  }
+
+  .waitlist-msg.success { color: var(--accent); }
+  .waitlist-msg.error { color: #ef4444; }
+
+  .hp-field {
+    position: absolute;
+    left: -9999px;
+    opacity: 0;
+    height: 0;
+    width: 0;
+    pointer-events: none;
   }
 
   /* Comparison table */
@@ -639,6 +613,15 @@ const jsonLd = {
 
   .compare-table td:first-child {
     color: var(--text);
+  }
+
+  .compare-table td code {
+    background: var(--bg-hover);
+    border: 1px solid var(--border);
+    padding: 0.05rem 0.25rem;
+    border-radius: 2px;
+    font-size: 0.68rem;
+    font-family: inherit;
   }
 
   .compare-table td.col-featured {
@@ -775,86 +758,89 @@ const jsonLd = {
       font-size: 1.2rem;
     }
 
-    .subtier-row {
-      grid-template-columns: 1fr auto;
+    .waitlist-row {
+      flex-direction: column;
     }
 
-    .subtier-desc {
-      grid-column: 1 / -1;
-      margin-top: -0.2rem;
+    .waitlist-row button {
+      width: 100%;
     }
   }
 </style>
 
 <script>
-  const btnMonthly = document.getElementById('btn-monthly') as HTMLButtonElement;
-  const btnAnnual = document.getElementById('btn-annual') as HTMLButtonElement;
-  const priceAmounts = document.querySelectorAll<HTMLElement>('.price-amount');
-  const billingAnnual = document.querySelectorAll<HTMLElement>('.billing-annual');
-  const billingMonthly = document.querySelectorAll<HTMLElement>('.billing-monthly');
+  function setupWaitlistForm(
+    formId: string,
+    emailId: string,
+    btnId: string,
+    msgId: string,
+    source: string,
+  ) {
+    const form = document.getElementById(formId) as HTMLFormElement | null;
+    const emailInput = document.getElementById(emailId) as HTMLInputElement | null;
+    const btn = document.getElementById(btnId) as HTMLButtonElement | null;
+    const msg = document.getElementById(msgId) as HTMLSpanElement | null;
+    if (!form || !emailInput || !btn || !msg) return;
 
-  let currentPeriod: 'monthly' | 'annual' = 'annual';
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const hp = (form.querySelector<HTMLInputElement>('.hp-field')?.value ?? '');
+      if (hp) return;
 
-  function setPeriod(period: 'monthly' | 'annual') {
-    currentPeriod = period;
-    const isAnnual = period === 'annual';
-
-    btnMonthly.classList.toggle('active', !isAnnual);
-    btnAnnual.classList.toggle('active', isAnnual);
-
-    priceAmounts.forEach(el => {
-      el.textContent = isAnnual
-        ? (el.dataset.annual ?? el.textContent)
-        : (el.dataset.monthly ?? el.textContent);
-    });
-
-    billingAnnual.forEach(el => { el.style.display = isAnnual ? '' : 'none'; });
-    billingMonthly.forEach(el => { el.style.display = isAnnual ? 'none' : ''; });
-  }
-
-  btnMonthly.addEventListener('click', () => setPeriod('monthly'));
-  btnAnnual.addEventListener('click', () => setPeriod('annual'));
-
-  // Defaults to annual — already set in HTML; ensure JS state matches
-  setPeriod('annual');
-
-  // Checkout button handlers
-  async function startCheckout(tier: string, btn: HTMLButtonElement, noteEl: HTMLElement | null) {
-    btn.disabled = true;
-    btn.textContent = 'Redirecting...';
-    if (noteEl) noteEl.textContent = '';
-
-    try {
-      const resp = await fetch('/api/checkout', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ tier, billing: currentPeriod }),
-      });
-
-      const data = await resp.json() as { url?: string; error?: string };
-
-      if (!resp.ok || !data.url) {
-        throw new Error(data.error ?? 'Checkout unavailable');
+      const email = emailInput.value.trim();
+      if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        msg.textContent = 'Please enter a valid email address.';
+        msg.className = 'waitlist-msg error';
+        return;
       }
 
-      window.location.href = data.url;
-    } catch (err: any) {
-      btn.disabled = false;
-      btn.textContent = tier === 'verified_publisher' ? 'Claim your listing \u2192' : 'Get API access \u2192';
-      if (noteEl) {
-        noteEl.textContent = err?.message === 'Payment processing not configured'
-          ? 'Checkout coming soon — join the waitlist.'
-          : 'Something went wrong. Please try again.';
+      btn.disabled = true;
+      btn.textContent = 'Joining...';
+      msg.textContent = '';
+      msg.className = 'waitlist-msg';
+
+      try {
+        const res = await fetch('/api/subscribe', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, source, _hp: '' }),
+        });
+        const data = await res.json() as { success?: boolean; already?: boolean; error?: string };
+        if (data.success) {
+          msg.textContent = data.already
+            ? "You're already on the list."
+            : "You're on the list. We'll notify you at launch.";
+          msg.className = 'waitlist-msg success';
+          emailInput.value = '';
+          btn.textContent = 'Joined!';
+        } else {
+          msg.textContent = data.error || 'Something went wrong. Try again.';
+          msg.className = 'waitlist-msg error';
+          btn.disabled = false;
+          btn.textContent = source.includes('pro') ? 'Join waitlist \u2192' : 'Get featured \u2192';
+        }
+      } catch {
+        msg.textContent = 'Network error. Please try again.';
+        msg.className = 'waitlist-msg error';
+        btn.disabled = false;
+        btn.textContent = source.includes('pro') ? 'Join waitlist \u2192' : 'Get featured \u2192';
       }
-    }
+    });
   }
 
-  document.querySelectorAll<HTMLButtonElement>('.checkout-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const tier = btn.dataset.tier ?? '';
-      const noteId = btn.id.replace('btn-', 'note-');
-      const noteEl = document.getElementById(noteId);
-      startCheckout(tier, btn, noteEl);
-    });
-  });
+  setupWaitlistForm(
+    'pro-waitlist-form',
+    'pro-waitlist-email',
+    'pro-waitlist-btn',
+    'pro-waitlist-msg',
+    'pricing-pro-waitlist',
+  );
+
+  setupWaitlistForm(
+    'sponsored-waitlist-form',
+    'sponsored-waitlist-email',
+    'sponsored-waitlist-btn',
+    'sponsored-waitlist-msg',
+    'pricing-sponsored-waitlist',
+  );
 </script>
