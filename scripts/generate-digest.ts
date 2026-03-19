@@ -21,6 +21,31 @@ import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 import { generateDigestEmail, type DigestData } from '../site/src/lib/email-template.js';
 
+// ---------------------------------------------------------------------------
+// Fetch top news from live API (best-effort — fails silently)
+// ---------------------------------------------------------------------------
+
+async function fetchTopNews(): Promise<DigestData['top_news']> {
+  try {
+    const res = await fetch('https://agentrank-ai.com/api/v1/news?limit=7', {
+      signal: AbortSignal.timeout(5000),
+    });
+    if (!res.ok) return undefined;
+    const data = await res.json() as { items: any[]; meta: { mock: boolean } };
+    // Skip mock data — only include real ingested news
+    if (data.meta?.mock) return undefined;
+    return data.items.map((n: any) => ({
+      title: n.title,
+      summary: n.summary ?? null,
+      source_url: n.source_url ?? null,
+      category: n.category ?? 'community',
+      author_handle: n.author_handle ?? null,
+    }));
+  } catch {
+    return undefined;
+  }
+}
+
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(__dirname, '..');
 
@@ -100,6 +125,13 @@ try {
 // Step 3: Build DigestData from weekly JSON
 // ---------------------------------------------------------------------------
 
+const topNews = await fetchTopNews();
+if (topNews?.length) {
+  console.error(`Fetched ${topNews.length} published news items for digest`);
+} else {
+  console.error('No published news items found (pipeline may not be running yet)');
+}
+
 const digestData: DigestData = {
   date: weeklyData.date ?? weeklyDate,
   stats: {
@@ -136,6 +168,7 @@ const digestData: DigestData = {
     language: e.language ?? '',
   })),
   featured_blog: featuredBlog,
+  top_news: topNews,
   // Placeholder unsubscribe URL for preview; real sends inject per-subscriber token
   unsubscribe_url: 'https://agentrank-ai.com/unsubscribe?preview=1',
 };

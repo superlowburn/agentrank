@@ -123,10 +123,36 @@ function escapeForAstro(s: string): string {
   return s.replace(/\\/g, "\\\\").replace(/`/g, "\\`").replace(/\$\{/g, "\\${");
 }
 
+// --- Fetch top news from live API (best-effort) ---
+
+async function fetchTopNews(): Promise<NewsItem[]> {
+  try {
+    const res = await fetch("https://agentrank-ai.com/api/v1/news?limit=7", {
+      signal: AbortSignal.timeout(5000),
+    });
+    if (!res.ok) return [];
+    const data = await res.json() as { items: any[]; meta: { mock: boolean } };
+    if (data.meta?.mock) return []; // skip placeholder data
+    return data.items.map((n: any) => ({
+      title: n.title,
+      summary: n.summary ?? null,
+      source_url: n.source_url ?? null,
+      category: n.category ?? "community",
+      author_handle: n.author_handle ?? null,
+    }));
+  } catch {
+    return [];
+  }
+}
+
 // --- Main ---
 
-function main(): void {
+async function main(): Promise<void> {
   console.log("Weekly Report Generator starting...\n");
+
+  // Fetch top news items from live API (best-effort, non-blocking)
+  const topNews = await fetchTopNews();
+  console.log(topNews.length > 0 ? `Fetched ${topNews.length} published news items` : "No published news items (ingestion pipeline may not be running yet)");
 
   const today = new Date().toISOString().slice(0, 10);
   const slug = `this-week-in-mcp-${today}`;
@@ -354,6 +380,7 @@ function main(): void {
     newReposCount,
     hasMoversData: hasMoversData,
     tweet,
+    topNews,
   });
 
   fs.writeFileSync(blogPostPath, blogPost);
@@ -380,6 +407,14 @@ function main(): void {
 
 // --- Blog post generator ---
 
+interface NewsItem {
+  title: string;
+  summary: string | null;
+  source_url: string | null;
+  category: string;
+  author_handle: string | null;
+}
+
 interface BlogParams {
   today: string;
   slug: string;
@@ -400,6 +435,7 @@ interface BlogParams {
   newReposCount: number;
   hasMoversData: boolean;
   tweet: string;
+  topNews: NewsItem[];
 }
 
 function generateBlogPost(p: BlogParams): string {
@@ -596,6 +632,7 @@ const publishDate = '${p.today}';
         <li><a href="#top10">Current top 10</a></li>
         <li><a href="#languages">Language breakdown</a></li>
         <li><a href="#tweet">Tweet this week</a></li>
+        ${p.topNews.length > 0 ? '<li><a href="#news">Top news this week</a></li>' : ''}
       </ol>
     </nav>
 
@@ -689,6 +726,24 @@ ${langRows}
       </div>
     </section>
 
+    ${p.topNews.length > 0 ? `<section id="news">
+      <h2>Top news this week</h2>
+      <p>Top ecosystem news from the past 7 days, ingested from Twitter and GitHub. <a href="/news/" class="inline-link">See all news &rarr;</a></p>
+      <div class="news-list">
+        ${p.topNews.slice(0, 7).map((n) => {
+          const catLabel = n.category.charAt(0).toUpperCase() + n.category.slice(1);
+          const link = n.source_url ?? "https://agentrank-ai.com/news";
+          const handle = n.author_handle ? `<span class="news-handle">@${escapeHtml(n.author_handle)}</span>` : "";
+          const summary = n.summary ? `<p class="news-summary">${escapeHtml(n.summary.slice(0, 200))}${n.summary.length > 200 ? "…" : ""}</p>` : "";
+          return `        <div class="news-item">
+          <div class="news-meta"><span class="news-cat">${escapeHtml(catLabel)}</span>${handle}</div>
+          <a href="${escapeHtml(link)}" class="news-title" target="_blank" rel="noopener">${escapeHtml(n.title)}</a>
+          ${summary}
+        </div>`;
+        }).join("\n")}
+      </div>
+    </section>` : ''}
+
     <BlogSubscribeCTA />
   </article>
 
@@ -756,6 +811,63 @@ ${langRows}
       font-size: 0.875rem;
       color: var(--text-muted);
     }
+
+    .news-list {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      margin: 1rem 0;
+    }
+
+    .news-item {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1rem 1.25rem;
+    }
+
+    .news-meta {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 0.4rem;
+    }
+
+    .news-cat {
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--accent);
+      background: color-mix(in srgb, var(--accent) 15%, transparent);
+      border-radius: 3px;
+      padding: 2px 6px;
+    }
+
+    .news-handle {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    .news-title {
+      display: block;
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--text);
+      text-decoration: none;
+      margin-bottom: 0.3rem;
+    }
+
+    .news-title:hover {
+      color: var(--accent);
+    }
+
+    .news-summary {
+      margin: 0;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
   </style>
 </Base>
 `;
@@ -818,4 +930,4 @@ function updateBlogIndex(params: {
   console.log("Blog index updated.");
 }
 
-main();
+main().catch((e) => { console.error(e); process.exit(1); });

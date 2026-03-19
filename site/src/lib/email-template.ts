@@ -49,6 +49,13 @@ export interface DigestData {
     url: string;
     description: string;
   };
+  top_news?: Array<{
+    title: string;
+    summary: string | null;
+    source_url: string | null;
+    category: string;
+    author_handle: string | null;
+  }>;
   unsubscribe_url: string;
 }
 
@@ -212,6 +219,43 @@ function buildHtml(data: DigestData): string {
       </td>
     </tr>` : '';
 
+  // --- Top news ---
+  const CATEGORY_LABELS: Record<string, string> = {
+    launch: 'Launch',
+    update: 'Update',
+    community: 'Community',
+    trending: 'Trending',
+    analysis: 'Analysis',
+  };
+  const topNewsHtml = data.top_news && data.top_news.length ? `
+    <tr>
+      <td style="padding:0 0 32px;">
+        <h2 style="margin:0 0 14px;font-size:11px;font-weight:700;color:#4b5563;text-transform:uppercase;letter-spacing:1.5px;">Top News This Week</h2>
+        <table width="100%" cellpadding="0" cellspacing="0">
+          <tbody>${data.top_news.slice(0, 7).map((n, i) => {
+            const catLabel = CATEGORY_LABELS[n.category] ?? n.category;
+            const link = n.source_url ?? 'https://agentrank-ai.com/news';
+            const handle = n.author_handle ? `@${n.author_handle}` : '';
+            return `
+            <tr>
+              <td style="padding:12px 0;border-bottom:1px solid #141414;${i === 0 ? 'border-top:1px solid #1a1a1a;' : ''}">
+                <div style="margin-bottom:4px;">
+                  <span style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#6366f1;background:#1a1a2e;border-radius:3px;padding:2px 6px;">${catLabel}</span>
+                  ${handle ? `<span style="font-size:10px;color:#374151;margin-left:6px;">${handle}</span>` : ''}
+                </div>
+                <a href="${link}" style="color:#e5e5e5;text-decoration:none;font-size:14px;font-weight:600;line-height:1.4;display:block;margin-bottom:4px;">${n.title}</a>
+                ${n.summary ? `<p style="margin:0;font-size:12px;color:#6b7280;line-height:1.5;">${n.summary.slice(0, 140)}${n.summary.length > 140 ? '…' : ''}</p>` : ''}
+              </td>
+            </tr>`;
+          }).join('')}
+          </tbody>
+        </table>
+        <div style="margin-top:14px;text-align:right;">
+          <a href="https://agentrank-ai.com/news" style="color:#6366f1;font-size:12px;text-decoration:none;font-weight:600;">All news &rarr;</a>
+        </div>
+      </td>
+    </tr>` : '';
+
   // --- Featured blog ---
   const featuredHtml = data.featured_blog ? `
     <tr>
@@ -276,6 +320,9 @@ function buildHtml(data: DigestData): string {
           <!-- Featured Blog -->
           ${featuredHtml}
 
+          <!-- Top News -->
+          ${topNewsHtml}
+
           <!-- CTA -->
           <tr>
             <td style="padding:8px 0 40px;text-align:center;">
@@ -334,6 +381,14 @@ function buildText(data: DigestData): string {
     ? `\nFEATURED ARTICLE\n${sub}\n${data.featured_blog.title}\n${data.featured_blog.url}\n`
     : '';
 
+  const newsSection = data.top_news && data.top_news.length
+    ? `\nTOP NEWS THIS WEEK\n${sub}\n${data.top_news.slice(0, 7).map(n => {
+        const handle = n.author_handle ? ` (${n.author_handle})` : '';
+        const link = n.source_url ?? 'https://agentrank-ai.com/news';
+        return `  [${(n.category || 'news').toUpperCase()}] ${n.title}${handle}\n  ${link}`;
+      }).join('\n\n')}\n`
+    : '';
+
   const newSection = newLines
     ? `\nNEW IN THE INDEX\n${sub}\n${newLines}\n`
     : '';
@@ -359,7 +414,7 @@ ${top10Lines}
 BIGGEST MOVERS UP
 ${sub}
 ${gainerLines}
-${losersSection}${newSection}${featuredSection}
+${losersSection}${newSection}${newsSection}${featuredSection}
 View the full leaderboard: https://agentrank-ai.com/
 ${sub}
 You're receiving this because you subscribed to AgentRank.
