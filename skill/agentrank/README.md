@@ -18,7 +18,13 @@ See [SKILL.md](SKILL.md) for the full Claude Code skill.
 
 ## Cursor
 
-Copy `.cursorrules` to your project root (or `~/.cursorrules` for global):
+**Recommended (Cursor 0.45+)** — copy to `.cursor/rules/` for MDC format:
+
+```bash
+mkdir -p .cursor/rules && curl -o .cursor/rules/agentrank.mdc https://raw.githubusercontent.com/superlowburn/agentrank/main/skill/agentrank/cursor/rules/agentrank.mdc
+```
+
+**Legacy** — copy `.cursorrules` to your project root (or `~/.cursorrules` for global):
 
 ```bash
 curl -o .cursorrules https://raw.githubusercontent.com/superlowburn/agentrank/main/skill/agentrank/cursor/.cursorrules
@@ -49,6 +55,16 @@ Copy `.windsurfrules` to your project root (or `~/.codeium/windsurf/memories/glo
 ```bash
 curl -o .windsurfrules https://raw.githubusercontent.com/superlowburn/agentrank/main/skill/agentrank/windsurf/.windsurfrules
 ```
+
+## Continue
+
+Copy `agentrank.md` to `.continue/rules/` in your repo:
+
+```bash
+mkdir -p .continue/rules && curl -o .continue/rules/agentrank.md https://raw.githubusercontent.com/superlowburn/agentrank/main/skill/agentrank/continue/agentrank.md
+```
+
+Continue loads all `.md` files from `.continue/rules/` automatically as context.
 
 ---
 
