@@ -2,6 +2,12 @@ export const prerender = true;
 
 const posts = [
   {
+    slug: 'how-agentrank-scores-mcp-servers',
+    title: 'How AgentRank Scores MCP Servers — The Quality Score Explained',
+    description: 'Every MCP server in the AgentRank index has a quality score from 0 to 100. Here is exactly what goes into it — the five signals, their weights, and real before/after examples from the index.',
+    date: '2026-03-19',
+  },
+  {
     slug: 'mcp-server-growth-report-march-2026',
     title: 'MCP Server Growth Report — March 2026',
     description: 'Velocity rankings for the MCP ecosystem. Top 10 fastest-growing tools by stars per week, category momentum, first-time top-100 entries, and maintenance health from 25,750+ indexed repositories.',

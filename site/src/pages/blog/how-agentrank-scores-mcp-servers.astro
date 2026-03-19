@@ -1,0 +1,557 @@
+---
+export const prerender = true;
+
+import Base from '../../layouts/Base.astro';
+import BlogSubscribeCTA from '../../components/BlogSubscribeCTA.astro';
+import RelatedPosts from '../../components/RelatedPosts.astro';
+
+const relatedPosts = [
+  { href: '/methodology/', title: 'AgentRank Scoring Methodology (full reference)' },
+  { href: '/blog/how-to-choose-an-mcp-server/', title: 'How to Choose an MCP Server in 2026' },
+  { href: '/blog/state-of-mcp-2026/', title: 'The State of MCP Servers & Agent Tools in 2026' },
+  { href: '/blog/mcp-server-comparison-top-10/', title: 'MCP Server Comparison: Top 10 Head-to-Head' },
+  { href: '/blog/best-mcp-servers-database/', title: 'Best MCP Servers for Database Management in 2026' },
+  { href: '/blog/top-mcp-servers-2026/', title: 'Top 10 MCP Servers for AI Agents in 2026' },
+];
+
+const publishDate = '2026-03-19';
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: 'How AgentRank Scores MCP Servers: The Quality Score Explained',
+  description: 'AgentRank assigns every MCP server a quality score from 0 to 100. Here is exactly how that score is computed — the five signals, the weights, and real examples from the index.',
+  datePublished: publishDate,
+  dateModified: publishDate,
+  author: {
+    '@type': 'Organization',
+    name: 'AgentRank',
+    url: 'https://agentrank-ai.com',
+  },
+  publisher: {
+    '@type': 'Organization',
+    name: 'AgentRank',
+    url: 'https://agentrank-ai.com',
+    logo: {
+      '@type': 'ImageObject',
+      url: 'https://agentrank-ai.com/og-image.png',
+    },
+  },
+  mainEntityOfPage: {
+    '@type': 'WebPage',
+    '@id': 'https://agentrank-ai.com/blog/how-agentrank-scores-mcp-servers/',
+  },
+  image: 'https://agentrank-ai.com/og-image.png',
+  keywords: 'MCP server quality score, MCP server ranking, best rated MCP servers, how to choose an MCP server, AgentRank score explained, MCP server evaluation',
+};
+
+const faqJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: [
+    {
+      '@type': 'Question',
+      name: 'What is the AgentRank quality score for MCP servers?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'The AgentRank quality score is a composite number from 0 to 100 that measures how healthy and maintainable an MCP server is. It is computed from five GitHub signals: freshness (20%), issue health (25%), inbound dependents (25%), stars (15%), and contributors (10%), plus minor signals for license, documentation, and release cadence (5% combined).',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'How is the AgentRank MCP server ranking different from GitHub stars?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'GitHub stars measure historical popularity, not current health. A tool can accumulate 10,000 stars and then go unmaintained for two years — and still rank high on stars. The AgentRank ranking weights freshness and issue health heavily, so a recently-updated tool with an active maintainer will outrank a starred-and-stale one.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'What is a good AgentRank score for an MCP server?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'A score above 60 indicates an actively maintained, production-relevant tool. The top tier (80+) has fewer than 200 tools in the entire index. The average across all 25,000+ indexed repos is 29.7, which reflects how many experiments and abandoned projects exist in the ecosystem.',
+      },
+    },
+  ],
+};
+---
+
+<Base
+  title="How AgentRank Scores MCP Servers — The Quality Score Explained"
+  description="AgentRank assigns every MCP server a quality score from 0–100. Here's exactly how it's computed — the five signals, the weights, and real before/after examples from the index."
+  activeTab="blog"
+  keywords="MCP server quality score, MCP server ranking, best rated MCP servers, how to choose an MCP server, AgentRank score explained"
+  canonicalUrl="https://agentrank-ai.com/blog/how-agentrank-scores-mcp-servers/"
+  jsonLd={[jsonLd, faqJsonLd]}
+>
+  <article class="blog-post">
+    <header class="post-header">
+      <div class="breadcrumb"><a href="/blog/">Blog</a> <span>/</span></div>
+      <h1>How AgentRank Scores MCP Servers</h1>
+      <div class="post-meta">
+        <time datetime={publishDate}>March 19, 2026</time>
+        <span class="sep">&middot;</span>
+        <span>7 min read</span>
+        <span class="sep">&middot;</span>
+        <span>Scoring &amp; Methodology</span>
+      </div>
+      <p class="lede">
+        Every MCP server in the AgentRank index has a <strong>quality score from 0 to 100</strong>.
+        That number isn't magic — it's computed from five verifiable GitHub signals, updated nightly.
+        Here is exactly what goes into it, why it matters, and what the score reveals that a star count doesn't.
+      </p>
+    </header>
+
+    <nav class="toc">
+      <strong>Contents</strong>
+      <ol>
+        <li><a href="#the-problem">The problem with sorting by stars</a></li>
+        <li><a href="#five-signals">The five scoring signals</a></li>
+        <li><a href="#before-after">Before and after: what scoring changes</a></li>
+        <li><a href="#real-examples">Real examples from the index</a></li>
+        <li><a href="#what-the-score-means">What your score means</a></li>
+        <li><a href="#explore">Explore the rankings</a></li>
+      </ol>
+    </nav>
+
+    <section id="the-problem">
+      <h2>The problem with sorting by stars</h2>
+      <p>
+        Open GitHub and search for "MCP server." Sort by stars. The top result has 83,000 stars — it's
+        a curated list of MCP servers, not an MCP server itself. The second result is the official reference
+        implementation repository with 81,000 stars. Both are genuinely useful. Neither tells you which
+        individual tool you should actually build on.
+      </p>
+      <p>
+        Stars accumulate over time. They don't decay. A tool that was popular in early 2025, went
+        unmaintained, and has been effectively abandoned still carries all those stars. When you're choosing
+        a production dependency, that star count is actively misleading.
+      </p>
+      <p>
+        The MCP ecosystem has 25,000+ indexed repositories. Of those, <strong>54% haven't seen a commit
+        in the past 90 days</strong>. More than 97% are solo-contributor projects — one developer who
+        might have moved on to something else. Sorting by stars surfaces the historically popular; it
+        doesn't surface the currently healthy.
+      </p>
+      <p>
+        That's the gap the <strong>MCP server quality score</strong> is designed to close.
+      </p>
+    </section>
+
+    <section id="five-signals">
+      <h2>The five scoring signals</h2>
+      <p>
+        AgentRank computes a composite score from five GitHub signals. Each is normalized to a 0–1 value,
+        weighted, and summed to produce the final 0–100 number. Here's what each signal measures and why
+        it was chosen.
+      </p>
+
+      <h3>1. Freshness (20% weight)</h3>
+      <p>
+        How many days since the last commit? This is the fastest proxy for "is anyone home."
+      </p>
+      <p>
+        A commit within the last 7 days scores 1.0. From days 7 to 90, the score decays linearly.
+        Beyond 90 days, the decay accelerates exponentially — a tool that hasn't been touched in six
+        months can score near 0 on this signal alone. One exception: repos with 200+ stars or 5+
+        dependents get a freshness floor of 0.3, because stable, widely-adopted tools don't need
+        daily commits to be reliable.
+      </p>
+      <p>
+        Freshness gets 20% weight because inactivity is often an early signal of abandonment — but
+        it's not the whole story. A tool can be stable and complete without needing frequent commits.
+        That's why it shares weight with four other signals.
+      </p>
+
+      <h3>2. Issue health (25% weight)</h3>
+      <p>
+        Issue health is closed issues divided by total issues. A maintainer who closes bug reports
+        and resolves feature requests scores well here. One who accumulates open issues without responding
+        scores low.
+      </p>
+      <p>
+        This is the strongest proxy for maintainer responsiveness. Stars tell you a tool was once useful.
+        Issue health tells you whether the maintainer is still paying attention. It gets the highest
+        single weight (25%) because unresponsive maintainers are the most common source of MCP tool rot.
+      </p>
+
+      <h3>3. Inbound dependents (25% weight)</h3>
+      <p>
+        How many other GitHub repositories import or depend on this tool? This signal comes from
+        GitHub's dependency graph and is the closest thing to real-world adoption data we have.
+      </p>
+      <p>
+        A tool with 500 inbound dependents isn't just popular — it's trusted by other developers
+        enough to build on. That's qualitatively different from a star, which requires a single click.
+        Inbound dependents also weight freshness differently: tools with many dependents are unlikely
+        to vanish overnight, so their freshness floor is protected.
+      </p>
+      <p>
+        <a href="/tool/PrefectHQ--fastmcp/" class="inline-link">PrefectHQ/fastmcp</a> — currently
+        #9 overall with a score of 94.73 — has among the highest inbound dependent counts in the Python
+        MCP ecosystem. Developers building their own MCP servers use fastmcp as a foundation, which
+        creates a compounding signal of trust.
+      </p>
+
+      <h3>4. Stars (15% weight)</h3>
+      <p>
+        Stars still matter — but they only get 15% of the weight. Normalized against the full distribution
+        across 25,000+ repos, a high star count contributes meaningfully to the final score without
+        dominating it. The most-starred repos in the index (<a href="/tool/microsoft--playwright-mcp/" class="inline-link">microsoft/playwright-mcp</a>
+        at 28,849 stars) score well on this signal. But a less-starred tool with an active maintainer
+        and healthy issues can outscore a viral-but-abandoned one.
+      </p>
+
+      <h3>5. Contributors (10% weight)</h3>
+      <p>
+        The number of unique contributors to a repository. A solo project has a bus factor of one —
+        if the maintainer disappears, the tool is effectively dead. A project with 5+ contributors
+        is statistically much more likely to survive maintainer turnover.
+      </p>
+      <p>
+        In the full index, 97% of MCP repos are single-contributor. The 3% with multiple contributors
+        cluster strongly in the high-score tiers. <a href="/tool/mark3labs--mcp-go/" class="inline-link">mark3labs/mcp-go</a>
+        (#4 overall, score 96.29) and <a href="/tool/microsoft--playwright-mcp/" class="inline-link">microsoft/playwright-mcp</a>
+        (#7, score 94.81) both have multi-contributor teams — and it shows in their sustained
+        quality and update cadence.
+      </p>
+
+      <h3>Minor signals (5% combined)</h3>
+      <p>
+        License quality, documentation presence, and release cadence together contribute 5%.
+        These are tie-breakers more than drivers — but a tool with no license, no README, and no
+        version tags starts the scoring process with a small penalty.
+      </p>
+      <p>
+        For the full technical specification — exact decay curves, normalization formulas, and how
+        missing data is handled — see the <a href="/methodology/" class="inline-link">scoring methodology page</a>.
+      </p>
+    </section>
+
+    <section id="before-after">
+      <h2>Before and after: what scoring changes</h2>
+      <p>
+        Here is a concrete illustration. Suppose you're looking for a database MCP server.
+        GitHub search sorted by stars returns results based on historical popularity.
+        The AgentRank <a href="/blog/best-mcp-servers-database/" class="inline-link">database category</a>
+        returns results sorted by the composite score.
+      </p>
+      <p>
+        The difference matters most in the middle of the distribution — tools with between 100 and
+        2,000 stars. At the top (Microsoft, Anthropic, PrefectHQ), stars and score agree: these are
+        well-maintained flagship tools backed by organizations with incentives to maintain them.
+        At the bottom, both signals agree the tool is probably experimental.
+      </p>
+      <p>
+        The disagreement happens in the middle. A tool with 800 stars and its last commit in January 2024
+        will appear high on a stars sort. On the AgentRank score, it falls — because its freshness
+        decayed, its issue backlog grew unclosed, and it never attracted a second contributor.
+        Meanwhile, a tool with 150 stars that ships weekly, closes issues within days, and has three
+        contributors rises in the ranking despite its lower star count.
+      </p>
+      <p>
+        That reordering — the surfacing of healthy tools that stars bury — is the core value of the score.
+      </p>
+    </section>
+
+    <section id="real-examples">
+      <h2>Real examples from the index</h2>
+
+      <h3>Why unity-mcp is #1</h3>
+      <p>
+        <a href="/tool/CoplayDev--unity-mcp/" class="inline-link">CoplayDev/unity-mcp</a> holds the
+        top position with a score of 98.67 and 7,003 stars. It's not the most-starred tool in the index
+        (that's punkpeye/awesome-mcp-servers at 83,000), but it earns the top score because it has
+        near-perfect marks across all five signals: committed within days, an issue close rate above 90%,
+        significant inbound dependents, high stars for its category, and multiple active contributors.
+        Every signal fires. That's rare.
+      </p>
+
+      <h3>Why a 10,000-star tool can score 40</h3>
+      <p>
+        There are tools in the index with 5,000–15,000 stars that score in the 30–50 range. The pattern
+        is consistent: viral launch in 2024, strong star growth, then maintainer moves on.
+        Last commit: 8+ months ago. Issue queue: 40+ unresolved bugs. Contributors: 1.
+        The stars are a historical artifact. The score reflects the current state.
+        If you build on that tool today, you're inheriting those 40+ unresolved bugs with no one to fix them.
+      </p>
+
+      <h3>The DevOps category surprise</h3>
+      <p>
+        In the <a href="/blog/best-mcp-servers-devops/" class="inline-link">DevOps category</a>,
+        the top-scoring tool by AgentRank score is not the one with the most stars.
+        <a href="/tool/microsoft--azure-devops-mcp/" class="inline-link">microsoft/azure-devops-mcp</a>
+        (#2 overall, score 97.17) scores higher than several more-starred competitors because it has
+        Microsoft's engineering team maintaining it, ships releases on a regular cadence, and has a
+        growing dependent count as developers build Azure pipelines on top of it.
+        Stars favor early movers. The score favors sustained quality.
+      </p>
+    </section>
+
+    <section id="what-the-score-means">
+      <h2>What your score means</h2>
+
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Score range</th>
+            <th>What it typically means</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>80–100 (Elite)</strong></td>
+            <td>Near-perfect signals across the board. Multi-contributor, actively maintained, widely adopted. Fewer than 200 tools in the full index.</td>
+          </tr>
+          <tr>
+            <td><strong>60–79 (High)</strong></td>
+            <td>Actively maintained with strong adoption signals. Suitable for production dependencies. Roughly the top 2% of the index.</td>
+          </tr>
+          <tr>
+            <td><strong>40–59 (Medium)</strong></td>
+            <td>Some signals strong, others weak. Often a well-starred but solo project, or a newer tool still building its record. Worth evaluating individually.</td>
+          </tr>
+          <tr>
+            <td><strong>20–39 (Low)</strong></td>
+            <td>The long tail. Experiments, weekend projects, tools that haven't been touched in months. Use with caution — check the repo directly before depending on it.</td>
+          </tr>
+          <tr>
+            <td><strong>0–19 (Minimal)</strong></td>
+            <td>Abandoned, archived, or new with no signal history. Avoid for production use.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p>
+        The average score across all 25,000+ indexed repos is <strong>29.7</strong>. That average reflects the
+        reality of the MCP ecosystem: it's wide and thin, full of experiments that haven't yet built
+        a health record. A score above 60 genuinely stands out.
+      </p>
+    </section>
+
+    <div class="cta-box">
+      <p>
+        <strong>See the full rankings.</strong> Browse all 25,000+ tools sorted by quality score,
+        filter by category, and compare signal breakdowns side by side at <a href="/">agentrank-ai.com</a>.
+        The index updates nightly.
+      </p>
+      <p>
+        <strong>Dig into the math.</strong> The <a href="/methodology/">methodology page</a> has the
+        full technical spec: exact decay curves, normalization formulas, and how missing signals
+        are handled.
+      </p>
+      <p>
+        <strong>Build something?</strong> If you maintain an MCP server and want to claim your listing —
+        add context, link your docs, and surface your tool to the right developers —
+        <a href="/submit/">submit it here</a>.
+      </p>
+    </div>
+
+    <RelatedPosts posts={relatedPosts} />
+    <BlogSubscribeCTA source="blog" />
+    <footer class="post-footer">
+      <p class="methodology">
+        <strong>Methodology:</strong> Score data from the AgentRank index as of March 2026.
+        Composite score computed from five GitHub signals: freshness 20%, issue health 25%,
+        inbound dependents 25%, stars 15%, contributors 10%, plus 5% minor signals.
+        All repos re-scored nightly. Full technical specification at <a href="/methodology/">agentrank-ai.com/methodology</a>.
+      </p>
+      <p class="share-line">
+        Found this useful? <a href="https://x.com/AgentRank_ai" target="_blank" rel="noopener noreferrer">Follow @AgentRank_ai</a> for
+        weekly ecosystem updates, biggest movers, and new tool spotlights.
+      </p>
+    </footer>
+  </article>
+
+  <style>
+    .blog-post {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 2rem 0 3rem;
+    }
+
+    .inline-link {
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    .breadcrumb {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      margin-bottom: 0.75rem;
+    }
+
+    .breadcrumb span {
+      margin: 0 0.25rem;
+      opacity: 0.5;
+    }
+
+    .breadcrumb a {
+      color: var(--text-muted);
+      text-decoration: none;
+    }
+
+    .breadcrumb a:hover {
+      color: var(--accent);
+    }
+
+    h1 {
+      font-size: clamp(1.75rem, 4vw, 2.4rem);
+      font-weight: 700;
+      line-height: 1.15;
+      margin: 0 0 0.75rem;
+    }
+
+    .post-meta {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-bottom: 1.25rem;
+    }
+
+    .post-meta .sep {
+      margin: 0 0.4rem;
+      opacity: 0.4;
+    }
+
+    .lede {
+      font-size: 1.15rem;
+      line-height: 1.65;
+      color: var(--text-secondary);
+      margin: 0;
+      border-left: 3px solid var(--accent);
+      padding-left: 1rem;
+    }
+
+    .toc {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1.25rem 1.5rem;
+      margin: 2rem 0;
+      font-size: 0.9rem;
+    }
+
+    .toc strong {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--text-muted);
+    }
+
+    .toc ol {
+      margin: 0;
+      padding-left: 1.25rem;
+    }
+
+    .toc li {
+      margin: 0.3rem 0;
+    }
+
+    .toc a {
+      color: var(--text-secondary);
+      text-decoration: none;
+    }
+
+    .toc a:hover {
+      color: var(--accent);
+    }
+
+    section {
+      margin: 2.5rem 0;
+    }
+
+    section h2 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin: 0 0 1rem;
+      padding-top: 0.5rem;
+    }
+
+    section h3 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin: 1.75rem 0 0.5rem;
+      color: var(--text-primary);
+    }
+
+    p {
+      line-height: 1.75;
+      margin: 0.85rem 0;
+    }
+
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.9rem;
+      margin: 1.5rem 0;
+    }
+
+    .data-table th,
+    .data-table td {
+      padding: 0.6rem 0.85rem;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .data-table thead th {
+      font-weight: 600;
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      background: var(--surface);
+    }
+
+    .data-table tbody tr:last-child td {
+      border-bottom: none;
+    }
+
+    .cta-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin: 2.5rem 0;
+    }
+
+    .cta-box p {
+      margin: 0.5rem 0;
+    }
+
+    .cta-box a {
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    .post-footer {
+      border-top: 1px solid var(--border);
+      padding-top: 1.5rem;
+      margin-top: 2rem;
+    }
+
+    .methodology {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+
+    .methodology a {
+      color: var(--text-muted);
+    }
+
+    .share-line {
+      font-size: 0.875rem;
+      color: var(--text-muted);
+      margin-top: 0.75rem;
+    }
+
+    .share-line a {
+      color: var(--accent);
+      font-weight: 600;
+    }
+  </style>
+</Base>
