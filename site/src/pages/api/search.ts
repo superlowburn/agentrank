@@ -13,18 +13,22 @@ export const GET: APIRoute = async ({ url, locals }) => {
   }
 
   const pattern = `%${q}%`;
+  const prefixPattern = `${q}%`;
   const results: SearchResult[] = [];
 
-  // Search tools
+  // Search tools — title prefix matches ranked higher than description-only matches
   if (!type || type === 'tool') {
     const tools = await env.DB.prepare(
-      `SELECT full_name, description, score, rank
+      `SELECT full_name, description, score, rank, category,
+              CASE WHEN full_name LIKE ?2 THEN score * 1.5
+                   WHEN full_name LIKE ?1 THEN score * 1.2
+                   ELSE score END AS relevance
        FROM tools
        WHERE (full_name LIKE ?1 OR description LIKE ?1)
          AND score IS NOT NULL
-       ORDER BY score DESC
-       LIMIT ?2`
-    ).bind(pattern, limit).all();
+       ORDER BY relevance DESC
+       LIMIT ?3`
+    ).bind(pattern, prefixPattern, limit).all();
 
     for (const t of tools.results || []) {
       results.push({
@@ -34,21 +38,25 @@ export const GET: APIRoute = async ({ url, locals }) => {
         description: t.description as string | null,
         score: t.score as number,
         rank: t.rank as number,
+        category: t.category as string | null,
         url: `https://agentrank-ai.com/tool/${t.full_name}/`,
       });
     }
   }
 
-  // Search skills
+  // Search skills — name prefix matches ranked higher
   if (!type || type === 'skill') {
     const skills = await env.DB.prepare(
-      `SELECT slug, name, description, score, rank
+      `SELECT slug, name, description, score, rank, category,
+              CASE WHEN name LIKE ?2 OR slug LIKE ?2 THEN score * 1.5
+                   WHEN name LIKE ?1 OR slug LIKE ?1 THEN score * 1.2
+                   ELSE score END AS relevance
        FROM skills
        WHERE (slug LIKE ?1 OR name LIKE ?1 OR description LIKE ?1)
          AND score IS NOT NULL
-       ORDER BY score DESC
-       LIMIT ?2`
-    ).bind(pattern, limit).all();
+       ORDER BY relevance DESC
+       LIMIT ?3`
+    ).bind(pattern, prefixPattern, limit).all();
 
     for (const s of skills.results || []) {
       const urlSlug = (s.slug as string).replace(/\//g, '--').replace(/:/g, '-');
@@ -59,13 +67,14 @@ export const GET: APIRoute = async ({ url, locals }) => {
         description: s.description as string | null,
         score: s.score as number,
         rank: s.rank as number,
+        category: s.category as string | null,
         url: `https://agentrank-ai.com/skill/${urlSlug}/`,
       });
     }
   }
 
   // Sort combined results by score descending, limit to requested count
-  results.sort((a, b) => b.score - a.score);
+  results.sort((a, b) => (b.score ?? 0) - (a.score ?? 0));
   const trimmed = results.slice(0, limit);
 
   return json({ query: q, results: trimmed });
@@ -78,6 +87,7 @@ interface SearchResult {
   description: string | null;
   score: number;
   rank: number;
+  category: string | null;
   url: string;
 }
 

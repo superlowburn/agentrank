@@ -75,31 +75,34 @@ export const GET: APIRoute = async ({ url, locals, request }) => {
 };
 
 async function queryTools(db: D1Database, q: string, sort: string, limit: number): Promise<ApiResult[]> {
-  let orderBy = 'score DESC';
-  if (sort === 'rank') orderBy = 'rank ASC';
-  else if (sort === 'stars') orderBy = 'stars DESC';
+  let orderBy = sort === 'rank' ? 'rank ASC' : sort === 'stars' ? 'stars DESC' : 'relevance DESC';
 
   let stmt;
   if (q) {
     const pattern = `%${q}%`;
+    const prefixPattern = `${q}%`;
     stmt = await db
       .prepare(
-        `SELECT full_name, description, score, rank, stars, last_commit_at, language, license
+        `SELECT full_name, description, score, rank, stars, last_commit_at, language, license, category,
+                CASE WHEN full_name LIKE ?2 THEN score * 1.5
+                     WHEN full_name LIKE ?1 THEN score * 1.2
+                     ELSE score END AS relevance
          FROM tools
          WHERE (full_name LIKE ?1 OR description LIKE ?1)
            AND score IS NOT NULL
          ORDER BY ${orderBy}
-         LIMIT ?2`
+         LIMIT ?3`
       )
-      .bind(pattern, limit)
+      .bind(pattern, prefixPattern, limit)
       .all();
   } else {
     stmt = await db
       .prepare(
-        `SELECT full_name, description, score, rank, stars, last_commit_at, language, license
+        `SELECT full_name, description, score, rank, stars, last_commit_at, language, license, category,
+                score AS relevance
          FROM tools
          WHERE score IS NOT NULL
-         ORDER BY ${orderBy}
+         ORDER BY ${sort === 'rank' ? 'rank ASC' : sort === 'stars' ? 'stars DESC' : 'score DESC'}
          LIMIT ?1`
       )
       .bind(limit)
@@ -113,6 +116,7 @@ async function queryTools(db: D1Database, q: string, sort: string, limit: number
     description: t.description as string | null,
     score: Math.round((t.score as number) * 10) / 10,
     rank: t.rank as number,
+    category: t.category as string | null,
     url: `https://agentrank-ai.com/tool/${(t.full_name as string).replace('/', '--')}/`,
     raw: {
       stars: t.stars as number,
@@ -124,31 +128,34 @@ async function queryTools(db: D1Database, q: string, sort: string, limit: number
 }
 
 async function querySkills(db: D1Database, q: string, sort: string, limit: number): Promise<ApiResult[]> {
-  let orderBy = 'score DESC';
-  if (sort === 'rank') orderBy = 'rank ASC';
-  else if (sort === 'stars') orderBy = 'gh_stars DESC';
+  let orderBy = sort === 'rank' ? 'rank ASC' : sort === 'stars' ? 'gh_stars DESC' : 'relevance DESC';
 
   let stmt;
   if (q) {
     const pattern = `%${q}%`;
+    const prefixPattern = `${q}%`;
     stmt = await db
       .prepare(
-        `SELECT slug, name, description, score, rank, gh_stars, gh_last_commit_at, installs, source
+        `SELECT slug, name, description, score, rank, gh_stars, gh_last_commit_at, installs, source, category,
+                CASE WHEN name LIKE ?2 OR slug LIKE ?2 THEN score * 1.5
+                     WHEN name LIKE ?1 OR slug LIKE ?1 THEN score * 1.2
+                     ELSE score END AS relevance
          FROM skills
          WHERE (slug LIKE ?1 OR name LIKE ?1 OR description LIKE ?1)
            AND score IS NOT NULL
          ORDER BY ${orderBy}
-         LIMIT ?2`
+         LIMIT ?3`
       )
-      .bind(pattern, limit)
+      .bind(pattern, prefixPattern, limit)
       .all();
   } else {
     stmt = await db
       .prepare(
-        `SELECT slug, name, description, score, rank, gh_stars, gh_last_commit_at, installs, source
+        `SELECT slug, name, description, score, rank, gh_stars, gh_last_commit_at, installs, source, category,
+                score AS relevance
          FROM skills
          WHERE score IS NOT NULL
-         ORDER BY ${orderBy}
+         ORDER BY ${sort === 'rank' ? 'rank ASC' : sort === 'stars' ? 'gh_stars DESC' : 'score DESC'}
          LIMIT ?1`
       )
       .bind(limit)
@@ -164,6 +171,7 @@ async function querySkills(db: D1Database, q: string, sort: string, limit: numbe
       description: s.description as string | null,
       score: s.score != null ? Math.round((s.score as number) * 10) / 10 : null,
       rank: s.rank as number | null,
+      category: s.category as string | null,
       url: `https://agentrank-ai.com/skill/${urlSlug}/`,
       raw: {
         stars: s.gh_stars as number | null,
@@ -227,6 +235,7 @@ interface ApiResult {
   description: string | null;
   score: number | null;
   rank: number | null;
+  category?: string | null;
   url: string;
   raw: Record<string, unknown>;
 }
