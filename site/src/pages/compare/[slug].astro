@@ -4,7 +4,7 @@ export const prerender = true;
 import Base from '../../layouts/Base.astro';
 import { getComparisonPairs } from '../../data/ranked';
 import { toSlug, relativeTime, scoreColor, type Tool } from '../../data/tools';
-import { CATEGORIES } from '../../data/content-gen';
+import { CATEGORIES, generateBreadcrumbJsonLd } from '../../data/content-gen';
 
 const SITE = 'https://agentrank-ai.com';
 
@@ -54,38 +54,45 @@ const freshB = freshnessScore(b);
 
 // ── JSON-LD ──────────────────────────────────────────────────────────────────
 
-const jsonLd = {
-  '@context': 'https://schema.org',
-  '@type': 'ItemList',
-  name: `${nameA} vs ${nameB} Comparison`,
-  description,
-  url: canonicalUrl,
-  numberOfItems: 2,
-  itemListElement: [
-    {
-      '@type': 'ListItem',
-      position: 1,
-      item: {
-        '@type': 'SoftwareApplication',
-        name: a.full_name,
-        url: a.url || `https://github.com/${a.full_name}`,
-        applicationCategory: 'DeveloperApplication',
-        description: a.description || `${a.full_name} is a ${catLabel}.`,
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    name: `${nameA} vs ${nameB} Comparison`,
+    description,
+    url: canonicalUrl,
+    numberOfItems: 2,
+    itemListElement: [
+      {
+        '@type': 'ListItem',
+        position: 1,
+        item: {
+          '@type': 'SoftwareApplication',
+          name: a.full_name,
+          url: a.url || `https://github.com/${a.full_name}`,
+          applicationCategory: 'DeveloperApplication',
+          description: a.description || `${a.full_name} is a ${catLabel}.`,
+        },
       },
-    },
-    {
-      '@type': 'ListItem',
-      position: 2,
-      item: {
-        '@type': 'SoftwareApplication',
-        name: b.full_name,
-        url: b.url || `https://github.com/${b.full_name}`,
-        applicationCategory: 'DeveloperApplication',
-        description: b.description || `${b.full_name} is a ${catLabel}.`,
+      {
+        '@type': 'ListItem',
+        position: 2,
+        item: {
+          '@type': 'SoftwareApplication',
+          name: b.full_name,
+          url: b.url || `https://github.com/${b.full_name}`,
+          applicationCategory: 'DeveloperApplication',
+          description: b.description || `${b.full_name} is a ${catLabel}.`,
+        },
       },
-    },
-  ],
-};
+    ],
+  },
+  generateBreadcrumbJsonLd([
+    { name: 'Home', item: SITE },
+    { name: 'Compare', item: `${SITE}/compare/` },
+    { name: `${nameA} vs ${nameB}`, item: canonicalUrl },
+  ]),
+];
 
 // ── Related pairs (same category, different tools) ────────────────────────────
 

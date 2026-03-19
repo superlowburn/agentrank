@@ -3,7 +3,7 @@ import Base from '../../layouts/Base.astro';
 import BlogSubscribeCTA from '../../components/BlogSubscribeCTA.astro';
 import { toSlug, formatStars, relativeTime, scoreColor, type Tool } from '../../data/tools';
 import { getAdvice } from '../../data/advice';
-import { generateToolSummary, generateContextSentences, getLicenseClass, generateToolJsonLd } from '../../data/content-gen';
+import { generateToolSummary, generateContextSentences, getLicenseClass, generateToolJsonLd, generateBreadcrumbJsonLd } from '../../data/content-gen';
 
 const { slug } = Astro.params;
 const fullName = slug!.replace('--', '/');
@@ -228,7 +228,14 @@ const widgetIframeSnippet = `<iframe src="${SITE_URL}/api/embed/${slug}.html" wi
 const widgetScriptSnippet = `<script src="${SITE_URL}/embed.js" data-tool="${tool.full_name}"><\/script>`;
 const widgetSvgSnippet = `[![AgentRank](${SITE_URL}/api/embed/${slug}.svg)](${badgeLinkUrl})`;
 
-const jsonLd = generateToolJsonLd({ ...tool, github_topics: githubTopics, category: row.category as string | null }, pageUrl);
+const jsonLd = [
+  generateToolJsonLd({ ...tool, github_topics: githubTopics, category: row.category as string | null }, pageUrl),
+  generateBreadcrumbJsonLd([
+    { name: 'Home', item: SITE_URL },
+    { name: 'Tools', item: `${SITE_URL}/tools/` },
+    { name: tool.full_name, item: pageUrl },
+  ]),
+];
 const keywordsStr = [...new Set([...tool.matched_queries, ...githubTopics])].join(', ');
 const ogImage = tool.rank <= 200 ? `/og/tool/${slug}.png` : undefined;
 

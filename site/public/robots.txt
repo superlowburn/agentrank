@@ -1,5 +1,6 @@
 User-agent: *
 Allow: /
 Disallow: /api/auth/
+Disallow: /admin/
 
 Sitemap: https://agentrank-ai.com/sitemap.xml

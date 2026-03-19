@@ -65,36 +65,33 @@ const title = `Best Alternatives to ${shortName} | AgentRank`;
 const description = `Top ${shortName} alternatives ranked by AgentRank score. Compare ${catLabel} tools by stars, freshness, and real adoption signals.`;
 const keywords = `${shortName} alternatives, ${tool.full_name} alternatives, best ${catLabel} tools, ${catLabel} alternatives`;
 
-const jsonLd = {
-  '@context': 'https://schema.org',
-  '@type': 'BreadcrumbList',
-  itemListElement: [
-    {
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: SITE },
+      { '@type': 'ListItem', position: 2, name: 'Tools', item: `${SITE}/tools/` },
+      { '@type': 'ListItem', position: 3, name: tool.full_name, item: `${SITE}/tool/${slug}/` },
+      { '@type': 'ListItem', position: 4, name: `Best Alternatives to ${shortName}`, item: canonicalUrl },
+    ],
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    name: `Best Alternatives to ${shortName}`,
+    description,
+    url: canonicalUrl,
+    numberOfItems: alternatives.length,
+    itemListElement: alternatives.map((alt, i) => ({
       '@type': 'ListItem',
-      position: 1,
-      name: 'Home',
-      item: SITE,
-    },
-    {
-      '@type': 'ListItem',
-      position: 2,
-      name: 'Tools',
-      item: `${SITE}/tools/`,
-    },
-    {
-      '@type': 'ListItem',
-      position: 3,
-      name: tool.full_name,
-      item: `${SITE}/tool/${slug}/`,
-    },
-    {
-      '@type': 'ListItem',
-      position: 4,
-      name: `Best Alternatives to ${shortName}`,
-      item: canonicalUrl,
-    },
-  ],
-};
+      position: i + 1,
+      name: alt.full_name,
+      url: `${SITE}/tool/${toSlug(alt.full_name)}/`,
+      description: alt.description || undefined,
+    })),
+  },
+];
 ---
 
 <Base title={title} description={description} canonicalUrl={canonicalUrl} jsonLd={jsonLd} keywords={keywords} ogImage={`/og/alternatives/${slug}.png`}>

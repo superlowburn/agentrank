@@ -3,7 +3,7 @@ import Base from '../../layouts/Base.astro';
 import { scoreColor, formatInstalls, sourceLabel } from '../../data/skills';
 import { relativeTime } from '../../data/tools';
 import { getSkillAdvice } from '../../data/advice';
-import { generateSkillSummary, generateContextSentences, generateSkillJsonLd } from '../../data/content-gen';
+import { generateSkillSummary, generateContextSentences, generateSkillJsonLd, generateBreadcrumbJsonLd } from '../../data/content-gen';
 
 const { slug } = Astro.params;
 
@@ -137,16 +137,23 @@ const contextSentences = generateContextSentences({
     last_commit_at: repoData.last_commit_at,
   } : {}),
 }, totalSkills);
-const jsonLd = generateSkillJsonLd({
-  name: skill.name,
-  slug: skill.slug,
-  description: skill.description,
-  source: skill.source,
-  author: skill.author,
-  score: skill.score,
-  platforms: skill.platforms,
-  dateModified: repoData?.last_commit_at,
-}, pageUrl);
+const jsonLd = [
+  generateSkillJsonLd({
+    name: skill.name,
+    slug: skill.slug,
+    description: skill.description,
+    source: skill.source,
+    author: skill.author,
+    score: skill.score,
+    platforms: skill.platforms,
+    dateModified: repoData?.last_commit_at,
+  }, pageUrl),
+  generateBreadcrumbJsonLd([
+    { name: 'Home', item: SITE_URL },
+    { name: 'Skills', item: `${SITE_URL}/skills/` },
+    { name: skill.name, item: pageUrl },
+  ]),
+];
 const keywordsStr = [skill.source, ...skill.platforms.slice(0, 5), 'AI skill', 'agent skill'].join(', ');
 const ogImage = skill.rank <= 200 ? `/og/skill/${slug}.png` : undefined;
 
