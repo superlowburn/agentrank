@@ -1,6 +1,7 @@
 import type { APIRoute } from 'astro';
-import { getComparisonPairs } from '../data/ranked';
+import { getComparisonPairs, getAllTools } from '../data/ranked';
 import { toSlug } from '../data/tools';
+import { CATEGORIES } from '../data/content-gen';
 
 export const prerender = false;
 
@@ -9,6 +10,25 @@ const SITE = 'https://agentrank-ai.com';
 const COMPARISON_SLUGS = getComparisonPairs().map(
   ({ a, b }) => `${toSlug(a.full_name)}-vs-${toSlug(b.full_name)}`
 );
+
+// Programmatic language + use-case pages
+const LANGUAGE_SLUGS = ['python', 'typescript', 'javascript', 'go', 'rust'];
+const _allToolsForSitemap = getAllTools();
+const _langCounts: Record<string, number> = {};
+for (const t of _allToolsForSitemap) {
+  if (t.language) {
+    const l = t.language.toLowerCase();
+    _langCounts[l] = (_langCounts[l] || 0) + 1;
+  }
+}
+const LANGUAGE_PAGES = LANGUAGE_SLUGS
+  .filter((l) => (_langCounts[l] || 0) >= 3)
+  .map((l) => ({ path: `/tools/language/${l}/`, changefreq: 'weekly' as const }));
+
+const _catSet = new Set(_allToolsForSitemap.map((t) => t.category).filter(Boolean));
+const USE_CASE_PAGES = [..._catSet]
+  .filter((c) => c! in CATEGORIES)
+  .map((c) => ({ path: `/tools/use-case/${c}/`, changefreq: 'weekly' as const }));
 
 const STATIC_PAGES = [
   { path: '/', changefreq: 'daily' },
@@ -71,7 +91,7 @@ export const GET: APIRoute = async ({ locals }) => {
 
   let urls = '';
 
-  for (const page of [...STATIC_PAGES, ...BLOG_POSTS, ...GUIDE_PAGES]) {
+  for (const page of [...STATIC_PAGES, ...BLOG_POSTS, ...GUIDE_PAGES, ...LANGUAGE_PAGES, ...USE_CASE_PAGES]) {
     urls += `  <url>
     <loc>${SITE}${page.path}</loc>
     <lastmod>${today}</lastmod>
