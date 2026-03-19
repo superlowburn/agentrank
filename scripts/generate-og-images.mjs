@@ -348,6 +348,13 @@ const PAGES = [
     label: 'agentrank-ai.com/blog',
     type: 'blog',
   },
+  {
+    slug: 'how-agentrank-scores-mcp-servers',
+    title: 'How AgentRank Scores MCP Servers',
+    subtitle: 'Five signals, real weights, no black boxes — the quality score explained',
+    label: 'agentrank-ai.com/blog',
+    type: 'blog',
+  },
   // Weekly "This Week in MCP" entries are auto-discovered below from data/weekly/
 
   {
