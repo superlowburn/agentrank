@@ -6,12 +6,16 @@ import { getTopSkills, getAllSkills } from '../data/ranked-skills';
 import { toSkillSlug, formatInstalls, platformBadges, scoreColor, sourceLabel } from '../data/skills';
 import { getAllTools } from '../data/ranked';
 import { CATEGORIES } from '../data/content-gen';
+import { getToolOfTheDay } from '../data/tool-of-the-day';
+import { scoreColor as toolScoreColor, formatStars } from '../data/tools';
 
 const TOP_N = 500;
 const allSkills = getAllSkills();
 const skills = getTopSkills(TOP_N);
 const totalCount = allSkills.length;
 const totalToolCount = getAllTools().length;
+const totd = getToolOfTheDay();
+const totdShortName = totd.tool.full_name.split('/')[1] || totd.tool.full_name;
 
 const usedCategories = [...new Set(skills.map((s) => s.category).filter(Boolean))].sort() as string[];
 
@@ -187,6 +191,29 @@ const itemListJsonLd = {
     </div>
   </div>
 
+  <div class="totd-widget">
+    <div class="totd-widget-label">Tool of the Day</div>
+    <div class="totd-widget-body">
+      <div class="totd-widget-info">
+        <a href={`/tool/${totd.slug}/`} class="totd-widget-name">{totdShortName}</a>
+        <span class="totd-widget-repo">{totd.tool.full_name}</span>
+        {totd.tool.description && (
+          <p class="totd-widget-desc">{totd.tool.description.slice(0, 140)}{totd.tool.description.length > 140 ? '…' : ''}</p>
+        )}
+      </div>
+      <div class="totd-widget-aside">
+        <span class="totd-widget-score" style={`color: ${toolScoreColor(totd.tool.score)}`}>{totd.tool.score?.toFixed(1)}</span>
+        <span class="totd-widget-score-label">score</span>
+        <div class="totd-widget-meta">
+          <span>#{totd.tool.rank}</span>
+          {totd.tool.stars > 0 && <span>· {formatStars(totd.tool.stars)} ★</span>}
+        </div>
+        <a href={`/tool/${totd.slug}/`} class="totd-widget-cta">View profile &rarr;</a>
+        <a href="/tool-of-the-day" class="totd-widget-share">share link</a>
+      </div>
+    </div>
+  </div>
+
   <div class="controls">
     <input type="text" id="search" placeholder="Search skills..." autocomplete="off" />
     <select id="category-filter" aria-label="Filter by category">
@@ -245,6 +272,150 @@ const itemListJsonLd = {
 </Base>
 
 <style>
+  .totd-widget {
+    border: 1px solid var(--accent);
+    border-radius: 6px;
+    background: var(--bg-surface);
+    padding: 1rem 1.25rem;
+    margin-bottom: 1.5rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .totd-widget::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent), transparent);
+  }
+
+  .totd-widget-label {
+    font-size: 0.68rem;
+    color: var(--accent);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+  }
+
+  .totd-widget-body {
+    display: flex;
+    gap: 1.25rem;
+    align-items: flex-start;
+  }
+
+  .totd-widget-info {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .totd-widget-name {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--text);
+    text-decoration: none;
+    display: block;
+    margin-bottom: 0.15rem;
+  }
+
+  .totd-widget-name:hover {
+    color: var(--accent);
+    text-decoration: none;
+  }
+
+  .totd-widget-repo {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    display: block;
+    margin-bottom: 0.5rem;
+  }
+
+  .totd-widget-desc {
+    font-size: 0.82rem;
+    color: var(--text-muted);
+    line-height: 1.5;
+    margin: 0;
+  }
+
+  .totd-widget-aside {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.2rem;
+    flex-shrink: 0;
+  }
+
+  .totd-widget-score {
+    font-size: 2rem;
+    font-weight: 800;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .totd-widget-score-label {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  .totd-widget-meta {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    display: flex;
+    gap: 0.3rem;
+    margin-top: 0.25rem;
+  }
+
+  .totd-widget-cta {
+    display: inline-block;
+    margin-top: 0.5rem;
+    padding: 0.3rem 0.7rem;
+    background: var(--accent);
+    color: #000;
+    font-size: 0.75rem;
+    font-weight: 600;
+    border-radius: 3px;
+    text-decoration: none;
+    transition: opacity 0.15s;
+    white-space: nowrap;
+  }
+
+  .totd-widget-cta:hover {
+    opacity: 0.85;
+    text-decoration: none;
+  }
+
+  .totd-widget-share {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    text-decoration: none;
+    text-align: right;
+  }
+
+  .totd-widget-share:hover {
+    color: var(--accent);
+    text-decoration: none;
+  }
+
+  @media (max-width: 500px) {
+    .totd-widget-body {
+      flex-direction: column;
+    }
+    .totd-widget-aside {
+      flex-direction: row;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+    .totd-widget-score {
+      font-size: 1.5rem;
+    }
+  }
+
   .category-nav {
     display: flex;
     flex-wrap: wrap;

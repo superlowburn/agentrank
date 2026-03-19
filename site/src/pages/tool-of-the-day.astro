@@ -1,0 +1,107 @@
+---
+export const prerender = true;
+
+import Base from '../layouts/Base.astro';
+import { getToolOfTheDay } from '../data/tool-of-the-day';
+import { scoreColor, formatStars } from '../data/tools';
+
+const { tool, slug } = getToolOfTheDay();
+const detailUrl = `/tool/${slug}/`;
+const shortName = tool.full_name.split('/')[1] || tool.full_name;
+const ogImagePath = `/og/tool-of-the-day.png`;
+---
+
+<Base
+  title={`Tool of the Day: ${shortName} — AgentRank`}
+  description={`Today's top-ranked MCP server: ${shortName}. ${tool.description?.slice(0, 120) ?? ''} Scored ${tool.score?.toFixed(1)}/100 on AgentRank.`}
+  canonicalUrl="https://agentrank-ai.com/tool-of-the-day"
+  ogImage={ogImagePath}
+>
+  <script define:vars={{ detailUrl }}>
+    window.location.replace(detailUrl);
+  </script>
+  <noscript>
+    <meta http-equiv="refresh" content={`0; url=${detailUrl}`} />
+  </noscript>
+
+  <div class="totd-redirect">
+    <div class="totd-label">Tool of the Day</div>
+    <h1 class="totd-name">{shortName}</h1>
+    <p class="totd-desc">{tool.description}</p>
+    <div class="totd-meta">
+      <span class="totd-score" style={`color: ${scoreColor(tool.score)}`}>{tool.score?.toFixed(1)}</span>
+      <span class="totd-meta-sep">·</span>
+      <span>#{tool.rank}</span>
+      {tool.stars > 0 && <><span class="totd-meta-sep">·</span><span>{formatStars(tool.stars)} stars</span></>}
+    </div>
+    <a href={detailUrl} class="totd-cta">View full profile &rarr;</a>
+  </div>
+</Base>
+
+<style>
+  .totd-redirect {
+    max-width: 600px;
+    margin: 4rem auto;
+    text-align: center;
+    padding: 2rem 1rem;
+  }
+
+  .totd-label {
+    font-size: 0.75rem;
+    color: var(--accent);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    font-weight: 600;
+    margin-bottom: 1rem;
+  }
+
+  .totd-name {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    color: var(--text);
+  }
+
+  .totd-desc {
+    font-size: 1rem;
+    color: var(--text-muted);
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+  }
+
+  .totd-meta {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    margin-bottom: 2rem;
+  }
+
+  .totd-score {
+    font-weight: 700;
+    font-size: 1rem;
+  }
+
+  .totd-meta-sep {
+    color: var(--border);
+  }
+
+  .totd-cta {
+    display: inline-block;
+    background: var(--accent);
+    color: #000;
+    font-weight: 600;
+    padding: 0.6rem 1.5rem;
+    border-radius: 4px;
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: opacity 0.15s;
+  }
+
+  .totd-cta:hover {
+    opacity: 0.85;
+    text-decoration: none;
+  }
+</style>

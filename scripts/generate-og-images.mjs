@@ -17,12 +17,109 @@ const COMPARE_OUT_DIR = join(__dirname, '../site/public/og/compare');
 const ALTERNATIVES_OUT_DIR = join(__dirname, '../site/public/og/alternatives');
 const TOOL_OUT_DIR = join(__dirname, '../site/public/og/tool');
 const SKILL_OUT_DIR = join(__dirname, '../site/public/og/skill');
+const TOTD_PATH = join(__dirname, '../data/tool-of-the-day.json');
 
 mkdirSync(OUT_DIR, { recursive: true });
 mkdirSync(COMPARE_OUT_DIR, { recursive: true });
 mkdirSync(ALTERNATIVES_OUT_DIR, { recursive: true });
 mkdirSync(TOOL_OUT_DIR, { recursive: true });
 mkdirSync(SKILL_OUT_DIR, { recursive: true });
+
+// ── Tool of the Day helpers ───────────────────────────────────────────────────
+
+function getTotdTool() {
+  try {
+    const history = JSON.parse(readFileSync(TOTD_PATH, 'utf-8'));
+    const today = new Date().toISOString().slice(0, 10);
+    const featuredName = history[today] ?? Object.values(history).at(-1);
+    if (!featuredName) return null;
+    const tool = rankedData.find(t => t.full_name === featuredName);
+    if (!tool) return null;
+    const shortName = tool.full_name.split('/')[1] || tool.full_name;
+    return { ...tool, shortName, slug: toSlug(tool.full_name) };
+  } catch {
+    return null;
+  }
+}
+
+function buildTotdHtml(tool) {
+  const sc = scoreColor(tool.score ?? 0);
+  const stars = tool.stars ?? 0;
+  const starsStr = stars >= 1000 ? (stars / 1000).toFixed(1) + 'K' : String(stars);
+  const titleSize = tool.shortName.length > 30 ? '42px' : tool.shortName.length > 20 ? '52px' : '60px';
+  const desc = (tool.description ?? '').slice(0, 110) + ((tool.description ?? '').length > 110 ? '…' : '');
+  const today = new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric', timeZone: 'UTC' });
+
+  return `<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&display=swap');
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    width: 1200px; height: 630px;
+    background: #0a0a0a;
+    font-family: 'JetBrains Mono', 'Courier New', monospace;
+    color: #e5e5e5;
+    display: flex; flex-direction: column;
+    justify-content: center; align-items: flex-start;
+    padding: 64px 72px; overflow: hidden; position: relative;
+  }
+  body::before {
+    content: ''; position: absolute; inset: 0;
+    background-image:
+      linear-gradient(rgba(34, 197, 94, 0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(34, 197, 94, 0.04) 1px, transparent 1px);
+    background-size: 60px 60px; pointer-events: none;
+  }
+  body::after {
+    content: ''; position: absolute; top: -120px; right: -120px;
+    width: 500px; height: 500px;
+    background: radial-gradient(circle, rgba(34, 197, 94, 0.15) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: rgba(34,197,94,0.12); border: 1px solid rgba(34,197,94,0.35);
+    border-radius: 20px; padding: 4px 14px;
+    font-size: 13px; color: #22c55e; letter-spacing: 0.1em; text-transform: uppercase;
+    margin-bottom: 20px;
+  }
+  .badge-dot { width: 6px; height: 6px; background: #22c55e; border-radius: 50%; }
+  .date { font-size: 13px; color: #52525b; margin-bottom: 8px; }
+  .title { font-size: ${titleSize}; font-weight: 800; color: #e5e5e5; line-height: 1.1; letter-spacing: -0.02em; margin-bottom: 10px; max-width: 820px; }
+  .fullname { font-size: 16px; color: #3f3f46; margin-bottom: 18px; }
+  .desc { font-size: 18px; color: #a1a1aa; line-height: 1.5; max-width: 760px; margin-bottom: 24px; }
+  .score-row { display: flex; align-items: baseline; gap: 20px; }
+  .score { font-size: 64px; font-weight: 800; color: ${sc}; line-height: 1; }
+  .score-label { font-size: 16px; color: #52525b; }
+  .rank { font-size: 22px; color: #52525b; font-weight: 700; }
+  .stars { font-size: 16px; color: #52525b; }
+  .divider { position: absolute; bottom: 90px; left: 72px; right: 72px; height: 1px; background: linear-gradient(90deg, #22c55e40, transparent); }
+  .footer { position: absolute; bottom: 50px; left: 72px; right: 72px; display: flex; align-items: center; justify-content: space-between; }
+  .brand { font-size: 17px; color: #3f3f46; }
+  .url { font-size: 15px; color: #3f3f46; }
+</style>
+</head>
+<body>
+  <div class="badge"><span class="badge-dot"></span>Tool of the Day</div>
+  <div class="title">${tool.shortName}</div>
+  <div class="fullname">${tool.full_name}</div>
+  ${desc ? `<div class="desc">${desc}</div>` : ''}
+  <div class="score-row">
+    <div><span class="score">${(tool.score ?? 0).toFixed(1)}</span> <span class="score-label">score</span></div>
+    <div class="rank">#${tool.rank}</div>
+    ${stars > 0 ? `<div class="stars">${starsStr} stars</div>` : ''}
+  </div>
+  <div class="divider"></div>
+  <div class="footer">
+    <span class="brand">agentrank-ai.com</span>
+    <span class="url">${today}</span>
+  </div>
+</body>
+</html>`;
+}
 
 // ── Data helpers (mirrors ranked.ts / tools.ts / content-gen.ts) ──────────────
 
@@ -768,6 +865,20 @@ async function main() {
     count++;
   }
   console.log(`  done: ${SKILL_OG_PAGES.length} skill images`);
+
+  // ── Tool of the Day OG ──────────────────────────────────────────────────────
+  const totdTool = getTotdTool();
+  if (totdTool) {
+    const html = buildTotdHtml(totdTool);
+    await page.setContent(html, { waitUntil: 'domcontentloaded' });
+    await page.waitForTimeout(300);
+    const outPath = join(OUT_DIR, 'tool-of-the-day.png');
+    await page.screenshot({ path: outPath, type: 'png' });
+    console.log(`  generated: og/tool-of-the-day.png (${totdTool.full_name})`);
+    count++;
+  } else {
+    console.log('  skipped: og/tool-of-the-day.png (no TOTD data)');
+  }
 
   await browser.close();
   console.log(`\nDone. Generated ${count} OG images total.`);
