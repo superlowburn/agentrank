@@ -1,0 +1,74 @@
+---
+interface Props {
+  current?: string;
+}
+
+const { current } = Astro.props;
+
+const categories = [
+  { href: '/blog/best-mcp-servers-ai-ml/', title: 'AI & Machine Learning' },
+  { href: '/blog/best-mcp-servers-api-integration/', title: 'API Integration' },
+  { href: '/blog/best-mcp-servers-code-generation/', title: 'Code Generation' },
+  { href: '/blog/best-mcp-servers-communication/', title: 'Communication' },
+  { href: '/blog/best-mcp-servers-data-science/', title: 'Data Science & Analytics' },
+  { href: '/blog/best-mcp-servers-database/', title: 'Database Management' },
+  { href: '/blog/best-mcp-servers-design/', title: 'Design (Figma, UI/UX)' },
+  { href: '/blog/best-mcp-servers-devops/', title: 'DevOps & Infrastructure' },
+  { href: '/blog/best-mcp-servers-file-management/', title: 'File Management' },
+  { href: '/blog/best-mcp-servers-game-dev/', title: 'Game Development' },
+  { href: '/blog/best-mcp-servers-home-automation/', title: 'Home Automation & IoT' },
+  { href: '/blog/best-mcp-servers-memory/', title: 'Memory & Knowledge' },
+  { href: '/blog/best-mcp-servers-productivity/', title: 'Productivity' },
+  { href: '/blog/best-mcp-servers-security/', title: 'Security' },
+  { href: '/blog/best-mcp-servers-web-browser/', title: 'Web Browser & Automation' },
+  { href: '/blog/best-mcp-servers-web-scraping-research/', title: 'Web Scraping & Research' },
+];
+
+const filtered = current ? categories.filter((c) => c.href !== current) : categories;
+---
+
+<section class="related-categories">
+  <h3 class="related-cat-heading">Browse by category</h3>
+  <div class="related-cat-grid">
+    {filtered.map((cat) => (
+      <a href={cat.href} class="related-cat-link">{cat.title}</a>
+    ))}
+  </div>
+</section>
+
+<style>
+  .related-categories {
+    margin: 1.5rem 0;
+    padding: 1rem 1.25rem;
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+  }
+
+  .related-cat-heading {
+    font-size: 0.72rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-muted);
+    margin-bottom: 0.65rem;
+  }
+
+  .related-cat-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem 0.6rem;
+  }
+
+  .related-cat-link {
+    font-size: 0.8rem;
+    color: var(--accent);
+    text-decoration: none;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+
+  .related-cat-link:hover {
+    text-decoration: underline;
+  }
+</style>

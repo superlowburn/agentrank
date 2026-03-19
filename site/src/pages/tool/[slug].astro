@@ -207,6 +207,39 @@ if (scoreHistory.length >= 2) {
 }
 
 const totalTools = (await env.DB.prepare('SELECT COUNT(*) as count FROM tools').first())?.count as number || 0;
+const shortName = tool.full_name.includes('/') ? tool.full_name.split('/')[1] : tool.full_name;
+const toolPageTitle = `${shortName} MCP Server — AgentRank`;
+const toolMetaDesc = (() => {
+  const catLabel = toolCategory
+    ? (CATEGORIES[toolCategory] ?? toolCategory.replace(/-/g, ' ').replace(/\b\w/g, (c: string) => c.toUpperCase()))
+    : null;
+  const base = tool.description || `${shortName} is an MCP server${catLabel ? ` for ${catLabel}` : ''}.`;
+  return `${shortName} MCP Server — AgentRank score ${tool.score.toFixed(1)}/100${catLabel ? ` · ${catLabel}` : ''}. ${base.slice(0, 120)}${base.length > 120 ? '...' : ''}`;
+})();
+const toolFaqJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: [
+    {
+      '@type': 'Question',
+      name: `What is the ${shortName} MCP server?`,
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: tool.description
+          ? `${tool.full_name} — ${tool.description} AgentRank score: ${tool.score.toFixed(1)}/100.`
+          : `${tool.full_name} is an MCP server indexed by AgentRank. Score: ${tool.score.toFixed(1)}/100.`,
+      },
+    },
+    {
+      '@type': 'Question',
+      name: `Is the ${shortName} MCP server actively maintained?`,
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: `The ${shortName} MCP server was last committed ${relativeTime(tool.last_commit_at)} and has ${tool.contributors} contributor${tool.contributors !== 1 ? 's' : ''}. Issue health: ${Math.round((tool.open_issues + tool.closed_issues > 0 ? tool.closed_issues / (tool.open_issues + tool.closed_issues) : 0.5) * 100)}% of issues resolved. AgentRank freshness score reflects real-time maintenance activity.`,
+      },
+    },
+  ],
+};
 const summary = generateToolSummary({ ...tool, github_topics: githubTopics });
 const contextSentences = generateContextSentences({
   rank: tool.rank,
@@ -235,6 +268,7 @@ const jsonLd = [
     { name: 'Tools', item: `${SITE_URL}/tools/` },
     { name: tool.full_name, item: pageUrl },
   ]),
+  toolFaqJsonLd,
 ];
 const keywordsStr = [...new Set([...tool.matched_queries, ...githubTopics])].join(', ');
 const ogImage = tool.rank <= 200 ? `/og/tool/${slug}.png` : undefined;
@@ -351,7 +385,7 @@ const categoryLabel = toolCategory
 Astro.response.headers.set('Cache-Control', 'public, max-age=60, s-maxage=3600, stale-while-revalidate=86400');
 ---
 
-<Base title={`${tool.full_name} — AgentRank`} description={summary} activeTab="tools" jsonLd={jsonLd} keywords={keywordsStr} canonicalUrl={pageUrl} ogImage={ogImage}>
+<Base title={toolPageTitle} description={toolMetaDesc} activeTab="tools" jsonLd={jsonLd} keywords={keywordsStr} canonicalUrl={pageUrl} ogImage={ogImage}>
   <nav class="breadcrumb" aria-label="breadcrumb">
     <a href="/">Home</a>
     <span class="breadcrumb-sep" aria-hidden="true">&rsaquo;</span>
@@ -367,7 +401,8 @@ Astro.response.headers.set('Cache-Control', 'public, max-age=60, s-maxage=3600, 
   </nav>
 
   <div class="tool-header">
-    <h2>{tool.full_name}</h2>
+    <h1>{shortName} MCP Server</h1>
+    <p class="tool-full-name">{tool.full_name}</p>
     <div class="tool-meta">
       <span class="score-badge" style={`color: ${scoreColor(tool.score)}`}>
         Score: {tool.score.toFixed(1)}
@@ -752,10 +787,17 @@ Astro.response.headers.set('Cache-Control', 'public, max-age=60, s-maxage=3600, 
     margin-bottom: 1rem;
   }
 
-  .tool-header h2 {
+  .tool-header h1 {
     font-size: 1.5rem;
     font-weight: 700;
+    margin-bottom: 0.15rem;
+  }
+
+  .tool-full-name {
+    font-size: 0.8rem;
+    color: var(--text-muted);
     margin-bottom: 0.5rem;
+    font-family: var(--font-mono, monospace);
   }
 
   .tool-meta {

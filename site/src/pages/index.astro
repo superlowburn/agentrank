@@ -48,21 +48,60 @@ const itemListJsonLd = {
     url: `https://agentrank-ai.com/skill/${toSkillSlug(skill.slug)}/`,
   })),
 };
+
+const faqJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: [
+    {
+      '@type': 'Question',
+      name: 'How do I choose an MCP server?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Choose an MCP server based on five signals: stars (raw popularity), freshness (days since last commit), issue health (closed vs total issues), contributors (bus factor risk), and inbound dependents (real-world adoption). The AgentRank score combines all five into a single 0–100 number updated daily. Higher scores mean more reliable, actively maintained servers.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'What is the MCP server ranking based on?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'The AgentRank MCP server ranking uses a composite score weighted across: stars (15%), freshness (25%), issue health (25%), contributors (10%), and inbound dependents (25%). Scores are recomputed nightly from live GitHub data. A tool with a recent commit, responsive maintainer, and multiple downstream dependents outranks a tool with more stars but no recent activity.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Which MCP servers are most popular?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: `AgentRank indexes ${totalToolCount.toLocaleString('en-US')}+ MCP servers and agent tools. The leaderboard shows the most popular MCP servers ranked by composite score — not just raw star count. Use the filters on this page to browse by category, or search for a specific tool name.`,
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'What is the best rated MCP server?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'The best rated MCP servers according to the AgentRank quality score are those with high freshness (committed within the last 30 days), strong issue health (80%+ closed issues), multiple contributors, and inbound dependent usage. The top-ranked tools in the leaderboard meet all five criteria at once.',
+      },
+    },
+  ],
+};
 ---
 
 <Base
-  title="AgentRank — Google PageRank for AI agents"
-  description={`Discover and rank ${totalCount.toLocaleString('en-US')}+ AI skills, MCP servers, and agent tools. Scored daily from real signals. Install once and your AI automatically finds the best tool.`}
-  keywords="AI skills, MCP servers, agent tools, Claude skills, AI agent tools, best AI skills, skills.sh, Glama MCP, model context protocol skills"
+  title="MCP Server Ranking — Most Popular MCP Servers Leaderboard | AgentRank"
+  description={`The MCP server leaderboard. ${totalToolCount.toLocaleString('en-US')}+ MCP servers ranked by real signals: freshness, issue health, stars, contributors, and dependents. Find the best rated MCP servers, updated daily.`}
+  keywords="MCP server ranking, most popular MCP servers, MCP server leaderboard, best rated MCP servers, MCP server quality score, MCP server index, AI skills, agent tools"
   activeTab="skills"
   canonicalUrl="https://agentrank-ai.com/"
-  jsonLd={[websiteJsonLd, itemListJsonLd]}
+  jsonLd={[websiteJsonLd, itemListJsonLd, faqJsonLd]}
   ogImage="/og/home.png"
 >
   <div class="install-banner">
     <div class="hero-headline">
-      <h2>Find the best MCP servers and AI agent tools</h2>
-      <p class="hero-sub">Ranked by real signals, updated daily. The index your AI uses to find the right tool automatically.</p>
+      <h1>MCP Server Ranking &amp; Leaderboard</h1>
+      <p class="hero-sub">The most popular MCP servers, ranked by real signals — freshness, issue health, stars, contributors, and dependents. Updated daily.</p>
     </div>
 
     <div class="hero-stats">

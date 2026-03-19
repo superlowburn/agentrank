@@ -4,6 +4,7 @@ export const prerender = true;
 import Base from '../../layouts/Base.astro';
 import BlogSubscribeCTA from '../../components/BlogSubscribeCTA.astro';
 import RelatedPosts from '../../components/RelatedPosts.astro';
+import RelatedCategories from '../../components/RelatedCategories.astro';
 
 const relatedPosts = [
   { href: '/blog/exa-mcp-vs-firecrawl-mcp/', title: 'Exa MCP vs Firecrawl MCP: Which Web Research Tool?' },
@@ -362,6 +363,7 @@ const faqJsonLd = {
       </div>
     </section>
 
+    <RelatedCategories current="/blog/best-mcp-servers-web-scraping-research/" />
     <RelatedPosts posts={relatedPosts} />
     <BlogSubscribeCTA source="blog" />
     <footer class="post-footer">

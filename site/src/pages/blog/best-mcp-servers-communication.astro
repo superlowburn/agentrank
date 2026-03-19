@@ -4,6 +4,7 @@ export const prerender = true;
 import Base from '../../layouts/Base.astro';
 import BlogSubscribeCTA from '../../components/BlogSubscribeCTA.astro';
 import RelatedPosts from '../../components/RelatedPosts.astro';
+import RelatedCategories from '../../components/RelatedCategories.astro';
 
 const relatedPosts = [
   { href: '/blog/best-mcp-servers-productivity/', title: 'Best MCP Servers for Productivity in 2026' },
@@ -365,6 +366,7 @@ const faqJsonLd = {
       </div>
     </section>
 
+    <RelatedCategories current="/blog/best-mcp-servers-communication/" />
     <RelatedPosts posts={relatedPosts} />
     <BlogSubscribeCTA source="blog" />
     <footer class="post-footer">
