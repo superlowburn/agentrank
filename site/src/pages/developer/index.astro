@@ -1,0 +1,418 @@
+---
+export const prerender = false;
+import Base from '../../layouts/Base.astro';
+---
+
+<Base
+  title="Developer API — AgentRank"
+  description="Get a free AgentRank API key. Access 25,000+ ranked MCP servers and agent tools programmatically. Free tier: 100 requests/day."
+  activeTab="api"
+  canonicalUrl="https://agentrank-ai.com/developer/"
+>
+
+  <style>
+    .dev-hero {
+      margin-bottom: 2rem;
+    }
+
+    .dev-hero h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+    }
+
+    .dev-hero p {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
+
+    .tier-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    @media (max-width: 600px) {
+      .tier-grid { grid-template-columns: 1fr; }
+    }
+
+    .tier-card {
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 1.25rem;
+      background: var(--bg-surface);
+    }
+
+    .tier-card.highlighted {
+      border-color: var(--accent);
+    }
+
+    .tier-name {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      margin-bottom: 0.25rem;
+    }
+
+    .tier-price {
+      font-size: 1.4rem;
+      font-weight: 700;
+      margin-bottom: 0.75rem;
+    }
+
+    .tier-price span {
+      font-size: 0.8rem;
+      font-weight: 400;
+      color: var(--text-muted);
+    }
+
+    .tier-features {
+      list-style: none;
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+    }
+
+    .tier-features li::before {
+      content: '+ ';
+      color: var(--accent);
+    }
+
+    .signup-section {
+      max-width: 480px;
+      margin-bottom: 2rem;
+    }
+
+    .signup-section h2 {
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+    }
+
+    .form-group {
+      margin-bottom: 0.75rem;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-bottom: 0.35rem;
+    }
+
+    .form-group input {
+      width: 100%;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 0.5rem 0.75rem;
+      border-radius: 4px;
+      font-family: inherit;
+      font-size: 0.85rem;
+    }
+
+    .form-group input:focus {
+      outline: 1px solid var(--accent);
+      border-color: var(--accent);
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: #000;
+      border: none;
+      border-radius: 4px;
+      padding: 0.55rem 1.25rem;
+      font-family: inherit;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity 0.15s;
+    }
+
+    .btn-primary:hover { opacity: 0.85; }
+    .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    .form-msg {
+      margin-top: 0.75rem;
+      font-size: 0.82rem;
+      min-height: 1em;
+    }
+
+    .form-msg.error { color: #ef4444; }
+    .form-msg.success { color: var(--accent); }
+
+    .key-result {
+      display: none;
+      margin-top: 1.25rem;
+      border: 1px solid var(--accent);
+      border-radius: 6px;
+      padding: 1rem;
+      background: var(--bg-surface);
+    }
+
+    .key-result.visible { display: block; }
+
+    .key-result h3 {
+      font-size: 0.85rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      color: var(--accent);
+    }
+
+    .key-warning {
+      font-size: 0.78rem;
+      color: #f59e0b;
+      margin-bottom: 0.75rem;
+    }
+
+    .key-display {
+      display: flex;
+      gap: 0.5rem;
+      align-items: center;
+      margin-bottom: 0.75rem;
+    }
+
+    .key-display code {
+      flex: 1;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 0.4rem 0.6rem;
+      font-size: 0.8rem;
+      word-break: break-all;
+      color: var(--text);
+    }
+
+    .btn-copy {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      border-radius: 4px;
+      padding: 0.35rem 0.6rem;
+      font-family: inherit;
+      font-size: 0.75rem;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: color 0.15s;
+    }
+
+    .btn-copy:hover { color: var(--text); }
+
+    .key-meta {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      display: flex;
+      gap: 1.5rem;
+    }
+
+    .key-meta strong { color: var(--text); }
+
+    .code-section {
+      margin-top: 2.5rem;
+    }
+
+    .code-section h2 {
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+    }
+
+    .code-block {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 1rem;
+      font-size: 0.8rem;
+      overflow-x: auto;
+      margin-bottom: 1rem;
+    }
+
+    .code-block pre {
+      margin: 0;
+      color: var(--text);
+    }
+
+    .code-block .comment { color: var(--text-muted); }
+    .code-block .string { color: #86efac; }
+    .code-block .keyword { color: #93c5fd; }
+
+    .links-row {
+      margin-top: 2rem;
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      display: flex;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+    }
+  </style>
+
+  <div class="dev-hero">
+    <h1>Developer API</h1>
+    <p>Programmatic access to 25,000+ ranked MCP servers and agent tools. Free tier included.</p>
+  </div>
+
+  <div class="tier-grid">
+    <div class="tier-card">
+      <div class="tier-name">Free</div>
+      <div class="tier-price">$0 <span>/ month</span></div>
+      <ul class="tier-features">
+        <li>100 requests / day</li>
+        <li>Search, rankings, tool details</li>
+        <li>JSON responses</li>
+        <li>No credit card required</li>
+      </ul>
+    </div>
+    <div class="tier-card highlighted">
+      <div class="tier-name">Pro API</div>
+      <div class="tier-price">$49 <span>/ month</span></div>
+      <ul class="tier-features">
+        <li>10,000 requests / day</li>
+        <li>All endpoints including /v2</li>
+        <li>Batch lookups + rank history</li>
+        <li>Rate limit headers included</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="signup-section">
+    <h2>Get your free API key</h2>
+    <form id="signup-form" novalidate>
+      <div class="form-group">
+        <label for="signup-email">Email address</label>
+        <input
+          type="email"
+          id="signup-email"
+          name="email"
+          placeholder="you@example.com"
+          autocomplete="email"
+          required
+        />
+      </div>
+      <div class="form-group">
+        <label for="signup-name">Key name <span style="color: var(--text-muted); font-size: 0.75rem;">(optional)</span></label>
+        <input
+          type="text"
+          id="signup-name"
+          name="name"
+          placeholder="My project"
+          autocomplete="off"
+        />
+      </div>
+      <button type="submit" class="btn-primary" id="signup-btn">Generate API key</button>
+      <div class="form-msg" id="signup-msg" aria-live="polite"></div>
+    </form>
+
+    <div class="key-result" id="key-result">
+      <h3>Your API key</h3>
+      <p class="key-warning">Copy this key now. It will not be shown again.</p>
+      <div class="key-display">
+        <code id="key-value"></code>
+        <button class="btn-copy" id="btn-copy" type="button">Copy</button>
+      </div>
+      <div class="key-meta">
+        <span>Tier: <strong>free</strong></span>
+        <span>Limit: <strong>100 req/day</strong></span>
+      </div>
+    </div>
+  </div>
+
+  <div class="code-section">
+    <h2>Quick start</h2>
+    <div class="code-block">
+      <pre><span class="comment"># Search for MCP tools</span>
+curl -H <span class="string">"Authorization: Bearer ark_free_..."</span> \
+  <span class="string">"https://agentrank-ai.com/api/v2/search?q=filesystem"</span>
+
+<span class="comment"># Get top-ranked tools</span>
+curl -H <span class="string">"Authorization: Bearer ark_free_..."</span> \
+  <span class="string">"https://agentrank-ai.com/api/v2/search?sort=rank&limit=10"</span>
+
+<span class="comment"># Tool details</span>
+curl -H <span class="string">"Authorization: Bearer ark_free_..."</span> \
+  <span class="string">"https://agentrank-ai.com/api/v2/tool/modelcontextprotocol--servers"</span></pre>
+    </div>
+  </div>
+
+  <div class="links-row">
+    <a href="/docs/">Full API reference</a>
+    <a href="/docs/authentication/">Authentication docs</a>
+    <a href="/docs/rate-limits/">Rate limits</a>
+    <a href="/developer/usage/">Check your usage</a>
+    <a href="/pricing/">Upgrade to Pro</a>
+  </div>
+
+  <script>
+    const form = document.getElementById('signup-form') as HTMLFormElement | null;
+    const emailInput = document.getElementById('signup-email') as HTMLInputElement | null;
+    const nameInput = document.getElementById('signup-name') as HTMLInputElement | null;
+    const btn = document.getElementById('signup-btn') as HTMLButtonElement | null;
+    const msg = document.getElementById('signup-msg') as HTMLElement | null;
+    const keyResult = document.getElementById('key-result') as HTMLElement | null;
+    const keyValue = document.getElementById('key-value') as HTMLElement | null;
+    const btnCopy = document.getElementById('btn-copy') as HTMLButtonElement | null;
+
+    form?.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const email = emailInput!.value.trim();
+      const name = nameInput!.value.trim();
+
+      if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        msg!.textContent = 'Please enter a valid email address.';
+        msg!.className = 'form-msg error';
+        return;
+      }
+
+      btn!.disabled = true;
+      btn!.textContent = 'Generating...';
+      msg!.textContent = '';
+      msg!.className = 'form-msg';
+
+      try {
+        const res = await fetch('/api/developer/signup', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, name: name || undefined }),
+        });
+        const data = await res.json() as any;
+
+        if (res.ok && data.key) {
+          keyValue!.textContent = data.key;
+          keyResult!.classList.add('visible');
+          msg!.textContent = '';
+          form!.style.display = 'none';
+        } else if (res.status === 409) {
+          msg!.textContent = `A key already exists for this email (prefix: ${data.keyPrefix}). Check your records or contact us to rotate it.`;
+          msg!.className = 'form-msg error';
+          btn!.disabled = false;
+          btn!.textContent = 'Generate API key';
+        } else {
+          msg!.textContent = data.error || 'Something went wrong. Please try again.';
+          msg!.className = 'form-msg error';
+          btn!.disabled = false;
+          btn!.textContent = 'Generate API key';
+        }
+      } catch {
+        msg!.textContent = 'Network error. Please try again.';
+        msg!.className = 'form-msg error';
+        btn!.disabled = false;
+        btn!.textContent = 'Generate API key';
+      }
+    });
+
+    btnCopy?.addEventListener('click', () => {
+      const key = keyValue?.textContent ?? '';
+      if (!key) return;
+      navigator.clipboard.writeText(key).then(() => {
+        btnCopy.textContent = 'Copied!';
+        setTimeout(() => { btnCopy.textContent = 'Copy'; }, 2000);
+      }).catch(() => {
+        btnCopy.textContent = 'Copy failed';
+      });
+    });
+  </script>
+
+</Base>

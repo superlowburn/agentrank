@@ -1,0 +1,491 @@
+---
+export const prerender = false;
+import Base from '../../layouts/Base.astro';
+---
+
+<Base
+  title="API Usage — AgentRank Developer"
+  description="Check your AgentRank API key usage, quota, and top endpoints."
+  activeTab="api"
+  canonicalUrl="https://agentrank-ai.com/developer/usage/"
+>
+
+  <style>
+    .usage-hero {
+      margin-bottom: 2rem;
+    }
+
+    .usage-hero h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+    }
+
+    .usage-hero p {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
+
+    .lookup-section {
+      max-width: 480px;
+      margin-bottom: 2rem;
+    }
+
+    .lookup-section h2 {
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+    }
+
+    .form-row {
+      display: flex;
+      gap: 0.5rem;
+      align-items: flex-end;
+    }
+
+    .form-group {
+      flex: 1;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-bottom: 0.35rem;
+    }
+
+    .form-group input {
+      width: 100%;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 0.5rem 0.75rem;
+      border-radius: 4px;
+      font-family: inherit;
+      font-size: 0.82rem;
+    }
+
+    .form-group input:focus {
+      outline: 1px solid var(--accent);
+      border-color: var(--accent);
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: #000;
+      border: none;
+      border-radius: 4px;
+      padding: 0.55rem 1rem;
+      font-family: inherit;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: opacity 0.15s;
+    }
+
+    .btn-primary:hover { opacity: 0.85; }
+    .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    .lookup-msg {
+      margin-top: 0.75rem;
+      font-size: 0.82rem;
+      min-height: 1em;
+    }
+
+    .lookup-msg.error { color: #ef4444; }
+
+    .dashboard {
+      display: none;
+    }
+
+    .dashboard.visible { display: block; }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .stat-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 1rem;
+    }
+
+    .stat-label {
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      margin-bottom: 0.35rem;
+    }
+
+    .stat-value {
+      font-size: 1.5rem;
+      font-weight: 700;
+    }
+
+    .stat-value.accent { color: var(--accent); }
+    .stat-value.warn { color: #f59e0b; }
+
+    .stat-sub {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      margin-top: 0.2rem;
+    }
+
+    .section-header {
+      font-size: 0.85rem;
+      font-weight: 700;
+      margin-bottom: 0.75rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .history-chart {
+      margin-bottom: 2rem;
+    }
+
+    .bar-chart {
+      display: flex;
+      align-items: flex-end;
+      gap: 3px;
+      height: 60px;
+      margin-bottom: 0.5rem;
+    }
+
+    .bar {
+      flex: 1;
+      background: var(--accent);
+      opacity: 0.7;
+      border-radius: 2px 2px 0 0;
+      min-height: 2px;
+      position: relative;
+      cursor: default;
+    }
+
+    .bar:hover { opacity: 1; }
+
+    .bar-tooltip {
+      display: none;
+      position: absolute;
+      bottom: calc(100% + 4px);
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 0.2rem 0.4rem;
+      font-size: 0.68rem;
+      white-space: nowrap;
+      z-index: 10;
+    }
+
+    .bar:hover .bar-tooltip { display: block; }
+
+    .chart-dates {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.65rem;
+      color: var(--text-muted);
+    }
+
+    .table-section {
+      margin-bottom: 2rem;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.82rem;
+    }
+
+    th {
+      text-align: left;
+      padding: 0.4rem 0.6rem;
+      border-bottom: 1px solid var(--border);
+      color: var(--text-muted);
+      font-weight: 600;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    td {
+      padding: 0.45rem 0.6rem;
+      border-bottom: 1px solid var(--border);
+      color: var(--text);
+    }
+
+    tr:last-child td { border-bottom: none; }
+
+    .key-info {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 1rem;
+      margin-bottom: 2rem;
+      font-size: 0.82rem;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 0.75rem;
+    }
+
+    .key-info-item .label {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: 0.2rem;
+    }
+
+    .key-info-item .value { font-weight: 600; }
+
+    .tier-badge {
+      display: inline-block;
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      border: 1px solid var(--accent);
+      color: var(--accent);
+      border-radius: 3px;
+      padding: 0.05rem 0.35rem;
+    }
+
+    .tier-badge.pro { border-color: #f59e0b; color: #f59e0b; }
+
+    .upgrade-banner {
+      background: var(--bg-surface);
+      border: 1px solid var(--accent);
+      border-radius: 6px;
+      padding: 1rem;
+      margin-bottom: 2rem;
+      font-size: 0.85rem;
+    }
+
+    .upgrade-banner strong { color: var(--accent); }
+
+    .btn-upgrade {
+      display: inline-block;
+      margin-top: 0.5rem;
+      background: var(--accent);
+      color: #000;
+      border-radius: 4px;
+      padding: 0.35rem 0.85rem;
+      font-family: inherit;
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: opacity 0.15s;
+    }
+
+    .btn-upgrade:hover { opacity: 0.85; text-decoration: none; }
+
+    .links-row {
+      margin-top: 1.5rem;
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      display: flex;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+    }
+  </style>
+
+  <div class="usage-hero">
+    <h1>API Usage</h1>
+    <p>Check your quota, request history, and top endpoints.</p>
+  </div>
+
+  <div class="lookup-section">
+    <h2>Look up your key</h2>
+    <div class="form-row">
+      <div class="form-group">
+        <label for="lookup-key">API key</label>
+        <input
+          type="text"
+          id="lookup-key"
+          placeholder="ark_free_..."
+          autocomplete="off"
+          spellcheck="false"
+        />
+      </div>
+      <button class="btn-primary" id="lookup-btn" type="button">Check usage</button>
+    </div>
+    <div class="lookup-msg" id="lookup-msg" aria-live="polite"></div>
+  </div>
+
+  <div class="dashboard" id="dashboard">
+
+    <div class="key-info" id="key-info"></div>
+
+    <div class="stats-grid" id="stats-grid"></div>
+
+    <div class="history-chart" id="history-section" style="display:none">
+      <div class="section-header">30-day history</div>
+      <div class="bar-chart" id="bar-chart"></div>
+      <div class="chart-dates" id="chart-dates"></div>
+    </div>
+
+    <div class="table-section" id="endpoints-section" style="display:none">
+      <div class="section-header">Top endpoints (30 days)</div>
+      <table>
+        <thead>
+          <tr>
+            <th>Endpoint</th>
+            <th>Requests</th>
+          </tr>
+        </thead>
+        <tbody id="endpoints-tbody"></tbody>
+      </table>
+    </div>
+
+    <div class="upgrade-banner" id="upgrade-banner" style="display:none">
+      <strong>Running low?</strong> Upgrade to Pro API for 10,000 requests/day + batch lookups and rank history.
+      <br/>
+      <a href="/pricing/" class="btn-upgrade">View Pro plans</a>
+    </div>
+
+    <div class="links-row">
+      <a href="/developer/">Get another key</a>
+      <a href="/docs/">API reference</a>
+      <a href="/pricing/">Upgrade to Pro</a>
+    </div>
+
+  </div>
+
+  <script>
+    const lookupKeyInput = document.getElementById('lookup-key') as HTMLInputElement | null;
+    const lookupBtn = document.getElementById('lookup-btn') as HTMLButtonElement | null;
+    const lookupMsg = document.getElementById('lookup-msg') as HTMLElement | null;
+    const dashboard = document.getElementById('dashboard') as HTMLElement | null;
+    const keyInfo = document.getElementById('key-info') as HTMLElement | null;
+    const statsGrid = document.getElementById('stats-grid') as HTMLElement | null;
+    const barChart = document.getElementById('bar-chart') as HTMLElement | null;
+    const chartDates = document.getElementById('chart-dates') as HTMLElement | null;
+    const historySection = document.getElementById('history-section') as HTMLElement | null;
+    const endpointsSection = document.getElementById('endpoints-section') as HTMLElement | null;
+    const endpointsTbody = document.getElementById('endpoints-tbody') as HTMLElement | null;
+    const upgradeBanner = document.getElementById('upgrade-banner') as HTMLElement | null;
+
+    function formatNum(n: number | null): string {
+      if (n === null || n === undefined) return 'unlimited';
+      return n.toLocaleString();
+    }
+
+    function renderDashboard(data: any) {
+      const { key, quota, topEndpoints, history } = data;
+
+      // Key info
+      keyInfo!.innerHTML = `
+        <div class="key-info-item">
+          <div class="label">Key prefix</div>
+          <div class="value">${key.prefix}</div>
+        </div>
+        <div class="key-info-item">
+          <div class="label">Tier</div>
+          <div class="value"><span class="tier-badge ${key.tier === 'pro' ? 'pro' : ''}">${key.tier}</span></div>
+        </div>
+        ${key.name ? `<div class="key-info-item"><div class="label">Name</div><div class="value">${escHtml(key.name)}</div></div>` : ''}
+        ${key.lastUsedAt ? `<div class="key-info-item"><div class="label">Last used</div><div class="value">${key.lastUsedAt.slice(0, 10)}</div></div>` : ''}
+      `;
+
+      // Stats
+      const usedPct = quota.dailyLimit ? Math.round((quota.usedToday / quota.dailyLimit) * 100) : 0;
+      const statClass = usedPct >= 90 ? 'warn' : 'accent';
+      statsGrid!.innerHTML = `
+        <div class="stat-card">
+          <div class="stat-label">Used today</div>
+          <div class="stat-value ${statClass}">${formatNum(quota.usedToday)}</div>
+          <div class="stat-sub">of ${formatNum(quota.dailyLimit)} limit</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Remaining</div>
+          <div class="stat-value">${formatNum(quota.remaining)}</div>
+          <div class="stat-sub">resets at midnight UTC</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Daily limit</div>
+          <div class="stat-value">${formatNum(quota.dailyLimit)}</div>
+          <div class="stat-sub">${key.tier} tier</div>
+        </div>
+      `;
+
+      // History bar chart
+      if (history && history.length > 0) {
+        const maxVal = Math.max(...history.map((h: any) => h.requests), 1);
+        barChart!.innerHTML = history.map((h: any) => {
+          const pct = Math.max((h.requests / maxVal) * 100, 2);
+          return `<div class="bar" style="height:${pct}%"><div class="bar-tooltip">${h.date}<br/>${h.requests.toLocaleString()} req</div></div>`;
+        }).join('');
+        if (history.length > 0) {
+          chartDates!.innerHTML = `<span>${history[0].date.slice(5)}</span><span>${history[history.length - 1].date.slice(5)}</span>`;
+        }
+        historySection!.style.display = '';
+      }
+
+      // Top endpoints
+      if (topEndpoints && topEndpoints.length > 0) {
+        endpointsTbody!.innerHTML = topEndpoints.map((ep: any) =>
+          `<tr><td>${escHtml(ep.endpoint)}</td><td>${ep.requests.toLocaleString()}</td></tr>`
+        ).join('');
+        endpointsSection!.style.display = '';
+      }
+
+      // Upgrade nudge
+      if (key.tier === 'free' && quota.dailyLimit && quota.usedToday > quota.dailyLimit * 0.7) {
+        upgradeBanner!.style.display = '';
+      }
+
+      dashboard!.classList.add('visible');
+    }
+
+    function escHtml(s: string): string {
+      return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    }
+
+    lookupBtn?.addEventListener('click', async () => {
+      const key = lookupKeyInput!.value.trim();
+      if (!key || !key.startsWith('ark_')) {
+        lookupMsg!.textContent = 'Please enter a valid API key (starts with ark_).';
+        lookupMsg!.className = 'lookup-msg error';
+        return;
+      }
+
+      lookupBtn.disabled = true;
+      lookupBtn.textContent = 'Loading...';
+      lookupMsg!.textContent = '';
+      lookupMsg!.className = 'lookup-msg';
+      dashboard!.classList.remove('visible');
+
+      try {
+        const res = await fetch('/api/developer/usage', {
+          headers: { 'Authorization': `Bearer ${key}` },
+        });
+        const data = await res.json() as any;
+
+        if (res.ok) {
+          renderDashboard(data);
+        } else {
+          lookupMsg!.textContent = data.error || 'Invalid API key.';
+          lookupMsg!.className = 'lookup-msg error';
+        }
+      } catch {
+        lookupMsg!.textContent = 'Network error. Please try again.';
+        lookupMsg!.className = 'lookup-msg error';
+      } finally {
+        lookupBtn.disabled = false;
+        lookupBtn.textContent = 'Check usage';
+      }
+    });
+
+    // Allow Enter key on input
+    lookupKeyInput?.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') lookupBtn?.click();
+    });
+  </script>
+
+</Base>
