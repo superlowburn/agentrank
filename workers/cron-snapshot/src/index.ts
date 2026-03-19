@@ -14,6 +14,7 @@ export interface Env {
   RESEND_API_KEY?: string;
   DASH_TOKEN?: string;
   UNSUB_SECRET?: string;
+  GITHUB_TOKEN?: string;
 }
 
 // ---------------------------------------------------------------------------
@@ -832,6 +833,326 @@ async function sendWeeklyDigest(env: Env): Promise<void> {
   console.log(`[cron-snapshot] sendWeeklyDigest: sent=${sent} failed=${failed} total=${subscribers.length}`);
 }
 
+// ---------------------------------------------------------------------------
+// Activity Event Detection — ingest star spikes, new tools, movers, deprecated
+// ---------------------------------------------------------------------------
+
+async function ingestActivityEvents(
+  db: D1Database,
+  today: string
+): Promise<number> {
+  const d = new Date(today + "T00:00:00Z");
+  d.setUTCDate(d.getUTCDate() - 7);
+  const prevDate = utcDateString(d);
+
+  // Load existing source_urls for today to dedup within this run
+  const existingResult = await db
+    .prepare(
+      `SELECT source_url FROM news_items
+       WHERE source_url IS NOT NULL
+         AND published_at >= ?`
+    )
+    .bind(today)
+    .all<{ source_url: string }>();
+  const existingUrls = new Set(
+    existingResult.results?.map((r) => r.source_url) ?? []
+  );
+
+  const toInsert: Array<{
+    title: string;
+    summary: string;
+    source_url: string;
+    category: string;
+    related_tool_slugs: string;
+    published_at: string;
+  }> = [];
+
+  // --- 1. Star velocity spikes (>50% week-over-week growth, min 100 stars) ---
+  const spikeRows = await db
+    .prepare(
+      `SELECT t.full_name, t.stars AS current_stars, sh.stars AS prev_stars
+       FROM tools t
+       JOIN score_history sh
+         ON sh.tool_slug = t.full_name
+        AND sh.tool_type = 'tool'
+        AND sh.recorded_at = ?1
+       WHERE t.stars >= 100
+         AND sh.stars > 0
+         AND CAST(t.stars - sh.stars AS REAL) / sh.stars >= 0.5
+       ORDER BY CAST(t.stars - sh.stars AS REAL) / sh.stars DESC
+       LIMIT 20`
+    )
+    .bind(prevDate)
+    .all<{ full_name: string; current_stars: number; prev_stars: number }>();
+
+  for (const row of spikeRows.results ?? []) {
+    const url = `https://github.com/${row.full_name}#trending-${today}`;
+    if (existingUrls.has(url)) continue;
+    const pct = Math.round(
+      ((row.current_stars - row.prev_stars) / row.prev_stars) * 100
+    );
+    const repoName = row.full_name.split("/")[1] ?? row.full_name;
+    toInsert.push({
+      title: `${repoName} is trending (+${pct}% stars this week)`,
+      summary: `${row.full_name} grew from ${row.prev_stars} to ${row.current_stars} stars in 7 days (+${pct}%).`,
+      source_url: url,
+      category: "trending",
+      related_tool_slugs: JSON.stringify([row.full_name]),
+      published_at: today,
+    });
+    existingUrls.add(url);
+  }
+
+  // --- 2. New tools entering the index ---
+  const newTools = await getNewTools(db, today);
+  for (const tool of newTools.slice(0, 20)) {
+    const url = `https://github.com/${tool.full_name}#new-${today}`;
+    if (existingUrls.has(url)) continue;
+    const repoName = tool.full_name.split("/")[1] ?? tool.full_name;
+    toInsert.push({
+      title: `${repoName} entered the AgentRank index`,
+      summary: `${tool.full_name} is a new ${tool.tool_type} in the index, ranked #${tool.rank} with ${tool.stars} stars.`,
+      source_url: url,
+      category: "new-tool",
+      related_tool_slugs: JSON.stringify([tool.full_name]),
+      published_at: today,
+    });
+    existingUrls.add(url);
+  }
+
+  // --- 3. Big movers (10+ rank change — top 5 gainers + top 5 losers) ---
+  const allMovers = await getBiggestMovers(db, today);
+  const bigMovers = allMovers.filter((m) => Math.abs(m.rank_delta) >= 10);
+  const gainers = bigMovers.filter((m) => m.rank_delta > 0).slice(0, 5);
+  const losers = bigMovers.filter((m) => m.rank_delta < 0).slice(0, 5);
+
+  for (const mover of [...gainers, ...losers]) {
+    const direction = mover.rank_delta > 0 ? "up" : "down";
+    const url = `https://github.com/${mover.full_name}#mover-${direction}-${today}`;
+    if (existingUrls.has(url)) continue;
+    const repoName = mover.full_name.split("/")[1] ?? mover.full_name;
+    const delta = Math.abs(mover.rank_delta);
+    toInsert.push({
+      title: `${repoName} moved ${direction} ${delta} spots on AgentRank`,
+      summary: `${mover.full_name} ${direction === "up" ? "gained" : "dropped"} ${delta} ranks (#${mover.prev_rank} → #${mover.current_rank}).`,
+      source_url: url,
+      category: "mover",
+      related_tool_slugs: JSON.stringify([mover.full_name]),
+      published_at: today,
+    });
+    existingUrls.add(url);
+  }
+
+  // --- 4. Repos newly archived/deprecated ---
+  const archivedRows = await db
+    .prepare(
+      `SELECT t.full_name
+       FROM tools t
+       WHERE t.is_archived = 1
+         AND NOT EXISTS (
+           SELECT 1 FROM news_items ni
+           WHERE ni.category = 'deprecated'
+             AND ni.source_url = 'https://github.com/' || t.full_name || '#deprecated'
+         )
+       LIMIT 20`
+    )
+    .all<{ full_name: string }>();
+
+  for (const row of archivedRows.results ?? []) {
+    const url = `https://github.com/${row.full_name}#deprecated`;
+    if (existingUrls.has(url)) continue;
+    const repoName = row.full_name.split("/")[1] ?? row.full_name;
+    toInsert.push({
+      title: `${repoName} has been archived`,
+      summary: `${row.full_name} is now archived on GitHub. It may no longer be actively maintained.`,
+      source_url: url,
+      category: "deprecated",
+      related_tool_slugs: JSON.stringify([row.full_name]),
+      published_at: today,
+    });
+    existingUrls.add(url);
+  }
+
+  if (toInsert.length === 0) {
+    console.log(`[cron-snapshot] ingestActivityEvents: no new events for ${today}`);
+    return 0;
+  }
+
+  // Batch insert in chunks of 50
+  const INSERT_CHUNK = 50;
+  let totalInserted = 0;
+  for (let i = 0; i < toInsert.length; i += INSERT_CHUNK) {
+    const chunk = toInsert.slice(i, i + INSERT_CHUNK);
+    const stmts = chunk.map((item) =>
+      db
+        .prepare(
+          `INSERT OR IGNORE INTO news_items
+             (id, title, summary, source_url, source, category, related_tool_slugs, status, published_at)
+           VALUES (?, ?, ?, ?, 'internal', ?, ?, 'published', ?)`
+        )
+        .bind(
+          crypto.randomUUID(),
+          item.title,
+          item.summary,
+          item.source_url,
+          item.category,
+          item.related_tool_slugs,
+          item.published_at
+        )
+    );
+    await db.batch(stmts);
+    totalInserted += chunk.length;
+  }
+
+  console.log(
+    `[cron-snapshot] ingestActivityEvents: inserted ${totalInserted} events for ${today}`
+  );
+  return totalInserted;
+}
+
+// ---------------------------------------------------------------------------
+// GitHub Release Monitor — ingest new tool releases as news_items
+// ---------------------------------------------------------------------------
+
+interface GitHubRelease {
+  id: number;
+  tag_name: string;
+  name: string | null;
+  body: string | null;
+  html_url: string;
+  published_at: string | null;
+  prerelease: boolean;
+  draft: boolean;
+}
+
+async function fetchToolReleases(
+  fullName: string,
+  githubToken: string,
+  limit = 5
+): Promise<GitHubRelease[]> {
+  const url = `https://api.github.com/repos/${fullName}/releases?per_page=${limit}`;
+  try {
+    const res = await fetch(url, {
+      headers: {
+        Authorization: `Bearer ${githubToken}`,
+        Accept: "application/vnd.github+json",
+        "User-Agent": "AgentRank/1.0 (https://agentrank-ai.com)",
+        "X-GitHub-Api-Version": "2022-11-28",
+      },
+    });
+    if (!res.ok) return [];
+    return (await res.json()) as GitHubRelease[];
+  } catch {
+    return [];
+  }
+}
+
+async function monitorGitHubReleases(
+  db: D1Database,
+  githubToken: string
+): Promise<number> {
+  // 1. Query top 500 tools by score
+  const tools = await db
+    .prepare(`SELECT full_name FROM tools ORDER BY score DESC LIMIT 500`)
+    .all<{ full_name: string }>();
+
+  if (!tools.results?.length) return 0;
+
+  // 2. Load existing github release source_urls for dedup
+  const existingResult = await db
+    .prepare(
+      `SELECT source_url FROM news_items WHERE source = 'github' AND source_url IS NOT NULL`
+    )
+    .all<{ source_url: string }>();
+  const existingUrls = new Set(
+    existingResult.results?.map((r) => r.source_url) ?? []
+  );
+
+  // 3. Process tools in parallel batches of 20
+  const BATCH_SIZE = 20;
+  const toInsert: Array<{
+    title: string;
+    summary: string | null;
+    source_url: string;
+    category: string;
+    related_tool_slugs: string;
+    published_at: string;
+  }> = [];
+
+  for (let i = 0; i < tools.results.length; i += BATCH_SIZE) {
+    const batch = tools.results.slice(i, i + BATCH_SIZE);
+    const batchResults = await Promise.all(
+      batch.map(async ({ full_name }) => {
+        const releases = await fetchToolReleases(full_name, githubToken, 5);
+        return { full_name, releases };
+      })
+    );
+
+    for (const { full_name, releases } of batchResults) {
+      for (const release of releases) {
+        if (release.draft || release.prerelease) continue;
+        if (!release.published_at) continue;
+        if (existingUrls.has(release.html_url)) continue;
+
+        const repoName = full_name.split("/")[1] ?? full_name;
+        const displayName = release.name?.trim() || release.tag_name;
+        const title = `${repoName} ${displayName} released`;
+        const summary = release.body
+          ? release.body.replace(/\r\n|\r/g, "\n").trim().slice(0, 280)
+          : null;
+
+        toInsert.push({
+          title,
+          summary,
+          source_url: release.html_url,
+          category: "release",
+          related_tool_slugs: JSON.stringify([full_name]),
+          published_at: release.published_at,
+        });
+
+        // Track locally to dedup within this run
+        existingUrls.add(release.html_url);
+      }
+    }
+  }
+
+  if (toInsert.length === 0) {
+    console.log(`[cron-snapshot] monitorGitHubReleases: no new releases found`);
+    return 0;
+  }
+
+  // 4. Batch insert in chunks of 50
+  const INSERT_CHUNK = 50;
+  let totalInserted = 0;
+  for (let i = 0; i < toInsert.length; i += INSERT_CHUNK) {
+    const chunk = toInsert.slice(i, i + INSERT_CHUNK);
+    const stmts = chunk.map((item) =>
+      db
+        .prepare(
+          `INSERT OR IGNORE INTO news_items
+             (id, title, summary, source_url, source, category, related_tool_slugs, status, published_at)
+           VALUES (?, ?, ?, ?, 'github', ?, ?, 'published', ?)`
+        )
+        .bind(
+          crypto.randomUUID(),
+          item.title,
+          item.summary,
+          item.source_url,
+          item.category,
+          item.related_tool_slugs,
+          item.published_at
+        )
+    );
+    await db.batch(stmts);
+    totalInserted += chunk.length;
+  }
+
+  console.log(
+    `[cron-snapshot] monitorGitHubReleases: inserted ${totalInserted} new release items`
+  );
+  return totalInserted;
+}
+
 // --- Scheduled handler ---
 
 export default {
@@ -872,7 +1193,27 @@ export default {
       console.log(`[cron-snapshot] sendWelcomeEmails failed (non-fatal): ${e?.message}`);
     }
 
-    // Step 4b: On Tuesdays, send the weekly email digest to all subscribers
+    // Step 4b: Ingest activity events (star spikes, new tools, movers, deprecated)
+    try {
+      const eventCount = await ingestActivityEvents(env.DB, today);
+      console.log(`[cron-snapshot] ingestActivityEvents: ${eventCount} events`);
+    } catch (e: any) {
+      console.log(`[cron-snapshot] ingestActivityEvents failed (non-fatal): ${e?.message}`);
+    }
+
+    // Step 4d: Monitor GitHub releases for top tools and ingest as news_items
+    if (env.GITHUB_TOKEN) {
+      try {
+        const releaseCount = await monitorGitHubReleases(env.DB, env.GITHUB_TOKEN);
+        console.log(`[cron-snapshot] monitorGitHubReleases: ${releaseCount} new items`);
+      } catch (e: any) {
+        console.log(`[cron-snapshot] monitorGitHubReleases failed (non-fatal): ${e?.message}`);
+      }
+    } else {
+      console.log(`[cron-snapshot] monitorGitHubReleases: skipped (no GITHUB_TOKEN)`);
+    }
+
+    // Step 4e: On Tuesdays, send the weekly email digest to all subscribers
     if (isTuesday) {
       try {
         await sendWeeklyDigest(env);
