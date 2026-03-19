@@ -1,0 +1,669 @@
+---
+export const prerender = true;
+
+import Base from '../../layouts/Base.astro';
+import BlogSubscribeCTA from '../../components/BlogSubscribeCTA.astro';
+import RelatedPosts from '../../components/RelatedPosts.astro';
+
+const relatedPosts = [
+  { href: '/blog/neon-mcp-vs-mongodb-mcp/', title: 'Neon MCP vs MongoDB MCP: Which Cloud Database MCP Server?' },
+  { href: '/blog/kubernetes-mcp-server-vs-mcp-server-kubernetes/', title: 'Kubernetes MCP Server Showdown: containers vs Flux159' },
+  { href: '/blog/how-to-choose-an-mcp-server/', title: 'How to Choose an MCP Server in 2026' },
+  { href: '/blog/best-mcp-servers-productivity/', title: 'Best MCP Servers for Productivity in 2026' },
+];
+
+const publishDate = '2026-03-19';
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: 'Google Workspace MCP vs Microsoft 365 MCP: Which Productivity Suite Server?',
+  description: 'Data-driven comparison of Google Workspace and Microsoft 365 MCP servers. Scores, features, and which to use depending on your productivity stack — March 2026 data from AgentRank.',
+  datePublished: publishDate,
+  dateModified: publishDate,
+  author: {
+    '@type': 'Organization',
+    name: 'AgentRank',
+    url: 'https://agentrank-ai.com',
+  },
+  publisher: {
+    '@type': 'Organization',
+    name: 'AgentRank',
+    url: 'https://agentrank-ai.com',
+    logo: {
+      '@type': 'ImageObject',
+      url: 'https://agentrank-ai.com/og-image.png',
+    },
+  },
+  mainEntityOfPage: {
+    '@type': 'WebPage',
+    '@id': 'https://agentrank-ai.com/blog/google-workspace-mcp-vs-microsoft-365-mcp/',
+  },
+  image: 'https://agentrank-ai.com/og-image.png',
+  keywords: 'google workspace MCP server, microsoft 365 MCP server, google vs microsoft MCP, productivity MCP comparison, gmail MCP, office 365 MCP server 2026',
+};
+
+const tools = [
+  {
+    name: 'Softeria/ms-365-mcp-server',
+    slug: 'softeria--ms-365-mcp-server',
+    score: 89.33,
+    stars: 538,
+    contributors: 28,
+    lastCommit: '2026-03-11',
+    lang: 'TypeScript',
+    type: 'Community (Softeria)',
+    useCase: 'Microsoft 365 / Office / Graph API',
+    verdict: 'Higher AgentRank score (89.33). Covers the full Microsoft 365 stack via Graph API: Outlook, Teams, SharePoint, OneDrive, Word, Excel, PowerPoint. TypeScript, MIT. 28 contributors.',
+  },
+  {
+    name: 'taylorwilsdon/google_workspace_mcp',
+    slug: 'taylorwilsdon--google_workspace_mcp',
+    score: 88.94,
+    stars: 1840,
+    contributors: 78,
+    lastCommit: '2026-03-17',
+    lang: 'Python',
+    type: 'Community (taylorwilsdon)',
+    useCase: 'Gmail / Calendar / Drive / Docs / Sheets',
+    verdict: 'Most contributors (78) and most stars (1,840) in the productivity category. Covers Gmail, Calendar, Docs, Sheets, Slides, Chat, Drive, Forms, Tasks. Python, MIT. Committed March 17.',
+  },
+];
+
+const faqJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: [
+    {
+      '@type': 'Question',
+      name: 'What is the Google Workspace MCP server?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'taylorwilsdon/google_workspace_mcp is a community MCP server that connects AI agents to the full Google Workspace suite. It scores 88.94 in the AgentRank index with 1,840 GitHub stars — the most starred productivity MCP server. It covers Gmail, Google Calendar, Docs, Sheets, Slides, Chat, Drive, Forms, and Tasks through the Google API. Written in Python, MIT licensed.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'What is the Microsoft 365 MCP server?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Softeria/ms-365-mcp-server is a community MCP server for Microsoft 365 and Office services via the Microsoft Graph API. It scores 89.33 in the AgentRank index with 538 GitHub stars. It covers Outlook email and calendar, Microsoft Teams, SharePoint, OneDrive, and Office documents (Word, Excel, PowerPoint). Written in TypeScript, MIT licensed.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Should I use Google Workspace MCP or Microsoft 365 MCP?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'The answer depends entirely on which productivity suite your organization uses. If your team runs on Google Workspace (Gmail, Google Drive, Google Docs), use taylorwilsdon/google_workspace_mcp. If your team runs on Microsoft 365 (Outlook, Teams, SharePoint, Office), use Softeria/ms-365-mcp-server. The two servers are not interchangeable — they connect to different systems.',
+      },
+    },
+  ],
+};
+---
+
+<Base
+  title="Google Workspace MCP vs Microsoft 365 MCP: Which Productivity Server? — AgentRank"
+  description="Compare Google Workspace and Microsoft 365 MCP servers. Scores, features, and which to use for your productivity stack — March 2026 data from the AgentRank index."
+  activeTab="blog"
+  keywords="google workspace MCP, microsoft 365 MCP server, google vs microsoft MCP, gmail MCP, outlook MCP, productivity suite AI agent 2026"
+  canonicalUrl="https://agentrank-ai.com/blog/google-workspace-mcp-vs-microsoft-365-mcp/"
+  jsonLd={[jsonLd, faqJsonLd]}
+  ogImage="/og/blog.png"
+>
+  <article class="blog-post">
+    <header class="post-header">
+      <div class="breadcrumb"><a href="/blog/">Blog</a> <span>/</span></div>
+      <h1>Google Workspace MCP vs Microsoft 365 MCP: Which Productivity Suite Server?</h1>
+      <div class="post-meta">
+        <time datetime={publishDate}>March 19, 2026</time>
+        <span class="sep">&middot;</span>
+        <span>5 min read</span>
+        <span class="sep">&middot;</span>
+        <span>AgentRank Index</span>
+      </div>
+      <p class="lede">
+        Two productivity giants, two MCP servers: <strong>Google Workspace</strong> (Gmail, Calendar, Drive,
+        Docs, Sheets — 1,840 stars, 78 contributors) and <strong>Microsoft 365</strong> (Outlook, Teams,
+        SharePoint, Office — score 89.33). Both near the top of the index. The right choice is
+        determined by your existing productivity stack, not by the score.
+      </p>
+    </header>
+
+    <nav class="toc">
+      <strong>Contents</strong>
+      <ol>
+        <li><a href="#comparison-table">Side-by-side comparison</a></li>
+        <li><a href="#ms365-section">Microsoft 365 MCP deep dive</a></li>
+        <li><a href="#google-section">Google Workspace MCP deep dive</a></li>
+        <li><a href="#coverage">Feature coverage comparison</a></li>
+        <li><a href="#verdict">Verdict</a></li>
+        <li><a href="#setup">Setup guide</a></li>
+      </ol>
+    </nav>
+
+    <section id="comparison-table">
+      <h2>Side-by-side comparison</h2>
+      <p>
+        Microsoft 365 edges Google Workspace in score (89.33 vs 88.94) — a 0.39-point difference that
+        reflects slightly better issue health (76% close rate vs Google Workspace's 72%). Google Workspace
+        leads in community depth: 78 contributors and 1,840 stars vs Microsoft 365's 28 contributors and 538 stars.
+        Both are community-maintained, not official vendor servers.
+      </p>
+
+      <div class="table-wrapper">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Repository</th>
+              <th class="num">Score</th>
+              <th class="num">Stars</th>
+              <th class="num">Contrib.</th>
+              <th class="num">Last commit</th>
+              <th>Use case</th>
+            </tr>
+          </thead>
+          <tbody>
+            {tools.map((tool, i) => (
+              <tr class={i === 0 ? 'row-winner' : 'row-second'}>
+                <td class="tool-cell">
+                  <a href={`/tool/${tool.slug}/`} class="tool-link">{tool.name}</a>
+                  <span class="tool-meta">{tool.type} · {tool.lang}</span>
+                </td>
+                <td class="num score-cell">{tool.score}</td>
+                <td class="num">{tool.stars.toLocaleString('en-US')}</td>
+                <td class="num">{tool.contributors}</td>
+                <td class="num date-cell">{tool.lastCommit}</td>
+                <td class="use-cell">{tool.useCase}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <p class="table-note">
+        Data from March 19, 2026 crawl. Score = composite of stars 15%, freshness 25%, issue health 25%,
+        contributors 10%, inbound dependents 25%.
+      </p>
+    </section>
+
+    <section id="ms365-section">
+      <h2>Microsoft 365 MCP deep dive</h2>
+
+      <h3>Softeria/ms-365-mcp-server — score 89.33</h3>
+      <p>
+        <a href="/tool/softeria--ms-365-mcp-server/" class="inline-link">Softeria/ms-365-mcp-server</a>
+        connects AI agents to Microsoft 365 and Office services via the <strong>Microsoft Graph API</strong>.
+        The Graph API is Microsoft's unified endpoint for all M365 data — one authentication flow covers
+        all of Outlook, Teams, SharePoint, OneDrive, and Office documents.
+      </p>
+      <p>
+        The server covers email (read, compose, send), calendar management, Teams messages and channels,
+        SharePoint sites and lists, OneDrive files, and Office document operations. For enterprise
+        Microsoft shops, this replaces multiple point integrations with a single MCP server backed by
+        Microsoft's production Graph infrastructure.
+      </p>
+      <p>
+        538 stars and 28 contributors. Last commit March 11, 2026. Written in TypeScript, MIT licensed.
+        The issue health signal is strong: 72 closed issues vs 23 open (a 76% close rate). The lower
+        star count relative to Google Workspace reflects the timing of the project's launch, not quality.
+      </p>
+
+      <div class="verdict-box ms365-box">
+        <strong>Best for:</strong> Microsoft 365 / Office organizations. Covers Outlook, Teams, SharePoint,
+        OneDrive, and Office via Microsoft Graph. Score 89.33, TypeScript, 76% issue close rate.
+      </div>
+    </section>
+
+    <section id="google-section">
+      <h2>Google Workspace MCP deep dive</h2>
+
+      <h3>taylorwilsdon/google_workspace_mcp — score 88.94</h3>
+      <p>
+        <a href="/tool/taylorwilsdon--google_workspace_mcp/" class="inline-link">taylorwilsdon/google_workspace_mcp</a>
+        is one of the most comprehensively scoped MCP servers in the entire index. It covers
+        <strong>nine Google Workspace services</strong> through their respective APIs: Gmail, Google Calendar,
+        Docs, Sheets, Slides, Chat, Forms, Tasks, and Drive. The maintainer also includes a CLI tool for
+        direct invocation outside the MCP protocol.
+      </p>
+      <p>
+        78 contributors makes this the highest-contributor MCP server outside the official SDKs and major
+        frameworks. That depth suggests the codebase is actively reviewed and improved. 1,840 stars —
+        the most starred productivity MCP server by a wide margin. Last commit March 17, 2026. Written in
+        Python, MIT licensed.
+      </p>
+      <p>
+        The score of 88.94 (0.39 behind Microsoft 365) primarily reflects slightly lower issue health:
+        187 closed issues vs 71 open (72% close rate). Given the breadth of nine APIs, a larger open
+        issue count is expected — and a 72% close rate is still healthy.
+      </p>
+
+      <div class="verdict-box google-box">
+        <strong>Best for:</strong> Google Workspace organizations. Covers Gmail, Calendar, Drive, Docs, Sheets,
+        Slides, Chat, Forms, and Tasks. Score 88.94, 78 contributors, 1,840 stars — the most community-backed
+        productivity server.
+      </div>
+    </section>
+
+    <section id="coverage">
+      <h2>Feature coverage comparison</h2>
+
+      <div class="table-wrapper">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Feature</th>
+              <th>Google Workspace MCP</th>
+              <th>Microsoft 365 MCP</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Email</td>
+              <td>Gmail (read, compose, send, labels)</td>
+              <td>Outlook (read, compose, send, folders)</td>
+            </tr>
+            <tr>
+              <td>Calendar</td>
+              <td>Google Calendar (events, availability)</td>
+              <td>Outlook Calendar (events, scheduling)</td>
+            </tr>
+            <tr>
+              <td>Documents</td>
+              <td>Google Docs + Sheets + Slides</td>
+              <td>Word + Excel + PowerPoint via Graph</td>
+            </tr>
+            <tr>
+              <td>File storage</td>
+              <td>Google Drive</td>
+              <td>OneDrive + SharePoint</td>
+            </tr>
+            <tr>
+              <td>Messaging / Chat</td>
+              <td>Google Chat</td>
+              <td>Microsoft Teams</td>
+            </tr>
+            <tr>
+              <td>Task management</td>
+              <td>Google Tasks</td>
+              <td>Microsoft To Do (via Graph)</td>
+            </tr>
+            <tr>
+              <td>Forms / Surveys</td>
+              <td>Google Forms</td>
+              <td>Microsoft Forms (via Graph)</td>
+            </tr>
+            <tr>
+              <td>Language</td>
+              <td>Python</td>
+              <td>TypeScript</td>
+            </tr>
+            <tr>
+              <td>License</td>
+              <td>MIT</td>
+              <td>MIT</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="verdict">
+      <h2>Verdict</h2>
+      <p>
+        This is the most straightforward decision in the MCP comparison series: pick the server that
+        matches your productivity suite. There is no meaningful quality difference — both are well-maintained
+        with healthy issue close rates and active contributor bases.
+      </p>
+
+      <ul class="verdict-list">
+        <li><strong>Your organization uses Google Workspace (Gmail, Google Drive, Google Calendar):</strong> <a href="/tool/taylorwilsdon--google_workspace_mcp/" class="inline-link">taylorwilsdon/google_workspace_mcp</a> — score 88.94, 78 contributors, nine services covered.</li>
+        <li><strong>Your organization uses Microsoft 365 (Outlook, Teams, SharePoint, Office):</strong> <a href="/tool/softeria--ms-365-mcp-server/" class="inline-link">Softeria/ms-365-mcp-server</a> — score 89.33, Microsoft Graph API, full M365 coverage.</li>
+        <li><strong>Your organization uses both:</strong> Install both — they operate on different OAuth credentials and do not conflict. Many enterprise environments bridge Google and Microsoft products.</li>
+      </ul>
+
+      <p>
+        Neither server is official (vendor-maintained). Both are community projects with strong contributor
+        depth. If official vendor support matters to your organization, monitor both projects for official
+        adoption — Microsoft and Google both have MCP programs underway.
+      </p>
+    </section>
+
+    <section id="setup">
+      <h2>Setup guide</h2>
+
+      <h3>Install Google Workspace MCP</h3>
+      <p>Requires Google OAuth credentials (client ID + secret from Google Cloud Console):</p>
+
+      <pre class="code-block"><code>{`{
+  "mcpServers": {
+    "google-workspace": {
+      "command": "uvx",
+      "args": ["google-workspace-mcp"],
+      "env": {
+        "GOOGLE_CLIENT_ID": "your-client-id",
+        "GOOGLE_CLIENT_SECRET": "your-client-secret"
+      }
+    }
+  }
+}`}</code></pre>
+
+      <h3>Install Microsoft 365 MCP</h3>
+      <p>Requires Azure app registration with Microsoft Graph permissions:</p>
+
+      <pre class="code-block"><code>{`{
+  "mcpServers": {
+    "ms365": {
+      "command": "npx",
+      "args": ["-y", "ms-365-mcp-server"],
+      "env": {
+        "TENANT_ID": "your-azure-tenant-id",
+        "CLIENT_ID": "your-app-client-id",
+        "CLIENT_SECRET": "your-app-client-secret"
+      }
+    }
+  }
+}`}</code></pre>
+
+      <p>
+        Both servers require OAuth app setup with their respective cloud providers. Google Workspace setup
+        requires a Google Cloud project; Microsoft 365 setup requires an Azure app registration with
+        appropriate Graph API permissions.
+      </p>
+
+      <div class="cta-box">
+        <p>
+          <strong>See all productivity MCP servers:</strong> <a href="/blog/best-mcp-servers-productivity/">Best MCP Servers for Productivity</a> —
+          full ranking including Notion, Slack, Linear, and more.
+        </p>
+        <p>
+          <strong>Full leaderboard:</strong> <a href="/">25,638 tools ranked by AgentRank score</a> — updated daily.
+        </p>
+      </div>
+    </section>
+
+    <RelatedPosts posts={relatedPosts} />
+    <BlogSubscribeCTA source="blog" />
+    <footer class="post-footer">
+      <p class="methodology">
+        <strong>Methodology:</strong> Data from the AgentRank index crawled March 19, 2026.
+        Scores computed using: stars 15%, freshness 25%, issue health 25%, contributors 10%, inbound dependents 25%.
+        25,638 repositories indexed.
+      </p>
+      <p class="share-line">
+        Found this useful? <a href="https://x.com/AgentRank_ai" target="_blank" rel="noopener noreferrer">Follow @AgentRank_ai</a> for
+        weekly ecosystem updates, biggest movers, and new tool spotlights.
+      </p>
+    </footer>
+  </article>
+
+  <style>
+    .blog-post {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 2rem 0 3rem;
+    }
+
+    .inline-link {
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    .breadcrumb {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      margin-bottom: 0.75rem;
+    }
+
+    .breadcrumb span {
+      margin: 0 0.25rem;
+      opacity: 0.5;
+    }
+
+    .post-header {
+      margin-bottom: 2rem;
+      padding-bottom: 1.5rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .post-header h1 {
+      font-size: 1.6rem;
+      font-weight: 700;
+      line-height: 1.3;
+      margin-bottom: 0.75rem;
+    }
+
+    .post-meta {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      flex-wrap: wrap;
+      margin-bottom: 1rem;
+    }
+
+    .sep { opacity: 0.4; }
+
+    .lede {
+      font-size: 1rem;
+      line-height: 1.7;
+      color: var(--text);
+      opacity: 0.9;
+    }
+
+    .toc {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 1rem 1.25rem;
+      margin-bottom: 2.5rem;
+      font-size: 0.82rem;
+    }
+
+    .toc strong {
+      display: block;
+      margin-bottom: 0.6rem;
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+    }
+
+    .toc ol {
+      margin: 0;
+      padding-left: 1.2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+    }
+
+    .toc a { color: var(--text-muted); }
+    .toc a:hover { color: var(--accent); }
+
+    section { margin-bottom: 3rem; }
+
+    section h2 {
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin-bottom: 0.75rem;
+      padding-bottom: 0.4rem;
+      border-bottom: 2px solid var(--accent);
+      display: inline-block;
+    }
+
+    section h3 {
+      font-size: 0.95rem;
+      font-weight: 700;
+      margin: 1.5rem 0 0.5rem;
+      color: var(--text);
+    }
+
+    section p {
+      font-size: 0.9rem;
+      line-height: 1.75;
+      color: var(--text);
+      opacity: 0.9;
+      margin-bottom: 0.9rem;
+    }
+
+    .table-wrapper {
+      overflow-x: auto;
+      margin: 1rem 0 0.5rem;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.82rem;
+    }
+
+    .data-table th {
+      text-align: left;
+      font-weight: 600;
+      color: var(--text-muted);
+      border-bottom: 1px solid var(--border);
+      padding: 0.4rem 0.75rem 0.4rem 0;
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      white-space: nowrap;
+    }
+
+    .data-table td {
+      padding: 0.45rem 0.75rem 0.45rem 0;
+      border-bottom: 1px solid var(--border);
+      color: var(--text);
+      vertical-align: top;
+    }
+
+    .data-table tr:last-child td { border-bottom: none; }
+
+    .row-winner td {
+      background: color-mix(in srgb, var(--accent) 4%, transparent);
+    }
+
+    .num {
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .tool-cell {
+      display: flex;
+      flex-direction: column;
+      gap: 0.15rem;
+    }
+
+    .tool-link {
+      font-weight: 600;
+      color: var(--accent);
+      font-size: 0.78rem;
+    }
+
+    .tool-meta {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+    }
+
+    .score-cell {
+      color: var(--accent);
+      font-weight: 700;
+    }
+
+    .date-cell {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+    }
+
+    .use-cell {
+      font-size: 0.78rem;
+    }
+
+    .table-note {
+      font-size: 0.75rem !important;
+      color: var(--text-muted) !important;
+      margin-top: 0.5rem !important;
+    }
+
+    .verdict-box {
+      border-radius: 4px;
+      padding: 0.875rem 1rem;
+      margin-top: 1.25rem;
+      font-size: 0.88rem;
+      line-height: 1.6;
+    }
+
+    .ms365-box {
+      background: color-mix(in srgb, var(--accent) 8%, var(--bg-surface));
+      border: 1px solid var(--accent);
+    }
+
+    .google-box {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+    }
+
+    .verdict-list {
+      margin: 0.75rem 0 1rem 1.25rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+      font-size: 0.9rem;
+      line-height: 1.65;
+    }
+
+    .code-block {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 0.875rem 1rem;
+      font-size: 0.78rem;
+      line-height: 1.6;
+      overflow-x: auto;
+      margin: 0.75rem 0 1rem;
+    }
+
+    .code-block code {
+      font-family: monospace;
+      color: var(--text);
+    }
+
+    .cta-box {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      border-radius: 4px;
+      padding: 1rem 1.25rem;
+      margin-top: 1.5rem;
+    }
+
+    .cta-box p {
+      margin-bottom: 0.5rem;
+      font-size: 0.88rem !important;
+    }
+
+    .cta-box p:last-child { margin-bottom: 0; }
+
+    .post-footer {
+      margin-top: 3rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--border);
+    }
+
+    .methodology {
+      font-size: 0.75rem !important;
+      color: var(--text-muted) !important;
+      opacity: 1 !important;
+    }
+
+    .share-line {
+      font-size: 0.82rem !important;
+      margin-top: 0.75rem;
+    }
+
+    @media (max-width: 640px) {
+      .post-header h1 { font-size: 1.3rem; }
+      .date-cell, .use-cell { display: none; }
+    }
+  </style>
+</Base>

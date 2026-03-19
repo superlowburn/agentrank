@@ -1,0 +1,595 @@
+---
+export const prerender = true;
+
+import Base from '../../layouts/Base.astro';
+import BlogSubscribeCTA from '../../components/BlogSubscribeCTA.astro';
+import RelatedPosts from '../../components/RelatedPosts.astro';
+
+const relatedPosts = [
+  { href: '/blog/neon-mcp-vs-mongodb-mcp/', title: 'Neon MCP vs MongoDB MCP: Which Cloud Database MCP Server?' },
+  { href: '/blog/best-mcp-servers-database/', title: 'Best MCP Servers for Database Management in 2026' },
+  { href: '/blog/best-mcp-servers-data-science/', title: 'Best MCP Servers for Data Science in 2026' },
+  { href: '/blog/how-to-choose-an-mcp-server/', title: 'How to Choose an MCP Server in 2026' },
+];
+
+const publishDate = '2026-03-19';
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: 'MotherDuck MCP vs Redis MCP: Which In-Memory/Analytical Database Server?',
+  description: 'Data-driven comparison of MotherDuck and Redis MCP servers. AgentRank scores within 0.22 points of each other — here\'s how they differ where it counts — March 2026 data.',
+  datePublished: publishDate,
+  dateModified: publishDate,
+  author: {
+    '@type': 'Organization',
+    name: 'AgentRank',
+    url: 'https://agentrank-ai.com',
+  },
+  publisher: {
+    '@type': 'Organization',
+    name: 'AgentRank',
+    url: 'https://agentrank-ai.com',
+    logo: {
+      '@type': 'ImageObject',
+      url: 'https://agentrank-ai.com/og-image.png',
+    },
+  },
+  mainEntityOfPage: {
+    '@type': 'WebPage',
+    '@id': 'https://agentrank-ai.com/blog/motherduck-mcp-vs-redis-mcp/',
+  },
+  image: 'https://agentrank-ai.com/og-image.png',
+  keywords: 'motherduck MCP server, redis MCP server, motherduck vs redis MCP, database MCP server comparison, DuckDB MCP, Redis AI agent 2026',
+};
+
+const tools = [
+  {
+    name: 'motherduckdb/mcp-server-motherduck',
+    slug: 'motherduckdb--mcp-server-motherduck',
+    score: 89.06,
+    stars: 442,
+    contributors: 16,
+    lastCommit: '2026-03-16',
+    lang: 'Python',
+    type: 'Official (MotherDuck)',
+    useCase: 'Analytical SQL / DuckDB',
+    verdict: 'Highest-scoring database MCP in this comparison. Local DuckDB + cloud MotherDuck hybrid. 442 stars, 16 contributors, committed March 16. Best for analytical workloads, data science pipelines, and Parquet/CSV querying.',
+  },
+  {
+    name: 'redis/mcp-redis',
+    slug: 'redis--mcp-redis',
+    score: 88.84,
+    stars: 454,
+    contributors: 23,
+    lastCommit: '2026-03-17',
+    lang: 'Python',
+    type: 'Official (Redis)',
+    useCase: 'Key-value / cache / search',
+    verdict: 'Official Redis Labs server. 454 stars, 23 contributors, committed March 17. Score 88.84 — just 0.22 points behind MotherDuck. Best for caching, session management, real-time data, and Redis Search workloads.',
+  },
+];
+
+const faqJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: [
+    {
+      '@type': 'Question',
+      name: 'What is the MotherDuck MCP server?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'motherduckdb/mcp-server-motherduck is the official MCP server for MotherDuck and DuckDB. It scores 89.06 in the AgentRank index with 442 GitHub stars. It gives AI agents the ability to run analytical SQL queries locally via DuckDB and against cloud-hosted MotherDuck databases. It handles Parquet files, CSV, JSON, and Arrow formats natively — ideal for data science and analytics workflows.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'What is the Redis MCP server?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'redis/mcp-redis is the official MCP server from Redis Labs. It scores 88.84 in the AgentRank index with 454 GitHub stars. It provides AI agents with natural language access to Redis for key-value operations, caching, sorted sets, pub/sub, and Redis Search. It is designed for real-time data access patterns rather than analytical batch queries.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Should I use MotherDuck MCP or Redis MCP?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'The two servers serve different data patterns. Use MotherDuck MCP if your agents need to run SQL analytics, query Parquet/CSV files, or access a DuckDB or MotherDuck database. Use Redis MCP if your agents need fast key-value lookups, caching, session data, or vector search via Redis. They are not competing databases — they solve different problems.',
+      },
+    },
+  ],
+};
+---
+
+<Base
+  title="MotherDuck MCP vs Redis MCP: Which Database MCP Server? — AgentRank"
+  description="Compare MotherDuck and Redis MCP servers — scores within 0.22 points of each other. Which to use for analytics vs real-time data — March 2026 data from the AgentRank index."
+  activeTab="blog"
+  keywords="motherduck MCP server, redis MCP server, duckdb MCP, redis vs motherduck MCP, database MCP 2026, AI agent database tool"
+  canonicalUrl="https://agentrank-ai.com/blog/motherduck-mcp-vs-redis-mcp/"
+  jsonLd={[jsonLd, faqJsonLd]}
+  ogImage="/og/blog.png"
+>
+  <article class="blog-post">
+    <header class="post-header">
+      <div class="breadcrumb"><a href="/blog/">Blog</a> <span>/</span></div>
+      <h1>MotherDuck MCP vs Redis MCP: Which Database Server for Your Agent?</h1>
+      <div class="post-meta">
+        <time datetime={publishDate}>March 19, 2026</time>
+        <span class="sep">&middot;</span>
+        <span>5 min read</span>
+        <span class="sep">&middot;</span>
+        <span>AgentRank Index</span>
+      </div>
+      <p class="lede">
+        <strong>MotherDuck</strong> (DuckDB + cloud analytics) and <strong>Redis</strong> (key-value + real-time
+        cache) are the two closest-scoring database MCP servers in the AgentRank index — separated by just
+        <strong>0.22 points</strong> (89.06 vs 88.84). Both are official, vendor-maintained. Here's where
+        the real differences lie.
+      </p>
+    </header>
+
+    <nav class="toc">
+      <strong>Contents</strong>
+      <ol>
+        <li><a href="#comparison-table">Side-by-side comparison</a></li>
+        <li><a href="#motherduck-section">MotherDuck MCP deep dive</a></li>
+        <li><a href="#redis-section">Redis MCP deep dive</a></li>
+        <li><a href="#verdict">Verdict</a></li>
+        <li><a href="#setup">Setup guide</a></li>
+      </ol>
+    </nav>
+
+    <section id="comparison-table">
+      <h2>Side-by-side comparison</h2>
+      <p>
+        The 0.22-point score gap between MotherDuck (89.06) and Redis (88.84) is essentially a tie on the
+        AgentRank scoring model. Redis has a slight edge in raw stars (454 vs 442) and contributor depth
+        (23 vs 16) — MotherDuck wins on issue close rate (12 closed vs 3 open, an 80% close rate vs Redis's
+        68%). The real differentiation is the data model, not the score.
+      </p>
+
+      <div class="table-wrapper">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Repository</th>
+              <th class="num">Score</th>
+              <th class="num">Stars</th>
+              <th class="num">Contrib.</th>
+              <th class="num">Last commit</th>
+              <th>Use case</th>
+            </tr>
+          </thead>
+          <tbody>
+            {tools.map((tool, i) => (
+              <tr class={i === 0 ? 'row-winner' : 'row-second'}>
+                <td class="tool-cell">
+                  <a href={`/tool/${tool.slug}/`} class="tool-link">{tool.name}</a>
+                  <span class="tool-meta">{tool.type} · {tool.lang}</span>
+                </td>
+                <td class="num score-cell">{tool.score}</td>
+                <td class="num">{tool.stars.toLocaleString('en-US')}</td>
+                <td class="num">{tool.contributors}</td>
+                <td class="num date-cell">{tool.lastCommit}</td>
+                <td class="use-cell">{tool.useCase}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <p class="table-note">
+        Data from March 19, 2026 crawl. Score = composite of stars 15%, freshness 25%, issue health 25%,
+        contributors 10%, inbound dependents 25%.
+      </p>
+    </section>
+
+    <section id="motherduck-section">
+      <h2>MotherDuck MCP deep dive</h2>
+
+      <h3>motherduckdb/mcp-server-motherduck — score 89.06</h3>
+      <p>
+        <a href="/tool/motherduckdb--mcp-server-motherduck/" class="inline-link">motherduckdb/mcp-server-motherduck</a>
+        is the official MCP server for both local DuckDB and cloud-hosted MotherDuck. DuckDB is an
+        in-process analytical database designed for OLAP workloads — it runs entirely in-process (no server
+        required) and is exceptionally fast at columnar scans over Parquet files, CSV, JSON, and Arrow datasets.
+      </p>
+      <p>
+        The server gives AI agents the ability to run SQL queries against local DuckDB instances or remote
+        MotherDuck databases. This is particularly powerful for data science agents: an agent can read a
+        250MB Parquet file, run aggregations, and return summarized results without ever moving the raw data.
+        The 16-contributor team and 80% issue close rate (12 closed vs 3 open) suggest a well-maintained codebase.
+      </p>
+      <p>
+        Last commit: March 16, 2026. Written in Python. MIT license. Zero external service dependencies for
+        local DuckDB usage — a significant advantage in airgapped or offline environments.
+      </p>
+
+      <div class="verdict-box motherduck-box">
+        <strong>Best for:</strong> Data analytics, data science pipelines, querying Parquet/CSV/JSON files locally,
+        and MotherDuck cloud database access. Score 89.06, no external service required for local DuckDB.
+      </div>
+    </section>
+
+    <section id="redis-section">
+      <h2>Redis MCP deep dive</h2>
+
+      <h3>redis/mcp-redis — score 88.84</h3>
+      <p>
+        <a href="/tool/redis--mcp-redis/" class="inline-link">redis/mcp-redis</a> is the official Redis MCP
+        server maintained by Redis Labs. It provides AI agents with natural language access to Redis operations:
+        key-value get/set, hash operations, sorted sets, lists, pub/sub, streams, and Redis Search (full-text
+        and vector search via RediSearch).
+      </p>
+      <p>
+        Redis is a fundamentally different data model from DuckDB. Where DuckDB excels at analytical batch
+        queries, Redis excels at low-latency random access — sub-millisecond reads for cache lookups, session
+        data, leaderboards, and real-time feeds. For agents that need to check a cache, update a rate limit
+        counter, or read a user session, Redis is the appropriate tool.
+      </p>
+      <p>
+        23 contributors and a March 17 commit date make this one of the most actively maintained vendor
+        servers in the database category. The 68% issue close rate (15 closed vs 7 open) is healthy. Written
+        in Python. MIT license. Requires a running Redis instance (local or cloud-hosted via Redis Cloud).
+      </p>
+
+      <div class="verdict-box redis-box">
+        <strong>Best for:</strong> Caching, session management, real-time data pipelines, pub/sub, and vector
+        search via Redis Search. Score 88.84, 23 contributors, most recently committed database server in this comparison.
+      </div>
+    </section>
+
+    <section id="verdict">
+      <h2>Verdict</h2>
+      <p>
+        Despite nearly identical AgentRank scores, MotherDuck and Redis are not comparable tools — they model
+        completely different data access patterns. Choosing between them is a data architecture question, not
+        a quality question:
+      </p>
+
+      <ul class="verdict-list">
+        <li><strong>Analytical workloads, data files, SQL queries:</strong> <a href="/tool/motherduckdb--mcp-server-motherduck/" class="inline-link">motherduckdb/mcp-server-motherduck</a> — score 89.06, DuckDB OLAP engine, Parquet/CSV native, no external service required.</li>
+        <li><strong>Real-time cache, key-value, session data, vector search:</strong> <a href="/tool/redis--mcp-redis/" class="inline-link">redis/mcp-redis</a> — score 88.84, sub-millisecond reads, Redis Search included.</li>
+        <li><strong>Running both:</strong> Common in production — MotherDuck for analytical queries, Redis for hot-path lookups. They complement each other cleanly.</li>
+      </ul>
+
+      <p>
+        If your use case involves querying files or running aggregations, use MotherDuck. If it involves
+        checking session state, caching API responses, or real-time sorted data, use Redis. If you're unsure,
+        the <a href="/blog/best-mcp-servers-database/">full database category ranking</a> covers 7 top servers
+        including both.
+      </p>
+    </section>
+
+    <section id="setup">
+      <h2>Setup guide</h2>
+
+      <h3>Install MotherDuck MCP server</h3>
+      <p>Add to your MCP client config (<code>claude_desktop_config.json</code> or <code>.cursor/mcp.json</code>):</p>
+
+      <pre class="code-block"><code>{`{
+  "mcpServers": {
+    "motherduck": {
+      "command": "uvx",
+      "args": ["mcp-server-motherduck"],
+      "env": {
+        "motherduck_token": "your-motherduck-token"
+      }
+    }
+  }
+}`}</code></pre>
+
+      <p>For local DuckDB only (no cloud account required), omit the token and pass a database path as an argument.</p>
+
+      <h3>Install Redis MCP server</h3>
+
+      <pre class="code-block"><code>{`{
+  "mcpServers": {
+    "redis": {
+      "command": "uvx",
+      "args": ["mcp-redis"],
+      "env": {
+        "REDIS_URL": "redis://localhost:6379"
+      }
+    }
+  }
+}`}</code></pre>
+
+      <div class="cta-box">
+        <p>
+          <strong>See all database MCP servers:</strong> <a href="/blog/best-mcp-servers-database/">Best MCP Servers for Database Management</a> —
+          910 tools ranked, top 7 reviewed.
+        </p>
+        <p>
+          <strong>Full leaderboard:</strong> <a href="/">25,638 tools ranked by AgentRank score</a> — updated daily.
+        </p>
+      </div>
+    </section>
+
+    <RelatedPosts posts={relatedPosts} />
+    <BlogSubscribeCTA source="blog" />
+    <footer class="post-footer">
+      <p class="methodology">
+        <strong>Methodology:</strong> Data from the AgentRank index crawled March 19, 2026.
+        Scores computed using: stars 15%, freshness 25%, issue health 25%, contributors 10%, inbound dependents 25%.
+        25,638 repositories indexed. 910 repositories matched database-category queries.
+      </p>
+      <p class="share-line">
+        Found this useful? <a href="https://x.com/AgentRank_ai" target="_blank" rel="noopener noreferrer">Follow @AgentRank_ai</a> for
+        weekly ecosystem updates, biggest movers, and new tool spotlights.
+      </p>
+    </footer>
+  </article>
+
+  <style>
+    .blog-post {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 2rem 0 3rem;
+    }
+
+    .inline-link {
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    .breadcrumb {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      margin-bottom: 0.75rem;
+    }
+
+    .breadcrumb span {
+      margin: 0 0.25rem;
+      opacity: 0.5;
+    }
+
+    .post-header {
+      margin-bottom: 2rem;
+      padding-bottom: 1.5rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .post-header h1 {
+      font-size: 1.6rem;
+      font-weight: 700;
+      line-height: 1.3;
+      margin-bottom: 0.75rem;
+    }
+
+    .post-meta {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      flex-wrap: wrap;
+      margin-bottom: 1rem;
+    }
+
+    .sep { opacity: 0.4; }
+
+    .lede {
+      font-size: 1rem;
+      line-height: 1.7;
+      color: var(--text);
+      opacity: 0.9;
+    }
+
+    .toc {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 1rem 1.25rem;
+      margin-bottom: 2.5rem;
+      font-size: 0.82rem;
+    }
+
+    .toc strong {
+      display: block;
+      margin-bottom: 0.6rem;
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+    }
+
+    .toc ol {
+      margin: 0;
+      padding-left: 1.2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+    }
+
+    .toc a { color: var(--text-muted); }
+    .toc a:hover { color: var(--accent); }
+
+    section { margin-bottom: 3rem; }
+
+    section h2 {
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin-bottom: 0.75rem;
+      padding-bottom: 0.4rem;
+      border-bottom: 2px solid var(--accent);
+      display: inline-block;
+    }
+
+    section h3 {
+      font-size: 0.95rem;
+      font-weight: 700;
+      margin: 1.5rem 0 0.5rem;
+      color: var(--text);
+    }
+
+    section p {
+      font-size: 0.9rem;
+      line-height: 1.75;
+      color: var(--text);
+      opacity: 0.9;
+      margin-bottom: 0.9rem;
+    }
+
+    .table-wrapper {
+      overflow-x: auto;
+      margin: 1rem 0 0.5rem;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.82rem;
+    }
+
+    .data-table th {
+      text-align: left;
+      font-weight: 600;
+      color: var(--text-muted);
+      border-bottom: 1px solid var(--border);
+      padding: 0.4rem 0.75rem 0.4rem 0;
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      white-space: nowrap;
+    }
+
+    .data-table td {
+      padding: 0.45rem 0.75rem 0.45rem 0;
+      border-bottom: 1px solid var(--border);
+      color: var(--text);
+      vertical-align: top;
+    }
+
+    .data-table tr:last-child td { border-bottom: none; }
+
+    .row-winner td {
+      background: color-mix(in srgb, var(--accent) 4%, transparent);
+    }
+
+    .num {
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .tool-cell {
+      display: flex;
+      flex-direction: column;
+      gap: 0.15rem;
+    }
+
+    .tool-link {
+      font-weight: 600;
+      color: var(--accent);
+      font-size: 0.78rem;
+    }
+
+    .tool-meta {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+    }
+
+    .score-cell {
+      color: var(--accent);
+      font-weight: 700;
+    }
+
+    .date-cell {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+    }
+
+    .use-cell {
+      font-size: 0.78rem;
+    }
+
+    .table-note {
+      font-size: 0.75rem !important;
+      color: var(--text-muted) !important;
+      margin-top: 0.5rem !important;
+    }
+
+    .verdict-box {
+      border-radius: 4px;
+      padding: 0.875rem 1rem;
+      margin-top: 1.25rem;
+      font-size: 0.88rem;
+      line-height: 1.6;
+    }
+
+    .motherduck-box {
+      background: color-mix(in srgb, var(--accent) 8%, var(--bg-surface));
+      border: 1px solid var(--accent);
+    }
+
+    .redis-box {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+    }
+
+    .verdict-list {
+      margin: 0.75rem 0 1rem 1.25rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+      font-size: 0.9rem;
+      line-height: 1.65;
+    }
+
+    .code-block {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 0.875rem 1rem;
+      font-size: 0.78rem;
+      line-height: 1.6;
+      overflow-x: auto;
+      margin: 0.75rem 0 1rem;
+    }
+
+    .code-block code {
+      font-family: monospace;
+      color: var(--text);
+    }
+
+    .cta-box {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      border-radius: 4px;
+      padding: 1rem 1.25rem;
+      margin-top: 1.5rem;
+    }
+
+    .cta-box p {
+      margin-bottom: 0.5rem;
+      font-size: 0.88rem !important;
+    }
+
+    .cta-box p:last-child { margin-bottom: 0; }
+
+    .post-footer {
+      margin-top: 3rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--border);
+    }
+
+    .methodology {
+      font-size: 0.75rem !important;
+      color: var(--text-muted) !important;
+      opacity: 1 !important;
+    }
+
+    .share-line {
+      font-size: 0.82rem !important;
+      margin-top: 0.75rem;
+    }
+
+    @media (max-width: 640px) {
+      .post-header h1 { font-size: 1.3rem; }
+      .date-cell, .use-cell { display: none; }
+    }
+  </style>
+</Base>

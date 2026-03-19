@@ -1,0 +1,593 @@
+---
+export const prerender = true;
+
+import Base from '../../layouts/Base.astro';
+import BlogSubscribeCTA from '../../components/BlogSubscribeCTA.astro';
+import RelatedPosts from '../../components/RelatedPosts.astro';
+
+const relatedPosts = [
+  { href: '/blog/best-mcp-servers-devops/', title: 'Best MCP Servers for DevOps & Infrastructure in 2026' },
+  { href: '/blog/neon-mcp-vs-mongodb-mcp/', title: 'Neon MCP vs MongoDB MCP: Which Cloud Database MCP Server?' },
+  { href: '/blog/how-to-choose-an-mcp-server/', title: 'How to Choose an MCP Server in 2026' },
+  { href: '/blog/best-mcp-servers-cloud-infrastructure/', title: 'Best MCP Servers for Cloud Infrastructure in 2026' },
+];
+
+const publishDate = '2026-03-19';
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: 'containers/kubernetes-mcp-server vs Flux159/mcp-server-kubernetes: Kubernetes MCP Compared',
+  description: 'Data-driven comparison of the two leading Kubernetes MCP servers. Scores, languages, feature differences, and which to use for your cluster — March 2026 data from AgentRank.',
+  datePublished: publishDate,
+  dateModified: publishDate,
+  author: {
+    '@type': 'Organization',
+    name: 'AgentRank',
+    url: 'https://agentrank-ai.com',
+  },
+  publisher: {
+    '@type': 'Organization',
+    name: 'AgentRank',
+    url: 'https://agentrank-ai.com',
+    logo: {
+      '@type': 'ImageObject',
+      url: 'https://agentrank-ai.com/og-image.png',
+    },
+  },
+  mainEntityOfPage: {
+    '@type': 'WebPage',
+    '@id': 'https://agentrank-ai.com/blog/kubernetes-mcp-server-vs-mcp-server-kubernetes/',
+  },
+  image: 'https://agentrank-ai.com/og-image.png',
+  keywords: 'kubernetes MCP server comparison, containers kubernetes MCP, Flux159 mcp-server-kubernetes, kubectl MCP server, k8s AI agent 2026',
+};
+
+const tools = [
+  {
+    name: 'containers/kubernetes-mcp-server',
+    slug: 'containers--kubernetes-mcp-server',
+    score: 84.62,
+    stars: 1294,
+    contributors: 42,
+    lastCommit: '2026-03-16',
+    lang: 'Go',
+    license: 'Apache-2.0',
+    type: 'Community (containers org)',
+    useCase: 'Kubernetes + OpenShift',
+    verdict: 'Highest-scoring Kubernetes MCP. Written in Go, Apache-2.0. 42 contributors — deepest team in this category. OpenShift support. Last commit March 16.',
+  },
+  {
+    name: 'Flux159/mcp-server-kubernetes',
+    slug: 'flux159--mcp-server-kubernetes',
+    score: 79.65,
+    stars: 1355,
+    contributors: 40,
+    lastCommit: '2026-03-01',
+    lang: 'TypeScript',
+    license: 'MIT',
+    type: 'Community (Flux159)',
+    useCase: 'Kubernetes management',
+    verdict: 'Most starred Kubernetes MCP. TypeScript, MIT license. 40 contributors, 11 inbound dependents. More standard k8s coverage, no OpenShift. Last commit March 1.',
+  },
+];
+
+const faqJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: [
+    {
+      '@type': 'Question',
+      name: 'What is containers/kubernetes-mcp-server?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'containers/kubernetes-mcp-server is a Go-based MCP server for Kubernetes and OpenShift clusters. It scores 84.62 in the AgentRank index with 1,294 stars and 42 contributors — the largest contributor base in the Kubernetes MCP category. It is licensed under Apache-2.0 and supports OpenShift-specific operations in addition to standard Kubernetes management.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'What is Flux159/mcp-server-kubernetes?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Flux159/mcp-server-kubernetes is a TypeScript-based MCP server for Kubernetes management. It scores 79.65 in the AgentRank index with 1,355 stars and 40 contributors — the most starred Kubernetes MCP server. It is MIT licensed and has 11 inbound dependents, suggesting it is used as a building block in other projects.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Which Kubernetes MCP server should I use?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Use containers/kubernetes-mcp-server if you run OpenShift, prefer Go, or want the Apache-2.0 license. Use Flux159/mcp-server-kubernetes if you want TypeScript, MIT licensing, or are building on top of an existing Kubernetes MCP server (it has more inbound dependents). Both are actively maintained with similar contributor counts.',
+      },
+    },
+  ],
+};
+---
+
+<Base
+  title="containers/kubernetes-mcp-server vs Flux159/mcp-server-kubernetes — AgentRank"
+  description="Compare the two leading Kubernetes MCP servers. Scores, languages, OpenShift support, and which to use for your cluster — March 2026 data from the AgentRank index."
+  activeTab="blog"
+  keywords="kubernetes MCP server, containers kubernetes MCP, mcp-server-kubernetes, k8s AI agent, kubectl MCP, kubernetes management MCP 2026"
+  canonicalUrl="https://agentrank-ai.com/blog/kubernetes-mcp-server-vs-mcp-server-kubernetes/"
+  jsonLd={[jsonLd, faqJsonLd]}
+  ogImage="/og/blog.png"
+>
+  <article class="blog-post">
+    <header class="post-header">
+      <div class="breadcrumb"><a href="/blog/">Blog</a> <span>/</span></div>
+      <h1>Kubernetes MCP Server Showdown: containers vs Flux159</h1>
+      <div class="post-meta">
+        <time datetime={publishDate}>March 19, 2026</time>
+        <span class="sep">&middot;</span>
+        <span>5 min read</span>
+        <span class="sep">&middot;</span>
+        <span>AgentRank Index</span>
+      </div>
+      <p class="lede">
+        Two community-built Kubernetes MCP servers dominate the category: <strong>containers/kubernetes-mcp-server</strong>
+        (Go, Apache-2.0, OpenShift support) and <strong>Flux159/mcp-server-kubernetes</strong> (TypeScript, MIT,
+        most starred). Similar star counts — 1,294 vs 1,355 — but a 5-point score gap separates them.
+        We break down why.
+      </p>
+    </header>
+
+    <nav class="toc">
+      <strong>Contents</strong>
+      <ol>
+        <li><a href="#comparison-table">Side-by-side comparison</a></li>
+        <li><a href="#containers-section">containers/kubernetes-mcp-server deep dive</a></li>
+        <li><a href="#flux159-section">Flux159/mcp-server-kubernetes deep dive</a></li>
+        <li><a href="#verdict">Verdict</a></li>
+        <li><a href="#setup">Setup guide</a></li>
+      </ol>
+    </nav>
+
+    <section id="comparison-table">
+      <h2>Side-by-side comparison</h2>
+      <p>
+        Despite nearly equal star counts (1,294 vs 1,355), containers leads in score (84.62 vs 79.65). The
+        gap is driven by freshness — containers committed March 16 vs Flux159's March 1, an 18-day difference
+        that impacts the freshness signal (25% of the score). Both have 40+ contributors, making them
+        the most deeply staffed tools in the Kubernetes category.
+      </p>
+
+      <div class="table-wrapper">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Repository</th>
+              <th class="num">Score</th>
+              <th class="num">Stars</th>
+              <th class="num">Contrib.</th>
+              <th class="num">Last commit</th>
+              <th>Language</th>
+            </tr>
+          </thead>
+          <tbody>
+            {tools.map((tool, i) => (
+              <tr class={i === 0 ? 'row-winner' : 'row-second'}>
+                <td class="tool-cell">
+                  <a href={`/tool/${tool.slug}/`} class="tool-link">{tool.name}</a>
+                  <span class="tool-meta">{tool.type} · {tool.license}</span>
+                </td>
+                <td class="num score-cell">{tool.score}</td>
+                <td class="num">{tool.stars.toLocaleString('en-US')}</td>
+                <td class="num">{tool.contributors}</td>
+                <td class="num date-cell">{tool.lastCommit}</td>
+                <td class="use-cell">{tool.lang}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <p class="table-note">
+        Data from March 19, 2026 crawl. Score = composite of stars 15%, freshness 25%, issue health 25%,
+        contributors 10%, inbound dependents 25%.
+      </p>
+    </section>
+
+    <section id="containers-section">
+      <h2>containers/kubernetes-mcp-server deep dive</h2>
+
+      <h3>containers/kubernetes-mcp-server — score 84.62</h3>
+      <p>
+        <a href="/tool/containers--kubernetes-mcp-server/" class="inline-link">containers/kubernetes-mcp-server</a>
+        is maintained under the <code>containers</code> GitHub organization — the same org behind Podman, Buildah,
+        and other container-ecosystem tools. Written in Go with an Apache-2.0 license, it is the more
+        "enterprise-ready" of the two options.
+      </p>
+      <p>
+        The standout feature is <strong>OpenShift support</strong>. OpenShift is Red Hat's Kubernetes distribution
+        used heavily in regulated industries and large enterprises. If your organization runs OpenShift, this
+        is the only Kubernetes MCP server with native support for OpenShift-specific APIs and resource types.
+      </p>
+      <p>
+        42 contributors is the highest in the Kubernetes category. The issue health signal reflects a responsive
+        team: 98 issues closed against 77 open (a 56% close rate). Go's performance characteristics matter
+        less for an MCP server than for a high-throughput service — but the language choice reflects the
+        containers org's ecosystem preferences.
+      </p>
+
+      <div class="verdict-box containers-box">
+        <strong>Best for:</strong> OpenShift users, teams that prefer Go, Apache-2.0 licensing requirements,
+        and enterprise Kubernetes environments. Score 84.62, 42 contributors — deepest team in the category.
+      </div>
+    </section>
+
+    <section id="flux159-section">
+      <h2>Flux159/mcp-server-kubernetes deep dive</h2>
+
+      <h3>Flux159/mcp-server-kubernetes — score 79.65</h3>
+      <p>
+        <a href="/tool/flux159--mcp-server-kubernetes/" class="inline-link">Flux159/mcp-server-kubernetes</a>
+        is the most-starred Kubernetes MCP server (1,355 stars vs 1,294 for containers). Written in TypeScript
+        with an MIT license, it is the friendlier option for JavaScript/TypeScript ecosystems and for teams
+        that want the permissive MIT license without the Apache-2.0 patent clauses.
+      </p>
+      <p>
+        The 11 inbound dependents in the AgentRank index suggest that other MCP servers and agent frameworks
+        import or build on top of it — a meaningful indicator of ecosystem traction. The MIT license makes
+        it easy to embed in commercial products without attribution requirements.
+      </p>
+      <p>
+        The lower score (79.65) is primarily driven by the March 1 commit date — it is 18 days staler than
+        containers as of the March 19 crawl. Issue health is strong: 83 closed issues against 11 open,
+        an 88% close rate — the best in this comparison, and one of the best in the DevOps category overall.
+      </p>
+
+      <div class="verdict-box flux159-box">
+        <strong>Best for:</strong> Standard Kubernetes workloads, TypeScript stacks, MIT-licensed deployments,
+        and projects building on top of a Kubernetes MCP server. Score 79.65, 88% issue close rate.
+      </div>
+    </section>
+
+    <section id="verdict">
+      <h2>Verdict</h2>
+      <p>
+        Both servers are mature, well-maintained, and appropriate for production use. The decision criteria
+        are narrow:
+      </p>
+
+      <ul class="verdict-list">
+        <li><strong>You run OpenShift:</strong> <a href="/tool/containers--kubernetes-mcp-server/" class="inline-link">containers/kubernetes-mcp-server</a> — only option with native OpenShift support. Score 84.62.</li>
+        <li><strong>You want TypeScript or MIT license:</strong> <a href="/tool/flux159--mcp-server-kubernetes/" class="inline-link">Flux159/mcp-server-kubernetes</a> — TypeScript, MIT, 88% issue close rate. Score 79.65.</li>
+        <li><strong>You're building on top of a k8s MCP server:</strong> Flux159 has 11 inbound dependents vs 0 for containers — the more commonly embedded option.</li>
+        <li><strong>Standard vanilla k8s, no preference:</strong> containers leads on current score (84.62) and freshness. Default to it unless you have a specific reason to prefer Flux159.</li>
+      </ul>
+    </section>
+
+    <section id="setup">
+      <h2>Setup guide</h2>
+
+      <h3>Install containers/kubernetes-mcp-server</h3>
+      <p>Add to your MCP client config — requires Go or a pre-built binary:</p>
+
+      <pre class="code-block"><code>{`{
+  "mcpServers": {
+    "kubernetes": {
+      "command": "kubernetes-mcp-server",
+      "args": [],
+      "env": {
+        "KUBECONFIG": "/path/to/.kube/config"
+      }
+    }
+  }
+}`}</code></pre>
+
+      <h3>Install Flux159/mcp-server-kubernetes</h3>
+
+      <pre class="code-block"><code>{`{
+  "mcpServers": {
+    "kubernetes": {
+      "command": "npx",
+      "args": ["-y", "mcp-server-kubernetes"],
+      "env": {
+        "KUBECONFIG": "/path/to/.kube/config"
+      }
+    }
+  }
+}`}</code></pre>
+
+      <p>
+        Both servers use your local <code>kubeconfig</code> for cluster access. Ensure your <code>kubectl</code>
+        context points to the correct cluster before starting.
+      </p>
+
+      <div class="cta-box">
+        <p>
+          <strong>See all DevOps MCP servers:</strong> <a href="/blog/best-mcp-servers-devops/">Best MCP Servers for DevOps & Infrastructure</a> —
+          complete ranking with kubectl, Helm, Terraform, and more.
+        </p>
+        <p>
+          <strong>Full leaderboard:</strong> <a href="/">25,638 tools ranked by AgentRank score</a> — updated daily.
+        </p>
+      </div>
+    </section>
+
+    <RelatedPosts posts={relatedPosts} />
+    <BlogSubscribeCTA source="blog" />
+    <footer class="post-footer">
+      <p class="methodology">
+        <strong>Methodology:</strong> Data from the AgentRank index crawled March 19, 2026.
+        Scores computed using: stars 15%, freshness 25%, issue health 25%, contributors 10%, inbound dependents 25%.
+        25,638 repositories indexed.
+      </p>
+      <p class="share-line">
+        Found this useful? <a href="https://x.com/AgentRank_ai" target="_blank" rel="noopener noreferrer">Follow @AgentRank_ai</a> for
+        weekly ecosystem updates, biggest movers, and new tool spotlights.
+      </p>
+    </footer>
+  </article>
+
+  <style>
+    .blog-post {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 2rem 0 3rem;
+    }
+
+    .inline-link {
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    .breadcrumb {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      margin-bottom: 0.75rem;
+    }
+
+    .breadcrumb span {
+      margin: 0 0.25rem;
+      opacity: 0.5;
+    }
+
+    .post-header {
+      margin-bottom: 2rem;
+      padding-bottom: 1.5rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .post-header h1 {
+      font-size: 1.6rem;
+      font-weight: 700;
+      line-height: 1.3;
+      margin-bottom: 0.75rem;
+    }
+
+    .post-meta {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      flex-wrap: wrap;
+      margin-bottom: 1rem;
+    }
+
+    .sep { opacity: 0.4; }
+
+    .lede {
+      font-size: 1rem;
+      line-height: 1.7;
+      color: var(--text);
+      opacity: 0.9;
+    }
+
+    .toc {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 1rem 1.25rem;
+      margin-bottom: 2.5rem;
+      font-size: 0.82rem;
+    }
+
+    .toc strong {
+      display: block;
+      margin-bottom: 0.6rem;
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+    }
+
+    .toc ol {
+      margin: 0;
+      padding-left: 1.2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+    }
+
+    .toc a { color: var(--text-muted); }
+    .toc a:hover { color: var(--accent); }
+
+    section { margin-bottom: 3rem; }
+
+    section h2 {
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin-bottom: 0.75rem;
+      padding-bottom: 0.4rem;
+      border-bottom: 2px solid var(--accent);
+      display: inline-block;
+    }
+
+    section h3 {
+      font-size: 0.95rem;
+      font-weight: 700;
+      margin: 1.5rem 0 0.5rem;
+      color: var(--text);
+    }
+
+    section p {
+      font-size: 0.9rem;
+      line-height: 1.75;
+      color: var(--text);
+      opacity: 0.9;
+      margin-bottom: 0.9rem;
+    }
+
+    .table-wrapper {
+      overflow-x: auto;
+      margin: 1rem 0 0.5rem;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.82rem;
+    }
+
+    .data-table th {
+      text-align: left;
+      font-weight: 600;
+      color: var(--text-muted);
+      border-bottom: 1px solid var(--border);
+      padding: 0.4rem 0.75rem 0.4rem 0;
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      white-space: nowrap;
+    }
+
+    .data-table td {
+      padding: 0.45rem 0.75rem 0.45rem 0;
+      border-bottom: 1px solid var(--border);
+      color: var(--text);
+      vertical-align: top;
+    }
+
+    .data-table tr:last-child td { border-bottom: none; }
+
+    .row-winner td {
+      background: color-mix(in srgb, var(--accent) 4%, transparent);
+    }
+
+    .num {
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .tool-cell {
+      display: flex;
+      flex-direction: column;
+      gap: 0.15rem;
+    }
+
+    .tool-link {
+      font-weight: 600;
+      color: var(--accent);
+      font-size: 0.78rem;
+    }
+
+    .tool-meta {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+    }
+
+    .score-cell {
+      color: var(--accent);
+      font-weight: 700;
+    }
+
+    .date-cell {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+    }
+
+    .use-cell {
+      font-size: 0.78rem;
+    }
+
+    .table-note {
+      font-size: 0.75rem !important;
+      color: var(--text-muted) !important;
+      margin-top: 0.5rem !important;
+    }
+
+    .verdict-box {
+      border-radius: 4px;
+      padding: 0.875rem 1rem;
+      margin-top: 1.25rem;
+      font-size: 0.88rem;
+      line-height: 1.6;
+    }
+
+    .containers-box {
+      background: color-mix(in srgb, var(--accent) 8%, var(--bg-surface));
+      border: 1px solid var(--accent);
+    }
+
+    .flux159-box {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+    }
+
+    .verdict-list {
+      margin: 0.75rem 0 1rem 1.25rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+      font-size: 0.9rem;
+      line-height: 1.65;
+    }
+
+    .code-block {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 0.875rem 1rem;
+      font-size: 0.78rem;
+      line-height: 1.6;
+      overflow-x: auto;
+      margin: 0.75rem 0 1rem;
+    }
+
+    .code-block code {
+      font-family: monospace;
+      color: var(--text);
+    }
+
+    .cta-box {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      border-radius: 4px;
+      padding: 1rem 1.25rem;
+      margin-top: 1.5rem;
+    }
+
+    .cta-box p {
+      margin-bottom: 0.5rem;
+      font-size: 0.88rem !important;
+    }
+
+    .cta-box p:last-child { margin-bottom: 0; }
+
+    .post-footer {
+      margin-top: 3rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--border);
+    }
+
+    .methodology {
+      font-size: 0.75rem !important;
+      color: var(--text-muted) !important;
+      opacity: 1 !important;
+    }
+
+    .share-line {
+      font-size: 0.82rem !important;
+      margin-top: 0.75rem;
+    }
+
+    @media (max-width: 640px) {
+      .post-header h1 { font-size: 1.3rem; }
+      .date-cell, .use-cell { display: none; }
+    }
+  </style>
+</Base>

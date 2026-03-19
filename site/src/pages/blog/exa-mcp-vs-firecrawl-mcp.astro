@@ -1,0 +1,589 @@
+---
+export const prerender = true;
+
+import Base from '../../layouts/Base.astro';
+import BlogSubscribeCTA from '../../components/BlogSubscribeCTA.astro';
+import RelatedPosts from '../../components/RelatedPosts.astro';
+
+const relatedPosts = [
+  { href: '/blog/tavily-mcp-vs-brave-search-mcp/', title: 'Tavily MCP vs Brave Search MCP: Which Web Search Server?' },
+  { href: '/blog/best-mcp-servers-search/', title: 'Best MCP Servers for Web Search in 2026' },
+  { href: '/blog/how-to-choose-an-mcp-server/', title: 'How to Choose an MCP Server in 2026' },
+  { href: '/blog/playwright-mcp-vs-puppeteer-mcp/', title: 'Playwright MCP vs Puppeteer MCP: Which Browser Automation Tool?' },
+];
+
+const publishDate = '2026-03-19';
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: 'Exa MCP vs Firecrawl MCP: Which Web Research Tool for AI Agents?',
+  description: 'Data-driven comparison of Exa and Firecrawl MCP servers. AgentRank scores, stars, use cases, and which to choose for web research and content extraction — March 2026.',
+  datePublished: publishDate,
+  dateModified: publishDate,
+  author: {
+    '@type': 'Organization',
+    name: 'AgentRank',
+    url: 'https://agentrank-ai.com',
+  },
+  publisher: {
+    '@type': 'Organization',
+    name: 'AgentRank',
+    url: 'https://agentrank-ai.com',
+    logo: {
+      '@type': 'ImageObject',
+      url: 'https://agentrank-ai.com/og-image.png',
+    },
+  },
+  mainEntityOfPage: {
+    '@type': 'WebPage',
+    '@id': 'https://agentrank-ai.com/blog/exa-mcp-vs-firecrawl-mcp/',
+  },
+  image: 'https://agentrank-ai.com/og-image.png',
+  keywords: 'exa MCP server, firecrawl MCP server, exa vs firecrawl MCP, web scraping MCP server, web research AI agent, content extraction MCP 2026',
+};
+
+const tools = [
+  {
+    name: 'exa-labs/exa-mcp-server',
+    slug: 'exa-labs--exa-mcp-server',
+    score: 76.64,
+    stars: 4035,
+    contributors: 19,
+    lastCommit: '2026-03-17',
+    lang: 'TypeScript',
+    type: 'Official (Exa Labs)',
+    useCase: 'AI-native web search + crawl',
+    verdict: 'Higher AgentRank score (76.64). Search-first design with semantic search capabilities. 4,035 stars, committed March 17. Best for agents that need semantically relevant results, not just keyword matches.',
+  },
+  {
+    name: 'firecrawl/firecrawl-mcp-server',
+    slug: 'firecrawl--firecrawl-mcp-server',
+    score: 73.94,
+    stars: 5798,
+    contributors: 21,
+    lastCommit: '2026-03-13',
+    lang: 'JavaScript',
+    type: 'Official (Firecrawl)',
+    useCase: 'Web scraping + structured extraction',
+    verdict: 'More stars (5,798 — most in web research category). Crawl-first design with structured data extraction. Best for agents that need to scrape entire sites, extract structured data from pages, or batch-crawl multiple URLs.',
+  },
+];
+
+const faqJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: [
+    {
+      '@type': 'Question',
+      name: 'What is the Exa MCP server?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'exa-labs/exa-mcp-server is the official MCP server from Exa Labs. It scores 76.64 in the AgentRank index with 4,035 GitHub stars. It gives AI agents access to Exa\'s search engine, which is optimized for semantic similarity — finding pages that are conceptually related, not just keyword-matched. It also supports web crawling. Last commit March 17, 2026.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'What is the Firecrawl MCP server?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'firecrawl/firecrawl-mcp-server is the official Firecrawl MCP server. It scores 73.94 in the AgentRank index with 5,798 GitHub stars — the most starred web research MCP server. It specializes in web scraping, structured data extraction from pages, site mapping, and batch URL crawling. Last commit March 13, 2026.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Should I use Exa MCP or Firecrawl MCP?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Use Exa MCP if your agents need semantically relevant search results — finding content by concept rather than keywords. Use Firecrawl MCP if your agents need to extract structured data from specific URLs, scrape entire websites, or process large numbers of pages in batch. The two tools are complementary: Exa for discovery, Firecrawl for extraction.',
+      },
+    },
+  ],
+};
+---
+
+<Base
+  title="Exa MCP vs Firecrawl MCP: Which Web Research Tool? — AgentRank"
+  description="Compare Exa and Firecrawl MCP servers for web research. Scores, use cases, and which to choose for search vs scraping — March 2026 data from the AgentRank index."
+  activeTab="blog"
+  keywords="exa MCP server, firecrawl MCP server, exa vs firecrawl, web scraping MCP, web research AI agent, content extraction MCP 2026"
+  canonicalUrl="https://agentrank-ai.com/blog/exa-mcp-vs-firecrawl-mcp/"
+  jsonLd={[jsonLd, faqJsonLd]}
+  ogImage="/og/blog.png"
+>
+  <article class="blog-post">
+    <header class="post-header">
+      <div class="breadcrumb"><a href="/blog/">Blog</a> <span>/</span></div>
+      <h1>Exa MCP vs Firecrawl MCP: Which Web Research Tool for AI Agents?</h1>
+      <div class="post-meta">
+        <time datetime={publishDate}>March 19, 2026</time>
+        <span class="sep">&middot;</span>
+        <span>5 min read</span>
+        <span class="sep">&middot;</span>
+        <span>AgentRank Index</span>
+      </div>
+      <p class="lede">
+        <strong>Exa</strong> (semantic search + crawl) and <strong>Firecrawl</strong> (web scraping +
+        structured extraction) are two of the most-starred web research MCP servers in the index —
+        4,035 and 5,798 stars respectively. Exa scores 76.64; Firecrawl scores 73.94.
+        Here's when to use each.
+      </p>
+    </header>
+
+    <nav class="toc">
+      <strong>Contents</strong>
+      <ol>
+        <li><a href="#comparison-table">Side-by-side comparison</a></li>
+        <li><a href="#exa-section">Exa MCP deep dive</a></li>
+        <li><a href="#firecrawl-section">Firecrawl MCP deep dive</a></li>
+        <li><a href="#verdict">Verdict</a></li>
+        <li><a href="#setup">Setup guide</a></li>
+      </ol>
+    </nav>
+
+    <section id="comparison-table">
+      <h2>Side-by-side comparison</h2>
+      <p>
+        Firecrawl has more stars (5,798 vs 4,035) but Exa scores higher (76.64 vs 73.94). The score gap
+        is driven by freshness — Exa committed March 17 vs Firecrawl's March 13 — and by Exa's better issue
+        health (57 closed vs 40 open, a 59% close rate vs Firecrawl's alarming 21%, with 85 open issues
+        against only 23 closed). That open issue backlog is Firecrawl's largest score penalty.
+      </p>
+
+      <div class="table-wrapper">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Repository</th>
+              <th class="num">Score</th>
+              <th class="num">Stars</th>
+              <th class="num">Contrib.</th>
+              <th class="num">Last commit</th>
+              <th>Use case</th>
+            </tr>
+          </thead>
+          <tbody>
+            {tools.map((tool, i) => (
+              <tr class={i === 0 ? 'row-winner' : 'row-second'}>
+                <td class="tool-cell">
+                  <a href={`/tool/${tool.slug}/`} class="tool-link">{tool.name}</a>
+                  <span class="tool-meta">{tool.type} · {tool.lang}</span>
+                </td>
+                <td class="num score-cell">{tool.score}</td>
+                <td class="num">{tool.stars.toLocaleString('en-US')}</td>
+                <td class="num">{tool.contributors}</td>
+                <td class="num date-cell">{tool.lastCommit}</td>
+                <td class="use-cell">{tool.useCase}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <p class="table-note">
+        Data from March 19, 2026 crawl. Score = composite of stars 15%, freshness 25%, issue health 25%,
+        contributors 10%, inbound dependents 25%.
+      </p>
+    </section>
+
+    <section id="exa-section">
+      <h2>Exa MCP deep dive</h2>
+
+      <h3>exa-labs/exa-mcp-server — score 76.64</h3>
+      <p>
+        <a href="/tool/exa-labs--exa-mcp-server/" class="inline-link">exa-labs/exa-mcp-server</a> is the
+        official MCP server from Exa Labs. Exa's underlying search engine is built for semantic similarity:
+        it finds pages that are <em>conceptually related</em> to a query, not just pages that contain the
+        exact search terms. This is particularly useful for AI agents doing research — retrieving sources
+        about a topic rather than hunting for specific keywords.
+      </p>
+      <p>
+        The server exposes both search and crawling capabilities. For a given search query, agents get
+        back structured results with cleaned content, URLs, and relevance scores. For a specific URL,
+        agents can crawl the page and retrieve cleaned text. 4,035 stars, 19 contributors, and a
+        March 17 commit date place it in the top tier of the web research category.
+      </p>
+      <p>
+        Issue health is solid: 57 closed issues vs 40 open (59% close rate). Requires an Exa API key —
+        the free tier is generous enough for development and light production use.
+      </p>
+
+      <div class="verdict-box exa-box">
+        <strong>Best for:</strong> Research agents, content discovery, finding semantically relevant sources.
+        Score 76.64, 4,035 stars. Search-first design with AI-optimized results.
+      </div>
+    </section>
+
+    <section id="firecrawl-section">
+      <h2>Firecrawl MCP deep dive</h2>
+
+      <h3>firecrawl/firecrawl-mcp-server — score 73.94</h3>
+      <p>
+        <a href="/tool/firecrawl--firecrawl-mcp-server/" class="inline-link">firecrawl/firecrawl-mcp-server</a>
+        is the official Firecrawl MCP server. Firecrawl is a web scraping service optimized for
+        <strong>structured data extraction</strong> — it strips ads, navigation, and boilerplate from pages
+        and returns clean, structured content suitable for LLM consumption.
+      </p>
+      <p>
+        Where Exa focuses on search-first discovery, Firecrawl focuses on crawl-first extraction. Given
+        a URL (or a list of URLs), it returns clean markdown or structured JSON. It also supports
+        site mapping — crawling an entire domain and returning a URL inventory. For agents that need to
+        process large volumes of web content, Firecrawl's batch capabilities are unmatched in this category.
+      </p>
+      <p>
+        5,798 stars is the highest in the web research category — reflecting strong developer awareness.
+        However, the 85 open issues vs 23 closed (a 21% close rate) is a concern: it suggests the
+        maintainers are slower to address issues than the user base demands. Factor this into production
+        decisions. Requires a Firecrawl API key.
+      </p>
+
+      <div class="verdict-box firecrawl-box">
+        <strong>Best for:</strong> Structured data extraction, site mapping, batch URL processing, and
+        converting web pages into clean markdown for LLMs. Score 73.94, 5,798 stars — most starred in category.
+        Note: monitor open issue count before committing to production use.
+      </div>
+    </section>
+
+    <section id="verdict">
+      <h2>Verdict</h2>
+      <p>
+        Exa and Firecrawl solve adjacent problems: Exa finds the right content, Firecrawl extracts it.
+        The most effective research pipelines use both:
+      </p>
+
+      <ul class="verdict-list">
+        <li><strong>You need to find relevant content by topic:</strong> <a href="/tool/exa-labs--exa-mcp-server/" class="inline-link">exa-labs/exa-mcp-server</a> — semantic search, score 76.64. Returns conceptually relevant results, not just keyword matches.</li>
+        <li><strong>You need to extract structured data from known URLs:</strong> <a href="/tool/firecrawl--firecrawl-mcp-server/" class="inline-link">firecrawl/firecrawl-mcp-server</a> — clean markdown extraction, site crawling, batch processing. Score 73.94.</li>
+        <li><strong>Building a full research pipeline:</strong> Run both — Exa to discover sources, Firecrawl to extract clean content from those sources.</li>
+        <li><strong>You need one server only:</strong> Start with Exa (higher score, better issue health). Add Firecrawl when you need batch extraction or site mapping.</li>
+      </ul>
+    </section>
+
+    <section id="setup">
+      <h2>Setup guide</h2>
+
+      <h3>Install Exa MCP server</h3>
+      <p>Add to your MCP client config (<code>claude_desktop_config.json</code> or <code>.cursor/mcp.json</code>):</p>
+
+      <pre class="code-block"><code>{`{
+  "mcpServers": {
+    "exa": {
+      "command": "npx",
+      "args": ["-y", "exa-mcp-server"],
+      "env": {
+        "EXA_API_KEY": "your-exa-api-key"
+      }
+    }
+  }
+}`}</code></pre>
+
+      <h3>Install Firecrawl MCP server</h3>
+
+      <pre class="code-block"><code>{`{
+  "mcpServers": {
+    "firecrawl": {
+      "command": "npx",
+      "args": ["-y", "firecrawl-mcp"],
+      "env": {
+        "FIRECRAWL_API_KEY": "your-firecrawl-api-key"
+      }
+    }
+  }
+}`}</code></pre>
+
+      <div class="cta-box">
+        <p>
+          <strong>Compare more search tools:</strong> <a href="/blog/tavily-mcp-vs-brave-search-mcp/">Tavily MCP vs Brave Search MCP</a> —
+          web search comparison with extraction focus.
+        </p>
+        <p>
+          <strong>Full leaderboard:</strong> <a href="/">25,638 tools ranked by AgentRank score</a> — updated daily.
+        </p>
+      </div>
+    </section>
+
+    <RelatedPosts posts={relatedPosts} />
+    <BlogSubscribeCTA source="blog" />
+    <footer class="post-footer">
+      <p class="methodology">
+        <strong>Methodology:</strong> Data from the AgentRank index crawled March 19, 2026.
+        Scores computed using: stars 15%, freshness 25%, issue health 25%, contributors 10%, inbound dependents 25%.
+        25,638 repositories indexed.
+      </p>
+      <p class="share-line">
+        Found this useful? <a href="https://x.com/AgentRank_ai" target="_blank" rel="noopener noreferrer">Follow @AgentRank_ai</a> for
+        weekly ecosystem updates, biggest movers, and new tool spotlights.
+      </p>
+    </footer>
+  </article>
+
+  <style>
+    .blog-post {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 2rem 0 3rem;
+    }
+
+    .inline-link {
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    .breadcrumb {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      margin-bottom: 0.75rem;
+    }
+
+    .breadcrumb span {
+      margin: 0 0.25rem;
+      opacity: 0.5;
+    }
+
+    .post-header {
+      margin-bottom: 2rem;
+      padding-bottom: 1.5rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .post-header h1 {
+      font-size: 1.6rem;
+      font-weight: 700;
+      line-height: 1.3;
+      margin-bottom: 0.75rem;
+    }
+
+    .post-meta {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      flex-wrap: wrap;
+      margin-bottom: 1rem;
+    }
+
+    .sep { opacity: 0.4; }
+
+    .lede {
+      font-size: 1rem;
+      line-height: 1.7;
+      color: var(--text);
+      opacity: 0.9;
+    }
+
+    .toc {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 1rem 1.25rem;
+      margin-bottom: 2.5rem;
+      font-size: 0.82rem;
+    }
+
+    .toc strong {
+      display: block;
+      margin-bottom: 0.6rem;
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+    }
+
+    .toc ol {
+      margin: 0;
+      padding-left: 1.2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+    }
+
+    .toc a { color: var(--text-muted); }
+    .toc a:hover { color: var(--accent); }
+
+    section { margin-bottom: 3rem; }
+
+    section h2 {
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin-bottom: 0.75rem;
+      padding-bottom: 0.4rem;
+      border-bottom: 2px solid var(--accent);
+      display: inline-block;
+    }
+
+    section h3 {
+      font-size: 0.95rem;
+      font-weight: 700;
+      margin: 1.5rem 0 0.5rem;
+      color: var(--text);
+    }
+
+    section p {
+      font-size: 0.9rem;
+      line-height: 1.75;
+      color: var(--text);
+      opacity: 0.9;
+      margin-bottom: 0.9rem;
+    }
+
+    .table-wrapper {
+      overflow-x: auto;
+      margin: 1rem 0 0.5rem;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.82rem;
+    }
+
+    .data-table th {
+      text-align: left;
+      font-weight: 600;
+      color: var(--text-muted);
+      border-bottom: 1px solid var(--border);
+      padding: 0.4rem 0.75rem 0.4rem 0;
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      white-space: nowrap;
+    }
+
+    .data-table td {
+      padding: 0.45rem 0.75rem 0.45rem 0;
+      border-bottom: 1px solid var(--border);
+      color: var(--text);
+      vertical-align: top;
+    }
+
+    .data-table tr:last-child td { border-bottom: none; }
+
+    .row-winner td {
+      background: color-mix(in srgb, var(--accent) 4%, transparent);
+    }
+
+    .num {
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .tool-cell {
+      display: flex;
+      flex-direction: column;
+      gap: 0.15rem;
+    }
+
+    .tool-link {
+      font-weight: 600;
+      color: var(--accent);
+      font-size: 0.78rem;
+    }
+
+    .tool-meta {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+    }
+
+    .score-cell {
+      color: var(--accent);
+      font-weight: 700;
+    }
+
+    .date-cell {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+    }
+
+    .use-cell {
+      font-size: 0.78rem;
+    }
+
+    .table-note {
+      font-size: 0.75rem !important;
+      color: var(--text-muted) !important;
+      margin-top: 0.5rem !important;
+    }
+
+    .verdict-box {
+      border-radius: 4px;
+      padding: 0.875rem 1rem;
+      margin-top: 1.25rem;
+      font-size: 0.88rem;
+      line-height: 1.6;
+    }
+
+    .exa-box {
+      background: color-mix(in srgb, var(--accent) 8%, var(--bg-surface));
+      border: 1px solid var(--accent);
+    }
+
+    .firecrawl-box {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+    }
+
+    .verdict-list {
+      margin: 0.75rem 0 1rem 1.25rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+      font-size: 0.9rem;
+      line-height: 1.65;
+    }
+
+    .code-block {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 0.875rem 1rem;
+      font-size: 0.78rem;
+      line-height: 1.6;
+      overflow-x: auto;
+      margin: 0.75rem 0 1rem;
+    }
+
+    .code-block code {
+      font-family: monospace;
+      color: var(--text);
+    }
+
+    .cta-box {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      border-radius: 4px;
+      padding: 1rem 1.25rem;
+      margin-top: 1.5rem;
+    }
+
+    .cta-box p {
+      margin-bottom: 0.5rem;
+      font-size: 0.88rem !important;
+    }
+
+    .cta-box p:last-child { margin-bottom: 0; }
+
+    .post-footer {
+      margin-top: 3rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--border);
+    }
+
+    .methodology {
+      font-size: 0.75rem !important;
+      color: var(--text-muted) !important;
+      opacity: 1 !important;
+    }
+
+    .share-line {
+      font-size: 0.82rem !important;
+      margin-top: 0.75rem;
+    }
+
+    @media (max-width: 640px) {
+      .post-header h1 { font-size: 1.3rem; }
+      .date-cell, .use-cell { display: none; }
+    }
+  </style>
+</Base>
