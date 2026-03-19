@@ -607,9 +607,9 @@ export function generateSkillJsonLd(skill: {
     keywords: `${skill.source}, AI skill, agent skill`,
     aggregateRating: {
       '@type': 'AggregateRating',
-      ratingValue: skill.score.toFixed(1),
-      bestRating: '100',
-      worstRating: '0',
+      ratingValue: (1 + (skill.score / 100) * 4).toFixed(1),
+      bestRating: '5',
+      worstRating: '1',
       ratingCount: 1,
     },
   };
