@@ -101,6 +101,14 @@ const allSkills = isLanguageSlug
 const pageUrl = `https://agentrank-ai.com/category/${slug}/`;
 const totalCount = allTools.length + allSkills.length;
 
+// Average score across tools + skills in this category
+const scoredTools = allTools.filter((t) => typeof t.score === 'number');
+const scoredSkills = allSkills.filter((s) => typeof s.score === 'number');
+const avgScore = (scoredTools.length + scoredSkills.length) > 0
+  ? (scoredTools.reduce((sum, t) => sum + t.score, 0) + scoredSkills.reduce((sum, s) => sum + s.score, 0))
+    / (scoredTools.length + scoredSkills.length)
+  : null;
+
 // Related categories: resolve labels for display
 const relatedCategoryEntries = (content?.relatedCategories || [])
   .map((cat) => ({ slug: cat, label: ALL_CATEGORY_LABELS[cat] || cat }))
@@ -182,6 +190,7 @@ const jsonLd = categoryItemListJsonLd
   <p class="category-sub">
     {allTools.length} tool{allTools.length !== 1 ? 's' : ''}
     {allSkills.length > 0 && <> &middot; {allSkills.length} skill{allSkills.length !== 1 ? 's' : ''}</>}
+    {avgScore !== null && <> &middot; avg score <span class="avg-score">{avgScore.toFixed(1)}</span></>}
   </p>
 
   {content?.intro && content.intro.length > 0 && (
@@ -322,6 +331,11 @@ const jsonLd = categoryItemListJsonLd
     color: var(--text-muted);
     font-size: 0.85rem;
     margin-bottom: 1.5rem;
+  }
+
+  .avg-score {
+    font-weight: 600;
+    color: var(--accent);
   }
 
   .intro-section {

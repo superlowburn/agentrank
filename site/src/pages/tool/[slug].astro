@@ -3,7 +3,7 @@ import Base from '../../layouts/Base.astro';
 import BlogSubscribeCTA from '../../components/BlogSubscribeCTA.astro';
 import { toSlug, formatStars, relativeTime, scoreColor, type Tool } from '../../data/tools';
 import { getAdvice } from '../../data/advice';
-import { generateToolSummary, generateContextSentences, getLicenseClass, generateToolJsonLd, generateBreadcrumbJsonLd } from '../../data/content-gen';
+import { generateToolSummary, generateContextSentences, getLicenseClass, generateToolJsonLd, generateBreadcrumbJsonLd, CATEGORIES } from '../../data/content-gen';
 
 const { slug } = Astro.params;
 const fullName = slug!.replace('--', '/');
@@ -344,7 +344,7 @@ if (relatedTools.length < 3) {
 }
 
 const categoryLabel = toolCategory
-  ? toolCategory.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase())
+  ? (CATEGORIES[toolCategory] ?? toolCategory.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase()))
   : null;
 
 // Edge cache tool pages for 1 hour, browser for 60s (scores update daily)
@@ -356,6 +356,12 @@ Astro.response.headers.set('Cache-Control', 'public, max-age=60, s-maxage=3600, 
     <a href="/">Home</a>
     <span class="breadcrumb-sep" aria-hidden="true">&rsaquo;</span>
     <a href="/tools/">Tools</a>
+    {toolCategory && categoryLabel && (
+      <>
+        <span class="breadcrumb-sep" aria-hidden="true">&rsaquo;</span>
+        <a href={`/category/${toolCategory}/`}>{categoryLabel}</a>
+      </>
+    )}
     <span class="breadcrumb-sep" aria-hidden="true">&rsaquo;</span>
     <span class="breadcrumb-current" aria-current="page">{tool.full_name}</span>
   </nav>
@@ -379,6 +385,9 @@ Astro.response.headers.set('Cache-Control', 'public, max-age=60, s-maxage=3600, 
         </span>
       )}
       <span class="rank-badge">Rank #{tool.rank}</span>
+      {toolCategory && categoryLabel && (
+        <a href={`/category/${toolCategory}/`} class="badge cat-tag">{categoryLabel}</a>
+      )}
       {tool.is_archived && <span class="badge archived">Archived</span>}
       {isSponsored && <span class="badge sponsored" title={sponsorTier ? `Sponsored (${sponsorTier})` : 'Sponsored'}>Sponsored</span>}
     </div>
@@ -819,6 +828,22 @@ Astro.response.headers.set('Cache-Control', 'public, max-age=60, s-maxage=3600, 
     background: color-mix(in srgb, var(--accent) 20%, transparent);
     color: var(--accent);
     border: 1px solid color-mix(in srgb, var(--accent) 40%, transparent);
+  }
+
+  .cat-tag {
+    background: color-mix(in srgb, var(--text-muted) 12%, transparent);
+    color: var(--text-muted);
+    border: 1px solid color-mix(in srgb, var(--text-muted) 20%, transparent);
+    text-decoration: none;
+    font-size: 0.65rem;
+    padding: 0.1rem 0.35rem;
+    border-radius: 3px;
+  }
+
+  .cat-tag:hover {
+    background: color-mix(in srgb, var(--accent) 12%, transparent);
+    color: var(--accent);
+    border-color: color-mix(in srgb, var(--accent) 25%, transparent);
   }
 
   .description {
