@@ -60,33 +60,82 @@ const itemListJsonLd = {
       <h2>Find the best MCP servers and AI agent tools</h2>
       <p class="hero-sub">Ranked by real signals, updated daily. The index your AI uses to find the right tool automatically.</p>
     </div>
-    <div class="social-proof">
-      <span class="sp-stat"><strong>{totalCount.toLocaleString('en-US')}</strong> skills ranked</span>
-      <span class="sp-sep">·</span>
-      <span class="sp-stat"><strong>{totalToolCount.toLocaleString('en-US')}+</strong> tools indexed</span>
-      <span class="sp-sep">·</span>
-      <span class="sp-stat">updated daily</span>
-      <span class="sp-sep">·</span>
-      <a class="sp-stat sp-link" href="/reports/">weekly reports</a>
-      <span class="sp-sep">·</span>
-      <a class="sp-stat sp-link" href="https://github.com/superlowburn/agentrank" target="_blank" rel="noopener noreferrer">open source</a>
+
+    <div class="hero-stats">
+      <div class="hero-stat">
+        <span class="hero-stat-num" id="stat-tools">{totalToolCount.toLocaleString('en-US')}</span>
+        <span class="hero-stat-label">tools</span>
+      </div>
+      <span class="hero-stat-sep" aria-hidden="true">·</span>
+      <div class="hero-stat">
+        <span class="hero-stat-num" id="stat-skills">{totalCount.toLocaleString('en-US')}</span>
+        <span class="hero-stat-label">skills</span>
+      </div>
+      <span class="hero-stat-sep" aria-hidden="true">·</span>
+      <div class="hero-stat">
+        <span class="hero-stat-num">daily</span>
+        <span class="hero-stat-label">updates</span>
+      </div>
+      <span class="hero-stat-sep" aria-hidden="true">·</span>
+      <a href="/reports/" class="hero-stat hero-stat-link">
+        <span class="hero-stat-num">weekly</span>
+        <span class="hero-stat-label">reports</span>
+      </a>
     </div>
+
+    <div class="hero-search-wrap">
+      <div class="hero-search-inner">
+        <span class="hero-search-icon" aria-hidden="true">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        </span>
+        <input
+          type="text"
+          id="hero-search"
+          class="hero-search-input"
+          placeholder="Search tools and skills..."
+          autocomplete="off"
+          spellcheck="false"
+          aria-label="Search tools and skills"
+          aria-autocomplete="list"
+          aria-controls="hero-search-results"
+        />
+        <span class="hero-search-hint" id="hero-search-hint" aria-hidden="true">↵ to browse all</span>
+      </div>
+      <div class="hero-search-results" id="hero-search-results" role="listbox" aria-label="Search suggestions"></div>
+    </div>
+
     <div class="install-pitch">
       <strong class="install-headline">Install once — your AI picks the right tool automatically.</strong>
       <span class="install-sub">No prompting, no config.</span>
     </div>
     <div class="install-options">
       <div class="install-option">
-        <span class="install-label">Claude Code</span>
+        <span class="install-label">
+          <svg class="platform-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><polyline points="8 12 11 15 16 9"/></svg>
+          Claude Code
+        </span>
         <div class="install-cmd-wrap">
           <code class="install-cmd">claude mcp add agentrank -- npx -y agentrank-mcp-server</code>
           <span class="copy-hint" aria-hidden="true">copy</span>
         </div>
       </div>
       <div class="install-option">
-        <span class="install-label">Claude Desktop / Cursor / Windsurf</span>
+        <span class="install-label">
+          <svg class="platform-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>
+          Cursor / Windsurf
+        </span>
         <div class="install-cmd-wrap">
           <code class="install-cmd">{'{"command":"npx","args":["-y","agentrank-mcp-server"]}'}</code>
+          <span class="copy-hint" aria-hidden="true">copy</span>
+        </div>
+      </div>
+      <div class="install-option">
+        <span class="install-label">
+          <svg class="platform-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><polyline points="13 2 13 9 20 9"/></svg>
+          VS Code
+        </span>
+        <div class="install-cmd-wrap">
+          <code class="install-cmd">{'{"servers":{"agentrank":{"command":"npx","args":["-y","agentrank-mcp-server"]}}}'}</code>
           <span class="copy-hint" aria-hidden="true">copy</span>
         </div>
       </div>
@@ -401,40 +450,228 @@ const itemListJsonLd = {
     margin: 0;
   }
 
+  /* Animated stats row */
+  .hero-stats {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .hero-stat {
+    display: flex;
+    align-items: baseline;
+    gap: 0.3rem;
+  }
+
+  .hero-stat-num {
+    font-size: 0.88rem;
+    font-weight: 700;
+    color: var(--accent);
+    letter-spacing: 0.01em;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .hero-stat-label {
+    font-size: 0.68rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .hero-stat-sep {
+    color: var(--border);
+    font-size: 0.75rem;
+    flex-shrink: 0;
+  }
+
+  a.hero-stat-link {
+    text-decoration: none;
+    cursor: pointer;
+  }
+
+  a.hero-stat-link:hover .hero-stat-num {
+    text-decoration: underline;
+  }
+
+  /* Hero inline search */
+  .hero-search-wrap {
+    position: relative;
+    margin-bottom: 1rem;
+  }
+
+  .hero-search-inner {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+
+  .hero-search-icon {
+    position: absolute;
+    left: 0.75rem;
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    pointer-events: none;
+    flex-shrink: 0;
+  }
+
+  .hero-search-input {
+    width: 100%;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    padding: 0.55rem 6rem 0.55rem 2.2rem;
+    font-family: inherit;
+    font-size: 0.875rem;
+    color: var(--text);
+    transition: border-color 0.15s, box-shadow 0.15s;
+    min-width: 0;
+  }
+
+  .hero-search-input::placeholder {
+    color: var(--text-muted);
+  }
+
+  .hero-search-input:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 15%, transparent);
+  }
+
+  .hero-search-hint {
+    position: absolute;
+    right: 0.75rem;
+    font-size: 0.65rem;
+    color: var(--text-muted);
+    pointer-events: none;
+    white-space: nowrap;
+    opacity: 0.7;
+    letter-spacing: 0.02em;
+  }
+
+  .hero-search-results {
+    position: absolute;
+    top: calc(100% + 2px);
+    left: 0;
+    right: 0;
+    background: var(--bg-surface);
+    border: 1px solid var(--accent);
+    border-radius: 5px;
+    z-index: 50;
+    overflow: hidden;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+  }
+
+  .hero-search-results[hidden] {
+    display: none;
+  }
+
+  .hsr-item {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0.75rem;
+    cursor: pointer;
+    text-decoration: none;
+    border-bottom: 1px solid var(--border);
+    transition: background 0.1s;
+  }
+
+  .hsr-item:last-child {
+    border-bottom: none;
+  }
+
+  .hsr-item:hover,
+  .hsr-item.hsr-active {
+    background: var(--bg-hover);
+  }
+
+  .hsr-type {
+    font-size: 0.6rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 0.1rem 0.3rem;
+    border-radius: 3px;
+    flex-shrink: 0;
+  }
+
+  .hsr-type-tool {
+    background: color-mix(in srgb, #3b82f6 15%, transparent);
+    color: #60a5fa;
+    border: 1px solid color-mix(in srgb, #3b82f6 30%, transparent);
+  }
+
+  .hsr-type-skill {
+    background: color-mix(in srgb, var(--accent) 12%, transparent);
+    color: var(--accent);
+    border: 1px solid color-mix(in srgb, var(--accent) 25%, transparent);
+  }
+
+  .hsr-type-agent {
+    background: color-mix(in srgb, #a855f7 15%, transparent);
+    color: #c084fc;
+    border: 1px solid color-mix(in srgb, #a855f7 30%, transparent);
+  }
+
+  .hsr-name {
+    font-size: 0.82rem;
+    color: var(--text);
+    font-weight: 500;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .hsr-score {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    font-weight: 600;
+    flex-shrink: 0;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .hsr-footer {
+    padding: 0.4rem 0.75rem;
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    text-align: center;
+    border-top: 1px solid var(--border);
+    background: var(--bg);
+  }
+
+  .hsr-empty {
+    padding: 0.75rem;
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    text-align: center;
+  }
+
+  .hsr-loading {
+    padding: 0.6rem 0.75rem;
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    text-align: center;
+  }
+
+  /* Platform icon in install-label */
+  .platform-icon {
+    width: 12px;
+    height: 12px;
+    vertical-align: middle;
+    margin-right: 0.2rem;
+    flex-shrink: 0;
+  }
+
   .install-banner {
     background: var(--bg-surface);
     border: 1px solid var(--accent);
     border-radius: 6px;
     padding: 1.25rem 1.5rem;
     margin-bottom: 1.5rem;
-  }
-
-  .social-proof {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    margin-bottom: 0.75rem;
-    flex-wrap: wrap;
-  }
-
-  .sp-stat {
-    font-size: 0.72rem;
-    color: var(--accent);
-    font-weight: 600;
-    letter-spacing: 0.02em;
-  }
-
-  .sp-sep {
-    color: var(--border);
-    font-size: 0.72rem;
-  }
-
-  .sp-link {
-    text-decoration: none;
-  }
-
-  .sp-link:hover {
-    text-decoration: underline;
   }
 
   .install-headline {
@@ -468,6 +705,9 @@ const itemListJsonLd = {
     letter-spacing: 0.05em;
     color: var(--text-muted);
     font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.2rem;
   }
 
   .install-cmd-wrap {
@@ -529,7 +769,7 @@ const itemListJsonLd = {
       gap: 0.75rem;
     }
 
-    .social-proof {
+    .hero-stats {
       gap: 0.4rem;
     }
   }
@@ -1146,6 +1386,166 @@ const itemListJsonLd = {
       }, 1500);
     });
   });
+
+  // Live stats — update social-proof counts from /api/v1/stats
+  (async () => {
+    try {
+      const res = await fetch('/api/v1/stats');
+      if (!res.ok) return;
+      const data = await res.json();
+      const skillsEl = document.getElementById('stat-skills');
+      const toolsEl = document.getElementById('stat-tools');
+      const updatedEl = document.getElementById('stat-updated');
+      if (skillsEl && data.totalSkills) {
+        skillsEl.textContent = data.totalSkills.toLocaleString('en-US');
+      }
+      if (toolsEl && data.totalTools) {
+        toolsEl.textContent = data.totalTools.toLocaleString('en-US') + '+';
+      }
+      if (updatedEl && data.generatedAt) {
+        const mins = Math.round((Date.now() - new Date(data.generatedAt).getTime()) / 60000);
+        if (mins < 60) {
+          updatedEl.textContent = `updated ${mins}m ago`;
+        } else {
+          const hrs = Math.floor(mins / 60);
+          updatedEl.textContent = `updated ${hrs}h ago`;
+        }
+      }
+    } catch {
+      // Non-fatal — static values remain
+    }
+  })();
+
+  // Animated stat counters — fetch live stats and count up
+  (async () => {
+    function animateCount(el: HTMLElement, target: number, duration: number = 1200) {
+      const start = performance.now();
+      const startVal = 0;
+      const step = (now: number) => {
+        const elapsed = now - start;
+        const progress = Math.min(elapsed / duration, 1);
+        // ease-out cubic
+        const eased = 1 - Math.pow(1 - progress, 3);
+        const current = Math.round(startVal + (target - startVal) * eased);
+        el.textContent = current.toLocaleString('en-US');
+        if (progress < 1) requestAnimationFrame(step);
+        else el.textContent = target.toLocaleString('en-US');
+      };
+      requestAnimationFrame(step);
+    }
+
+    try {
+      const res = await fetch('/api/v1/stats');
+      if (!res.ok) return;
+      const data = await res.json();
+      const toolsEl = document.getElementById('stat-tools') as HTMLElement | null;
+      const skillsEl = document.getElementById('stat-skills') as HTMLElement | null;
+      if (toolsEl && data.totalTools) animateCount(toolsEl, data.totalTools);
+      if (skillsEl && data.totalSkills) animateCount(skillsEl, data.totalSkills);
+    } catch {
+      // Non-fatal — static build-time values remain
+    }
+  })();
+
+  // Hero inline search — debounced live search with dropdown
+  ((() => {
+    const input = document.getElementById('hero-search') as HTMLInputElement | null;
+    const results = document.getElementById('hero-search-results') as HTMLElement | null;
+    if (!input || !results) return;
+
+    let debounceTimer: ReturnType<typeof setTimeout> | null = null;
+    let currentQuery = '';
+    let activeIndex = -1;
+    let items: HTMLElement[] = [];
+
+    function setActive(idx: number) {
+      items.forEach((el, i) => el.classList.toggle('hsr-active', i === idx));
+      activeIndex = idx;
+    }
+
+    function closeResults() {
+      results.hidden = true;
+      results.innerHTML = '';
+      activeIndex = -1;
+      items = [];
+    }
+
+    async function doSearch(q: string) {
+      if (!q.trim()) { closeResults(); return; }
+      results.hidden = false;
+      results.innerHTML = '<div class="hsr-loading">searching…</div>';
+      try {
+        const res = await fetch(`/api/v1/search?q=${encodeURIComponent(q)}&limit=6`);
+        if (!res.ok) throw new Error('search failed');
+        const data = await res.json();
+        if (q !== currentQuery) return; // stale
+        if (!data.results || data.results.length === 0) {
+          results.innerHTML = `<div class="hsr-empty">No results for "${q}"</div>`;
+          items = [];
+          return;
+        }
+        const html = data.results.slice(0, 5).map((r: any) => {
+          const typeClass = `hsr-type-${r.type}`;
+          const score = r.score != null ? `${r.score.toFixed(1)}` : '';
+          const name = r.name || r.id;
+          // Path-only URLs for same-origin nav
+          const href = r.url ? new URL(r.url).pathname : '#';
+          return `<a class="hsr-item" href="${href}" role="option" data-url="${href}">
+            <span class="hsr-type ${typeClass}">${r.type}</span>
+            <span class="hsr-name">${name}</span>
+            ${score ? `<span class="hsr-score">${score}</span>` : ''}
+          </a>`;
+        }).join('');
+        const total = data.meta?.total ?? data.results.length;
+        const footer = total > 5
+          ? `<div class="hsr-footer"><a href="/?q=${encodeURIComponent(q)}" style="color:var(--accent);text-decoration:none">View all ${total} results &rarr;</a></div>`
+          : '';
+        results.innerHTML = html + footer;
+        items = Array.from(results.querySelectorAll('.hsr-item'));
+        activeIndex = -1;
+      } catch {
+        if (q === currentQuery) results.innerHTML = '<div class="hsr-empty">Search unavailable</div>';
+      }
+    }
+
+    input.addEventListener('input', () => {
+      currentQuery = input.value;
+      if (debounceTimer) clearTimeout(debounceTimer);
+      if (!currentQuery.trim()) { closeResults(); return; }
+      debounceTimer = setTimeout(() => doSearch(currentQuery), 220);
+    });
+
+    input.addEventListener('keydown', (e: KeyboardEvent) => {
+      if (results.hidden) return;
+      if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        setActive(Math.min(activeIndex + 1, items.length - 1));
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        setActive(Math.max(activeIndex - 1, 0));
+      } else if (e.key === 'Enter') {
+        if (activeIndex >= 0 && items[activeIndex]) {
+          e.preventDefault();
+          (items[activeIndex] as HTMLAnchorElement).click();
+        } else if (currentQuery.trim()) {
+          window.location.href = `/?q=${encodeURIComponent(currentQuery.trim())}`;
+        }
+      } else if (e.key === 'Escape') {
+        closeResults();
+        input.blur();
+      }
+    });
+
+    document.addEventListener('click', (e) => {
+      if (!input.contains(e.target as Node) && !results.contains(e.target as Node)) {
+        closeResults();
+      }
+    });
+
+    input.addEventListener('focus', () => {
+      if (currentQuery.trim()) doSearch(currentQuery);
+    });
+  })());
 
   // Featured sponsors — load from API and inject above leaderboard
   (async () => {
