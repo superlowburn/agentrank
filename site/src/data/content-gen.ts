@@ -561,6 +561,11 @@ export function generateToolJsonLd(tool: {
       name: owner,
       url: `https://github.com/${owner}`,
     },
+    offers: {
+      '@type': 'Offer',
+      price: '0',
+      priceCurrency: 'USD',
+    },
     aggregateRating: {
       '@type': 'AggregateRating',
       ratingValue,
@@ -605,6 +610,11 @@ export function generateSkillJsonLd(skill: {
     operatingSystem: skill.platforms.join(', ') || undefined,
     dateModified: skill.dateModified || undefined,
     keywords: `${skill.source}, AI skill, agent skill`,
+    offers: {
+      '@type': 'Offer',
+      price: '0',
+      priceCurrency: 'USD',
+    },
     aggregateRating: {
       '@type': 'AggregateRating',
       ratingValue: (1 + (skill.score / 100) * 4).toFixed(1),
