@@ -195,8 +195,9 @@ const jsonLd = categoryItemListJsonLd
   {allTools.length > 0 && (
     <section>
       {allSkills.length > 0 && <h3 class="section-heading">Tools</h3>}
+      <div id="category-sponsored" data-category={slug}></div>
       <div class="table-wrap">
-        <table>
+        <table id="tools-table">
           <thead>
             <tr>
               <th>#</th>
@@ -209,7 +210,7 @@ const jsonLd = categoryItemListJsonLd
           </thead>
           <tbody>
             {allTools.map((tool, i) => (
-              <tr>
+              <tr data-full-name={tool.full_name}>
                 <td class="rank">{i + 1}</td>
                 <td class="name">
                   <a href={`/tool/${toSlug(tool.full_name)}/`}>{tool.full_name}</a>
@@ -497,4 +498,151 @@ const jsonLd = categoryItemListJsonLd
   .blog-link-item:hover {
     text-decoration: underline;
   }
+
+  /* Category sponsored placement */
+  .cat-sponsor-card {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    background: color-mix(in srgb, var(--accent) 4%, var(--bg-surface));
+    border: 1px solid color-mix(in srgb, var(--accent) 30%, var(--border));
+    border-left: 3px solid var(--accent);
+    border-radius: 5px;
+    padding: 0.85rem 1rem;
+    margin-bottom: 0.75rem;
+    text-decoration: none;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    transition: background 0.15s;
+  }
+
+  .cat-sponsor-card:hover {
+    background: color-mix(in srgb, var(--accent) 8%, var(--bg-surface));
+    text-decoration: none;
+  }
+
+  .cat-sponsor-body {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .cat-sponsor-name-row {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.25rem;
+  }
+
+  .cat-sponsor-name {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text);
+  }
+
+  .cat-sponsor-badge {
+    font-size: 0.6rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    padding: 0.1rem 0.35rem;
+    border-radius: 3px;
+    background: color-mix(in srgb, var(--accent) 12%, transparent);
+    color: var(--accent);
+    border: 1px solid color-mix(in srgb, var(--accent) 25%, transparent);
+  }
+
+  .cat-sponsor-desc {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    line-height: 1.4;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+
+  .cat-sponsor-cta {
+    align-self: center;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--accent);
+    white-space: nowrap;
+  }
+
+  /* Sponsored row highlight */
+  tr.sponsored-row td {
+    background: color-mix(in srgb, var(--accent) 4%, transparent) !important;
+  }
+
+  tr.sponsored-row:hover td {
+    background: color-mix(in srgb, var(--accent) 8%, transparent) !important;
+  }
+
+  .sponsored-pill {
+    display: inline-block;
+    font-size: 0.58rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 0.08rem 0.3rem;
+    border-radius: 3px;
+    background: color-mix(in srgb, var(--accent) 12%, transparent);
+    color: var(--accent);
+    border: 1px solid color-mix(in srgb, var(--accent) 25%, transparent);
+    margin-left: 0.35rem;
+    vertical-align: middle;
+  }
 </style>
+
+<script>
+  const container = document.getElementById('category-sponsored') as HTMLElement | null;
+  if (container) {
+    const category = container.dataset.category || '';
+    (async () => {
+      try {
+        const res = await fetch('/api/sponsored');
+        if (!res.ok) return;
+        const { sponsored } = await res.json();
+        if (!sponsored || sponsored.length === 0) return;
+
+        const sponsoredSet = new Set<string>(sponsored.map((t: any) => t.full_name));
+
+        // Highlight sponsored rows in the tools table
+        document.querySelectorAll<HTMLElement>('#tools-table tbody tr[data-full-name]').forEach((row) => {
+          if (sponsoredSet.has(row.dataset.fullName || '')) {
+            row.classList.add('sponsored-row');
+            const nameCell = row.querySelector('.name');
+            if (nameCell && !nameCell.querySelector('.sponsored-pill')) {
+              const pill = document.createElement('span');
+              pill.className = 'sponsored-pill';
+              pill.textContent = 'Sponsored';
+              nameCell.appendChild(pill);
+            }
+          }
+        });
+
+        // Find sponsored tool matching this category
+        const match = sponsored.find((t: any) => t.category === category);
+        if (!match) return;
+
+        const slug = match.full_name.replace('/', '--');
+        const desc = (match.sponsor_description || match.description || '').slice(0, 120);
+        const ctaHtml = match.sponsor_cta_text
+          ? `<span class="cat-sponsor-cta">${match.sponsor_cta_text} &rarr;</span>`
+          : `<span class="cat-sponsor-cta">View &rarr;</span>`;
+
+        container.innerHTML = `<a class="cat-sponsor-card" href="/api/sponsored/click?tool=${encodeURIComponent(match.full_name)}&type=detail&page=category">
+          <div class="cat-sponsor-body">
+            <div class="cat-sponsor-name-row">
+              <span class="cat-sponsor-name">${match.full_name.split('/')[1] || match.full_name}</span>
+              <span class="cat-sponsor-badge">Sponsored</span>
+            </div>
+            ${desc ? `<p class="cat-sponsor-desc">${desc}</p>` : ''}
+          </div>
+          ${ctaHtml}
+        </a>`;
+      } catch {
+        // Non-fatal
+      }
+    })();
+  }
+</script>

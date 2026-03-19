@@ -147,6 +147,8 @@ const itemListJsonLd = {
     ))}
   </div>
 
+  <div id="featured-sponsors"></div>
+
   <div class="table-wrap">
     <table id="leaderboard">
       <thead>
@@ -792,6 +794,162 @@ const itemListJsonLd = {
     white-space: nowrap;
   }
 
+  /* Featured sponsors section */
+  .featured-sponsors {
+    margin-bottom: 1.5rem;
+  }
+
+  .featured-sponsors-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.65rem;
+  }
+
+  .featured-sponsors-label {
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-muted);
+  }
+
+  .featured-sponsors-cta {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    text-decoration: none;
+  }
+
+  .featured-sponsors-cta:hover {
+    color: var(--accent);
+    text-decoration: none;
+  }
+
+  .featured-sponsors-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 0.75rem;
+  }
+
+  .sponsor-card {
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-left: 3px solid color-mix(in srgb, var(--accent) 60%, transparent);
+    border-radius: 5px;
+    padding: 0.85rem 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    text-decoration: none;
+    transition: border-color 0.15s, background 0.15s;
+  }
+
+  .sponsor-card:hover {
+    border-color: var(--accent);
+    background: var(--bg-hover);
+    text-decoration: none;
+  }
+
+  .sponsor-card-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+  }
+
+  .sponsor-card-name {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .sponsor-badge {
+    font-size: 0.6rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    padding: 0.1rem 0.35rem;
+    border-radius: 3px;
+    background: color-mix(in srgb, var(--accent) 12%, transparent);
+    color: var(--accent);
+    border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent);
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .sponsor-card-desc {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    line-height: 1.4;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+  }
+
+  .sponsor-card-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 0.1rem;
+  }
+
+  .sponsor-card-score {
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: var(--text-muted);
+  }
+
+  .sponsor-card-category {
+    font-size: 0.68rem;
+    color: var(--text-muted);
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    padding: 0.1rem 0.3rem;
+  }
+
+  .sponsor-cta-btn {
+    margin-top: 0.4rem;
+    display: inline-block;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--accent);
+    text-decoration: none;
+    padding: 0.25rem 0;
+  }
+
+  .sponsor-cta-btn:hover {
+    text-decoration: underline;
+  }
+
+  /* Sponsored row highlight in leaderboard */
+  tr.sponsored-row td {
+    background: color-mix(in srgb, var(--accent) 4%, transparent) !important;
+  }
+
+  tr.sponsored-row:hover td {
+    background: color-mix(in srgb, var(--accent) 8%, transparent) !important;
+  }
+
+  .sponsored-pill {
+    display: inline-block;
+    font-size: 0.58rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 0.08rem 0.3rem;
+    border-radius: 3px;
+    background: color-mix(in srgb, var(--accent) 12%, transparent);
+    color: var(--accent);
+    border: 1px solid color-mix(in srgb, var(--accent) 25%, transparent);
+    margin-left: 0.35rem;
+    vertical-align: middle;
+  }
+
   @media (max-width: 480px) {
     .nwi {
       grid-template-columns: 4rem 1fr 3rem;
@@ -931,6 +1089,50 @@ const itemListJsonLd = {
       }, 1500);
     });
   });
+
+  // Featured sponsors — load from API and inject above leaderboard
+  (async () => {
+    const container = document.getElementById('featured-sponsors');
+    if (!container) return;
+    try {
+      const res = await fetch('/api/sponsored');
+      if (!res.ok) return;
+      const { sponsored } = await res.json();
+      if (!sponsored || sponsored.length === 0) return;
+
+      const top = sponsored.slice(0, 3);
+      const cards = top.map((t) => {
+        const slug = t.full_name.replace('/', '--');
+        const desc = (t.sponsor_description || t.description || '').slice(0, 120);
+        const cat = t.category ? `<span class="sponsor-card-category">${t.category}</span>` : '';
+        const cta = t.sponsor_cta_text && t.sponsor_cta_url
+          ? `<a class="sponsor-cta-btn" href="/api/sponsored/click?tool=${encodeURIComponent(t.full_name)}&type=cta&page=homepage" target="_blank" rel="noopener noreferrer">${t.sponsor_cta_text} &rarr;</a>`
+          : '';
+        return `<a class="sponsor-card" href="/api/sponsored/click?tool=${encodeURIComponent(t.full_name)}&type=detail&page=homepage">
+          <div class="sponsor-card-top">
+            <span class="sponsor-card-name">${t.full_name.split('/')[1] || t.full_name}</span>
+            <span class="sponsor-badge">Sponsored</span>
+          </div>
+          ${desc ? `<p class="sponsor-card-desc">${desc}</p>` : ''}
+          <div class="sponsor-card-meta">
+            <span class="sponsor-card-score">Score: ${(t.score || 0).toFixed(1)}</span>
+            ${cat}
+          </div>
+          ${cta}
+        </a>`;
+      }).join('');
+
+      container.innerHTML = `<div class="featured-sponsors">
+        <div class="featured-sponsors-header">
+          <span class="featured-sponsors-label">Featured Tools</span>
+          <a class="featured-sponsors-cta" href="/pricing/#sponsored">Get featured &rarr;</a>
+        </div>
+        <div class="featured-sponsors-grid">${cards}</div>
+      </div>`;
+    } catch {
+      // Non-fatal — just don't show the section
+    }
+  })();
 
   // News widget — load latest items from API
   (async () => {

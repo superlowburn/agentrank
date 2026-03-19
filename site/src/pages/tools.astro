@@ -58,6 +58,8 @@ const itemListJsonLd = {
     ))}
   </div>
 
+  <div id="featured-sponsors-tools"></div>
+
   <div class="table-wrap">
     <table id="leaderboard">
       <thead>
@@ -452,6 +454,110 @@ const itemListJsonLd = {
       background: color-mix(in srgb, var(--accent) 12%, transparent);
     }
   }
+
+  /* Sponsored row highlight */
+  tr.sponsored-row td {
+    background: color-mix(in srgb, var(--accent) 4%, transparent) !important;
+  }
+
+  tr.sponsored-row:hover td {
+    background: color-mix(in srgb, var(--accent) 8%, transparent) !important;
+  }
+
+  /* Featured sponsors section */
+  .featured-sponsors {
+    margin-bottom: 1rem;
+  }
+
+  .featured-sponsors-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.65rem;
+  }
+
+  .featured-sponsors-label {
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-muted);
+  }
+
+  .featured-sponsors-cta {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    text-decoration: none;
+  }
+
+  .featured-sponsors-cta:hover {
+    color: var(--accent);
+  }
+
+  .featured-sponsors-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 0.75rem;
+  }
+
+  .sponsor-card {
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-left: 3px solid color-mix(in srgb, var(--accent) 60%, transparent);
+    border-radius: 5px;
+    padding: 0.85rem 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    text-decoration: none;
+    transition: border-color 0.15s, background 0.15s;
+  }
+
+  .sponsor-card:hover {
+    border-color: var(--accent);
+    background: var(--bg-hover);
+    text-decoration: none;
+  }
+
+  .sponsor-card-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+  }
+
+  .sponsor-card-name {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .sponsor-badge {
+    font-size: 0.6rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    padding: 0.1rem 0.35rem;
+    border-radius: 3px;
+    background: color-mix(in srgb, var(--accent) 12%, transparent);
+    color: var(--accent);
+    border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent);
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .sponsor-card-desc {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    line-height: 1.4;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+  }
 </style>
 
 <script>
@@ -677,18 +783,30 @@ const itemListJsonLd = {
     });
   });
 
-  // --- Sponsored badge injection ---
+  // --- Sponsored badge injection + featured section ---
   (async () => {
     try {
       const resp = await fetch('/api/sponsored');
       if (!resp.ok) return;
-      const { sponsored } = await resp.json() as { sponsored: Array<{ full_name: string }> };
+      const { sponsored } = await resp.json() as {
+        sponsored: Array<{
+          full_name: string;
+          sponsor_tier: string | null;
+          description: string | null;
+          score: number;
+          category: string | null;
+          sponsor_description: string | null;
+          sponsor_cta_text: string | null;
+          sponsor_cta_url: string | null;
+        }>;
+      };
       if (!sponsored.length) return;
 
       const sponsoredSet = new Set(sponsored.map((s) => s.full_name));
       document.querySelectorAll<HTMLTableRowElement>('tr[data-full-name]').forEach((row) => {
         const fullName = row.dataset.fullName;
         if (fullName && sponsoredSet.has(fullName)) {
+          row.classList.add('sponsored-row');
           const nameCell = row.querySelector('.name');
           if (nameCell && !nameCell.querySelector('.sponsored')) {
             const badge = document.createElement('span');
@@ -698,6 +816,30 @@ const itemListJsonLd = {
           }
         }
       });
+
+      // Featured sponsors section
+      const container = document.getElementById('featured-sponsors-tools');
+      if (container) {
+        const top = sponsored.slice(0, 3);
+        const cards = top.map((t) => {
+          const desc = (t.sponsor_description || t.description || '').slice(0, 120);
+          return `<a class="sponsor-card" href="/api/sponsored/click?tool=${encodeURIComponent(t.full_name)}&type=detail&page=tools">
+            <div class="sponsor-card-top">
+              <span class="sponsor-card-name">${t.full_name.split('/')[1] || t.full_name}</span>
+              <span class="sponsor-badge">Sponsored</span>
+            </div>
+            ${desc ? `<p class="sponsor-card-desc">${desc}</p>` : ''}
+          </a>`;
+        }).join('');
+
+        container.innerHTML = `<div class="featured-sponsors">
+          <div class="featured-sponsors-header">
+            <span class="featured-sponsors-label">Featured Tools</span>
+            <a class="featured-sponsors-cta" href="/pricing/#sponsored">Get featured &rarr;</a>
+          </div>
+          <div class="featured-sponsors-grid">${cards}</div>
+        </div>`;
+      }
     } catch {
       // Non-fatal
     }

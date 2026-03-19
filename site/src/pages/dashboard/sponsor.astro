@@ -1,0 +1,563 @@
+---
+export const prerender = false;
+
+import Base from '../../layouts/Base.astro';
+
+const sessionId = Astro.url.searchParams.get('session_id');
+
+if (!sessionId) {
+  return Astro.redirect('/pricing/#sponsored');
+}
+
+const { env } = (Astro.locals as any).runtime;
+
+// Fetch dashboard data server-side
+let dashData: {
+  tool: {
+    full_name: string;
+    description: string | null;
+    score: number;
+    category: string | null;
+    rank: number;
+    sponsor_description: string | null;
+    sponsor_cta_text: string | null;
+    sponsor_cta_url: string | null;
+  } | null;
+  email: string | null;
+  tier: string | null;
+  period_end: number | null;
+  stats: {
+    last_7_days: { impressions: number; clicks: number; cta_clicks: number };
+    last_30_days: { impressions: number; clicks: number; cta_clicks: number };
+  };
+} | null = null;
+
+try {
+  // Verify session via Stripe
+  const stripeKey = env.STRIPE_SECRET_KEY;
+  let toolFullName: string | null = null;
+  let userEmail: string | null = null;
+  let tier: string | null = null;
+
+  if (stripeKey) {
+    const resp = await fetch(
+      `https://api.stripe.com/v1/checkout/sessions/${sessionId}?expand[]=customer_details`,
+      { headers: { Authorization: `Bearer ${stripeKey}` } }
+    );
+    if (resp.ok) {
+      const session = await resp.json() as {
+        metadata?: { tool_full_name?: string; tier?: string };
+        customer_details?: { email?: string };
+        customer_email?: string;
+        payment_status?: string;
+      };
+      if (session.payment_status === 'paid') {
+        toolFullName = session.metadata?.tool_full_name ?? null;
+        userEmail = session.customer_details?.email ?? session.customer_email ?? null;
+        tier = session.metadata?.tier ?? null;
+      }
+    }
+  }
+
+  if (toolFullName) {
+    const tool = await env.DB.prepare(
+      `SELECT full_name, description, score, category, rank,
+              sponsor_description, sponsor_cta_text, sponsor_cta_url
+       FROM tools WHERE full_name = ?`
+    ).bind(toolFullName).first() as typeof dashData extends null ? never : NonNullable<typeof dashData>['tool'];
+
+    const nowSec = Math.floor(Date.now() / 1000);
+    const day7 = nowSec - 7 * 86400;
+    const day30 = nowSec - 30 * 86400;
+
+    const statsRows7 = await env.DB.prepare(
+      `SELECT event_type, COUNT(*) as cnt FROM sponsor_events
+       WHERE tool_full_name = ? AND created_at >= ? GROUP BY event_type`
+    ).bind(toolFullName, day7).all() as { results: Array<{ event_type: string; cnt: number }> };
+
+    const statsRows30 = await env.DB.prepare(
+      `SELECT event_type, COUNT(*) as cnt FROM sponsor_events
+       WHERE tool_full_name = ? AND created_at >= ? GROUP BY event_type`
+    ).bind(toolFullName, day30).all() as { results: Array<{ event_type: string; cnt: number }> };
+
+    const mkStats = (rows: Array<{ event_type: string; cnt: number }>) => {
+      const s = { impressions: 0, clicks: 0, cta_clicks: 0 };
+      for (const r of rows) {
+        if (r.event_type === 'impression') s.impressions = r.cnt;
+        else if (r.event_type === 'click') s.clicks = r.cnt;
+        else if (r.event_type === 'cta_click') s.cta_clicks = r.cnt;
+      }
+      return s;
+    };
+
+    // Get subscription period_end
+    const sub = await env.DB.prepare(
+      'SELECT current_period_end FROM subscriptions WHERE tool_full_name = ? AND status = ? LIMIT 1'
+    ).bind(toolFullName, 'active').first() as { current_period_end: number } | null;
+
+    dashData = {
+      tool,
+      email: userEmail,
+      tier,
+      period_end: sub?.current_period_end ?? null,
+      stats: {
+        last_7_days: mkStats(statsRows7.results ?? []),
+        last_30_days: mkStats(statsRows30.results ?? []),
+      },
+    };
+  }
+} catch {
+  // Fall through to show error state
+}
+---
+
+<Base
+  title="Sponsor Dashboard — AgentRank"
+  description="Manage your sponsored listing on AgentRank."
+  canonicalUrl="https://agentrank-ai.com/dashboard/sponsor/"
+>
+  {!dashData || !dashData.tool ? (
+    <div class="error-wrap">
+      <h1>Session not found</h1>
+      <p>We couldn't verify your sponsored listing. Make sure you're using the link from your confirmation email.</p>
+      <a href="/pricing/#sponsored" class="btn-primary">View sponsorship options</a>
+    </div>
+  ) : (
+    <div class="dash-wrap">
+      <div class="dash-header">
+        <div>
+          <h1 class="dash-title">Sponsor Dashboard</h1>
+          <p class="dash-sub">
+            <a href={`/tool/${dashData.tool.full_name.replace('/', '--')}/`} class="tool-link">
+              {dashData.tool.full_name}
+            </a>
+            {dashData.tier && <span class="tier-badge">{dashData.tier.replace('sponsored_', '')}</span>}
+          </p>
+        </div>
+        {dashData.period_end && (
+          <p class="renews-at">Renews {new Date(dashData.period_end * 1000).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</p>
+        )}
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-period">Last 7 days</div>
+          <div class="stat-row">
+            <div class="stat-item">
+              <span class="stat-value">{dashData.stats.last_7_days.impressions.toLocaleString('en-US')}</span>
+              <span class="stat-label">Impressions</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-value">{dashData.stats.last_7_days.clicks.toLocaleString('en-US')}</span>
+              <span class="stat-label">Clicks</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-value">{dashData.stats.last_7_days.cta_clicks.toLocaleString('en-US')}</span>
+              <span class="stat-label">CTA clicks</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-period">Last 30 days</div>
+          <div class="stat-row">
+            <div class="stat-item">
+              <span class="stat-value">{dashData.stats.last_30_days.impressions.toLocaleString('en-US')}</span>
+              <span class="stat-label">Impressions</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-value">{dashData.stats.last_30_days.clicks.toLocaleString('en-US')}</span>
+              <span class="stat-label">Clicks</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-value">{dashData.stats.last_30_days.cta_clicks.toLocaleString('en-US')}</span>
+              <span class="stat-label">CTA clicks</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <section class="edit-section">
+        <h2 class="section-title">Customize your listing</h2>
+        <p class="section-sub">These appear in your featured placement. Leave blank to use defaults from GitHub.</p>
+
+        <form id="listing-form" class="listing-form">
+          <div class="form-field">
+            <label for="sponsor-desc">Custom description</label>
+            <span class="field-hint">Max 200 chars. Falls back to GitHub description if blank.</span>
+            <textarea
+              id="sponsor-desc"
+              name="sponsor_description"
+              maxlength="200"
+              rows="3"
+              placeholder={dashData.tool.description?.slice(0, 200) || 'Describe your tool in 1-2 sentences...'}
+            >{dashData.tool.sponsor_description || ''}</textarea>
+            <span class="char-count" id="desc-count">{(dashData.tool.sponsor_description || '').length}/200</span>
+          </div>
+
+          <div class="form-field">
+            <label for="cta-text">CTA button text</label>
+            <span class="field-hint">Max 50 chars. E.g. "Try Free", "Get Started", "View Docs"</span>
+            <input
+              type="text"
+              id="cta-text"
+              name="sponsor_cta_text"
+              maxlength="50"
+              placeholder="Try Free"
+              value={dashData.tool.sponsor_cta_text || ''}
+            />
+          </div>
+
+          <div class="form-field">
+            <label for="cta-url">CTA button URL</label>
+            <span class="field-hint">Must be a valid https:// URL.</span>
+            <input
+              type="url"
+              id="cta-url"
+              name="sponsor_cta_url"
+              placeholder="https://your-site.com"
+              value={dashData.tool.sponsor_cta_url || ''}
+            />
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" id="save-btn" class="btn-primary">Save changes</button>
+            <span id="save-msg" class="save-msg" aria-live="polite"></span>
+          </div>
+        </form>
+      </section>
+
+      <section class="preview-section">
+        <h2 class="section-title">Live listing</h2>
+        <p class="section-sub">
+          Your tool appears in the <a href="/tools/" class="preview-link">tools leaderboard</a>,
+          {dashData.tool.category && <> the <a href={`/category/${dashData.tool.category}/`} class="preview-link">{dashData.tool.category}</a> category page,</>}
+          and on the <a href="/" class="preview-link">homepage</a> featured section.
+        </p>
+        <div class="score-row">
+          <span class="score-label">AgentRank score</span>
+          <strong class="score-val">{dashData.tool.score.toFixed(1)}</strong>
+          <span class="score-note">(score is algorithm-driven — not affected by sponsorship)</span>
+        </div>
+      </section>
+    </div>
+  )}
+</Base>
+
+<style>
+  .error-wrap {
+    max-width: 520px;
+    margin: 4rem auto;
+    text-align: center;
+  }
+
+  .error-wrap h1 {
+    font-size: 1.3rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .error-wrap p {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    margin-bottom: 1.5rem;
+  }
+
+  .dash-wrap {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 1.5rem 0;
+  }
+
+  .dash-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+  }
+
+  .dash-title {
+    font-size: 1.3rem;
+    font-weight: 700;
+    margin-bottom: 0.25rem;
+  }
+
+  .dash-sub {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .tool-link {
+    color: var(--accent);
+    text-decoration: none;
+    font-weight: 600;
+  }
+
+  .tool-link:hover {
+    text-decoration: underline;
+  }
+
+  .tier-badge {
+    font-size: 0.65rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    padding: 0.1rem 0.4rem;
+    border-radius: 3px;
+    background: color-mix(in srgb, var(--accent) 12%, transparent);
+    color: var(--accent);
+    border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent);
+  }
+
+  .renews-at {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    white-space: nowrap;
+  }
+
+  .stats-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-bottom: 2rem;
+  }
+
+  @media (max-width: 500px) {
+    .stats-grid { grid-template-columns: 1fr; }
+  }
+
+  .stat-card {
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 1rem 1.25rem;
+  }
+
+  .stat-period {
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-muted);
+    margin-bottom: 0.75rem;
+  }
+
+  .stat-row {
+    display: flex;
+    gap: 1.5rem;
+  }
+
+  .stat-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+  }
+
+  .stat-value {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--text);
+    line-height: 1;
+  }
+
+  .stat-label {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+  }
+
+  .edit-section,
+  .preview-section {
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .section-title {
+    font-size: 0.9rem;
+    font-weight: 700;
+    margin-bottom: 0.35rem;
+  }
+
+  .section-sub {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    margin-bottom: 1.25rem;
+  }
+
+  .listing-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+
+  .form-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  .form-field label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text);
+  }
+
+  .field-hint {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+  }
+
+  .form-field input,
+  .form-field textarea {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 0.5rem 0.75rem;
+    border-radius: 4px;
+    font-family: inherit;
+    font-size: 0.85rem;
+    resize: vertical;
+  }
+
+  .form-field input:focus,
+  .form-field textarea:focus {
+    outline: 1px solid var(--accent);
+    border-color: var(--accent);
+  }
+
+  .char-count {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    text-align: right;
+  }
+
+  .form-actions {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .btn-primary {
+    display: inline-block;
+    background: var(--accent);
+    color: #000;
+    border: none;
+    border-radius: 4px;
+    padding: 0.5rem 1rem;
+    font-family: inherit;
+    font-size: 0.85rem;
+    font-weight: 700;
+    cursor: pointer;
+    text-decoration: none;
+    transition: opacity 0.15s;
+  }
+
+  .btn-primary:hover {
+    opacity: 0.85;
+    text-decoration: none;
+  }
+
+  .btn-primary:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .save-msg {
+    font-size: 0.8rem;
+  }
+
+  .save-msg.success { color: var(--accent); }
+  .save-msg.error { color: #ef4444; }
+
+  .score-row {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+  }
+
+  .score-label {
+    font-size: 0.82rem;
+    color: var(--text-muted);
+  }
+
+  .score-val {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--text);
+  }
+
+  .score-note {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    font-style: italic;
+  }
+
+  .preview-link {
+    color: var(--accent);
+    text-decoration: none;
+  }
+
+  .preview-link:hover {
+    text-decoration: underline;
+  }
+</style>
+
+<script>
+  const form = document.getElementById('listing-form') as HTMLFormElement | null;
+  const saveBtn = document.getElementById('save-btn') as HTMLButtonElement | null;
+  const saveMsg = document.getElementById('save-msg') as HTMLSpanElement | null;
+  const textarea = document.getElementById('sponsor-desc') as HTMLTextAreaElement | null;
+  const charCount = document.getElementById('desc-count') as HTMLSpanElement | null;
+
+  // Char counter for description
+  textarea?.addEventListener('input', () => {
+    const len = textarea.value.length;
+    if (charCount) charCount.textContent = `${len}/200`;
+  });
+
+  const sessionId = new URL(location.href).searchParams.get('session_id') || '';
+
+  form?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if (!saveBtn || !saveMsg) return;
+    saveBtn.disabled = true;
+    saveMsg.className = 'save-msg';
+    saveMsg.textContent = '';
+
+    const data = new FormData(form);
+    const payload: Record<string, string> = {
+      session_id: sessionId,
+      sponsor_description: (data.get('sponsor_description') as string) ?? '',
+      sponsor_cta_text: (data.get('sponsor_cta_text') as string) ?? '',
+      sponsor_cta_url: (data.get('sponsor_cta_url') as string) ?? '',
+    };
+
+    try {
+      const res = await fetch('/api/sponsor/listing', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+      const result = await res.json() as { ok?: boolean; error?: string };
+      if (result.ok) {
+        saveMsg.textContent = 'Changes saved.';
+        saveMsg.className = 'save-msg success';
+      } else {
+        saveMsg.textContent = result.error || 'Failed to save.';
+        saveMsg.className = 'save-msg error';
+        saveBtn.disabled = false;
+      }
+    } catch {
+      saveMsg.textContent = 'Network error.';
+      saveMsg.className = 'save-msg error';
+      saveBtn.disabled = false;
+    }
+  });
+</script>

@@ -27,7 +27,10 @@ CREATE TABLE tools (
   pypi_package TEXT,
   category TEXT,
   sponsored INTEGER NOT NULL DEFAULT 0,
-  sponsor_tier TEXT
+  sponsor_tier TEXT,
+  sponsor_description TEXT,
+  sponsor_cta_text TEXT,
+  sponsor_cta_url TEXT
 );
 
 CREATE INDEX idx_tools_full_name ON tools(full_name);
@@ -346,6 +349,23 @@ CREATE INDEX IF NOT EXISTS idx_wr_week_start ON weekly_reports(week_start DESC);
 -- Migration (run once on existing D1):
 -- CREATE TABLE IF NOT EXISTS weekly_reports (id TEXT PRIMARY KEY, week_start TEXT NOT NULL, week_end TEXT NOT NULL, week_number INTEGER NOT NULL, year INTEGER NOT NULL, total_tools INTEGER NOT NULL DEFAULT 0, new_tools_count INTEGER NOT NULL DEFAULT 0, top_10 TEXT, biggest_movers TEXT, new_tools TEXT, notable_releases TEXT, category_stats TEXT, generated_at TEXT NOT NULL DEFAULT (datetime('now')));
 -- CREATE INDEX IF NOT EXISTS idx_wr_week_start ON weekly_reports(week_start DESC);
+
+-- Sponsor events — click/impression tracking for sponsored listings
+-- survives pipeline DROP/CREATE cycles
+CREATE TABLE IF NOT EXISTS sponsor_events (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  tool_full_name TEXT NOT NULL,
+  event_type TEXT NOT NULL,  -- 'impression' | 'click' | 'cta_click'
+  page_type TEXT,            -- 'homepage' | 'category' | 'detail' | 'comparison'
+  created_at INTEGER NOT NULL DEFAULT (unixepoch())
+);
+CREATE INDEX IF NOT EXISTS idx_sponsor_events_tool ON sponsor_events(tool_full_name, created_at);
+-- Migration (run once on existing D1):
+-- ALTER TABLE tools ADD COLUMN sponsor_description TEXT;
+-- ALTER TABLE tools ADD COLUMN sponsor_cta_text TEXT;
+-- ALTER TABLE tools ADD COLUMN sponsor_cta_url TEXT;
+-- CREATE TABLE IF NOT EXISTS sponsor_events (id INTEGER PRIMARY KEY AUTOINCREMENT, tool_full_name TEXT NOT NULL, event_type TEXT NOT NULL, page_type TEXT, created_at INTEGER NOT NULL DEFAULT (unixepoch()));
+-- CREATE INDEX IF NOT EXISTS idx_sponsor_events_tool ON sponsor_events(tool_full_name, created_at);
 
 -- Submissions table — survives pipeline DROP/CREATE cycles
 CREATE TABLE IF NOT EXISTS submissions (
