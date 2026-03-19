@@ -61,7 +61,7 @@ const currentSlug = currentFullName.replace('/', '--');
 // Tool data
 const tool = await env.DB.prepare(
   `SELECT full_name, url, description, rank, score, stars, open_issues, closed_issues,
-          contributors, dependents, last_commit_at, language, license
+          contributors, dependents, last_commit_at, language, license, category
    FROM tools WHERE full_name = ?`
 ).bind(currentFullName).first() as Record<string, unknown> | null;
 
@@ -74,13 +74,21 @@ const claim = await env.DB.prepare(
   'SELECT tagline, category, logo_url, is_deprecated FROM claims WHERE tool_full_name = ? AND github_username = ? AND verified = 1'
 ).bind(currentFullName, githubUsername).first() as Record<string, unknown> | null;
 
-// 7-day page views
+// 7-day page views (human only)
 const viewResult = await env.DB.prepare(
   `SELECT COUNT(*) as count FROM request_log
-   WHERE path LIKE ? AND type = 'page' AND ts >= datetime('now', '-7 days')`
+   WHERE path LIKE ? AND type = 'page' AND is_bot = 0 AND ts >= datetime('now', '-7 days')`
 ).bind(`/tool/${currentSlug}%`).first() as { count: number } | null;
 
 const viewCount7d = viewResult?.count ?? 0;
+
+// 30-day page views (human only)
+const view30Result = await env.DB.prepare(
+  `SELECT COUNT(*) as count FROM request_log
+   WHERE path LIKE ? AND type = 'page' AND is_bot = 0 AND ts >= datetime('now', '-30 days')`
+).bind(`/tool/${currentSlug}%`).first() as { count: number } | null;
+
+const viewCount30d = view30Result?.count ?? 0;
 
 // Total tools for rank context
 const totalResult = await env.DB.prepare(
@@ -88,6 +96,55 @@ const totalResult = await env.DB.prepare(
 ).first() as { count: number } | null;
 
 const totalTools = (totalResult?.count ?? 0).toLocaleString();
+
+// 30-day rank/score history
+const histResult = await env.DB.prepare(
+  `SELECT snapshot_date, score, rank
+   FROM rank_history
+   WHERE tool_full_name = ? AND tool_type = 'tool'
+   ORDER BY snapshot_date DESC
+   LIMIT 30`
+).bind(currentFullName).all();
+
+const histRowsDesc = (histResult.results || []) as { snapshot_date: string; score: number; rank: number }[];
+const histRows = [...histRowsDesc].reverse(); // oldest-first
+
+// Rank and score changes vs 7 days ago
+let rankChange: number | null = null;
+let scoreChange: number | null = null;
+if (histRows.length >= 2) {
+  const latest = histRows[histRows.length - 1];
+  const cutoffDate = new Date(latest.snapshot_date + 'T00:00:00Z');
+  cutoffDate.setUTCDate(cutoffDate.getUTCDate() - 7);
+  const cutoffStr = cutoffDate.toISOString().slice(0, 10);
+  const baseline = histRowsDesc.find((h) => h.snapshot_date <= cutoffStr);
+  if (baseline) {
+    rankChange = baseline.rank - latest.rank; // positive = rank improved
+    scoreChange = Math.round((latest.score - baseline.score) * 10) / 10;
+  }
+}
+
+// Top referrers (30d) for tool listing
+const refResult = await env.DB.prepare(
+  `SELECT referrer, COUNT(*) as cnt FROM request_log
+   WHERE path LIKE ? AND type = 'page' AND is_bot = 0
+   AND referrer IS NOT NULL AND ts >= datetime('now', '-30 days')
+   GROUP BY referrer ORDER BY cnt DESC LIMIT 6`
+).bind(`/tool/${currentSlug}%`).all();
+
+const topReferrers = (refResult.results || []) as { referrer: string; cnt: number }[];
+
+// Category average score
+const toolCategory = (tool.category as string) || (claim?.category as string) || null;
+let categoryAvgScore: number | null = null;
+let categoryToolCount = 0;
+if (toolCategory) {
+  const catResult = await env.DB.prepare(
+    `SELECT AVG(score) as avg_score, COUNT(*) as cnt FROM tools WHERE category = ? AND is_archived = 0`
+  ).bind(toolCategory).first() as { avg_score: number | null; cnt: number } | null;
+  categoryAvgScore = catResult?.avg_score ? Math.round(catResult.avg_score * 10) / 10 : null;
+  categoryToolCount = catResult?.cnt ?? 0;
+}
 
 // Score signals
 const stars = (tool.stars as number) || 0;
@@ -112,7 +169,6 @@ if (lastCommitAt) {
   freshnessScore = Math.max(0, 1 - daysSinceCommit / 180);
 }
 
-// Format last commit
 function formatDaysAgo(days: number | null): string {
   if (days === null) return 'unknown';
   if (days === 0) return 'today';
@@ -128,17 +184,68 @@ function formatDaysAgo(days: number | null): string {
 // Listing completeness
 const hasLogo = !!claim?.logo_url;
 const hasTagline = !!claim?.tagline;
-const hasCategory = !!claim?.category;
-const isVerifiedPro = false; // free tier only in this build
+const hasCategory = !!(claim?.category || tool.category);
+const isVerifiedPro = false;
 
 const tagline = (claim?.tagline as string) || '';
-const category = (claim?.category as string) || '';
+const category = (claim?.category as string) || (tool.category as string) || '';
 const logoUrl = (claim?.logo_url as string) || '';
 
 const claimedToolsForSwitcher = claimedToolsList.map((c) => ({
   full_name: c.tool_full_name,
   slug: c.tool_full_name.replace('/', '--'),
 }));
+
+// Build SVG score trend chart
+const CHART_W = 480;
+const CHART_H = 72;
+const CHART_PAD_X = 4;
+const CHART_PAD_Y = 8;
+
+let scorePolyline = '';
+let scoreAreaPath = '';
+let rankPolyline = '';
+
+if (histRows.length >= 2) {
+  const scores = histRows.map((h) => h.score);
+  const minScore = Math.min(...scores);
+  const maxScore = Math.max(...scores);
+  const scoreRange = maxScore - minScore || 1;
+  const n = histRows.length;
+
+  const pts = histRows.map((h, i) => {
+    const x = CHART_PAD_X + (i / (n - 1)) * (CHART_W - 2 * CHART_PAD_X);
+    const y = CHART_PAD_Y + (1 - (h.score - minScore) / scoreRange) * (CHART_H - 2 * CHART_PAD_Y);
+    return { x: x.toFixed(1), y: y.toFixed(1) };
+  });
+
+  scorePolyline = pts.map((p) => `${p.x},${p.y}`).join(' ');
+  const firstX = pts[0].x;
+  const lastX = pts[pts.length - 1].x;
+  const bottom = CHART_H - CHART_PAD_Y;
+  scoreAreaPath = `M${firstX},${bottom} ` + pts.map((p) => `L${p.x},${p.y}`).join(' ') + ` L${lastX},${bottom} Z`;
+}
+
+// Rank trend (inverted - lower rank = better = higher on chart)
+let rankPolylineStr = '';
+if (histRows.length >= 2) {
+  const ranks = histRows.map((h) => h.rank);
+  const minRank = Math.min(...ranks);
+  const maxRank = Math.max(...ranks);
+  const rankRange = maxRank - minRank || 1;
+  const n = histRows.length;
+
+  const pts = histRows.map((h, i) => {
+    const x = CHART_PAD_X + (i / (n - 1)) * (CHART_W - 2 * CHART_PAD_X);
+    // Invert: lower rank = higher on chart (better)
+    const y = CHART_PAD_Y + ((h.rank - minRank) / rankRange) * (CHART_H - 2 * CHART_PAD_Y);
+    return `${x.toFixed(1)},${y.toFixed(1)}`;
+  });
+
+  rankPolylineStr = pts.join(' ');
+}
+
+const hasHistory = histRows.length >= 2;
 ---
 
 <Base title={`Publisher Dashboard — ${currentFullName} — AgentRank`} description="AgentRank publisher dashboard">
@@ -167,71 +274,161 @@ const claimedToolsForSwitcher = claimedToolsList.map((c) => ({
     </div>
   </div>
 
+  <!-- Stats row -->
   <div class="stats-row">
     <div class="stat-card">
       <div class="stat-label">AgentRank Score</div>
       <div class="stat-value score-value">{score}</div>
-      <div class="stat-sub">of 100</div>
+      <div class="stat-sub">
+        {scoreChange !== null && (
+          <span class={scoreChange >= 0 ? 'delta-up' : 'delta-down'}>
+            {scoreChange >= 0 ? '+' : ''}{scoreChange} vs 7d ago
+          </span>
+        )}
+        {scoreChange === null && 'of 100'}
+      </div>
     </div>
     <div class="stat-card">
       <div class="stat-label">Global Rank</div>
       <div class="stat-value">#{rank.toLocaleString()}</div>
-      <div class="stat-sub">of {totalTools}+</div>
+      <div class="stat-sub">
+        {rankChange !== null && rankChange !== 0 && (
+          <span class={rankChange > 0 ? 'delta-up' : 'delta-down'}>
+            {rankChange > 0 ? `+${rankChange}` : rankChange} vs 7d ago
+          </span>
+        )}
+        {rankChange === 0 && <span class="delta-stable">no change</span>}
+        {rankChange === null && `of ${totalTools}+`}
+      </div>
     </div>
     <div class="stat-card">
       <div class="stat-label">Views (7d)</div>
       <div class="stat-value">{viewCount7d.toLocaleString()}</div>
-      <div class="stat-sub">last 7 days</div>
+      <div class="stat-sub">human visitors</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Views (30d)</div>
+      <div class="stat-value">{viewCount30d.toLocaleString()}</div>
+      <div class="stat-sub">human visitors</div>
     </div>
   </div>
 
-  <!-- Locked analytics teaser -->
-  <div class="locked-panel">
-    <div class="locked-panel-header">
-      <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
-        <path d="M7 1C5.343 1 4 2.343 4 4v1H3a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V6a1 1 0 0 0-1-1h-1V4c0-1.657-1.343-3-3-3zm0 1.5c.828 0 1.5.672 1.5 1.5v1h-3V4c0-.828.672-1.5 1.5-1.5z" fill="currentColor"/>
-      </svg>
-      Unlock publisher analytics
+  <!-- Score trend chart -->
+  <div class="section">
+    <div class="section-header">
+      Score trend — last 30 days
     </div>
-    <p class="locked-desc">See score trend over time, referral sources, comparison events, install attribution, and set score-change email alerts.</p>
-    <div class="locked-charts">
-      <div class="locked-chart">
-        <div class="chart-fake">
-          <div class="chart-fake-bar" style="height:40%"></div>
-          <div class="chart-fake-bar" style="height:55%"></div>
-          <div class="chart-fake-bar" style="height:70%"></div>
-          <div class="chart-fake-bar" style="height:65%"></div>
-          <div class="chart-fake-bar" style="height:80%"></div>
-          <div class="chart-fake-bar" style="height:75%"></div>
-          <div class="chart-fake-bar" style="height:90%"></div>
-        </div>
-        <div class="chart-lock-label">
-          <svg width="12" height="12" viewBox="0 0 14 14" fill="none" aria-hidden="true">
-            <path d="M7 1C5.343 1 4 2.343 4 4v1H3a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V6a1 1 0 0 0-1-1h-1V4c0-1.657-1.343-3-3-3zm0 1.5c.828 0 1.5.672 1.5 1.5v1h-3V4c0-.828.672-1.5 1.5-1.5z" fill="currentColor"/>
-          </svg>
-          Score trend (30d)
+    {hasHistory ? (
+      <div class="chart-wrap">
+        <svg viewBox={`0 0 ${CHART_W} ${CHART_H}`} class="trend-chart" aria-label="Score trend over 30 days" role="img">
+          <!-- Area fill -->
+          <path d={scoreAreaPath} class="chart-area" />
+          <!-- Line -->
+          <polyline points={scorePolyline} class="chart-line" fill="none" />
+          <!-- Latest dot -->
+          {(() => {
+            const lastPt = scorePolyline.split(' ').pop();
+            if (!lastPt) return null;
+            const [lx, ly] = lastPt.split(',');
+            return <circle cx={lx} cy={ly} r="3" class="chart-dot" />;
+          })()}
+        </svg>
+        <div class="chart-labels">
+          <span>{histRows[0]?.snapshot_date.slice(5)}</span>
+          <span>{histRows[histRows.length - 1]?.snapshot_date.slice(5)}</span>
         </div>
       </div>
-      <div class="locked-chart">
-        <div class="chart-fake">
-          <div class="chart-fake-bar" style="height:30%"></div>
-          <div class="chart-fake-bar" style="height:60%"></div>
-          <div class="chart-fake-bar" style="height:45%"></div>
-          <div class="chart-fake-bar" style="height:80%"></div>
-          <div class="chart-fake-bar" style="height:50%"></div>
-          <div class="chart-fake-bar" style="height:70%"></div>
-          <div class="chart-fake-bar" style="height:40%"></div>
-        </div>
-        <div class="chart-lock-label">
-          <svg width="12" height="12" viewBox="0 0 14 14" fill="none" aria-hidden="true">
-            <path d="M7 1C5.343 1 4 2.343 4 4v1H3a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V6a1 1 0 0 0-1-1h-1V4c0-1.657-1.343-3-3-3zm0 1.5c.828 0 1.5.672 1.5 1.5v1h-3V4c0-.828.672-1.5 1.5-1.5z" fill="currentColor"/>
-          </svg>
-          Referral sources
-        </div>
+    ) : (
+      <div class="chart-empty">
+        No history yet — trend data populates after the first daily snapshot.
       </div>
-    </div>
-    <a href="/pricing/" class="upgrade-cta">Upgrade to Verified Publisher Pro — $29/mo &rarr;</a>
+    )}
   </div>
+
+  <!-- Rank trend chart -->
+  {hasHistory && (
+    <div class="section">
+      <div class="section-header">
+        Rank trend — last 30 days
+        <span class="section-note">lower is better</span>
+      </div>
+      <div class="chart-wrap">
+        <svg viewBox={`0 0 ${CHART_W} ${CHART_H}`} class="trend-chart rank-chart" aria-label="Rank trend over 30 days" role="img">
+          <polyline points={rankPolylineStr} class="chart-line rank-line" fill="none" />
+          {(() => {
+            const lastPt = rankPolylineStr.split(' ').pop();
+            if (!lastPt) return null;
+            const [lx, ly] = lastPt.split(',');
+            return <circle cx={lx} cy={ly} r="3" class="chart-dot rank-dot" />;
+          })()}
+        </svg>
+        <div class="chart-labels">
+          <span>{histRows[0]?.snapshot_date.slice(5)}</span>
+          <span>#{rank.toLocaleString()} today</span>
+        </div>
+      </div>
+    </div>
+  )}
+
+  <!-- Traffic sources -->
+  <div class="section">
+    <div class="section-header">Traffic sources — last 30 days</div>
+    {topReferrers.length > 0 ? (
+      <div class="referrer-table">
+        {topReferrers.map((r) => {
+          const label = r.referrer === 'direct' ? 'Direct / unknown' : r.referrer;
+          const pct = viewCount30d > 0 ? Math.round((r.cnt / viewCount30d) * 100) : 0;
+          return (
+            <div class="referrer-row">
+              <span class="referrer-src">{label}</span>
+              <div class="referrer-bar-wrap">
+                <div class="referrer-bar" style={`width:${Math.min(pct, 100)}%`}></div>
+              </div>
+              <span class="referrer-cnt">{r.cnt.toLocaleString()}</span>
+              <span class="referrer-pct">{pct}%</span>
+            </div>
+          );
+        })}
+      </div>
+    ) : (
+      <p class="empty-note">No referrer data yet for this period.</p>
+    )}
+  </div>
+
+  <!-- Category comparison -->
+  {toolCategory && categoryAvgScore !== null && (
+    <div class="section">
+      <div class="section-header">Category comparison</div>
+      <div class="category-cmp">
+        <div class="cmp-label-row">
+          <span class="cmp-tool-label">{currentFullName.split('/')[1]} — score {score}</span>
+          <span class="cmp-cat-label">Category avg — {categoryAvgScore} ({categoryToolCount} tools in "{toolCategory}")</span>
+        </div>
+        <div class="cmp-bars">
+          <div class="cmp-row">
+            <span class="cmp-row-label">Your score</span>
+            <div class="cmp-bar-wrap">
+              <div class="cmp-bar cmp-bar-tool" style={`width:${score}%`}></div>
+            </div>
+            <span class="cmp-bar-val">{score}</span>
+          </div>
+          <div class="cmp-row">
+            <span class="cmp-row-label">Category avg</span>
+            <div class="cmp-bar-wrap">
+              <div class="cmp-bar cmp-bar-avg" style={`width:${categoryAvgScore}%`}></div>
+            </div>
+            <span class="cmp-bar-val">{categoryAvgScore}</span>
+          </div>
+        </div>
+        {score > categoryAvgScore && (
+          <p class="cmp-note cmp-note-good">You are above the category average by {(score - categoryAvgScore).toFixed(1)} points.</p>
+        )}
+        {score <= categoryAvgScore && (
+          <p class="cmp-note cmp-note-warn">You are below the category average by {(categoryAvgScore - score).toFixed(1)} points. <a href="/methodology/" class="cmp-link">How to improve &rarr;</a></p>
+        )}
+      </div>
+    </div>
+  )}
 
   <!-- Score breakdown -->
   <div class="section">
@@ -246,7 +443,7 @@ const claimedToolsForSwitcher = claimedToolsList.map((c) => ({
           <div class="signal-bar" style={`width:${Math.round(starsScore * 100)}%`}></div>
         </div>
         <span class="signal-val">{starsScore.toFixed(2)}</span>
-        <span class="signal-detail">{stars.toLocaleString()} stars</span>
+        <span class="signal-detail">{stars.toLocaleString()} stars · weight 15%</span>
       </div>
       <div class="signal-row">
         <span class="signal-label">Freshness</span>
@@ -254,7 +451,7 @@ const claimedToolsForSwitcher = claimedToolsList.map((c) => ({
           <div class="signal-bar" style={`width:${Math.round(freshnessScore * 100)}%`}></div>
         </div>
         <span class="signal-val">{freshnessScore.toFixed(2)}</span>
-        <span class="signal-detail">Last commit: {formatDaysAgo(daysSinceCommit)}</span>
+        <span class="signal-detail">Last commit: {formatDaysAgo(daysSinceCommit)} · weight 25%</span>
       </div>
       <div class="signal-row">
         <span class="signal-label">Issue health</span>
@@ -263,7 +460,7 @@ const claimedToolsForSwitcher = claimedToolsList.map((c) => ({
         </div>
         <span class="signal-val">{issueHealth.toFixed(2)}</span>
         <span class="signal-detail">
-          {openIssues} open, {closedIssues} closed
+          {openIssues} open, {closedIssues} closed · weight 25%
           {issueHealth < 0.4 && <span class="signal-hint"> — needs work</span>}
         </span>
       </div>
@@ -273,7 +470,7 @@ const claimedToolsForSwitcher = claimedToolsList.map((c) => ({
           <div class="signal-bar" style={`width:${Math.round(contributorsScore * 100)}%`}></div>
         </div>
         <span class="signal-val">{contributorsScore.toFixed(2)}</span>
-        <span class="signal-detail">{contributors} contributor{contributors !== 1 ? 's' : ''}</span>
+        <span class="signal-detail">{contributors} contributor{contributors !== 1 ? 's' : ''} · weight 10%</span>
       </div>
       <div class="signal-row">
         <span class="signal-label">Dependents</span>
@@ -281,10 +478,24 @@ const claimedToolsForSwitcher = claimedToolsList.map((c) => ({
           <div class="signal-bar" style={`width:${Math.round(dependentsScore * 100)}%`}></div>
         </div>
         <span class="signal-val">{dependentsScore.toFixed(2)}</span>
-        <span class="signal-detail">{dependents.toLocaleString()} dependent repos</span>
+        <span class="signal-detail">{dependents.toLocaleString()} dependent repos · weight 25%</span>
       </div>
     </div>
   </div>
+
+  <!-- Verified Publisher upgrade CTA -->
+  {!isVerifiedPro && (
+    <div class="upgrade-panel">
+      <div class="upgrade-panel-header">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+          <path d="M7 1C5.343 1 4 2.343 4 4v1H3a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V6a1 1 0 0 0-1-1h-1V4c0-1.657-1.343-3-3-3zm0 1.5c.828 0 1.5.672 1.5 1.5v1h-3V4c0-.828.672-1.5 1.5-1.5z" fill="currentColor"/>
+        </svg>
+        Upgrade to Verified Publisher Pro
+      </div>
+      <p class="upgrade-desc">Get a Verified Publisher badge on your listing, priority placement in category pages, and score-change email alerts.</p>
+      <a href="/pricing/" class="upgrade-cta">Upgrade — $29/mo &rarr;</a>
+    </div>
+  )}
 
   <!-- Listing status -->
   <div class="section">
@@ -318,15 +529,17 @@ const claimedToolsForSwitcher = claimedToolsList.map((c) => ({
           {hasCategory && <span class="check-val">{category}</span>}
         </span>
       </div>
-      <div class="check-row check-locked">
+      <div class={`check-row ${isVerifiedPro ? 'check-done' : 'check-locked'}`}>
         <span class="check-icon check-icon-lock">
-          <svg width="10" height="10" viewBox="0 0 14 14" fill="none" aria-hidden="true">
-            <path d="M7 1C5.343 1 4 2.343 4 4v1H3a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V6a1 1 0 0 0-1-1h-1V4c0-1.657-1.343-3-3-3zm0 1.5c.828 0 1.5.672 1.5 1.5v1h-3V4c0-.828.672-1.5 1.5-1.5z" fill="currentColor"/>
-          </svg>
+          {isVerifiedPro ? '✓' : (
+            <svg width="10" height="10" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+              <path d="M7 1C5.343 1 4 2.343 4 4v1H3a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V6a1 1 0 0 0-1-1h-1V4c0-1.657-1.343-3-3-3zm0 1.5c.828 0 1.5.672 1.5 1.5v1h-3V4c0-.828.672-1.5 1.5-1.5z" fill="currentColor"/>
+            </svg>
+          )}
         </span>
         <span>
           Verified Publisher badge
-          <a href="/pricing/" class="check-link">Upgrade to add badge &rarr;</a>
+          {!isVerifiedPro && <a href="/pricing/" class="check-link">Upgrade to add badge &rarr;</a>}
         </span>
       </div>
     </div>
@@ -425,14 +638,14 @@ const claimedToolsForSwitcher = claimedToolsList.map((c) => ({
   .stats-row {
     display: flex;
     gap: 1rem;
-    margin-bottom: 1.5rem;
+    margin-bottom: 2rem;
     flex-wrap: wrap;
   }
 
   .stat-card {
     flex: 1;
-    min-width: 140px;
-    max-width: 200px;
+    min-width: 130px;
+    max-width: 180px;
     background: var(--bg-surface);
     border: 1px solid var(--border);
     border-radius: 6px;
@@ -463,8 +676,225 @@ const claimedToolsForSwitcher = claimedToolsList.map((c) => ({
     color: var(--text-muted);
   }
 
-  /* Locked analytics panel */
-  .locked-panel {
+  .delta-up {
+    color: #4ade80;
+    font-weight: 600;
+  }
+
+  .delta-down {
+    color: #f87171;
+    font-weight: 600;
+  }
+
+  .delta-stable {
+    color: var(--text-muted);
+  }
+
+  /* Charts */
+  .chart-wrap {
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 1rem;
+  }
+
+  .trend-chart {
+    width: 100%;
+    height: auto;
+    display: block;
+    overflow: visible;
+  }
+
+  .chart-area {
+    fill: var(--accent);
+    opacity: 0.08;
+  }
+
+  .chart-line {
+    stroke: var(--accent);
+    stroke-width: 1.5;
+    stroke-linejoin: round;
+    stroke-linecap: round;
+  }
+
+  .chart-dot {
+    fill: var(--accent);
+  }
+
+  .rank-chart .chart-line {
+    stroke: #818cf8;
+  }
+
+  .rank-chart .chart-dot {
+    fill: #818cf8;
+  }
+
+  .chart-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.68rem;
+    color: var(--text-muted);
+    margin-top: 0.4rem;
+  }
+
+  .chart-empty {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    padding: 1rem;
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+  }
+
+  /* Referrers */
+  .referrer-table {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .referrer-row {
+    display: grid;
+    grid-template-columns: 1fr 120px 50px 36px;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 0.8rem;
+  }
+
+  .referrer-src {
+    color: var(--text-muted);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 0.75rem;
+  }
+
+  .referrer-bar-wrap {
+    height: 4px;
+    background: var(--bg-hover);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .referrer-bar {
+    height: 100%;
+    background: var(--accent);
+    border-radius: 2px;
+    min-width: 2px;
+  }
+
+  .referrer-cnt {
+    font-weight: 600;
+    text-align: right;
+    font-size: 0.75rem;
+  }
+
+  .referrer-pct {
+    color: var(--text-muted);
+    font-size: 0.72rem;
+    text-align: right;
+  }
+
+  .empty-note {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+  }
+
+  /* Category comparison */
+  .category-cmp {
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 1rem 1.25rem;
+  }
+
+  .cmp-label-row {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    margin-bottom: 0.75rem;
+  }
+
+  .cmp-tool-label {
+    color: var(--accent);
+    font-weight: 600;
+  }
+
+  .cmp-bars {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .cmp-row {
+    display: grid;
+    grid-template-columns: 90px 1fr 40px;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .cmp-row-label {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+  }
+
+  .cmp-bar-wrap {
+    height: 8px;
+    background: var(--bg-hover);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .cmp-bar {
+    height: 100%;
+    border-radius: 4px;
+    min-width: 2px;
+  }
+
+  .cmp-bar-tool {
+    background: var(--accent);
+  }
+
+  .cmp-bar-avg {
+    background: var(--text-muted);
+    opacity: 0.5;
+  }
+
+  .cmp-bar-val {
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-align: right;
+  }
+
+  .cmp-note {
+    font-size: 0.78rem;
+    margin: 0;
+  }
+
+  .cmp-note-good {
+    color: #4ade80;
+  }
+
+  .cmp-note-warn {
+    color: var(--text-muted);
+  }
+
+  .cmp-link {
+    color: var(--accent);
+    text-decoration: none;
+    font-weight: 600;
+  }
+
+  .cmp-link:hover {
+    text-decoration: underline;
+  }
+
+  /* Upgrade panel */
+  .upgrade-panel {
     background: var(--bg-surface);
     border: 1px solid var(--border);
     border-radius: 6px;
@@ -472,7 +902,7 @@ const claimedToolsForSwitcher = claimedToolsList.map((c) => ({
     margin-bottom: 2rem;
   }
 
-  .locked-panel-header {
+  .upgrade-panel-header {
     display: flex;
     align-items: center;
     gap: 0.4rem;
@@ -482,57 +912,11 @@ const claimedToolsForSwitcher = claimedToolsList.map((c) => ({
     margin-bottom: 0.5rem;
   }
 
-  .locked-desc {
+  .upgrade-desc {
     font-size: 0.8rem;
     color: var(--text-muted);
     margin-bottom: 1rem;
     line-height: 1.5;
-  }
-
-  .locked-charts {
-    display: flex;
-    gap: 1rem;
-    margin-bottom: 1rem;
-  }
-
-  .locked-chart {
-    flex: 1;
-    min-height: 80px;
-    background: var(--bg-hover);
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .chart-fake {
-    position: absolute;
-    inset: 0;
-    display: flex;
-    align-items: flex-end;
-    gap: 3px;
-    padding: 8px;
-    filter: blur(4px);
-    opacity: 0.4;
-  }
-
-  .chart-fake-bar {
-    flex: 1;
-    background: var(--accent);
-    border-radius: 2px 2px 0 0;
-    min-width: 8px;
-  }
-
-  .chart-lock-label {
-    position: absolute;
-    inset: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.4rem;
-    font-size: 0.72rem;
-    color: var(--text-muted);
-    font-weight: 600;
   }
 
   .upgrade-cta {
@@ -584,6 +968,14 @@ const claimedToolsForSwitcher = claimedToolsList.map((c) => ({
     text-decoration: underline;
   }
 
+  .section-note {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    text-transform: none;
+    letter-spacing: 0;
+    font-weight: 400;
+  }
+
   /* Score signals */
   .signals {
     display: flex;
@@ -630,9 +1022,8 @@ const claimedToolsForSwitcher = claimedToolsList.map((c) => ({
   }
 
   .signal-detail {
-    font-size: 0.75rem;
+    font-size: 0.72rem;
     color: var(--text-muted);
-    white-space: nowrap;
   }
 
   .signal-hint {
@@ -718,16 +1109,24 @@ const claimedToolsForSwitcher = claimedToolsList.map((c) => ({
       max-width: 100%;
     }
 
-    .locked-charts {
-      flex-direction: column;
-    }
-
     .signal-row {
       grid-template-columns: 90px 1fr 40px;
     }
 
     .signal-detail {
       display: none;
+    }
+
+    .referrer-row {
+      grid-template-columns: 1fr 80px 40px;
+    }
+
+    .referrer-pct {
+      display: none;
+    }
+
+    .cmp-row {
+      grid-template-columns: 80px 1fr 36px;
     }
   }
 </style>

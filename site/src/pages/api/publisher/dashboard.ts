@@ -21,7 +21,6 @@ function json(data: unknown, status = 200) {
 export const GET: APIRoute = async ({ request, locals }) => {
   const { env } = (locals as any).runtime;
 
-  // Parse session cookie
   const cookies = parseCookies(request.headers.get('cookie') || '');
   const rawSession = cookies.claim_session ? decodeURIComponent(cookies.claim_session) : null;
 
@@ -37,7 +36,7 @@ export const GET: APIRoute = async ({ request, locals }) => {
     return json({ error: 'unauthenticated' }, 401);
   }
 
-  // Get all verified claims for this user
+  // Verified claims for this user
   const claimsResult = await env.DB.prepare(
     'SELECT tool_full_name FROM claims WHERE github_username = ? AND verified = 1 AND status = ? ORDER BY created_at ASC'
   ).bind(githubUsername, 'active').all();
@@ -48,7 +47,6 @@ export const GET: APIRoute = async ({ request, locals }) => {
     return json({ error: 'no_claims' }, 403);
   }
 
-  // Determine which tool to show
   const urlParams = new URL(request.url).searchParams;
   const requestedSlug = urlParams.get('slug');
   const requestedFullName = requestedSlug ? requestedSlug.replace('--', '/') : null;
@@ -57,7 +55,6 @@ export const GET: APIRoute = async ({ request, locals }) => {
   if (requestedFullName && claimedTools.some((c) => c.tool_full_name === requestedFullName)) {
     currentFullName = requestedFullName;
   } else {
-    // Default: use the tool from cookie slug if still claimed, else first claimed
     const cookieFullName = sessionSlug.replace('--', '/');
     currentFullName = claimedTools.some((c) => c.tool_full_name === cookieFullName)
       ? cookieFullName
@@ -66,10 +63,10 @@ export const GET: APIRoute = async ({ request, locals }) => {
 
   const currentSlug = currentFullName.replace('/', '--');
 
-  // Load tool data
+  // Tool data
   const tool = await env.DB.prepare(
     `SELECT full_name, url, description, rank, score, stars, open_issues, closed_issues,
-            contributors, dependents, last_commit_at, language, license
+            contributors, dependents, last_commit_at, language, license, category
      FROM tools WHERE full_name = ?`
   ).bind(currentFullName).first() as Record<string, unknown> | null;
 
@@ -77,41 +74,78 @@ export const GET: APIRoute = async ({ request, locals }) => {
     return json({ error: 'tool_not_found' }, 404);
   }
 
-  // Load claim enrichment
+  // Claim enrichment
   const claim = await env.DB.prepare(
     'SELECT tagline, category, logo_url, is_deprecated FROM claims WHERE tool_full_name = ? AND github_username = ? AND verified = 1'
   ).bind(currentFullName, githubUsername).first() as Record<string, unknown> | null;
 
-  // Get 7-day page views from request_log
-  const viewResult = await env.DB.prepare(
+  // 7-day page views (human only)
+  const view7dResult = await env.DB.prepare(
     `SELECT COUNT(*) as count FROM request_log
-     WHERE path LIKE ? AND type = 'page' AND ts >= datetime('now', '-7 days')`
+     WHERE path LIKE ? AND type = 'page' AND is_bot = 0 AND ts >= datetime('now', '-7 days')`
   ).bind(`/tool/${currentSlug}%`).first() as { count: number } | null;
 
-  const viewCount7d = viewResult?.count ?? 0;
+  // 30-day page views (human only)
+  const view30dResult = await env.DB.prepare(
+    `SELECT COUNT(*) as count FROM request_log
+     WHERE path LIKE ? AND type = 'page' AND is_bot = 0 AND ts >= datetime('now', '-30 days')`
+  ).bind(`/tool/${currentSlug}%`).first() as { count: number } | null;
 
-  // Get total tools count for rank context
+  // Total tools
   const totalResult = await env.DB.prepare(
     'SELECT COUNT(*) as count FROM tools WHERE is_archived = 0'
   ).first() as { count: number } | null;
 
-  const totalTools = totalResult?.count ?? 0;
+  // 30-day rank/score history
+  const histResult = await env.DB.prepare(
+    `SELECT snapshot_date, score, rank
+     FROM rank_history
+     WHERE tool_full_name = ? AND tool_type = 'tool'
+     ORDER BY snapshot_date DESC
+     LIMIT 30`
+  ).bind(currentFullName).all();
 
-  // Check subscription status (for pro gate)
-  const subscription = await env.DB.prepare(
-    `SELECT id FROM subscriptions
-     WHERE user_email IN (
-       SELECT email FROM email_subscribers WHERE email IS NOT NULL
-     )
-     AND tier = 'verified_publisher' AND status = 'active'
-     LIMIT 1`
-  ).first();
+  const histRowsDesc = (histResult.results || []) as { snapshot_date: string; score: number; rank: number }[];
+  const history = [...histRowsDesc].reverse();
 
-  // For now: isPro = false (pro tier not built yet)
-  const isPro = false;
+  // Rank/score change vs 7 days ago
+  let rankChange: number | null = null;
+  let scoreChange: number | null = null;
+  if (history.length >= 2) {
+    const latest = history[history.length - 1];
+    const cutoffDate = new Date(latest.snapshot_date + 'T00:00:00Z');
+    cutoffDate.setUTCDate(cutoffDate.getUTCDate() - 7);
+    const cutoffStr = cutoffDate.toISOString().slice(0, 10);
+    const baseline = histRowsDesc.find((h) => h.snapshot_date <= cutoffStr);
+    if (baseline) {
+      rankChange = baseline.rank - latest.rank;
+      scoreChange = Math.round((latest.score - baseline.score) * 10) / 10;
+    }
+  }
 
-  // Build score signals for breakdown display
-  // Weights: stars 15%, freshness 25%, issue_health 25%, contributors 10%, dependents 25%
+  // Top referrers (30d)
+  const refResult = await env.DB.prepare(
+    `SELECT referrer, COUNT(*) as cnt FROM request_log
+     WHERE path LIKE ? AND type = 'page' AND is_bot = 0
+     AND referrer IS NOT NULL AND ts >= datetime('now', '-30 days')
+     GROUP BY referrer ORDER BY cnt DESC LIMIT 6`
+  ).bind(`/tool/${currentSlug}%`).all();
+
+  const topReferrers = (refResult.results || []) as { referrer: string; cnt: number }[];
+
+  // Category average
+  const toolCategory = (tool.category as string) || (claim?.category as string) || null;
+  let categoryAvgScore: number | null = null;
+  let categoryToolCount = 0;
+  if (toolCategory) {
+    const catResult = await env.DB.prepare(
+      `SELECT AVG(score) as avg_score, COUNT(*) as cnt FROM tools WHERE category = ? AND is_archived = 0`
+    ).bind(toolCategory).first() as { avg_score: number | null; cnt: number } | null;
+    categoryAvgScore = catResult?.avg_score ? Math.round(catResult.avg_score * 10) / 10 : null;
+    categoryToolCount = catResult?.cnt ?? 0;
+  }
+
+  // Score signals
   const stars = (tool.stars as number) || 0;
   const openIssues = (tool.open_issues as number) || 0;
   const closedIssues = (tool.closed_issues as number) || 0;
@@ -119,17 +153,16 @@ export const GET: APIRoute = async ({ request, locals }) => {
   const dependents = (tool.dependents as number) || 0;
   const lastCommitAt = tool.last_commit_at as string | null;
 
-  // Normalized signal scores (0-1), same as scorer
-  const starsScore = Math.min(1, Math.log10(Math.max(1, stars)) / 4); // 10k stars = 1.0
+  const starsScore = Math.min(1, Math.log10(Math.max(1, stars)) / 4);
   const totalIssues = openIssues + closedIssues;
   const issueHealth = totalIssues > 0 ? closedIssues / totalIssues : 0.5;
-  const contributorsScore = Math.min(1, Math.log10(Math.max(1, contributors)) / 2); // 100 = 1.0
-  const dependentsScore = Math.min(1, Math.log10(Math.max(1, dependents)) / 3); // 1000 = 1.0
+  const contributorsScore = Math.min(1, Math.log10(Math.max(1, contributors)) / 2);
+  const dependentsScore = Math.min(1, Math.log10(Math.max(1, dependents)) / 3);
 
   let freshnessScore = 0;
   if (lastCommitAt) {
     const daysSince = (Date.now() - new Date(lastCommitAt).getTime()) / (1000 * 60 * 60 * 24);
-    freshnessScore = Math.max(0, 1 - daysSince / 180); // 0 at 6 months
+    freshnessScore = Math.max(0, 1 - daysSince / 180);
   }
 
   const claimedToolsList = claimedTools.map((c) => ({
@@ -154,12 +187,17 @@ export const GET: APIRoute = async ({ request, locals }) => {
       contributors,
       dependents,
       language: tool.language,
+      category: toolCategory,
       tagline: claim?.tagline ?? null,
-      category: claim?.category ?? null,
       logo_url: claim?.logo_url ?? null,
       is_deprecated: claim?.is_deprecated === 1,
-      view_count_7d: viewCount7d,
-      total_tools: totalTools,
+    },
+    stats: {
+      view_count_7d: view7dResult?.count ?? 0,
+      view_count_30d: view30dResult?.count ?? 0,
+      total_tools: totalResult?.count ?? 0,
+      rank_change_7d: rankChange,
+      score_change_7d: scoreChange,
     },
     signals: {
       stars: parseFloat(starsScore.toFixed(2)),
@@ -168,6 +206,14 @@ export const GET: APIRoute = async ({ request, locals }) => {
       contributors: parseFloat(contributorsScore.toFixed(2)),
       dependents: parseFloat(dependentsScore.toFixed(2)),
     },
-    isPro,
+    history,
+    top_referrers: topReferrers,
+    category_comparison: categoryAvgScore !== null ? {
+      category: toolCategory,
+      tool_score: Math.round((tool.score as number) || 0),
+      avg_score: categoryAvgScore,
+      tool_count: categoryToolCount,
+    } : null,
+    isPro: false,
   });
 };
