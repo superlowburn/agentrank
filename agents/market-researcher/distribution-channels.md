@@ -167,3 +167,83 @@ These require outreach, not just form submissions.
 | **Medium (ongoing)** | Ben's Bites, DEV.to, Hashnode, AutoGen/CrewAI Discord, r/MachineLearning, YouTube creators |
 | **Paid (after monetization)** | Futurepedia, Toolify.ai |
 | **Low** | G2, Slant, InfoQ, r/artificial, r/ChatGPT |
+
+---
+
+## Supplemental Research (AUT-381, 2026-03-19)
+
+Additional directories and channels identified from fresh research. These fill in gaps across AI directories, dev tool directories, startup platforms, GitHub awesome lists, API directories, and newsletters.
+
+### Additional AI/ML Tool Directories
+
+| # | Name | URL | Submission | Cost | Notes |
+|---|------|-----|------------|------|-------|
+| S1 | TopAI.tools | topai.tools | Self-serve | Free | 120+ categories, updated daily |
+| S2 | ToolPilot | toolpilot.ai/pages/submit-your-ai-tool | Self-serve | Free | Dev-oriented AI tools audience |
+| S3 | AITopTools | aitoptools.com | Self-serve | Free | 10k+ tools, daily updates, user reviews |
+| S4 | AI Tools Directory | aitoolsdirectory.com | Self-serve | Free | General AI discovery |
+| S5 | AIxploria | aixploria.com/en/free-ai/ | Self-serve | Free | 5000+ free AI tools listed |
+| S6 | best-of-ai/ai-directories | github.com/best-of-ai/ai-directories | Open a PR | Free | Meta-list of AI directories — being in this list surfaces AgentRank to other submitters |
+
+### Additional Developer Tool Directories
+
+| # | Name | URL | Submission | Cost | Notes |
+|---|------|-----|------------|------|-------|
+| S7 | SaaSHub | saashub.com | Self-serve | Free | 195k+ products, 856k/mo visitors, community upvoting; good "alternatives" SEO |
+| S8 | DevHunt | devhunt.org | Self-serve | Free (6-week queue) or $49 | Built specifically for dev tools; highly relevant |
+| S9 | console.dev | console.dev/selection-criteria | Editorial email pitch | Free | Selects 2-3 dev tools/week; no paid placements; requires self-service signup available |
+
+### Additional Startup Launch Platforms
+
+| # | Name | URL | Submission | Cost | Notes |
+|---|------|-----|------------|------|-------|
+| S10 | Indie Hackers | indiehackers.com | Free community post | Free | Founder/builder audience; post in Products section |
+| S11 | BetaList | betalist.com | Self-serve | Free (2+ month wait) or ~$130 | Early adopter audience; strict: must be in beta and not launched on PH yet |
+
+### GitHub Awesome Lists (Beyond awesome-mcp-servers)
+
+| # | Repository | URL | Stars | Submission | Notes |
+|---|------------|-----|-------|------------|-------|
+| S12 | mahseema/awesome-ai-tools | github.com/mahseema/awesome-ai-tools | ~3k | Open a PR | Explicitly accepts PRs; curated AI tools list |
+| S13 | ikaijua/Awesome-AITools | github.com/ikaijua/Awesome-AITools | ~2k | Open a PR | README explicitly welcomes PR submissions |
+| S14 | eudk/awesome-ai-tools | github.com/eudk/awesome-ai-tools | Growing | Open a PR | "VERY LARGE AI TOOL LIST" updated 2026 |
+| S15 | caramaschiHG/awesome-ai-agents-2026 | github.com/caramaschiHG/awesome-ai-agents-2026 | Growing | Open a PR | 300+ resources, 20+ categories, updated monthly |
+| S16 | DirectorySurf/awesome-producthunt-alternatives | github.com/DirectorySurf/awesome-producthunt-alternatives | Small | Open a PR | Meta-list of launch directories |
+
+### API Directories (for AgentRank API)
+
+These are relevant once the API has an OpenAPI spec and public docs.
+
+| # | Name | URL | Submission | Cost | Notes |
+|---|------|-----|------------|------|-------|
+| S17 | RapidAPI Hub | rapidapi.com | Self-serve | Free | Large developer marketplace; monetization possible |
+| S18 | public-apis/public-apis | github.com/public-apis/public-apis | Open a PR | Free | 300k+ GitHub stars; most trafficked public API list |
+| S19 | PublicAPIs.io | publicapis.io | Self-serve | Free | 1000+ public APIs by category |
+| S20 | PublicAPIs.dev | publicapis.dev | Open a PR | Free | Collaborative list, 1400+ APIs |
+| S21 | APIs.guru | apis.guru | Submit OpenAPI spec | Free | "Wikipedia for REST APIs"; requires valid OpenAPI 2.0/3.0 spec |
+
+### Developer Newsletter Submission Forms
+
+| # | Newsletter | URL | Audience | How to Submit | Cost | Notes |
+|---|------------|-----|---------|---------------|------|-------|
+| S22 | console.dev newsletter | console.dev | Devtools-focused devs | Submit via site; editorial selection only | Free | Editorially independent; no paid placements; review 2-3 tools/week |
+| S23 | Ben's Bites News | news.bensbites.com | 100k+ AI followers | Community submit form | Free | Aggregates AI launches; fast pickup if interesting |
+| S24 | Hacker Newsletter | hackernewsletter.com | Curated HN readers | Organic — appears via strong Show HN performance | Free | No direct submission; Show HN → newsletter pickup |
+| S25 | developer-newsletters repo | github.com/jackbridger/developer-newsletters | Curators | Open a PR | Free | List of dev newsletters with sponsorship info; getting listed helps find further newsletter targets |
+
+### Quick-Win Checklist (Self-Serve, 30 Minutes Each)
+
+These are new additions not previously tracked that can be submitted without Steve:
+
+- [ ] SaaSHub — create listing, position vs. Smithery
+- [ ] DevHunt — submit now to start the 6-week queue
+- [ ] TopAI.tools — self-serve form
+- [ ] ToolPilot — self-serve form
+- [ ] AITopTools — self-serve form
+- [ ] AI Tools Directory — self-serve form
+- [ ] mahseema/awesome-ai-tools — open PR
+- [ ] ikaijua/Awesome-AITools — open PR
+- [ ] caramaschiHG/awesome-ai-agents-2026 — open PR
+- [ ] public-apis/public-apis — open PR (after API docs are live)
+- [ ] PublicAPIs.io — self-serve (after API docs are live)
+- [ ] Ben's Bites News — community submit
