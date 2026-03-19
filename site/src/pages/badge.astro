@@ -1,0 +1,260 @@
+---
+export const prerender = true;
+
+import Base from '../layouts/Base.astro';
+
+const SITE_URL = 'https://agentrank-ai.com';
+---
+
+<Base
+  title="AgentRank Score Badge — Embed in Your README"
+  description="Add an AgentRank score badge to your README. Automatically updates daily. Works on GitHub, npm, PyPI, and any Markdown-based site."
+  keywords="AgentRank badge, MCP server badge, README badge, agent tool score badge"
+  canonicalUrl={`${SITE_URL}/badge/`}
+>
+  <div class="badge-header">
+    <h1>Score Badge</h1>
+    <p class="subtitle">Show your AgentRank score in any README. Updates daily as your score changes.</p>
+  </div>
+
+  <div class="preview-row">
+    <img src="/api/badge/tool/microsoft--playwright-mcp" alt="AgentRank score example" height="20" />
+    <img src="/api/badge/tool/modelcontextprotocol--servers" alt="AgentRank score example" height="20" />
+    <img src="/api/badge/tool/executeautomation--playwright-mcp-server" alt="AgentRank score example" height="20" />
+  </div>
+
+  <section class="section">
+    <h2>Badge URL</h2>
+    <p class="section-desc">Use your tool's slug (replace <code>/</code> with <code>--</code> in the repo name):</p>
+    <div class="url-format">
+      <code>{SITE_URL}/api/v1/badge/<span class="placeholder">OWNER--REPO</span></code>
+    </div>
+    <p class="hint">Example: <code>microsoft/playwright-mcp</code> → slug <code>microsoft--playwright-mcp</code></p>
+  </section>
+
+  <section class="section">
+    <h2>Embed in Your README</h2>
+    <p class="section-desc">Copy one of these snippets and paste it into your README:</p>
+
+    <div class="snippet-block">
+      <div class="snippet-label">Markdown</div>
+      <div class="snippet-row">
+        <code class="snippet-code" id="md-code">[![AgentRank](https://agentrank-ai.com/api/v1/badge/OWNER--REPO)](https://agentrank-ai.com/tool/OWNER--REPO/)</code>
+        <button class="copy-btn" data-copy="[![AgentRank](https://agentrank-ai.com/api/v1/badge/OWNER--REPO)](https://agentrank-ai.com/tool/OWNER--REPO/)">Copy</button>
+      </div>
+    </div>
+
+    <div class="snippet-block">
+      <div class="snippet-label">HTML</div>
+      <div class="snippet-row">
+        <code class="snippet-code" id="html-code">&lt;a href="https://agentrank-ai.com/tool/OWNER--REPO/"&gt;&lt;img src="https://agentrank-ai.com/api/v1/badge/OWNER--REPO" alt="AgentRank"&gt;&lt;/a&gt;</code>
+        <button class="copy-btn" data-copy='<a href="https://agentrank-ai.com/tool/OWNER--REPO/"><img src="https://agentrank-ai.com/api/v1/badge/OWNER--REPO" alt="AgentRank"></a>'>Copy</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <h2>Score Colors</h2>
+    <div class="color-table">
+      <div class="color-row">
+        <span class="swatch" style="background:#22c55e"></span>
+        <span class="color-label">Green</span>
+        <span class="color-range">Score 70–100</span>
+        <span class="color-desc">Strong signal: actively maintained, well-adopted</span>
+      </div>
+      <div class="color-row">
+        <span class="swatch" style="background:#eab308"></span>
+        <span class="color-label">Yellow</span>
+        <span class="color-range">Score 40–69</span>
+        <span class="color-desc">Moderate signal: growing or occasionally updated</span>
+      </div>
+      <div class="color-row">
+        <span class="swatch" style="background:#ef4444"></span>
+        <span class="color-label">Red</span>
+        <span class="color-range">Score 0–39</span>
+        <span class="color-desc">Weak signal: early stage or stale</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <h2>Find Your Tool</h2>
+    <p class="section-desc">Search the index to get your exact badge URL and copy snippet:</p>
+    <a href="/embed/" class="cta-link">Browse all badges →</a>
+  </section>
+
+  <script>
+    document.querySelectorAll<HTMLButtonElement>('.copy-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const text = btn.dataset.copy || '';
+        navigator.clipboard.writeText(text).then(() => {
+          const orig = btn.textContent;
+          btn.textContent = 'Copied!';
+          setTimeout(() => { btn.textContent = orig; }, 2000);
+        });
+      });
+    });
+  </script>
+</Base>
+
+<style>
+  .badge-header {
+    margin-bottom: 2rem;
+  }
+
+  h1 {
+    font-size: 1.4rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+  }
+
+  .subtitle {
+    color: var(--text-muted);
+    font-size: 0.85rem;
+  }
+
+  .preview-row {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin-bottom: 2rem;
+    align-items: center;
+  }
+
+  .section {
+    margin-bottom: 2rem;
+  }
+
+  h2 {
+    font-size: 1rem;
+    font-weight: 700;
+    margin-bottom: 0.4rem;
+  }
+
+  .section-desc {
+    font-size: 0.82rem;
+    color: var(--text-muted);
+    margin-bottom: 0.75rem;
+  }
+
+  .url-format {
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 0.6rem 0.8rem;
+    font-size: 0.82rem;
+    margin-bottom: 0.5rem;
+    overflow-x: auto;
+  }
+
+  .placeholder {
+    color: var(--accent);
+    font-style: italic;
+  }
+
+  .hint {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+  }
+
+  .snippet-block {
+    margin-bottom: 0.75rem;
+  }
+
+  .snippet-label {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  .snippet-row {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  .snippet-code {
+    flex: 1;
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    padding: 0.35rem 0.5rem;
+    font-size: 0.68rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: var(--text-muted);
+    display: block;
+  }
+
+  .copy-btn {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    padding: 0.3rem 0.6rem;
+    font-size: 0.7rem;
+    cursor: pointer;
+    color: var(--text-muted);
+    font-family: inherit;
+    flex-shrink: 0;
+    white-space: nowrap;
+  }
+
+  .copy-btn:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  .color-table {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .color-row {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 0.82rem;
+  }
+
+  .swatch {
+    width: 14px;
+    height: 14px;
+    border-radius: 2px;
+    flex-shrink: 0;
+  }
+
+  .color-label {
+    font-weight: 600;
+    width: 4rem;
+    flex-shrink: 0;
+  }
+
+  .color-range {
+    color: var(--text-muted);
+    width: 6rem;
+    flex-shrink: 0;
+    font-size: 0.78rem;
+  }
+
+  .color-desc {
+    color: var(--text-muted);
+    font-size: 0.78rem;
+  }
+
+  .cta-link {
+    display: inline-block;
+    color: var(--accent);
+    font-size: 0.85rem;
+    text-decoration: none;
+    font-weight: 600;
+  }
+
+  .cta-link:hover {
+    text-decoration: underline;
+  }
+</style>
