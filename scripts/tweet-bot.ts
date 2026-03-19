@@ -31,6 +31,7 @@ const API_BASE = "https://agentrank-ai.com/api";
 const COOKIES_FILE = resolve(__dirname, "../.tweet-bot-cookies.json");
 const HISTORY_FILE = resolve(__dirname, "../.tweet-bot-history.json");
 const CAMPAIGN_FILE = resolve(__dirname, "maintainer-campaign.json");
+const NEWS_QUEUE_FILE = resolve(__dirname, "../.news-queue.json");
 
 // GitHub org/user -> Twitter handle mapping
 const TWITTER_HANDLES: Record<string, string> = {
@@ -543,6 +544,67 @@ function campaignStatus(): void {
   }
 }
 
+// --- News Queue ---
+
+interface NewsQueueItem {
+  id: string;
+  newsType: string;
+  headline: string;
+  tweetDraft: string;
+  status: "pending" | "posted" | "skipped";
+  postedAt?: string;
+}
+
+interface NewsQueue {
+  lastUpdated: string;
+  items: NewsQueueItem[];
+}
+
+function loadNewsQueue(): NewsQueue {
+  if (!existsSync(NEWS_QUEUE_FILE)) {
+    return { lastUpdated: new Date(0).toISOString(), items: [] };
+  }
+  try {
+    return JSON.parse(readFileSync(NEWS_QUEUE_FILE, "utf-8"));
+  } catch {
+    return { lastUpdated: new Date(0).toISOString(), items: [] };
+  }
+}
+
+function saveNewsQueue(queue: NewsQueue): void {
+  writeFileSync(NEWS_QUEUE_FILE, JSON.stringify(queue, null, 2));
+}
+
+function nextNewsQueueItem(): { item: NewsQueueItem; index: number } | null {
+  const queue = loadNewsQueue();
+  const idx = queue.items.findIndex((i) => i.status === "pending");
+  if (idx === -1) return null;
+  return { item: queue.items[idx], index: idx };
+}
+
+function markNewsItemPosted(index: number): void {
+  const queue = loadNewsQueue();
+  queue.items[index].status = "posted";
+  queue.items[index].postedAt = new Date().toISOString();
+  saveNewsQueue(queue);
+}
+
+function newsQueueStatus(): void {
+  const queue = loadNewsQueue();
+  const pending = queue.items.filter((i) => i.status === "pending").length;
+  const posted = queue.items.filter((i) => i.status === "posted").length;
+  console.log(
+    `News queue: ${pending} pending, ${posted} posted of ${queue.items.length} total`
+  );
+  for (const item of queue.items.slice(-10)) {
+    const icon =
+      item.status === "posted" ? "✓" : item.status === "skipped" ? "–" : "·";
+    console.log(
+      `  ${icon} [${item.newsType}] ${item.headline.substring(0, 60)}...`
+    );
+  }
+}
+
 // --- Main ---
 
 async function main() {
@@ -643,6 +705,36 @@ async function main() {
       console.log(`Campaign entry ${index + 1}/${loadCampaign().length} marked done.`);
     } else {
       console.error("Failed to post outreach tweet.");
+      process.exit(1);
+    }
+    return;
+  } else if (typeArg === "news") {
+    if (args.includes("--status")) {
+      newsQueueStatus();
+      return;
+    }
+    const next = nextNewsQueueItem();
+    if (!next) {
+      console.log(
+        "No pending items in news queue. Run: npx tsx scripts/news-pipeline.ts"
+      );
+      return;
+    }
+    const { item, index } = next;
+    console.log(`News item [${item.newsType}]: ${item.headline.substring(0, 60)}`);
+    tweet = item.tweetDraft;
+    if (dryRun) {
+      console.log("=== DRY RUN ===");
+      console.log(tweet);
+      console.log(`\nCharacters: ${tweet.length}`);
+      return;
+    }
+    const ok = await postTweetPlaywright(tweet);
+    if (ok) {
+      markNewsItemPosted(index);
+      console.log(`News item marked posted.`);
+    } else {
+      console.error("Failed to post news tweet.");
       process.exit(1);
     }
     return;
