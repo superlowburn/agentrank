@@ -1,0 +1,746 @@
+---
+export const prerender = true;
+
+import Base from '../../layouts/Base.astro';
+import BlogSubscribeCTA from '../../components/BlogSubscribeCTA.astro';
+import RelatedPosts from '../../components/RelatedPosts.astro';
+import RelatedCategories from '../../components/RelatedCategories.astro';
+
+const relatedPosts = [
+  { href: '/blog/best-mcp-servers-database/', title: 'Best MCP Servers for Database Management in 2026' },
+  { href: '/blog/neon-mcp-vs-mongodb-mcp/', title: 'Neon MCP vs MongoDB MCP: Which DB Server Wins?' },
+  { href: '/blog/motherduck-mcp-vs-redis-mcp/', title: 'MotherDuck MCP vs Redis MCP: Analytics vs Real-Time' },
+  { href: '/blog/best-mcp-servers-data-science/', title: 'Best MCP Servers for Data Science in 2026' },
+];
+
+const publishDate = '2026-03-19';
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: 'Top 10 MCP Servers for Database Access in 2026',
+  description: 'A data-driven ranking of the 10 best MCP servers for database access in 2026. Real AgentRank scores, GitHub stats, issue health, and which to use for Postgres, MySQL, MongoDB, Redis, and more.',
+  datePublished: publishDate,
+  dateModified: publishDate,
+  author: {
+    '@type': 'Organization',
+    name: 'AgentRank',
+    url: 'https://agentrank-ai.com',
+  },
+  publisher: {
+    '@type': 'Organization',
+    name: 'AgentRank',
+    url: 'https://agentrank-ai.com',
+    logo: {
+      '@type': 'ImageObject',
+      url: 'https://agentrank-ai.com/og-image.png',
+    },
+  },
+  mainEntityOfPage: {
+    '@type': 'WebPage',
+    '@id': 'https://agentrank-ai.com/blog/top-mcp-servers-database/',
+  },
+  image: 'https://agentrank-ai.com/og-image.png',
+  keywords: 'top MCP servers database access 2026, best database MCP server, postgres MCP server, mysql MCP server, mongodb MCP server, redis MCP server, database agent tool',
+};
+
+const tools = [
+  {
+    rank: 1,
+    name: 'motherduckdb/mcp-server-motherduck',
+    slug: 'motherduckdb--mcp-server-motherduck',
+    score: 89.06,
+    stars: 442,
+    lang: 'Python',
+    issueCloseRate: 80,
+    desc: 'Local MCP server for DuckDB and MotherDuck analytics',
+    useCase: 'Analytics / OLAP',
+    highlight: 'Runs DuckDB in-process — zero round-trips for local data. Fastest analytical queries in the category. 80% issue close rate.',
+  },
+  {
+    rank: 2,
+    name: 'redis/mcp-redis',
+    slug: 'redis--mcp-redis',
+    score: 88.84,
+    stars: 454,
+    lang: 'Python',
+    issueCloseRate: 68,
+    desc: 'Official Redis MCP Server — natural language interface for Redis',
+    useCase: 'Cache / Real-time',
+    highlight: 'Official Redis Labs server. Handles strings, hashes, sets, sorted sets, streams, and search.',
+  },
+  {
+    rank: 3,
+    name: 'mongodb-js/mongodb-mcp-server',
+    slug: 'mongodb-js--mongodb-mcp-server',
+    score: 88.56,
+    stars: 965,
+    lang: 'TypeScript',
+    issueCloseRate: 84,
+    desc: 'Official MCP server for MongoDB and MongoDB Atlas',
+    useCase: 'Document DB',
+    highlight: 'Official MongoDB team server with Atlas cloud support. 84% issue close rate — best-maintained in the top 3.',
+  },
+  {
+    rank: 4,
+    name: 'benborla/mcp-server-mysql',
+    slug: 'benborla--mcp-server-mysql',
+    score: 85.22,
+    stars: 1361,
+    lang: 'JavaScript',
+    issueCloseRate: 53,
+    desc: 'Read-only MySQL access via MCP — inspect schemas, run queries',
+    useCase: 'Relational (MySQL)',
+    highlight: 'Most-starred MySQL MCP server. Read-only by design — safe for production. 1,361 stars signals broad community adoption.',
+  },
+  {
+    rank: 5,
+    name: 'neondatabase/mcp-server-neon',
+    slug: 'neondatabase--mcp-server-neon',
+    score: 78.58,
+    stars: 564,
+    lang: 'TypeScript',
+    issueCloseRate: 43,
+    desc: 'Official MCP server for Neon — serverless Postgres management and queries',
+    useCase: 'Serverless Postgres',
+    highlight: 'Official Neon server covering both the management API and raw SQL. Best for serverless/edge Postgres deployments.',
+  },
+  {
+    rank: 6,
+    name: 'pgEdge/pgedge-postgres-mcp',
+    slug: 'pgEdge--pgedge-postgres-mcp',
+    score: 76.98,
+    stars: 90,
+    lang: 'Go',
+    issueCloseRate: 62,
+    desc: 'pgEdge MCP server with natural language agent CLI and full Postgres support',
+    useCase: 'Relational (Postgres)',
+    highlight: 'Pure Go implementation with a natural language agent CLI. Lower stars but 62% issue close rate — actively maintained.',
+  },
+  {
+    rank: 7,
+    name: 'dbt-labs/dbt-mcp',
+    slug: 'dbt-labs--dbt-mcp',
+    score: 76.04,
+    stars: 507,
+    lang: 'Python',
+    issueCloseRate: 68,
+    desc: 'Official dbt MCP server for running models, tests, and queries',
+    useCase: 'Data Engineering / dbt',
+    highlight: 'Official dbt Labs server. The only data engineering tool in the list — bridges your dbt project to any agent.',
+  },
+  {
+    rank: 8,
+    name: 'HenkDz/selfhosted-supabase-mcp',
+    slug: 'HenkDz--selfhosted-supabase-mcp',
+    score: 75.44,
+    stars: 118,
+    lang: 'TypeScript',
+    issueCloseRate: 100,
+    desc: 'MCP server for self-hosted Supabase instances',
+    useCase: 'Self-hosted Supabase',
+    highlight: '100% issue close rate — every reported issue resolved. Built for teams running Supabase on their own infrastructure.',
+  },
+  {
+    rank: 9,
+    name: 'runekaagaard/mcp-alchemy',
+    slug: 'runekaagaard--mcp-alchemy',
+    score: 74.93,
+    stars: 397,
+    lang: 'Python',
+    issueCloseRate: 100,
+    desc: 'Multi-database MCP server via SQLAlchemy — Postgres, MySQL, SQLite, and more',
+    useCase: 'Multi-DB (SQLAlchemy)',
+    highlight: '100% issue close rate. Supports any SQLAlchemy-compatible DB — the broadest coverage of any tool in this list.',
+  },
+  {
+    rank: 10,
+    name: 'bytebase/dbhub',
+    slug: 'bytebase--dbhub',
+    score: 70.71,
+    stars: 2335,
+    lang: 'TypeScript',
+    issueCloseRate: 95,
+    desc: 'Zero-dependency multi-DB MCP server: Postgres, MySQL, SQL Server, MariaDB, SQLite',
+    useCase: 'Multi-DB',
+    highlight: 'Most-starred DB MCP server in the index at 2,335 stars. 95% issue close rate. Zero external dependencies.',
+  },
+];
+
+const stats = {
+  totalDatabaseTools: 910,
+  avgDatabaseScore: 29.6,
+  topScore: 89.06,
+  lastUpdated: 'March 19, 2026',
+};
+
+const faqJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: [
+    {
+      '@type': 'Question',
+      name: 'What is the best MCP server for database access in 2026?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'The top-scoring database MCP servers in the AgentRank index (as of March 2026) are motherduckdb/mcp-server-motherduck (89.06), redis/mcp-redis (88.84), and mongodb-js/mongodb-mcp-server (88.56). For relational databases, benborla/mcp-server-mysql leads with 85.22 and 1,361 stars. Scores are computed from stars, freshness, issue health, contributors, and dependents.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Which MCP server should I use for PostgreSQL?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'For serverless or cloud Postgres, neondatabase/mcp-server-neon (score: 78.58) is the official choice. For on-premise or self-hosted Postgres, pgEdge/pgedge-postgres-mcp (76.98) offers a Go implementation with a natural language CLI. For multi-DB environments that include Postgres, bytebase/dbhub covers Postgres alongside MySQL, SQL Server, MariaDB, and SQLite.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'How do I give Claude database access via MCP?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Install a database MCP server for your DB type and add it to your MCP client config (claude_desktop_config.json or Cursor settings) with your connection string. The MCP server handles the database protocol; Claude handles query reasoning. For most setups, official servers (MongoDB, Redis, Neon) are safest since they track upstream changes.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Is there a single MCP server that works with multiple databases?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Yes — bytebase/dbhub (score: 70.71, 2,335 stars) and runekaagaard/mcp-alchemy (74.93) both support multiple engines from one server. dbhub covers Postgres, MySQL, SQL Server, MariaDB, and SQLite with zero dependencies. mcp-alchemy uses SQLAlchemy, so it works with any SQLAlchemy-supported database.',
+      },
+    },
+  ],
+};
+---
+
+<Base
+  title="Top 10 MCP Servers for Database Access in 2026 — AgentRank"
+  description="The 10 highest-scoring MCP servers for database access, ranked by real signals: AgentRank score, stars, issue close rate, and freshness. Covers Postgres, MySQL, MongoDB, Redis, DuckDB, and more."
+  activeTab="blog"
+  keywords="top MCP servers database access 2026, best database MCP server, postgres MCP server, mysql MCP server, mongodb MCP, redis MCP, duckdb MCP server, database agent tool"
+  canonicalUrl="https://agentrank-ai.com/blog/top-mcp-servers-database/"
+  jsonLd={[jsonLd, faqJsonLd]}
+  ogImage="/og-image.png"
+>
+  <article class="blog-post">
+    <header class="post-header">
+      <div class="breadcrumb"><a href="/blog/">Blog</a> <span>/</span></div>
+      <h1>Top 10 MCP Servers for Database Access in 2026</h1>
+      <div class="post-meta">
+        <time datetime={publishDate}>March 19, 2026</time>
+        <span class="sep">&middot;</span>
+        <span>6 min read</span>
+        <span class="sep">&middot;</span>
+        <span>AgentRank Index</span>
+      </div>
+      <p class="lede">
+        We scored <strong>{stats.totalDatabaseTools} database-category MCP servers</strong> in the AgentRank index
+        using real GitHub signals: stars, commit freshness, issue close rate, contributor count, and inbound dependents.
+        Below are the top 10, ranked by composite score. Data as of {stats.lastUpdated}.
+      </p>
+    </header>
+
+    <nav class="toc">
+      <strong>Contents</strong>
+      <ol>
+        <li><a href="#comparison">Full comparison table</a></li>
+        <li><a href="#top10">Top 10 breakdown</a></li>
+        <li><a href="#by-db">Choosing by database type</a></li>
+        <li><a href="#methodology">Scoring methodology</a></li>
+      </ol>
+    </nav>
+
+    <section id="comparison">
+      <h2>Full comparison table</h2>
+      <p>
+        All scores are on a 0–100 scale. The average across {stats.totalDatabaseTools} database tools is <strong>{stats.avgDatabaseScore}</strong>.
+        The tools below represent the top tier — all scoring above 70.
+      </p>
+
+      <table class="data-table comparison-table">
+        <thead>
+          <tr>
+            <th class="num">#</th>
+            <th>Repository</th>
+            <th class="num">Score</th>
+            <th class="num">Stars</th>
+            <th class="num">Issue Close %</th>
+            <th>Use Case</th>
+            <th>Lang</th>
+          </tr>
+        </thead>
+        <tbody>
+          {tools.map((tool) => (
+            <tr>
+              <td class="num rank-num">{tool.rank}</td>
+              <td class="tool-cell">
+                <a href={`/tool/${tool.slug}/`} class="tool-link">{tool.name}</a>
+                <span class="tool-desc">{tool.desc}</span>
+              </td>
+              <td class="num score-cell">{tool.score}</td>
+              <td class="num">{tool.stars.toLocaleString('en-US')}</td>
+              <td class="num close-rate">{tool.issueCloseRate}%</td>
+              <td class="use-case">{tool.useCase}</td>
+              <td class="lang-badge">{tool.lang}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </section>
+
+    <section id="top10">
+      <h2>Top 10 breakdown</h2>
+
+      <h3>#1 — motherduckdb/mcp-server-motherduck (89.06)</h3>
+      <p>
+        <a href="/tool/motherduckdb--mcp-server-motherduck/" class="inline-link">motherduckdb/mcp-server-motherduck</a> leads
+        the database category with a score of <strong>89.06</strong>. DuckDB runs in-process — no separate server, no
+        network round-trips. That makes it the fastest option for analytical queries over local files (Parquet, CSV, JSON)
+        or in-memory datasets. MotherDuck support extends it to cloud scale when needed.
+        80% issue close rate signals an active maintainer. Best choice if your agent is doing data analysis or ETL work.
+      </p>
+
+      <h3>#2 — redis/mcp-redis (88.84)</h3>
+      <p>
+        <a href="/tool/redis--mcp-redis/" class="inline-link">redis/mcp-redis</a> is the official Redis Labs server
+        scoring <strong>88.84</strong>. It exposes Redis data structures — strings, hashes, sets, sorted sets, streams,
+        and search — through natural language. 68% issue close rate and official vendor backing means this will track
+        breaking protocol changes. The right choice for any agent working with caching, session state, rate limiting,
+        or pub/sub messaging.
+      </p>
+
+      <h3>#3 — mongodb-js/mongodb-mcp-server (88.56)</h3>
+      <p>
+        <a href="/tool/mongodb-js--mongodb-mcp-server/" class="inline-link">mongodb-js/mongodb-mcp-server</a> is
+        MongoDB's official server at <strong>88.56</strong>. It's the most-starred tool in the top 3 (965 stars)
+        and has the highest issue close rate of the three at 84% — meaning reported problems actually get resolved.
+        Covers local MongoDB instances and cloud-hosted Atlas clusters. If your agent stack includes document storage,
+        this is the reference implementation to use.
+      </p>
+
+      <h3>#4 — benborla/mcp-server-mysql (85.22)</h3>
+      <p>
+        <a href="/tool/benborla--mcp-server-mysql/" class="inline-link">benborla/mcp-server-mysql</a> is the most-starred
+        MySQL MCP server with 1,361 stars and a score of <strong>85.22</strong>. It's read-only by design, which is a
+        deliberate safety constraint for production use — your agent can inspect schemas and run SELECT queries but can't
+        accidentally mutate data. If you need write access, fork it or pair it with a write-capable layer.
+      </p>
+
+      <h3>#5 — neondatabase/mcp-server-neon (78.58)</h3>
+      <p>
+        <a href="/tool/neondatabase--mcp-server-neon/" class="inline-link">neondatabase/mcp-server-neon</a> is Neon's
+        official server scoring <strong>78.58</strong>. It covers both the Neon management API (create/delete databases,
+        manage branches) and raw SQL query execution — two distinct use cases in one server.
+        564 stars and TypeScript implementation. Best for teams running serverless or edge Postgres on Neon's platform.
+      </p>
+
+      <h3>#6 — pgEdge/pgedge-postgres-mcp (76.98)</h3>
+      <p>
+        <a href="/tool/pgEdge--pgedge-postgres-mcp/" class="inline-link">pgEdge/pgedge-postgres-mcp</a> scores
+        <strong>76.98</strong> with a Go implementation. It includes a natural language agent CLI in addition to the
+        standard MCP interface — useful if you want to test queries locally before wiring them into an agent workflow.
+        62% issue close rate. Lower star count (90) but actively maintained by the pgEdge team.
+      </p>
+
+      <h3>#7 — dbt-labs/dbt-mcp (76.04)</h3>
+      <p>
+        <a href="/tool/dbt-labs--dbt-mcp/" class="inline-link">dbt-labs/dbt-mcp</a> is the official dbt Labs server
+        at <strong>76.04</strong>. It sits between your dbt project and any agent — exposing models, tests, and query
+        execution through MCP. 507 stars and 68% issue close rate. The only data engineering tool in this list.
+        Essential if your stack uses dbt for transformation; skip it if it doesn't.
+      </p>
+
+      <h3>#8 — HenkDz/selfhosted-supabase-mcp (75.44)</h3>
+      <p>
+        <a href="/tool/HenkDz--selfhosted-supabase-mcp/" class="inline-link">HenkDz/selfhosted-supabase-mcp</a> scores
+        <strong>75.44</strong> with a <strong>100% issue close rate</strong> — every reported issue resolved. Built
+        specifically for teams running Supabase on their own infrastructure (not Supabase Cloud). TypeScript, 118 stars.
+        A niche tool, but the right one if self-hosted Supabase is your stack.
+      </p>
+
+      <h3>#9 — runekaagaard/mcp-alchemy (74.93)</h3>
+      <p>
+        <a href="/tool/runekaagaard--mcp-alchemy/" class="inline-link">runekaagaard/mcp-alchemy</a> is the broadest
+        database coverage tool in this list at <strong>74.93</strong>. It uses SQLAlchemy under the hood — which means
+        it works with any SQLAlchemy-compatible database: Postgres, MySQL, SQLite, MSSQL, Oracle, and more.
+        100% issue close rate. 397 stars. Best for polyglot database environments.
+      </p>
+
+      <h3>#10 — bytebase/dbhub (70.71)</h3>
+      <p>
+        <a href="/tool/bytebase--dbhub/" class="inline-link">bytebase/dbhub</a> is the most-starred database MCP server
+        in the entire index with <strong>2,335 stars</strong>, though its composite score (70.71) trails the top tier.
+        Covers Postgres, MySQL, SQL Server, MariaDB, and SQLite from one zero-dependency server. 95% issue close rate.
+        Strong pick if your infrastructure runs multiple database engines and you want one server to rule them.
+      </p>
+    </section>
+
+    <section id="by-db">
+      <h2>Choosing by database type</h2>
+
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Database</th>
+            <th>Best MCP Server</th>
+            <th class="num">Score</th>
+            <th>Notes</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>MongoDB / Atlas</td>
+            <td><a href="/tool/mongodb-js--mongodb-mcp-server/" class="tool-link">mongodb-js/mongodb-mcp-server</a></td>
+            <td class="num score-cell">88.56</td>
+            <td>Official, 84% issue close rate</td>
+          </tr>
+          <tr>
+            <td>Redis</td>
+            <td><a href="/tool/redis--mcp-redis/" class="tool-link">redis/mcp-redis</a></td>
+            <td class="num score-cell">88.84</td>
+            <td>Official Redis Labs, all data structures</td>
+          </tr>
+          <tr>
+            <td>DuckDB / MotherDuck</td>
+            <td><a href="/tool/motherduckdb--mcp-server-motherduck/" class="tool-link">motherduckdb/mcp-server-motherduck</a></td>
+            <td class="num score-cell">89.06</td>
+            <td>Fastest for analytics, in-process</td>
+          </tr>
+          <tr>
+            <td>MySQL / MariaDB</td>
+            <td><a href="/tool/benborla--mcp-server-mysql/" class="tool-link">benborla/mcp-server-mysql</a></td>
+            <td class="num score-cell">85.22</td>
+            <td>Read-only, 1,361 stars</td>
+          </tr>
+          <tr>
+            <td>Postgres (serverless)</td>
+            <td><a href="/tool/neondatabase--mcp-server-neon/" class="tool-link">neondatabase/mcp-server-neon</a></td>
+            <td class="num score-cell">78.58</td>
+            <td>Official Neon, management + SQL</td>
+          </tr>
+          <tr>
+            <td>Postgres (self-hosted)</td>
+            <td><a href="/tool/pgEdge--pgedge-postgres-mcp/" class="tool-link">pgEdge/pgedge-postgres-mcp</a></td>
+            <td class="num score-cell">76.98</td>
+            <td>Go implementation, agent CLI included</td>
+          </tr>
+          <tr>
+            <td>Supabase (self-hosted)</td>
+            <td><a href="/tool/HenkDz--selfhosted-supabase-mcp/" class="tool-link">HenkDz/selfhosted-supabase-mcp</a></td>
+            <td class="num score-cell">75.44</td>
+            <td>100% issue close rate</td>
+          </tr>
+          <tr>
+            <td>Multiple engines</td>
+            <td><a href="/tool/bytebase--dbhub/" class="tool-link">bytebase/dbhub</a></td>
+            <td class="num score-cell">70.71</td>
+            <td>Zero deps, 5 engines, 2,335 stars</td>
+          </tr>
+          <tr>
+            <td>Any SQLAlchemy DB</td>
+            <td><a href="/tool/runekaagaard--mcp-alchemy/" class="tool-link">runekaagaard/mcp-alchemy</a></td>
+            <td class="num score-cell">74.93</td>
+            <td>Broadest coverage, 100% issue close</td>
+          </tr>
+          <tr>
+            <td>dbt projects</td>
+            <td><a href="/tool/dbt-labs--dbt-mcp/" class="tool-link">dbt-labs/dbt-mcp</a></td>
+            <td class="num score-cell">76.04</td>
+            <td>Official dbt Labs, runs models + tests</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="methodology">
+      <h2>Scoring methodology</h2>
+      <p class="methodology">
+        AgentRank scores combine five GitHub signals: stars (15%), commit freshness (25%), issue close rate (25%),
+        contributor count (10%), and inbound dependents (25%). Scores are updated nightly from live crawl data.
+        The average score across all {stats.totalDatabaseTools} database-category tools is {stats.avgDatabaseScore}.
+        <a href="/methodology/" class="inline-link">Full methodology &rarr;</a>
+      </p>
+
+      <div class="cta-box">
+        <p>
+          <strong>See all {stats.totalDatabaseTools} database tools ranked.</strong> The full leaderboard updates nightly
+          with fresh crawl data — scores shift as maintainers commit, close issues, and gain stars.
+        </p>
+        <p>
+          <a href="/category/database/" class="inline-link">Browse all database MCP servers &rarr;</a>
+          &nbsp;&nbsp;
+          <a href="/" class="inline-link">Full leaderboard &rarr;</a>
+        </p>
+      </div>
+    </section>
+
+    <footer class="post-footer">
+      <p class="methodology">
+        Data sourced from the AgentRank nightly crawl of 25,000+ GitHub repositories.
+        Scores reflect the March 19, 2026 snapshot.
+        <a href="/methodology/">Scoring methodology</a>.
+      </p>
+      <p class="share-line">
+        Found this useful? <a href="https://agentrank-ai.com/blog/top-mcp-servers-database/" class="inline-link">Share this post</a>
+        or explore the <a href="/" class="inline-link">full AgentRank leaderboard</a>.
+      </p>
+    </footer>
+
+    <BlogSubscribeCTA />
+    <RelatedPosts posts={relatedPosts} />
+    <RelatedCategories currentCategory="database" />
+  </article>
+</Base>
+
+<style>
+  .blog-post {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 2rem 1rem 4rem;
+  }
+
+  .post-header {
+    margin-bottom: 2rem;
+  }
+
+  .breadcrumb {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    margin-bottom: 0.75rem;
+  }
+
+  .breadcrumb a {
+    color: var(--text-muted);
+  }
+
+  .breadcrumb span {
+    margin: 0 0.3rem;
+    opacity: 0.4;
+  }
+
+  .post-header h1 {
+    font-size: 1.6rem;
+    font-weight: 800;
+    line-height: 1.25;
+    margin-bottom: 0.6rem;
+  }
+
+  .post-meta {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    flex-wrap: wrap;
+  }
+
+  .post-meta .sep {
+    opacity: 0.4;
+  }
+
+  .lede {
+    font-size: 1rem;
+    line-height: 1.7;
+    color: var(--text);
+    opacity: 0.9;
+  }
+
+  .toc {
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 1rem 1.25rem;
+    margin-bottom: 2.5rem;
+    font-size: 0.82rem;
+  }
+
+  .toc strong {
+    display: block;
+    margin-bottom: 0.6rem;
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-muted);
+  }
+
+  .toc ol {
+    margin: 0;
+    padding-left: 1.2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+  }
+
+  .toc a {
+    color: var(--text-muted);
+  }
+
+  .toc a:hover {
+    color: var(--accent);
+  }
+
+  section {
+    margin-bottom: 3rem;
+  }
+
+  section h2 {
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-bottom: 0.75rem;
+    padding-bottom: 0.4rem;
+    border-bottom: 2px solid var(--accent);
+    display: inline-block;
+  }
+
+  section h3 {
+    font-size: 0.95rem;
+    font-weight: 700;
+    margin: 1.5rem 0 0.5rem;
+    color: var(--text);
+  }
+
+  section p {
+    font-size: 0.9rem;
+    line-height: 1.75;
+    color: var(--text);
+    opacity: 0.9;
+    margin-bottom: 0.9rem;
+  }
+
+  .inline-link {
+    color: var(--accent);
+    font-weight: 600;
+  }
+
+  .data-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.82rem;
+    margin: 1rem 0 1.25rem;
+  }
+
+  .data-table th {
+    text-align: left;
+    font-weight: 600;
+    color: var(--text-muted);
+    border-bottom: 1px solid var(--border);
+    padding: 0.4rem 0.75rem 0.4rem 0;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+
+  .data-table td {
+    padding: 0.45rem 0.75rem 0.45rem 0;
+    border-bottom: 1px solid var(--border);
+    color: var(--text);
+    vertical-align: top;
+  }
+
+  .data-table tr:last-child td {
+    border-bottom: none;
+  }
+
+  .num {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .rank-num {
+    color: var(--text-muted);
+    font-weight: 700;
+  }
+
+  .tool-cell {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+  }
+
+  .tool-link {
+    font-weight: 600;
+    color: var(--accent);
+    font-size: 0.82rem;
+  }
+
+  .tool-desc {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    font-weight: 400;
+  }
+
+  .score-cell {
+    color: var(--accent);
+    font-weight: 700;
+  }
+
+  .close-rate {
+    font-variant-numeric: tabular-nums;
+  }
+
+  .use-case {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    white-space: nowrap;
+  }
+
+  .lang-badge {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    white-space: nowrap;
+  }
+
+  .cta-box {
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    border-radius: 4px;
+    padding: 1rem 1.25rem;
+    margin-top: 1.5rem;
+  }
+
+  .cta-box p {
+    margin-bottom: 0.5rem;
+  }
+
+  .cta-box p:last-child {
+    margin-bottom: 0;
+  }
+
+  .post-footer {
+    margin-top: 3rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border);
+  }
+
+  .methodology {
+    font-size: 0.75rem !important;
+    color: var(--text-muted) !important;
+    opacity: 1 !important;
+  }
+
+  .share-line {
+    font-size: 0.82rem !important;
+    margin-top: 0.75rem;
+  }
+
+  @media (max-width: 640px) {
+    .post-header h1 {
+      font-size: 1.3rem;
+    }
+
+    .data-table {
+      font-size: 0.75rem;
+    }
+
+    .use-case, .lang-badge {
+      display: none;
+    }
+
+    .comparison-table .close-rate {
+      display: none;
+    }
+  }
+</style>
