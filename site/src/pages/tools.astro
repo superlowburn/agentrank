@@ -14,6 +14,9 @@ const totalCount = getAllTools().length;
 // Collect categories that actually appear in the data
 const usedCategories = [...new Set(tools.map((t) => t.category).filter(Boolean))].sort() as string[];
 
+// Popular tools for empty state
+const popularTools = tools.slice(0, 5);
+
 const itemListJsonLd = {
   '@context': 'https://schema.org',
   '@type': 'ItemList',
@@ -39,27 +42,21 @@ const itemListJsonLd = {
   ogImage="/og/tools.png"
 >
   <div class="controls">
-    <input type="text" id="search" placeholder="Search tools..." autocomplete="off" />
-    <select id="category-filter">
-      <option value="">All categories</option>
-      {usedCategories.map((cat) => (
-        <option value={cat}>{CATEGORIES[cat] || cat}</option>
-      ))}
-    </select>
+    <div class="search-wrap">
+      <input type="text" id="search" placeholder="Search tools..." autocomplete="off" />
+      <div id="autocomplete" class="autocomplete-dropdown" hidden></div>
+    </div>
     <span class="count"><span id="visible-count">{tools.length}</span> of {totalCount.toLocaleString('en-US')} tools (top {TOP_N})</span>
   </div>
 
-  <BlogSubscribeCTA source="tools" />
-
-  <div class="category-nav">
+  <div class="filter-bar" id="filter-bar">
+    <button class="filter-chip active" data-cat="">All</button>
     {usedCategories.map((cat) => (
-      <a href={`/category/${cat}/`} class="cat-chip">{CATEGORIES[cat] || cat}</a>
+      <button class="filter-chip" data-cat={cat}>{CATEGORIES[cat] || cat}</button>
     ))}
-    <a href="/category/python/" class="cat-chip">Python</a>
-    <a href="/category/typescript/" class="cat-chip">TypeScript</a>
-    <a href="/category/go/" class="cat-chip">Go</a>
-    <a href="/category/rust/" class="cat-chip">Rust</a>
   </div>
+
+  <BlogSubscribeCTA source="tools" />
 
   <div class="table-wrap">
     <table id="leaderboard">
@@ -80,6 +77,7 @@ const itemListJsonLd = {
             <td class="rank">{tool.rank}</td>
             <td class="name">
               <a href={`/tool/${toSlug(tool.full_name)}/`}>{tool.full_name}</a>
+              {tool.category && <span class="badge cat-badge">{CATEGORIES[tool.category] || tool.category}</span>}
               {tool.is_archived && <span class="badge archived">archived</span>}
             </td>
             <td class="score">
@@ -95,6 +93,28 @@ const itemListJsonLd = {
         ))}
       </tbody>
     </table>
+
+    <div id="empty-state" class="empty-state" hidden>
+      <p class="empty-title">No tools found</p>
+      <p class="empty-sub">Try a different search term or clear the category filter.</p>
+      <div class="empty-popular">
+        <span>Popular right now:</span>
+        {popularTools.map((t) => (
+          <a href={`/tool/${toSlug(t.full_name)}/`} class="empty-tool-link">{t.full_name}</a>
+        ))}
+      </div>
+    </div>
+  </div>
+
+  <div class="category-nav-footer">
+    <span class="cat-nav-label">Browse by category:</span>
+    {usedCategories.map((cat) => (
+      <a href={`/category/${cat}/`} class="cat-chip">{CATEGORIES[cat] || cat}</a>
+    ))}
+    <a href="/category/python/" class="cat-chip">Python</a>
+    <a href="/category/typescript/" class="cat-chip">TypeScript</a>
+    <a href="/category/go/" class="cat-chip">Go</a>
+    <a href="/category/rust/" class="cat-chip">Rust</a>
   </div>
 </Base>
 
@@ -103,32 +123,15 @@ const itemListJsonLd = {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 1rem;
+    margin-bottom: 0.75rem;
     gap: 1rem;
   }
 
-  .category-nav {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.4rem;
-    margin-bottom: 1rem;
-  }
-
-  .cat-chip {
-    font-size: 0.75rem;
-    padding: 0.2rem 0.6rem;
-    border-radius: 3px;
-    border: 1px solid var(--border);
-    color: var(--text-muted);
-    background: var(--bg-surface);
-    text-decoration: none;
-    transition: color 0.15s, border-color 0.15s;
-  }
-
-  .cat-chip:hover {
-    color: var(--accent);
-    border-color: var(--accent);
-    text-decoration: none;
+  /* Search with autocomplete */
+  .search-wrap {
+    position: relative;
+    flex: 1;
+    max-width: 380px;
   }
 
   #search {
@@ -139,8 +142,7 @@ const itemListJsonLd = {
     border-radius: 4px;
     font-family: inherit;
     font-size: 0.85rem;
-    width: 300px;
-    max-width: 60%;
+    width: 100%;
   }
 
   #search:focus {
@@ -148,19 +150,92 @@ const itemListJsonLd = {
     border-color: var(--accent);
   }
 
-  #category-filter {
+  .autocomplete-dropdown {
+    position: absolute;
+    top: calc(100% + 2px);
+    left: 0;
+    right: 0;
     background: var(--bg-surface);
     border: 1px solid var(--border);
-    color: var(--text);
-    padding: 0.5rem 0.75rem;
     border-radius: 4px;
-    font-family: inherit;
-    font-size: 0.85rem;
-    cursor: pointer;
+    z-index: 100;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    overflow: hidden;
   }
 
-  #category-filter:focus {
-    outline: 1px solid var(--accent);
+  .ac-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.45rem 0.75rem;
+    cursor: pointer;
+    text-decoration: none;
+    color: var(--text);
+    font-size: 0.82rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .ac-item:last-child {
+    border-bottom: none;
+  }
+
+  .ac-item:hover, .ac-item.selected {
+    background: var(--bg-hover);
+    color: var(--accent);
+  }
+
+  .ac-name {
+    flex: 1;
+    font-weight: 500;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .ac-score {
+    font-size: 0.72rem;
+    padding: 0.1rem 0.35rem;
+    border-radius: 3px;
+    font-weight: 600;
+    flex-shrink: 0;
+  }
+
+  .ac-rank {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    flex-shrink: 0;
+  }
+
+  /* Filter chips */
+  .filter-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    margin-bottom: 0.75rem;
+    align-items: center;
+  }
+
+  .filter-chip {
+    font-size: 0.75rem;
+    padding: 0.25rem 0.65rem;
+    border-radius: 3px;
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+    background: var(--bg-surface);
+    cursor: pointer;
+    font-family: inherit;
+    transition: color 0.12s, border-color 0.12s, background 0.12s;
+    white-space: nowrap;
+  }
+
+  .filter-chip:hover {
+    color: var(--accent);
+    border-color: var(--accent);
+  }
+
+  .filter-chip.active {
+    background: var(--accent);
+    color: #fff;
     border-color: var(--accent);
   }
 
@@ -168,6 +243,7 @@ const itemListJsonLd = {
     color: var(--text-muted);
     font-size: 0.8rem;
     white-space: nowrap;
+    flex-shrink: 0;
   }
 
   .table-wrap {
@@ -254,6 +330,12 @@ const itemListJsonLd = {
     color: #fbbf24;
   }
 
+  .cat-badge {
+    background: color-mix(in srgb, var(--text-muted) 12%, transparent);
+    color: var(--text-muted);
+    border: 1px solid color-mix(in srgb, var(--text-muted) 20%, transparent);
+  }
+
   .score-bar {
     display: inline-block;
     padding: 0.1rem 0.5rem;
@@ -274,6 +356,82 @@ const itemListJsonLd = {
 
   .hidden-row {
     display: none;
+  }
+
+  /* Empty state */
+  .empty-state {
+    padding: 3rem 1.5rem;
+    text-align: center;
+    border-top: 1px solid var(--border);
+  }
+
+  .empty-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text);
+    margin: 0 0 0.35rem;
+  }
+
+  .empty-sub {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    margin: 0 0 1.25rem;
+  }
+
+  .empty-popular {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.82rem;
+    color: var(--text-muted);
+  }
+
+  .empty-tool-link {
+    padding: 0.2rem 0.6rem;
+    border-radius: 3px;
+    border: 1px solid var(--border);
+    color: var(--text);
+    text-decoration: none;
+    font-size: 0.8rem;
+  }
+
+  .empty-tool-link:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  /* Category nav footer */
+  .category-nav-footer {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-top: 1.5rem;
+    align-items: center;
+  }
+
+  .cat-nav-label {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    margin-right: 0.25rem;
+  }
+
+  .cat-chip {
+    font-size: 0.75rem;
+    padding: 0.2rem 0.6rem;
+    border-radius: 3px;
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+    background: var(--bg-surface);
+    text-decoration: none;
+    transition: color 0.15s, border-color 0.15s;
+  }
+
+  .cat-chip:hover {
+    color: var(--accent);
+    border-color: var(--accent);
+    text-decoration: none;
   }
 
   @media (prefers-color-scheme: light) {
@@ -300,31 +458,173 @@ const itemListJsonLd = {
   const tbody = document.getElementById('tbody')!;
   const rows = Array.from(tbody.querySelectorAll('tr'));
   const searchInput = document.getElementById('search') as HTMLInputElement;
-  const categoryFilter = document.getElementById('category-filter') as HTMLSelectElement;
   const visibleCount = document.getElementById('visible-count')!;
+  const autocompleteEl = document.getElementById('autocomplete') as HTMLDivElement;
+  const emptyState = document.getElementById('empty-state') as HTMLDivElement;
+  const filterBar = document.getElementById('filter-bar')!;
 
+  let currentCat = '';
   let currentSort = { col: '', dir: 'asc' };
+  let acSelectedIndex = -1;
 
+  // --- URL param helpers ---
+  function readUrlParams() {
+    const params = new URLSearchParams(window.location.search);
+    const q = params.get('q') || '';
+    const cat = params.get('cat') || '';
+    if (q) searchInput.value = q;
+    if (cat) setActiveChip(cat);
+    applyFilters();
+  }
+
+  function updateUrlParams() {
+    const params = new URLSearchParams();
+    if (searchInput.value) params.set('q', searchInput.value);
+    if (currentCat) params.set('cat', currentCat);
+    const newUrl = params.toString()
+      ? `${window.location.pathname}?${params.toString()}`
+      : window.location.pathname;
+    history.replaceState(null, '', newUrl);
+  }
+
+  // --- Filter logic ---
   function applyFilters() {
     const q = searchInput.value.toLowerCase();
-    const cat = categoryFilter.value;
     let count = 0;
     rows.forEach((row) => {
       const name = row.querySelector('.name')!.textContent!.toLowerCase();
       const lang = row.querySelector('.lang')!.textContent!.toLowerCase();
       const rowCat = (row as HTMLElement).dataset.category || '';
       const matchesSearch = !q || name.includes(q) || lang.includes(q);
-      const matchesCat = !cat || rowCat === cat;
+      const matchesCat = !currentCat || rowCat === currentCat;
       const visible = matchesSearch && matchesCat;
       row.classList.toggle('hidden-row', !visible);
       if (visible) count++;
     });
     visibleCount.textContent = String(count);
+    emptyState.hidden = count > 0;
+    updateUrlParams();
   }
 
-  searchInput.addEventListener('input', applyFilters);
-  categoryFilter.addEventListener('change', applyFilters);
+  searchInput.addEventListener('input', () => {
+    applyFilters();
+    scheduleAutocomplete();
+  });
 
+  // --- Category filter chips ---
+  function setActiveChip(cat: string) {
+    currentCat = cat;
+    filterBar.querySelectorAll<HTMLButtonElement>('.filter-chip').forEach((chip) => {
+      chip.classList.toggle('active', (chip.dataset.cat || '') === cat);
+    });
+  }
+
+  filterBar.addEventListener('click', (e) => {
+    const chip = (e.target as HTMLElement).closest<HTMLButtonElement>('.filter-chip');
+    if (!chip) return;
+    const cat = chip.dataset.cat || '';
+    setActiveChip(cat);
+    applyFilters();
+  });
+
+  // --- Autocomplete ---
+  let acTimer: ReturnType<typeof setTimeout> | null = null;
+
+  function scheduleAutocomplete() {
+    if (acTimer) clearTimeout(acTimer);
+    const q = searchInput.value.trim();
+    if (q.length < 2) {
+      hideAutocomplete();
+      return;
+    }
+    acTimer = setTimeout(() => fetchSuggestions(q), 150);
+  }
+
+  async function fetchSuggestions(q: string) {
+    try {
+      const res = await fetch(`/api/search?q=${encodeURIComponent(q)}&type=tool&limit=6`);
+      if (!res.ok) return;
+      const data = await res.json() as { results: Array<{ name: string; score: number; rank: number; url: string }> };
+      renderAutocomplete(data.results || []);
+    } catch {
+      // Non-fatal
+    }
+  }
+
+  function renderAutocomplete(results: Array<{ name: string; score: number; rank: number; url: string }>) {
+    if (!results.length || !searchInput.value.trim()) {
+      hideAutocomplete();
+      return;
+    }
+    acSelectedIndex = -1;
+    autocompleteEl.innerHTML = '';
+    results.forEach((r, i) => {
+      const a = document.createElement('a');
+      a.className = 'ac-item';
+      a.href = `/tool/${r.name.replace('/', '--')}/`;
+      a.dataset.index = String(i);
+
+      const nameEl = document.createElement('span');
+      nameEl.className = 'ac-name';
+      nameEl.textContent = r.name;
+
+      const scoreEl = document.createElement('span');
+      scoreEl.className = 'ac-score';
+      const s = r.score;
+      scoreEl.style.background = s > 70 ? 'rgba(34,197,94,.15)' : s > 40 ? 'rgba(234,179,8,.15)' : 'rgba(239,68,68,.15)';
+      scoreEl.style.color = s > 70 ? '#22c55e' : s > 40 ? '#eab308' : '#ef4444';
+      scoreEl.textContent = s.toFixed(1);
+
+      const rankEl = document.createElement('span');
+      rankEl.className = 'ac-rank';
+      rankEl.textContent = `#${r.rank}`;
+
+      a.appendChild(nameEl);
+      a.appendChild(scoreEl);
+      a.appendChild(rankEl);
+      autocompleteEl.appendChild(a);
+    });
+    autocompleteEl.hidden = false;
+  }
+
+  function hideAutocomplete() {
+    autocompleteEl.hidden = true;
+    autocompleteEl.innerHTML = '';
+    acSelectedIndex = -1;
+  }
+
+  // Keyboard navigation in autocomplete
+  searchInput.addEventListener('keydown', (e) => {
+    const items = autocompleteEl.querySelectorAll<HTMLAnchorElement>('.ac-item');
+    if (!items.length || autocompleteEl.hidden) return;
+
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      acSelectedIndex = Math.min(acSelectedIndex + 1, items.length - 1);
+      items.forEach((el, i) => el.classList.toggle('selected', i === acSelectedIndex));
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      acSelectedIndex = Math.max(acSelectedIndex - 1, -1);
+      items.forEach((el, i) => el.classList.toggle('selected', i === acSelectedIndex));
+    } else if (e.key === 'Enter' && acSelectedIndex >= 0) {
+      e.preventDefault();
+      items[acSelectedIndex]?.click();
+    } else if (e.key === 'Escape') {
+      hideAutocomplete();
+    }
+  });
+
+  document.addEventListener('click', (e) => {
+    if (!(e.target as HTMLElement).closest('.search-wrap')) {
+      hideAutocomplete();
+    }
+  });
+
+  searchInput.addEventListener('focus', () => {
+    if (searchInput.value.trim().length >= 2) scheduleAutocomplete();
+  });
+
+  // --- Column sorting ---
   document.querySelectorAll('th.sortable').forEach((th) => {
     th.addEventListener('click', () => {
       const col = (th as HTMLElement).dataset.col!;
@@ -340,7 +640,7 @@ const itemListJsonLd = {
       const getCellValue = (row: Element): string => {
         switch (col) {
           case 'rank': return row.querySelector('.rank')!.textContent!;
-          case 'name': return row.querySelector('.name')!.textContent!;
+          case 'name': return row.querySelector('.name a')!.textContent!;
           case 'score': return row.querySelector('.score-bar')!.textContent!;
           case 'stars': return row.querySelector('.stars')!.textContent!;
           case 'dependents': return row.querySelector('.dependents')!.textContent!;
@@ -357,6 +657,7 @@ const itemListJsonLd = {
         if (s.includes('mo ago')) return parseInt(s) * 30;
         if (s.includes('y ago')) return parseInt(s) * 365;
         if (s === 'today') return 0;
+        if (s === '—') return -1;
         return parseFloat(s) || 0;
       };
 
@@ -376,7 +677,7 @@ const itemListJsonLd = {
     });
   });
 
-  // Sponsored badge injection — non-blocking, best-effort
+  // --- Sponsored badge injection ---
   (async () => {
     try {
       const resp = await fetch('/api/sponsored');
@@ -398,7 +699,10 @@ const itemListJsonLd = {
         }
       });
     } catch {
-      // Non-fatal — sponsored badges are cosmetic
+      // Non-fatal
     }
   })();
+
+  // --- Init from URL ---
+  readUrlParams();
 </script>
