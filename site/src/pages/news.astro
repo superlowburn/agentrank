@@ -1,0 +1,613 @@
+---
+export const prerender = false;
+
+import Base from '../layouts/Base.astro';
+
+// Types
+interface NewsItem {
+  id: string;
+  title: string;
+  summary: string;
+  source_url: string;
+  source: 'twitter' | 'github' | 'manual';
+  category: string;
+  related_tool_slugs: string[] | string;
+  author: string;
+  author_handle: string;
+  engagement_score: number;
+  published_at: string;
+}
+
+const CATEGORIES = ['all', 'release', 'trending', 'new-tool', 'mover', 'deprecated'] as const;
+type Category = (typeof CATEGORIES)[number];
+
+const url = Astro.url;
+const activeCategory = (url.searchParams.get('category') || 'all') as Category;
+const page = Math.max(1, parseInt(url.searchParams.get('page') || '1', 10));
+const limit = 20;
+const offset = (page - 1) * limit;
+
+// Relative time helper
+function relativeTime(iso: string): string {
+  const diff = Date.now() - new Date(iso).getTime();
+  const mins = Math.floor(diff / 60000);
+  if (mins < 60) return `${mins}m ago`;
+  const hrs = Math.floor(mins / 60);
+  if (hrs < 24) return `${hrs}h ago`;
+  const days = Math.floor(hrs / 24);
+  if (days === 1) return 'yesterday';
+  return `${days}d ago`;
+}
+
+function slugToPath(slug: string): string {
+  return `/tool/${slug}/`;
+}
+
+// Fetch from D1 with mock data fallback
+const MOCK_NEWS_ITEMS: NewsItem[] = [
+  {
+    id: 'mock-1',
+    title: 'FastMCP surges past 10k GitHub stars',
+    summary: 'The Python MCP framework hit a major milestone this week, cementing its position as the go-to library for building MCP servers quickly. The project saw 500+ new stars in the last 7 days.',
+    source_url: 'https://github.com/jlowin/fastmcp',
+    source: 'github',
+    category: 'trending',
+    related_tool_slugs: ['jlowin--fastmcp'],
+    author: 'Jeremiah Lowin',
+    author_handle: 'jlowin',
+    engagement_score: 95,
+    published_at: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
+  },
+  {
+    id: 'mock-2',
+    title: 'mcp-use ships v0.4.0 with multi-agent orchestration',
+    summary: 'mcp-use released v0.4.0 with native support for coordinating multiple MCP clients in a single pipeline. Enables complex agent workflows with shared tool access.',
+    source_url: 'https://github.com/mcp-use/mcp-use/releases/tag/v0.4.0',
+    source: 'github',
+    category: 'release',
+    related_tool_slugs: ['mcp-use--mcp-use'],
+    author: 'mcp-use team',
+    author_handle: 'mcp_use',
+    engagement_score: 88,
+    published_at: new Date(Date.now() - 5 * 60 * 60 * 1000).toISOString(),
+  },
+  {
+    id: 'mock-3',
+    title: 'mark3labs/mcp-go climbed 12 spots this week',
+    summary: 'The Go MCP SDK jumped from rank #22 to #10 after a 40% surge in dependent repos. Its zero-dependency footprint is driving adoption across enterprise Go shops.',
+    source_url: 'https://github.com/mark3labs/mcp-go',
+    source: 'github',
+    category: 'mover',
+    related_tool_slugs: ['mark3labs--mcp-go'],
+    author: 'mark3labs',
+    author_handle: 'mark3labs',
+    engagement_score: 82,
+    published_at: new Date(Date.now() - 8 * 60 * 60 * 1000).toISOString(),
+  },
+  {
+    id: 'mock-4',
+    title: 'New: semantic-scholar MCP exposes academic research to AI agents',
+    summary: "A fastmcp-based server that lets AI agents search 200M+ papers, fetch abstracts, get citation networks, and find related work — all over MCP.",
+    source_url: 'https://github.com/zongmin-yu/semantic-scholar-fastmcp-mcp-server',
+    source: 'github',
+    category: 'new-tool',
+    related_tool_slugs: ['zongmin-yu--semantic-scholar-fastmcp-mcp-server'],
+    author: 'zongmin-yu',
+    author_handle: 'zongmin_yu',
+    engagement_score: 74,
+    published_at: new Date(Date.now() - 14 * 60 * 60 * 1000).toISOString(),
+  },
+  {
+    id: 'mock-5',
+    title: 'Microsoft ships Azure DevOps MCP v1.0',
+    summary: 'After 6 weeks in preview, the Azure DevOps MCP server graduated to v1.0. Supports pipelines, boards, repos, and artifacts from a single MCP connection.',
+    source_url: 'https://github.com/microsoft/azure-devops-mcp/releases',
+    source: 'github',
+    category: 'release',
+    related_tool_slugs: ['microsoft--azure-devops-mcp'],
+    author: 'Microsoft',
+    author_handle: 'Microsoft',
+    engagement_score: 68,
+    published_at: new Date(Date.now() - 22 * 60 * 60 * 1000).toISOString(),
+  },
+  {
+    id: 'mock-6',
+    title: 'New: shadcn-ui MCP server for component scaffolding',
+    summary: 'A new MCP server that exposes the full shadcn/ui component library to AI coding agents. Generate, install, and configure components directly from Claude or Cursor.',
+    source_url: 'https://github.com/Jpisnice/shadcn-ui-mcp-server',
+    source: 'github',
+    category: 'new-tool',
+    related_tool_slugs: ['Jpisnice--shadcn-ui-mcp-server'],
+    author: 'Jpisnice',
+    author_handle: 'Jpisnice',
+    engagement_score: 62,
+    published_at: new Date(Date.now() - 36 * 60 * 60 * 1000).toISOString(),
+  },
+  {
+    id: 'mock-7',
+    title: 'Serena jumps into top 20 after LSP expansion',
+    summary: 'Oraios/serena climbed 18 spots after shipping support for 12 language servers. Users report 40% fewer hallucinated code edits.',
+    source_url: 'https://github.com/oraios/serena',
+    source: 'github',
+    category: 'mover',
+    related_tool_slugs: ['oraios--serena'],
+    author: 'Oraios',
+    author_handle: 'oraios',
+    engagement_score: 58,
+    published_at: new Date(Date.now() - 48 * 60 * 60 * 1000).toISOString(),
+  },
+  {
+    id: 'mock-8',
+    title: 'agnix archived — no commits in 6 months',
+    summary: 'The agnix agent framework has been archived by its maintainer. Tools built on it should consider migrating to actively maintained alternatives.',
+    source_url: 'https://github.com/agent-sh/agnix',
+    source: 'github',
+    category: 'deprecated',
+    related_tool_slugs: ['agent-sh--agnix'],
+    author: 'AgentRank',
+    author_handle: 'AgentRank_ai',
+    engagement_score: 40,
+    published_at: new Date(Date.now() - 60 * 60 * 1000 * 60).toISOString(),
+  },
+];
+
+let items: NewsItem[] = [];
+let totalItems = 0;
+let isMock = false;
+
+try {
+  const { env } = Astro.locals.runtime;
+  const categoryClause = activeCategory !== 'all' ? `AND category = ?1` : '';
+  const bindings: (string | number)[] = activeCategory !== 'all'
+    ? [activeCategory, limit, offset]
+    : [limit, offset];
+  const bindOffset = activeCategory !== 'all' ? 1 : 0;
+
+  const countStmt = env.DB.prepare(
+    `SELECT COUNT(*) as n FROM news_items WHERE status = 'published' ${categoryClause}`
+  );
+  const countResult = activeCategory !== 'all'
+    ? await countStmt.bind(activeCategory).first<{ n: number }>()
+    : await countStmt.first<{ n: number }>();
+  totalItems = countResult?.n ?? 0;
+
+  const rows = await env.DB.prepare(
+    `SELECT id, title, summary, source_url, source, category,
+            related_tool_slugs, author, author_handle,
+            engagement_score, published_at
+     FROM news_items
+     WHERE status = 'published' ${categoryClause}
+     ORDER BY published_at DESC
+     LIMIT ?${bindOffset + 1} OFFSET ?${bindOffset + 2}`
+  ).bind(...bindings).all();
+
+  items = (rows.results as NewsItem[]).map((r) => ({
+    ...r,
+    related_tool_slugs: typeof r.related_tool_slugs === 'string'
+      ? JSON.parse(r.related_tool_slugs)
+      : (r.related_tool_slugs ?? []),
+  }));
+
+  if (items.length === 0) {
+    isMock = true;
+    const filtered = activeCategory === 'all' ? MOCK_NEWS_ITEMS : MOCK_NEWS_ITEMS.filter((n) => n.category === activeCategory);
+    totalItems = filtered.length;
+    items = filtered.slice(offset, offset + limit);
+  }
+} catch {
+  isMock = true;
+  const filtered = activeCategory === 'all' ? MOCK_NEWS_ITEMS : MOCK_NEWS_ITEMS.filter((n) => n.category === activeCategory);
+  totalItems = filtered.length;
+  items = filtered.slice(offset, offset + limit);
+}
+
+const totalPages = Math.ceil(totalItems / limit);
+
+function sourceIcon(source: string): string {
+  if (source === 'twitter') return '𝕏';
+  if (source === 'github') return '⌥'; // close enough, or use text
+  return '◆';
+}
+
+function sourceLabel(source: string): string {
+  if (source === 'twitter') return 'Twitter/X';
+  if (source === 'github') return 'GitHub';
+  return 'AgentRank';
+}
+
+function categoryLabel(cat: string): string {
+  const labels: Record<string, string> = {
+    release: 'Release',
+    trending: 'Trending',
+    'new-tool': 'New Tool',
+    mover: 'Mover',
+    deprecated: 'Deprecated',
+  };
+  return labels[cat] || cat;
+}
+
+function categoryTabLabel(cat: string): string {
+  const labels: Record<string, string> = {
+    all: 'All',
+    release: 'Releases',
+    trending: 'Trending',
+    'new-tool': 'New Tools',
+    mover: 'Movers',
+    deprecated: 'Deprecated',
+  };
+  return labels[cat] || cat;
+}
+
+function slugsArray(raw: string[] | string): string[] {
+  if (Array.isArray(raw)) return raw;
+  try { return JSON.parse(raw); } catch { return []; }
+}
+
+function buildUrl(cat: Category, pg: number): string {
+  const params = new URLSearchParams();
+  if (cat !== 'all') params.set('category', cat);
+  if (pg > 1) params.set('page', String(pg));
+  const q = params.toString();
+  return `/news/${q ? '?' + q : ''}`;
+}
+---
+
+<Base
+  title="MCP Ecosystem News | AgentRank"
+  description="Latest releases, trending tools, new entries, and rank movers in the MCP server and AI agent ecosystem. Updated daily from GitHub signals."
+  keywords="MCP news, AI agent news, MCP server releases, new MCP tools, model context protocol updates, agent tool launches"
+  activeTab="news"
+  canonicalUrl="https://agentrank-ai.com/news/"
+>
+  <div class="news-header">
+    <h2>Ecosystem News</h2>
+    <p class="news-desc">Releases, movers, new tools, and trending activity — sourced from GitHub signals.</p>
+  </div>
+
+  <nav class="cat-tabs" aria-label="News categories">
+    {CATEGORIES.map((cat) => (
+      <a
+        href={buildUrl(cat, 1)}
+        class={`cat-tab${activeCategory === cat ? ' active' : ''}`}
+        aria-current={activeCategory === cat ? 'page' : undefined}
+      >
+        {categoryTabLabel(cat)}
+      </a>
+    ))}
+  </nav>
+
+  {isMock && (
+    <div class="mock-notice">
+      Showing example items while the live ingestion pipeline warms up. Real ecosystem news coming soon.
+    </div>
+  )}
+
+  {items.length === 0 ? (
+    <div class="empty-state">
+      <p>No news in this category yet. Check back soon.</p>
+    </div>
+  ) : (
+    <div class="news-feed">
+      {items.map((item) => {
+        const relTime = relativeTime(item.published_at);
+        const slugs = slugsArray(item.related_tool_slugs);
+        return (
+          <article class="news-card">
+            <div class="news-card-meta">
+              <span class={`source-badge source-${item.source}`} title={sourceLabel(item.source)}>
+                {item.source === 'twitter' ? '𝕏' : item.source === 'github' ? 'GH' : 'AR'}
+              </span>
+              <span class={`cat-badge cat-${item.category}`}>{categoryLabel(item.category)}</span>
+              <time class="timestamp" datetime={item.published_at}>{relTime}</time>
+            </div>
+            <h3 class="news-title">
+              <a href={item.source_url} target="_blank" rel="noopener noreferrer">{item.title}</a>
+            </h3>
+            <p class="news-summary">{item.summary}</p>
+            <div class="news-footer">
+              {slugs.length > 0 && (
+                <div class="related-tools">
+                  {slugs.map((slug: string) => (
+                    <a href={slugToPath(slug)} class="tool-chip">{slug.replace(/-/g, '/')}</a>
+                  ))}
+                </div>
+              )}
+              {item.author_handle && (
+                <span class="author">
+                  {item.source === 'twitter'
+                    ? <a href={`https://twitter.com/${item.author_handle}`} target="_blank" rel="noopener noreferrer">@{item.author_handle}</a>
+                    : <a href={`https://github.com/${item.author_handle}`} target="_blank" rel="noopener noreferrer">{item.author || item.author_handle}</a>
+                  }
+                </span>
+              )}
+            </div>
+          </article>
+        );
+      })}
+    </div>
+  )}
+
+  {totalPages > 1 && (
+    <nav class="pagination" aria-label="Pagination">
+      {page > 1 && (
+        <a href={buildUrl(activeCategory, page - 1)} class="page-btn">&larr; prev</a>
+      )}
+      <span class="page-info">page {page} of {totalPages}</span>
+      {page < totalPages && (
+        <a href={buildUrl(activeCategory, page + 1)} class="page-btn">next &rarr;</a>
+      )}
+    </nav>
+  )}
+</Base>
+
+<style>
+  .news-header {
+    margin-bottom: 1.25rem;
+  }
+
+  .news-header h2 {
+    font-size: 1.15rem;
+    font-weight: 700;
+    margin-bottom: 0.25rem;
+  }
+
+  .news-desc {
+    color: var(--text-muted);
+    font-size: 0.82rem;
+  }
+
+  .cat-tabs {
+    display: flex;
+    gap: 0.2rem;
+    flex-wrap: wrap;
+    margin-bottom: 1.25rem;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 0.5rem;
+  }
+
+  .cat-tab {
+    color: var(--text-muted);
+    text-decoration: none;
+    font-size: 0.82rem;
+    padding: 0.2rem 0.65rem;
+    border-radius: 3px;
+    transition: color 0.12s, background 0.12s;
+    white-space: nowrap;
+  }
+
+  .cat-tab:hover {
+    color: var(--text);
+    background: var(--bg-hover);
+    text-decoration: none;
+  }
+
+  .cat-tab.active {
+    color: var(--accent);
+    font-weight: 700;
+    background: transparent;
+  }
+
+  .mock-notice {
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    color: var(--text-muted);
+    font-size: 0.78rem;
+    padding: 0.6rem 0.85rem;
+    margin-bottom: 1.25rem;
+    border-radius: 3px;
+  }
+
+  .news-feed {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .news-card {
+    border-bottom: 1px solid var(--border);
+    padding: 0.9rem 0;
+  }
+
+  .news-card:first-child {
+    border-top: 1px solid var(--border);
+  }
+
+  .news-card:hover {
+    background: transparent;
+  }
+
+  .news-card-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.35rem;
+    flex-wrap: wrap;
+  }
+
+  .source-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.5rem;
+    height: 1.5rem;
+    border-radius: 3px;
+    font-size: 0.65rem;
+    font-weight: 700;
+    line-height: 1;
+    flex-shrink: 0;
+  }
+
+  .source-twitter {
+    background: #000;
+    color: #fff;
+    border: 1px solid #333;
+  }
+
+  .source-github {
+    background: #161b22;
+    color: #e6edf3;
+    border: 1px solid #30363d;
+    font-size: 0.6rem;
+  }
+
+  .source-manual {
+    background: var(--bg-surface);
+    color: var(--accent);
+    border: 1px solid var(--border);
+    font-size: 0.6rem;
+  }
+
+  @media (prefers-color-scheme: light) {
+    .source-github {
+      background: #f6f8fa;
+      color: #24292f;
+      border: 1px solid #d0d7de;
+    }
+  }
+
+  .cat-badge {
+    font-size: 0.68rem;
+    padding: 0.1rem 0.45rem;
+    border-radius: 3px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+
+  .cat-release    { background: rgba(34,197,94,0.12);  color: #22c55e; }
+  .cat-trending   { background: rgba(245,158,11,0.12); color: #f59e0b; }
+  .cat-new-tool   { background: rgba(59,130,246,0.12); color: #3b82f6; }
+  .cat-mover      { background: rgba(168,85,247,0.12); color: #a855f7; }
+  .cat-deprecated { background: rgba(113,113,122,0.15); color: #71717a; }
+
+  @media (prefers-color-scheme: light) {
+    .cat-release    { background: rgba(34,197,94,0.15);   color: #16a34a; }
+    .cat-trending   { background: rgba(245,158,11,0.15);  color: #d97706; }
+    .cat-new-tool   { background: rgba(59,130,246,0.15);  color: #2563eb; }
+    .cat-mover      { background: rgba(168,85,247,0.15);  color: #7c3aed; }
+    .cat-deprecated { background: rgba(113,113,122,0.12); color: #52525b; }
+  }
+
+  .timestamp {
+    color: var(--text-muted);
+    font-size: 0.75rem;
+    margin-left: auto;
+  }
+
+  .news-title {
+    font-size: 0.95rem;
+    font-weight: 600;
+    line-height: 1.35;
+    margin-bottom: 0.3rem;
+  }
+
+  .news-title a {
+    color: var(--text);
+    text-decoration: none;
+  }
+
+  .news-title a:hover {
+    color: var(--accent);
+    text-decoration: none;
+  }
+
+  .news-summary {
+    color: var(--text-muted);
+    font-size: 0.82rem;
+    line-height: 1.5;
+    margin-bottom: 0.5rem;
+  }
+
+  .news-footer {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+  }
+
+  .related-tools {
+    display: flex;
+    gap: 0.35rem;
+    flex-wrap: wrap;
+  }
+
+  .tool-chip {
+    font-size: 0.7rem;
+    padding: 0.1rem 0.45rem;
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    color: var(--accent);
+    text-decoration: none;
+    white-space: nowrap;
+  }
+
+  .tool-chip:hover {
+    border-color: var(--accent);
+    text-decoration: none;
+  }
+
+  .author {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    margin-left: auto;
+  }
+
+  .author a {
+    color: var(--text-muted);
+    text-decoration: none;
+  }
+
+  .author a:hover {
+    color: var(--text);
+    text-decoration: underline;
+  }
+
+  .pagination {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    justify-content: center;
+    margin-top: 1.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border);
+  }
+
+  .page-btn {
+    font-size: 0.82rem;
+    color: var(--accent);
+    text-decoration: none;
+    padding: 0.3rem 0.75rem;
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    transition: border-color 0.12s;
+  }
+
+  .page-btn:hover {
+    border-color: var(--accent);
+    text-decoration: none;
+  }
+
+  .page-info {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+  }
+
+  .empty-state {
+    padding: 2rem 0;
+    color: var(--text-muted);
+    font-size: 0.85rem;
+  }
+
+  @media (max-width: 480px) {
+    .timestamp {
+      margin-left: 0;
+      width: 100%;
+    }
+
+    .author {
+      margin-left: 0;
+    }
+  }
+</style>
