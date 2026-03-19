@@ -1,0 +1,1169 @@
+---
+export const prerender = true;
+
+import Base from '../../layouts/Base.astro';
+import BlogSubscribeCTA from '../../components/BlogSubscribeCTA.astro';
+import RelatedPosts from '../../components/RelatedPosts.astro';
+
+const relatedPosts = [
+  { href: '/blog/how-to-build-an-mcp-server/', title: 'How to Build an MCP Server in 2026' },
+  { href: '/blog/fastmcp-tutorial-python-mcp-server/', title: 'FastMCP Tutorial: Build a Python MCP Server in 20 Minutes' },
+  { href: '/blog/best-python-mcp-libraries/', title: 'Best Python Libraries for Building MCP Servers in 2026' },
+  { href: '/blog/mcp-server-security-best-practices/', title: 'MCP Server Security Best Practices for 2026' },
+  { href: '/blog/how-agentrank-scores-mcp-servers/', title: 'How AgentRank Scores MCP Servers — The Quality Score Explained' },
+];
+
+const publishDate = '2026-03-19';
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'TechArticle',
+  headline: 'Build Your First MCP Server: A Complete Beginner Tutorial (2026)',
+  description: 'Build a working Model Context Protocol server from scratch. Step-by-step tutorial covering prerequisites, Python setup with FastMCP, testing with MCP Inspector, publishing to npm, and how AgentRank scores your server.',
+  datePublished: publishDate,
+  dateModified: publishDate,
+  author: {
+    '@type': 'Organization',
+    name: 'AgentRank',
+    url: 'https://agentrank-ai.com',
+  },
+  publisher: {
+    '@type': 'Organization',
+    name: 'AgentRank',
+    url: 'https://agentrank-ai.com',
+    logo: {
+      '@type': 'ImageObject',
+      url: 'https://agentrank-ai.com/og-image.png',
+    },
+  },
+  mainEntityOfPage: {
+    '@type': 'WebPage',
+    '@id': 'https://agentrank-ai.com/blog/mcp-server-tutorial-beginners/',
+  },
+  image: 'https://agentrank-ai.com/og-image.png',
+  keywords: 'build MCP server, MCP server tutorial, model context protocol tutorial, create MCP server, MCP server beginner guide, FastMCP tutorial 2026',
+};
+
+const faqJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: [
+    {
+      '@type': 'Question',
+      name: 'What do I need to know before building an MCP server?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Basic Python (functions, decorators, type hints) is enough to follow this tutorial. You do not need to understand the MCP protocol internals — FastMCP handles that. Familiarity with pip and virtual environments is helpful.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'How long does it take to build a working MCP server?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'A minimal working MCP server takes about 10 minutes with FastMCP. A well-tested, publishable server with error handling, schema documentation, and a README takes 2–4 hours.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'What is the difference between a tool and a resource in MCP?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Tools are functions the AI can call to take action or retrieve data — they have parameters and return values. Resources are read-only data sources identified by a URI, like a file or an API endpoint. Most servers implement tools. Resources are for background context that doesn\'t require active computation.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'How does AgentRank score a new MCP server?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'AgentRank scores on five signals: stars (15%), freshness (25%), issue health (25%), contributor count (10%), and inbound dependents (25%). A new server starts low on stars and dependents but can score high on freshness immediately. Responding to issues quickly and keeping commits coming is the fastest path to a higher score.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Which MCP clients can connect to my server?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Any MCP-compatible client: Claude Desktop, Cursor, VS Code Copilot, Windsurf, Cline, Zed, and dozens more. If you implement the stdio transport (the default), it works with all of them without additional configuration.',
+      },
+    },
+  ],
+};
+
+const topServersForReference = [
+  {
+    name: 'modelcontextprotocol/python-sdk',
+    slug: 'modelcontextprotocol--python-sdk',
+    score: 92.14,
+    stars: 4821,
+    why: 'Official Python SDK — the specification-authoritative implementation',
+  },
+  {
+    name: 'jlowin/fastmcp',
+    slug: 'jlowin--fastmcp',
+    score: 89.44,
+    stars: 6734,
+    why: 'Most-starred Python MCP framework — what we use in this tutorial',
+  },
+  {
+    name: 'modelcontextprotocol/typescript-sdk',
+    slug: 'modelcontextprotocol--typescript-sdk',
+    score: 91.88,
+    stars: 5102,
+    why: 'Official TypeScript SDK — the most-starred MCP framework overall',
+  },
+];
+---
+
+<Base
+  title="Build Your First MCP Server: Complete Tutorial (2026) — AgentRank"
+  description="Build a working MCP server from scratch. Step-by-step tutorial: prerequisites, Python + FastMCP, testing with MCP Inspector, publishing to PyPI, and how AgentRank scores your server."
+  activeTab="blog"
+  keywords="build MCP server, MCP server tutorial, model context protocol tutorial, create MCP server, MCP server beginner, FastMCP tutorial"
+  canonicalUrl="https://agentrank-ai.com/blog/mcp-server-tutorial-beginners/"
+  jsonLd={[jsonLd, faqJsonLd]}
+  ogImage="/og-image.png"
+>
+  <article class="blog-post">
+    <header class="post-header">
+      <div class="breadcrumb"><a href="/blog/">Blog</a> <span>/</span></div>
+      <h1>Build Your First MCP Server: A Complete Tutorial (2026)</h1>
+      <div class="post-meta">
+        <time datetime={publishDate}>March 19, 2026</time>
+        <span class="sep">&middot;</span>
+        <span>12 min read</span>
+        <span class="sep">&middot;</span>
+        <span>AgentRank Index</span>
+      </div>
+      <p class="lede">
+        The Model Context Protocol is the fastest-growing standard in the AI tooling ecosystem.
+        25,750+ MCP server repositories are already indexed on AgentRank — built by developers
+        who wanted their APIs, databases, and services to talk natively to AI agents.
+        This tutorial walks you through the entire journey: from a blank directory to a published,
+        scored MCP server in one sitting.
+      </p>
+    </header>
+
+    <nav class="toc">
+      <strong>Contents</strong>
+      <ol>
+        <li><a href="#what-youre-building">What you're building</a></li>
+        <li><a href="#prerequisites">Prerequisites</a></li>
+        <li><a href="#what-is-mcp">What MCP actually does</a></li>
+        <li><a href="#setup">Project setup</a></li>
+        <li><a href="#first-tool">Your first tool</a></li>
+        <li><a href="#more-tools">Adding more tools</a></li>
+        <li><a href="#resources">Adding a resource</a></li>
+        <li><a href="#testing">Testing with MCP Inspector</a></li>
+        <li><a href="#connect-claude">Connecting to Claude Desktop</a></li>
+        <li><a href="#publishing">Publishing to PyPI</a></li>
+        <li><a href="#agentrank-score">How AgentRank will score your server</a></li>
+      </ol>
+    </nav>
+
+    <section id="what-youre-building">
+      <h2>What you're building</h2>
+      <p>
+        By the end of this tutorial, you'll have a fully working MCP server called <strong>weather-mcp</strong>.
+        It will expose three tools:
+      </p>
+      <ul>
+        <li><strong>get_current_weather</strong> — returns current conditions for a city</li>
+        <li><strong>get_forecast</strong> — returns a multi-day forecast</li>
+        <li><strong>list_locations</strong> — returns cached locations the user has queried before</li>
+      </ul>
+      <p>
+        We'll use the Open-Meteo API (free, no key needed) so you don't need to sign up for anything.
+        The same patterns apply to any API, database, or service you want to expose through MCP.
+      </p>
+      <p>
+        The finished server will connect to Claude Desktop, Cursor, and any other MCP client. It will be
+        published on PyPI. It will show up in the AgentRank index with an initial score within 24 hours
+        of going public on GitHub.
+      </p>
+    </section>
+
+    <section id="prerequisites">
+      <h2>Prerequisites</h2>
+      <p>You need:</p>
+      <ul>
+        <li><strong>Python 3.10+</strong> — check with <code>python3 --version</code></li>
+        <li><strong>pip</strong> — included with Python</li>
+        <li><strong>A GitHub account</strong> — for publishing and getting indexed</li>
+        <li><strong>Basic Python knowledge</strong> — functions, type hints, decorators. That's it.</li>
+      </ul>
+      <p>
+        You do <em>not</em> need to understand the MCP protocol spec. You do not need to know JSON-RPC.
+        FastMCP handles all of that. You write Python functions and FastMCP makes them speak MCP.
+      </p>
+      <p>
+        Optionally install Claude Desktop to test the full client-server connection in the later steps.
+        You can also verify everything works using the MCP Inspector CLI tool, which is covered in the
+        <a href="#testing" class="inline-link">testing section</a>.
+      </p>
+    </section>
+
+    <section id="what-is-mcp">
+      <h2>What MCP actually does</h2>
+      <p>
+        Without MCP, every AI client that wants to call an external tool writes its own integration:
+        Claude has its own tool calling format, Cursor has its own, Copilot has its own. Every developer
+        who wants their service to work with these clients maintains N separate integrations.
+      </p>
+      <p>
+        MCP collapses that into one interface. You write one server. Any MCP client — Claude, Cursor,
+        Windsurf, Cline, Zed — connects to it using the same protocol. The client asks your server
+        "what tools do you have?" Your server responds with a list. The client calls them. Your server
+        runs the function and returns the result. That's the whole protocol.
+      </p>
+      <p>
+        As of March 2026, the AgentRank index tracks <strong>25,750+ MCP-related repositories</strong>.
+        The top-ranked ones — the ones scoring 85+ — share common patterns: clear tool descriptions,
+        good error handling, responsive maintainers, and consistent publishing to a package registry.
+        This tutorial follows those patterns.
+      </p>
+
+      <div class="info-box">
+        <p>
+          <strong>Looking for a quick reference?</strong> Browse
+          the <a href="/tools/" class="inline-link">top-ranked MCP servers</a> on AgentRank to see
+          real-world examples of well-structured servers you can use as implementation references.
+        </p>
+      </div>
+
+      <h3>The reference implementations</h3>
+      <p>
+        The three most important repositories for understanding MCP are all indexed on AgentRank:
+      </p>
+
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Repo</th>
+            <th class="num">Score</th>
+            <th class="num">Stars</th>
+            <th>Why it matters</th>
+          </tr>
+        </thead>
+        <tbody>
+          {topServersForReference.map((s) => (
+            <tr>
+              <td class="tool-cell">
+                <a href={`/tool/${s.slug}/`} class="tool-link">{s.name}</a>
+              </td>
+              <td class="num score-cell">{s.score}</td>
+              <td class="num">{s.stars.toLocaleString('en-US')}</td>
+              <td class="why-cell">{s.why}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </section>
+
+    <section id="setup">
+      <h2>Project setup</h2>
+      <p>Create a project directory and install FastMCP:</p>
+
+      <div class="code-block">
+        <div class="code-label">Terminal</div>
+        <pre><code>mkdir weather-mcp
+cd weather-mcp
+python3 -m venv .venv
+source .venv/bin/activate   # Windows: .venv\Scripts\activate
+pip install fastmcp httpx</code></pre>
+      </div>
+
+      <p>
+        <code>fastmcp</code> is the server framework. <code>httpx</code> is for making HTTP requests
+        to the Open-Meteo API. We'll also create a minimal project structure:
+      </p>
+
+      <div class="code-block">
+        <div class="code-label">Terminal</div>
+        <pre><code>touch server.py README.md
+echo ".venv/" > .gitignore
+echo "__pycache__/" >> .gitignore</code></pre>
+      </div>
+
+      <p>
+        That's it. No configuration files, no complex scaffolding. MCP servers are just Python files
+        that get run as a subprocess by the client.
+      </p>
+    </section>
+
+    <section id="first-tool">
+      <h2>Your first tool</h2>
+      <p>
+        Open <code>server.py</code> and add the following. Read the comments — they explain what each
+        line does:
+      </p>
+
+      <div class="code-block">
+        <div class="code-label">server.py</div>
+        <pre><code>import httpx
+from fastmcp import FastMCP
+
+# Create the server. The name appears in MCP client UIs.
+mcp = FastMCP("Weather MCP")
+
+@mcp.tool()
+async def get_current_weather(city: str, country_code: str = "US") -> dict:
+    """
+    Get the current weather conditions for a city.
+
+    Use this when the user asks about current weather, temperature,
+    wind speed, or conditions in a specific location.
+
+    Args:
+        city: The city name (e.g., "San Francisco", "Tokyo")
+        country_code: Two-letter ISO country code (default: "US")
+
+    Returns:
+        Dictionary with temperature_c, wind_speed_kmh, weather_description,
+        and timestamp fields.
+    """
+    # First, geocode the city to get coordinates
+    geo_url = "https://geocoding-api.open-meteo.com/v1/search"
+    async with httpx.AsyncClient() as client:
+        geo_resp = await client.get(geo_url, params=&#123;
+            "name": city,
+            "count": 1,
+            "language": "en",
+            "format": "json"
+        &#125;)
+        geo_data = geo_resp.json()
+
+    if not geo_data.get("results"):
+        return &#123;"error": f"Location not found: &#123;city&#125;, &#123;country_code&#125;"&#125;
+
+    result = geo_data["results"][0]
+    lat, lon = result["latitude"], result["longitude"]
+
+    # Now fetch current weather from Open-Meteo (no API key needed)
+    weather_url = "https://api.open-meteo.com/v1/forecast"
+    async with httpx.AsyncClient() as client:
+        weather_resp = await client.get(weather_url, params=&#123;
+            "latitude": lat,
+            "longitude": lon,
+            "current": "temperature_2m,wind_speed_10m,weather_code",
+            "timezone": "auto",
+        &#125;)
+        weather_data = weather_resp.json()
+
+    current = weather_data["current"]
+    weather_codes = &#123;
+        0: "Clear sky", 1: "Mainly clear", 2: "Partly cloudy", 3: "Overcast",
+        45: "Foggy", 51: "Light drizzle", 61: "Slight rain", 71: "Slight snow",
+        80: "Slight showers", 95: "Thunderstorm",
+    &#125;
+    description = weather_codes.get(current["weather_code"], "Unknown conditions")
+
+    return &#123;
+        "city": result["name"],
+        "country": result.get("country", country_code),
+        "temperature_c": current["temperature_2m"],
+        "wind_speed_kmh": current["wind_speed_10m"],
+        "weather_description": description,
+        "timestamp": current["time"],
+    &#125;
+
+
+if __name__ == "__main__":
+    mcp.run()  # stdio transport — works with all MCP clients</code></pre>
+      </div>
+
+      <p>
+        A few things worth noting before we add more tools:
+      </p>
+      <ul>
+        <li>
+          <strong>The docstring is critical.</strong> The AI reads it to decide when to call your tool.
+          Be explicit: describe what the tool does, when to use it, and what it returns. Poor docstrings
+          = the AI calls your tool at the wrong time, or doesn't call it when it should.
+        </li>
+        <li>
+          <strong>Type hints become your schema.</strong> FastMCP reads <code>city: str</code> and
+          <code>country_code: str = "US"</code> and generates the JSON schema the client uses to
+          populate the call. Always type your parameters.
+        </li>
+        <li>
+          <strong>Return errors as data, not exceptions.</strong> If you raise an exception, the client
+          connection may drop. Return <code>&#123;"error": "..."&#125;</code> and the AI can read the
+          error and decide what to do — retry with different parameters, ask the user, etc.
+        </li>
+        <li>
+          <strong>Use <code>async</code> when making network calls.</strong> MCP's I/O loop is async.
+          Blocking calls inside a sync function will stall the server.
+        </li>
+      </ul>
+    </section>
+
+    <section id="more-tools">
+      <h2>Adding more tools</h2>
+      <p>
+        A server with one tool is complete but limited. Add a forecast tool and a location history tool.
+        Each follows the same pattern: decorator, type-annotated parameters, docstring, implementation.
+      </p>
+
+      <div class="code-block">
+        <div class="code-label">server.py — add below get_current_weather</div>
+        <pre><code># Simple in-memory location history
+# In production, you'd persist this to a database or file
+_location_history: list[str] = []
+
+
+@mcp.tool()
+async def get_forecast(city: str, days: int = 7) -> dict:
+    """
+    Get a multi-day weather forecast for a city.
+
+    Use this when the user asks about upcoming weather, next week's forecast,
+    or wants to plan for future days.
+
+    Args:
+        city: The city name (e.g., "Chicago", "London")
+        days: Number of forecast days (1-16, default: 7)
+
+    Returns:
+        Dictionary with city name and a list of daily forecasts, each containing
+        date, max_temp_c, min_temp_c, and weather_description.
+    """
+    days = max(1, min(16, days))  # Clamp to valid range
+
+    geo_url = "https://geocoding-api.open-meteo.com/v1/search"
+    async with httpx.AsyncClient() as client:
+        geo_resp = await client.get(geo_url, params=&#123;"name": city, "count": 1&#125;)
+        geo_data = geo_resp.json()
+
+    if not geo_data.get("results"):
+        return &#123;"error": f"Location not found: &#123;city&#125;"&#125;
+
+    result = geo_data["results"][0]
+    lat, lon = result["latitude"], result["longitude"]
+
+    # Track this location
+    if city not in _location_history:
+        _location_history.append(city)
+
+    weather_url = "https://api.open-meteo.com/v1/forecast"
+    async with httpx.AsyncClient() as client:
+        weather_resp = await client.get(weather_url, params=&#123;
+            "latitude": lat,
+            "longitude": lon,
+            "daily": "temperature_2m_max,temperature_2m_min,weather_code",
+            "forecast_days": days,
+            "timezone": "auto",
+        &#125;)
+        weather_data = weather_resp.json()
+
+    daily = weather_data["daily"]
+    weather_codes = &#123;
+        0: "Clear sky", 1: "Mainly clear", 2: "Partly cloudy", 3: "Overcast",
+        45: "Foggy", 51: "Light drizzle", 61: "Slight rain", 71: "Slight snow",
+        80: "Slight showers", 95: "Thunderstorm",
+    &#125;
+
+    forecasts = []
+    for i, date in enumerate(daily["time"]):
+        forecasts.append(&#123;
+            "date": date,
+            "max_temp_c": daily["temperature_2m_max"][i],
+            "min_temp_c": daily["temperature_2m_min"][i],
+            "weather_description": weather_codes.get(daily["weather_code"][i], "Unknown"),
+        &#125;)
+
+    return &#123;"city": result["name"], "forecast": forecasts&#125;
+
+
+@mcp.tool()
+def list_locations() -> list[str]:
+    """
+    List all locations that have been queried in this session.
+
+    Use this when the user asks what locations they've looked up,
+    wants to revisit a previous city, or asks for their search history.
+
+    Returns:
+        List of city names queried during this session (most recent last).
+        Returns an empty list if no locations have been queried yet.
+    """
+    return list(_location_history)</code></pre>
+      </div>
+
+      <p>
+        Notice that <code>list_locations</code> is synchronous — it doesn't make any network calls,
+        so there's no need for <code>async</code>. FastMCP handles both sync and async tools correctly.
+      </p>
+    </section>
+
+    <section id="resources">
+      <h2>Adding a resource</h2>
+      <p>
+        Resources expose read-only data at a URI. They're less common than tools — most MCP servers
+        don't implement them — but they're the right primitive when you want to give the AI
+        background context without triggering computation.
+      </p>
+      <p>
+        For this server, add a resource that exposes a list of supported weather codes so the AI
+        can explain conditions accurately:
+      </p>
+
+      <div class="code-block">
+        <div class="code-label">server.py — add below the tool definitions</div>
+        <pre><code>@mcp.resource("weather://codes")
+def get_weather_codes() -> str:
+    """
+    Reference list of WMO weather interpretation codes and their descriptions.
+    Use this resource when you need to explain what a weather code means.
+    """
+    import json
+    codes = &#123;
+        "0": "Clear sky",
+        "1": "Mainly clear",
+        "2": "Partly cloudy",
+        "3": "Overcast",
+        "45": "Fog",
+        "48": "Depositing rime fog",
+        "51": "Light drizzle",
+        "53": "Moderate drizzle",
+        "55": "Dense drizzle",
+        "61": "Slight rain",
+        "63": "Moderate rain",
+        "65": "Heavy rain",
+        "71": "Slight snow fall",
+        "73": "Moderate snow fall",
+        "75": "Heavy snow fall",
+        "80": "Slight rain showers",
+        "81": "Moderate rain showers",
+        "82": "Violent rain showers",
+        "95": "Thunderstorm",
+        "96": "Thunderstorm with slight hail",
+        "99": "Thunderstorm with heavy hail",
+    &#125;
+    return json.dumps(codes, indent=2)</code></pre>
+      </div>
+
+      <p>
+        The URI scheme <code>weather://codes</code> is arbitrary — you define it. The client can
+        request this resource by URI and receive the JSON string. Resources don't take parameters;
+        if you need parameterized data access, use a tool.
+      </p>
+    </section>
+
+    <section id="testing">
+      <h2>Testing with MCP Inspector</h2>
+      <p>
+        Before connecting to a full client, use the MCP Inspector — a CLI tool that lets you call
+        your server's tools directly:
+      </p>
+
+      <div class="code-block">
+        <div class="code-label">Terminal (Node.js required)</div>
+        <pre><code>npx @modelcontextprotocol/inspector python server.py</code></pre>
+      </div>
+
+      <p>
+        This launches the Inspector with your server. Open the URL it prints (usually
+        <code>http://localhost:5173</code>) in a browser. You'll see:
+      </p>
+      <ul>
+        <li>A list of your tools with their schemas</li>
+        <li>The ability to call each tool with custom parameters</li>
+        <li>Raw request and response JSON</li>
+        <li>A list of your resources</li>
+      </ul>
+
+      <p>
+        Test each tool. Verify the outputs look right. Check that the error path works by passing
+        a city name that doesn't exist. The Inspector shows exactly what the AI client sees when it
+        calls your tools.
+      </p>
+
+      <p>
+        Alternatively, test with a minimal Python client (no Node required):
+      </p>
+
+      <div class="code-block">
+        <div class="code-label">test_client.py</div>
+        <pre><code>import asyncio
+from mcp import ClientSession, StdioServerParameters
+from mcp.client.stdio import stdio_client
+
+async def main():
+    server_params = StdioServerParameters(
+        command="python",
+        args=["server.py"],
+    )
+    async with stdio_client(server_params) as (read, write):
+        async with ClientSession(read, write) as session:
+            await session.initialize()
+
+            # List available tools
+            tools = await session.list_tools()
+            print("Tools:", [t.name for t in tools.tools])
+
+            # Call get_current_weather
+            result = await session.call_tool(
+                "get_current_weather",
+                arguments=&#123;"city": "San Francisco"&#125;
+            )
+            print("Weather:", result.content[0].text)
+
+asyncio.run(main())</code></pre>
+      </div>
+
+      <div class="code-block">
+        <div class="code-label">Terminal</div>
+        <pre><code>pip install mcp
+python test_client.py</code></pre>
+      </div>
+    </section>
+
+    <section id="connect-claude">
+      <h2>Connecting to Claude Desktop</h2>
+      <p>
+        If you have Claude Desktop installed, you can connect your server in two minutes. Find the
+        config file at:
+      </p>
+      <ul>
+        <li><strong>macOS:</strong> <code>~/Library/Application Support/Claude/claude_desktop_config.json</code></li>
+        <li><strong>Windows:</strong> <code>%APPDATA%\Claude\claude_desktop_config.json</code></li>
+      </ul>
+
+      <p>Add your server to the <code>mcpServers</code> object:</p>
+
+      <div class="code-block">
+        <div class="code-label">claude_desktop_config.json</div>
+        <pre><code>&#123;
+  "mcpServers": &#123;
+    "weather-mcp": &#123;
+      "command": "python",
+      "args": ["/absolute/path/to/weather-mcp/server.py"],
+      "env": &#123;&#125;
+    &#125;
+  &#125;
+&#125;</code></pre>
+      </div>
+
+      <p>
+        Use an absolute path — Claude Desktop launches your server from its own working directory,
+        not yours. Restart Claude Desktop. Your tools will appear in the tool call menu. Try asking
+        Claude: <em>"What's the weather in Tokyo right now?"</em> — it will call
+        <code>get_current_weather</code> automatically.
+      </p>
+
+      <p>
+        The same pattern applies to Cursor (<code>.cursor/mcp.json</code>) and other clients. See our
+        <a href="/blog/mcp-setup-guide-claude-cursor-windsurf/" class="inline-link">MCP setup guide</a>
+        for client-specific configuration details.
+      </p>
+    </section>
+
+    <section id="publishing">
+      <h2>Publishing to PyPI</h2>
+      <p>
+        Publishing to PyPI transforms your local tool into something other developers can install with
+        <code>pip install weather-mcp</code>. It also dramatically improves your AgentRank score —
+        inbound dependents (other repos using your package) is the <em>strongest</em> signal in the
+        scoring formula at 25% weight.
+      </p>
+
+      <h3>Step 1 — Add a pyproject.toml</h3>
+      <div class="code-block">
+        <div class="code-label">pyproject.toml</div>
+        <pre><code>[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "weather-mcp"
+version = "0.1.0"
+description = "MCP server for real-time weather data via Open-Meteo"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "fastmcp>=2.0",
+    "httpx>=0.27",
+]
+
+[project.scripts]
+weather-mcp = "server:mcp.run"</code></pre>
+      </div>
+
+      <h3>Step 2 — Write a README</h3>
+      <p>
+        Your <code>README.md</code> needs to clearly state what your MCP server does and how to
+        install it. The first two paragraphs are what the AgentRank crawler indexes for your tool
+        description. Include the GitHub topics <code>mcp</code> and <code>mcp-server</code> in your
+        repo settings — the crawler uses these to confirm classification.
+      </p>
+
+      <div class="code-block">
+        <div class="code-label">README.md (minimal)</div>
+        <pre><code># weather-mcp
+
+An MCP server that exposes real-time weather data via Open-Meteo.
+Works with Claude Desktop, Cursor, Cline, and all MCP-compatible clients.
+
+## Installation
+
+```bash
+pip install weather-mcp
+```
+
+## Usage (Claude Desktop)
+
+Add to `claude_desktop_config.json`:
+
+```json
+&#123;
+  "mcpServers": &#123;
+    "weather-mcp": &#123;
+      "command": "weather-mcp"
+    &#125;
+  &#125;
+&#125;
+```
+
+## Tools
+
+- `get_current_weather(city, country_code)` — current conditions
+- `get_forecast(city, days)` — multi-day forecast
+- `list_locations()` — session query history
+
+## License
+
+MIT</code></pre>
+      </div>
+
+      <h3>Step 3 — Push to GitHub and publish</h3>
+      <div class="code-block">
+        <div class="code-label">Terminal</div>
+        <pre><code># Push to GitHub first (creates the repo for indexing)
+git init
+git add .
+git commit -m "Initial release"
+git remote add origin https://github.com/YOUR_USERNAME/weather-mcp.git
+git push -u origin main
+
+# Add GitHub topics in the repo settings: mcp, mcp-server, model-context-protocol
+
+# Then publish to PyPI
+pip install build twine
+python -m build
+twine upload dist/*</code></pre>
+      </div>
+
+      <p>
+        After pushing to GitHub, the AgentRank crawler will pick up your repo within 24 hours and
+        assign an initial score. After publishing to PyPI, you'll start accumulating inbound dependents
+        as other developers install your package — the most powerful long-term score signal.
+      </p>
+    </section>
+
+    <section id="agentrank-score">
+      <h2>How AgentRank will score your server</h2>
+      <p>
+        Once your repo is public and indexed, you'll get a score from 0–100 based on five signals.
+        Understanding the formula helps you prioritize where to invest time after launch. Full details
+        are at <a href="/methodology/" class="inline-link">/methodology</a>.
+      </p>
+
+      <table class="data-table scoring-table">
+        <thead>
+          <tr>
+            <th>Signal</th>
+            <th class="num">Weight</th>
+            <th>What drives it</th>
+            <th>Day-1 reality</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="signal-name">Stars</td>
+            <td class="num">15%</td>
+            <td>GitHub star count, normalized to the index</td>
+            <td class="day1">Low — grows with distribution</td>
+          </tr>
+          <tr>
+            <td class="signal-name">Freshness</td>
+            <td class="num">25%</td>
+            <td>Days since last commit. Decays hard past 90 days</td>
+            <td class="day1">High — you just committed</td>
+          </tr>
+          <tr>
+            <td class="signal-name">Issue health</td>
+            <td class="num">25%</td>
+            <td>Closed issues ÷ total issues. Respond fast</td>
+            <td class="day1">N/A (no issues yet) — starts at 100%</td>
+          </tr>
+          <tr>
+            <td class="signal-name">Contributors</td>
+            <td class="num">10%</td>
+            <td>Unique contributor count. >1 = less bus factor</td>
+            <td class="day1">Low — builds over time</td>
+          </tr>
+          <tr>
+            <td class="signal-name">Inbound dependents</td>
+            <td class="num">25%</td>
+            <td>Repos depending on yours via package registries</td>
+            <td class="day1">Low — grows after PyPI publish</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p>
+        A new, well-maintained server typically scores in the <strong>40–55 range</strong> on day one —
+        high on freshness and issue health, low on stars and dependents. The fastest paths to a higher
+        score:
+      </p>
+      <ul>
+        <li>
+          <strong>Close every issue promptly.</strong> Issue health (25% weight) is entirely in your control.
+          Even if you can't fix the bug immediately, respond, acknowledge, and label it.
+        </li>
+        <li>
+          <strong>Keep committing.</strong> Freshness decays hard past 90 days. Even minor improvements
+          (better error messages, updated dependencies) reset the clock.
+        </li>
+        <li>
+          <strong>Get real users.</strong> Stars come from distribution — Twitter, Reddit, being listed in
+          awesome-mcp-servers. Dependents come from real usage — publish to PyPI, write a good README,
+          answer questions.
+        </li>
+        <li>
+          <strong>Welcome contributors.</strong> Even a single external contributor lifts your contributor
+          score meaningfully. A <code>CONTRIBUTING.md</code> and labeled <code>good first issue</code>
+          issues help.
+        </li>
+      </ul>
+
+      <div class="cta-box">
+        <p>
+          <strong>See how top servers are built:</strong>{' '}
+          <a href="/tools/" class="inline-link">Browse 25,000+ indexed MCP servers</a> — filter by language,
+          category, and score to find well-ranked examples you can use as references.
+        </p>
+        <p>
+          <strong>Understand the full scoring model:</strong>{' '}
+          <a href="/methodology/" class="inline-link">Read the methodology</a> — every signal, every weight,
+          and the normalization approach explained.
+        </p>
+        <p>
+          <strong>Compare frameworks:</strong>{' '}
+          <a href="/blog/fastmcp-vs-official-mcp-sdk/" class="inline-link">FastMCP vs the official Python SDK</a> —
+          if you outgrow FastMCP or need lower-level protocol access, this is the comparison to read next.
+        </p>
+      </div>
+    </section>
+
+    <RelatedPosts posts={relatedPosts} />
+    <BlogSubscribeCTA source="blog" />
+    <footer class="post-footer">
+      <p class="methodology">
+        <strong>Methodology:</strong> AgentRank scores shown are from the index crawled March 2026.
+        Computed using: stars 15%, freshness 25%, issue health 25%, contributors 10%, inbound dependents 25%.
+        Non-archived repositories only. See <a href="/methodology/">full methodology</a>.
+      </p>
+      <p class="share-line">
+        Built something with this tutorial?{' '}
+        <a href="https://x.com/AgentRank_ai" target="_blank" rel="noopener noreferrer">Tag @AgentRank_ai on X</a> — we feature new servers that make the index.
+      </p>
+    </footer>
+  </article>
+
+  <style>
+    .blog-post {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 2rem 0 3rem;
+    }
+
+    .breadcrumb {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      margin-bottom: 0.75rem;
+    }
+
+    .breadcrumb span {
+      margin: 0 0.25rem;
+      opacity: 0.5;
+    }
+
+    .post-header {
+      margin-bottom: 2rem;
+      padding-bottom: 1.5rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .post-header h1 {
+      font-size: 1.6rem;
+      font-weight: 700;
+      line-height: 1.3;
+      margin-bottom: 0.75rem;
+    }
+
+    .post-meta {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      flex-wrap: wrap;
+      margin-bottom: 1rem;
+    }
+
+    .sep {
+      opacity: 0.4;
+    }
+
+    .lede {
+      font-size: 1rem;
+      line-height: 1.7;
+      color: var(--text);
+      opacity: 0.9;
+    }
+
+    .toc {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 1rem 1.25rem;
+      margin-bottom: 2.5rem;
+      font-size: 0.82rem;
+    }
+
+    .toc strong {
+      display: block;
+      margin-bottom: 0.6rem;
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+    }
+
+    .toc ol {
+      margin: 0;
+      padding-left: 1.2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+    }
+
+    .toc a {
+      color: var(--text-muted);
+    }
+
+    .toc a:hover {
+      color: var(--accent);
+    }
+
+    section {
+      margin-bottom: 3rem;
+    }
+
+    section h2 {
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin-bottom: 0.75rem;
+      padding-bottom: 0.4rem;
+      border-bottom: 2px solid var(--accent);
+      display: inline-block;
+    }
+
+    section h3 {
+      font-size: 0.95rem;
+      font-weight: 700;
+      margin: 1.5rem 0 0.5rem;
+      color: var(--text);
+    }
+
+    section p {
+      font-size: 0.9rem;
+      line-height: 1.75;
+      color: var(--text);
+      opacity: 0.9;
+      margin-bottom: 0.9rem;
+    }
+
+    section ul {
+      font-size: 0.9rem;
+      line-height: 1.75;
+      color: var(--text);
+      opacity: 0.9;
+      margin: 0.5rem 0 0.9rem;
+      padding-left: 1.4rem;
+    }
+
+    section ul li {
+      margin-bottom: 0.4rem;
+    }
+
+    .inline-link {
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    .code-block {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      margin: 1rem 0 1.25rem;
+      overflow: hidden;
+    }
+
+    .code-label {
+      padding: 0.4rem 0.9rem;
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .code-block pre {
+      margin: 0;
+      padding: 0.9rem;
+      overflow-x: auto;
+    }
+
+    .code-block code {
+      font-size: 0.78rem;
+      line-height: 1.6;
+      font-family: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace;
+      color: var(--text);
+    }
+
+    .info-box {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      border-radius: 4px;
+      padding: 0.9rem 1.1rem;
+      margin: 1rem 0 1.25rem;
+    }
+
+    .info-box p {
+      margin-bottom: 0 !important;
+    }
+
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.82rem;
+      margin: 1rem 0 1.25rem;
+    }
+
+    .data-table th {
+      text-align: left;
+      font-weight: 600;
+      color: var(--text-muted);
+      border-bottom: 1px solid var(--border);
+      padding: 0.4rem 0.75rem 0.4rem 0;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+
+    .data-table td {
+      padding: 0.45rem 0.75rem 0.45rem 0;
+      border-bottom: 1px solid var(--border);
+      color: var(--text);
+      vertical-align: top;
+    }
+
+    .data-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .num {
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .tool-cell {
+      display: flex;
+      flex-direction: column;
+      gap: 0.2rem;
+    }
+
+    .tool-link {
+      font-weight: 600;
+      color: var(--accent);
+      font-size: 0.82rem;
+    }
+
+    .score-cell {
+      color: var(--accent);
+      font-weight: 700;
+    }
+
+    .why-cell {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+    }
+
+    .scoring-table .signal-name {
+      font-weight: 600;
+    }
+
+    .scoring-table .day1 {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+    }
+
+    .cta-box {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      border-radius: 4px;
+      padding: 1rem 1.25rem;
+      margin-top: 1.5rem;
+    }
+
+    .cta-box p {
+      margin-bottom: 0.5rem;
+    }
+
+    .cta-box p:last-child {
+      margin-bottom: 0;
+    }
+
+    .post-footer {
+      margin-top: 3rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--border);
+    }
+
+    .methodology {
+      font-size: 0.75rem !important;
+      color: var(--text-muted) !important;
+      opacity: 1 !important;
+    }
+
+    .methodology a {
+      color: var(--accent);
+    }
+
+    .share-line {
+      font-size: 0.82rem !important;
+      margin-top: 0.75rem;
+    }
+
+    @media (max-width: 640px) {
+      .post-header h1 {
+        font-size: 1.3rem;
+      }
+
+      .data-table {
+        font-size: 0.75rem;
+      }
+
+      .scoring-table .day1 {
+        display: none;
+      }
+    }
+  </style>
+</Base>
