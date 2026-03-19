@@ -1,0 +1,934 @@
+---
+export const prerender = true;
+
+import Base from '../../layouts/Base.astro';
+import BlogSubscribeCTA from '../../components/BlogSubscribeCTA.astro';
+import RelatedPosts from '../../components/RelatedPosts.astro';
+
+const relatedPosts = [
+  { href: '/blog/how-to-build-an-mcp-server/', title: 'How to Build an MCP Server in 2026' },
+  { href: '/blog/fastmcp-vs-official-mcp-sdk/', title: 'FastMCP vs Official Python MCP SDK' },
+  { href: '/blog/best-python-mcp-libraries/', title: 'Best Python MCP Libraries in 2026' },
+  { href: '/blog/fastmcp-tutorial-python-mcp-server/', title: 'FastMCP Tutorial: Build a Python MCP Server' },
+];
+
+const publishDate = '2026-03-19';
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: 'MCP Server Framework Comparison: TypeScript SDK vs FastMCP vs MCP-Go (2026)',
+  description: 'Data-driven comparison of the major MCP server frameworks: official TypeScript SDK, FastMCP (Python), mcp-go, and more. AgentRank scores, dependents, issue health, and when to use each — March 2026.',
+  datePublished: publishDate,
+  dateModified: publishDate,
+  author: {
+    '@type': 'Organization',
+    name: 'AgentRank',
+    url: 'https://agentrank-ai.com',
+  },
+  publisher: {
+    '@type': 'Organization',
+    name: 'AgentRank',
+    url: 'https://agentrank-ai.com',
+    logo: {
+      '@type': 'ImageObject',
+      url: 'https://agentrank-ai.com/og-image.png',
+    },
+  },
+  mainEntityOfPage: {
+    '@type': 'WebPage',
+    '@id': 'https://agentrank-ai.com/blog/mcp-server-framework-comparison/',
+  },
+  image: 'https://agentrank-ai.com/og/blog.png',
+  keywords: 'mcp server framework comparison, mcp-go vs fastmcp, modelcontextprotocol typescript sdk, fastmcp python 2026, mcp server go, best mcp framework 2026',
+};
+
+const frameworks = [
+  {
+    name: 'mark3labs/mcp-go',
+    slug: 'mark3labs--mcp-go',
+    label: 'mcp-go',
+    score: 96.09,
+    stars: 8353,
+    contributors: 170,
+    dependents: 2963,
+    issueCloseRate: 90,
+    lastCommit: '2026-03-11',
+    globalRank: 4,
+    lang: 'Go',
+    install: 'go get github.com/mark3labs/mcp-go',
+    type: 'Community',
+    highlight: true,
+  },
+  {
+    name: 'PrefectHQ/fastmcp',
+    slug: 'PrefectHQ--fastmcp',
+    label: 'FastMCP (Python)',
+    score: 95.61,
+    stars: 23775,
+    contributors: 208,
+    dependents: 7819,
+    issueCloseRate: 84,
+    lastCommit: '2026-03-17',
+    globalRank: 6,
+    lang: 'Python',
+    install: 'pip install fastmcp',
+    type: 'Community (Prefect)',
+    highlight: true,
+  },
+  {
+    name: 'punkpeye/fastmcp',
+    slug: 'punkpeye--fastmcp',
+    label: 'FastMCP (TypeScript)',
+    score: 89.71,
+    stars: 2999,
+    contributors: 56,
+    dependents: 1303,
+    issueCloseRate: 69,
+    lastCommit: '2026-03-06',
+    globalRank: 41,
+    lang: 'TypeScript',
+    install: 'npm install fastmcp',
+    type: 'Community',
+    highlight: false,
+  },
+  {
+    name: 'modelcontextprotocol/go-sdk',
+    slug: 'modelcontextprotocol--go-sdk',
+    label: 'Official Go SDK',
+    score: 92.77,
+    stars: 4120,
+    contributors: 96,
+    dependents: 1040,
+    issueCloseRate: 87,
+    lastCommit: '2026-03-13',
+    globalRank: 16,
+    lang: 'Go',
+    install: 'go get github.com/modelcontextprotocol/go-sdk',
+    type: 'Official (Anthropic)',
+    highlight: false,
+  },
+  {
+    name: 'modelcontextprotocol/python-sdk',
+    slug: 'modelcontextprotocol--python-sdk',
+    label: 'Official Python SDK',
+    score: 74.90,
+    stars: 22124,
+    contributors: 181,
+    dependents: 0,
+    issueCloseRate: 65,
+    lastCommit: '2026-03-13',
+    globalRank: 262,
+    lang: 'Python',
+    install: 'pip install mcp',
+    type: 'Official (Anthropic)',
+    highlight: false,
+  },
+  {
+    name: 'modelcontextprotocol/typescript-sdk',
+    slug: 'modelcontextprotocol--typescript-sdk',
+    label: 'Official TypeScript SDK',
+    score: 70.73,
+    stars: 11842,
+    contributors: 152,
+    dependents: 0,
+    issueCloseRate: 58,
+    lastCommit: '2026-03-13',
+    globalRank: 336,
+    lang: 'TypeScript',
+    install: 'npm install @modelcontextprotocol/sdk',
+    type: 'Official (Anthropic)',
+    highlight: false,
+  },
+];
+
+const faqJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: [
+    {
+      '@type': 'Question',
+      name: 'Which MCP server framework should I use in 2026?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'It depends on your language. For Python: PrefectHQ/fastmcp (score 95.61, #6 globally, 7,819 dependents) — the de facto community standard. For Go: mark3labs/mcp-go (score 96.09, #4 globally) or the official modelcontextprotocol/go-sdk for spec-level control. For TypeScript: punkpeye/fastmcp for ergonomics, or the official @modelcontextprotocol/sdk when you need full protocol coverage.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Is mcp-go the same as the official Go SDK?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'No. mark3labs/mcp-go is a community-built Go framework with its own implementation. modelcontextprotocol/go-sdk is the official Anthropic Go SDK released in early 2026. Both score in the top 20 of the AgentRank index. mcp-go (score 96.09, #4) edges out the official go-sdk (score 92.77, #16) due to its higher dependents count (2,963 vs 1,040) and longer track record.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Why does FastMCP score higher than the official Python MCP SDK?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: "FastMCP (95.61) outscores the official Python SDK (74.90) primarily because of inbound dependents: 7,819 vs 0 recorded for the official SDK. Most Python developers install fastmcp directly, which pulls in the official SDK as a transitive dependency. The official SDK's dependents don't appear in GitHub's dependency graph because fastmcp is the entry point.",
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Can I use FastMCP in production?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Yes. PrefectHQ/fastmcp has 7,819 inbound dependents, 208 contributors, an 84% issue close rate, and a commit as recent as March 17, 2026. It is maintained by Prefect (a production workflow company) and is the most widely adopted Python MCP framework in the AgentRank index.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'What is the AgentRank score?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'AgentRank scores rate MCP servers and agent tools 0–100 using five signals: stars (15%), freshness / days since last commit (25%), issue close rate (25%), contributor count (10%), and inbound dependents (25%). Scores are computed nightly across 25,750 indexed repositories. See agentrank-ai.com for the full methodology.',
+      },
+    },
+  ],
+};
+---
+
+<Base
+  title="MCP Server Framework Comparison: TypeScript SDK vs FastMCP vs MCP-Go (2026) — AgentRank"
+  description="Data-driven comparison of every major MCP server framework. AgentRank scores, dependents, issue health, and a pick-your-language decision guide — March 2026."
+  activeTab="blog"
+  keywords="mcp server framework comparison 2026, mcp-go vs fastmcp, modelcontextprotocol sdk, fastmcp python, mcp-go golang, best mcp framework, punkpeye fastmcp typescript"
+  canonicalUrl="https://agentrank-ai.com/blog/mcp-server-framework-comparison/"
+  jsonLd={[jsonLd, faqJsonLd]}
+  ogImage="/og/blog.png"
+>
+  <article class="blog-post">
+    <header class="post-header">
+      <div class="breadcrumb"><a href="/blog/">Blog</a> <span>/</span></div>
+      <h1>MCP Server Framework Comparison: TypeScript SDK vs FastMCP vs MCP-Go (2026)</h1>
+      <div class="post-meta">
+        <time datetime={publishDate}>March 19, 2026</time>
+        <span class="sep">&middot;</span>
+        <span>8 min read</span>
+        <span class="sep">&middot;</span>
+        <span>AgentRank Index</span>
+      </div>
+      <p class="lede">
+        Six frameworks compete for the top spot in MCP server development. We pulled every one of them from the
+        AgentRank index — 25,750 repositories scored by real signals, updated nightly — and ran the numbers.
+        The community picks are outscoring the official SDKs. Here's why, and which framework wins for your stack.
+      </p>
+    </header>
+
+    <nav class="toc">
+      <strong>Contents</strong>
+      <ol>
+        <li><a href="#comparison-table">Full comparison table</a></li>
+        <li><a href="#mcp-go">mcp-go (Go) — score 96.09</a></li>
+        <li><a href="#fastmcp-python">FastMCP Python — score 95.61</a></li>
+        <li><a href="#official-go-sdk">Official Go SDK — score 92.77</a></li>
+        <li><a href="#fastmcp-typescript">FastMCP TypeScript — score 89.71</a></li>
+        <li><a href="#official-sdks">Official Python &amp; TypeScript SDKs</a></li>
+        <li><a href="#decision-guide">Decision guide</a></li>
+        <li><a href="#quick-start">Quick-start code</a></li>
+      </ol>
+    </nav>
+
+    <section id="comparison-table">
+      <h2>Full comparison table</h2>
+      <p>
+        All six frameworks score in the top 1.4% of 25,750 indexed repositories. The most striking finding:
+        community-built frameworks dominate the top spots. <strong>mark3labs/mcp-go</strong> ranks
+        <strong>#4 globally</strong>, ahead of the official TypeScript SDK by 265 positions.
+      </p>
+
+      <div class="table-wrapper">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Framework</th>
+              <th class="num">Score</th>
+              <th class="num">Rank</th>
+              <th class="num">Stars</th>
+              <th class="num">Dep.</th>
+              <th class="num">Close%</th>
+              <th class="num">Contrib.</th>
+            </tr>
+          </thead>
+          <tbody>
+            {frameworks.map((fw) => (
+              <tr class={fw.highlight ? 'row-highlight' : ''}>
+                <td class="tool-cell">
+                  <a href={`/tool/${fw.slug}/`} class="tool-link">{fw.name}</a>
+                  <span class="tool-meta">{fw.type} · {fw.lang}</span>
+                </td>
+                <td class="num score-cell">{fw.score}</td>
+                <td class="num rank-cell">#{fw.globalRank}</td>
+                <td class="num">{fw.stars.toLocaleString('en-US')}</td>
+                <td class="num">{fw.dependents.toLocaleString('en-US')}</td>
+                <td class="num">{fw.issueCloseRate}%</td>
+                <td class="num">{fw.contributors}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <p class="table-note">
+        Score = AgentRank composite (0–100). Rank = position among 25,750 indexed repos.
+        Dep. = inbound GitHub package dependents. Close% = closed_issues / total_issues.
+        Data from March 19, 2026 crawl.
+      </p>
+
+      <div class="insight-box">
+        <strong>The headline:</strong> Community frameworks outrank official SDKs on every language axis.
+        mcp-go (#4) beats the official Go SDK (#16). FastMCP Python (#6) beats the official Python SDK (#262).
+        FastMCP TypeScript (#41) beats the official TypeScript SDK (#336). The gap is driven by inbound
+        dependents — the strongest signal in the AgentRank scoring model.
+      </div>
+    </section>
+
+    <section id="mcp-go">
+      <h2>mcp-go — score 96.09, rank #4</h2>
+
+      <p>
+        <a href="/tool/mark3labs--mcp-go/" class="inline-link">mark3labs/mcp-go</a> is the highest-scored MCP
+        server framework in the index and the top Go implementation by a wide margin. At score 96.09 and global
+        rank #4 across all 25,750 indexed repositories, it sits ahead of nearly every tool in the ecosystem
+        regardless of language.
+      </p>
+
+      <p>
+        The key data points: <strong>2,963 inbound dependents</strong>, 170 contributors, and a
+        <strong>90% issue close rate</strong> — the highest among all six frameworks. That close rate is a
+        signal of operational discipline: the maintainers resolve issues consistently and quickly. Combined with
+        8,353 stars and a last commit on March 11, 2026, this is an actively maintained project with deep
+        ecosystem roots.
+      </p>
+
+      <p>
+        mcp-go predates Anthropic's official Go SDK by over a year, which explains its 2.85x dependents advantage
+        (2,963 vs 1,040 for the official go-sdk). Developers who needed Go MCP support in 2024 and early 2025
+        went to mcp-go because it was the only production-ready option. That installed base compounds: each
+        dependent is a real repository that will need to be migrated if the maintainer ever switches libraries.
+      </p>
+
+      <p>
+        The framework uses a straightforward declarative API with tools, resources, and prompts registered via
+        builder patterns. It handles stdio and SSE transports, and includes a test client for integration testing
+        — a feature the official Go SDK is still maturing.
+      </p>
+
+      <div class="verdict-box highlight-box">
+        <strong>Best for:</strong> Go teams building MCP servers today. The highest score in the index, 90%
+        issue close rate, and 2,963 dependents confirm this is the Go community's consensus pick. Only reason
+        to look elsewhere: if you need strict spec parity with Anthropic's reference implementation.
+      </div>
+    </section>
+
+    <section id="fastmcp-python">
+      <h2>FastMCP (Python) — score 95.61, rank #6</h2>
+
+      <p>
+        <a href="/tool/PrefectHQ--fastmcp/" class="inline-link">PrefectHQ/fastmcp</a> is the de facto standard
+        for Python MCP server development. Score 95.61, global rank #6, and <strong>7,819 inbound dependents</strong> —
+        the highest dependents count of any framework in this comparison by a factor of 2.6x.
+      </p>
+
+      <p>
+        FastMCP wraps the official <code>modelcontextprotocol/python-sdk</code> with a FastAPI-style decorator
+        API. You write <code>@mcp.tool()</code> and FastMCP infers the JSON schema from Python type hints.
+        Compared to the official SDK's explicit type definitions and asyncio boilerplate, this eliminates
+        roughly 70% of the code you'd otherwise write to register a tool.
+      </p>
+
+      <p>
+        The project started as a solo effort by jlowin and was later adopted by Prefect (the workflow
+        orchestration company), bringing institutional maintenance without disrupting the community character.
+        The result is 208 contributors, an 84% issue close rate, and a commit as recent as March 17, 2026 —
+        the most recent update of any framework in this list.
+      </p>
+
+      <p>
+        The 7,819 dependents number deserves context: the official Python SDK shows 0 dependents in our index.
+        This doesn't mean nobody uses the official SDK — it means most Python developers install fastmcp
+        directly, pulling in the official SDK as a transitive dependency. When fastmcp is the entry point,
+        it's fastmcp that accumulates the dependents signal.
+      </p>
+
+      <div class="verdict-box highlight-box">
+        <strong>Best for:</strong> Python teams building production MCP servers. The 7,819 dependents, 84%
+        close rate, and active Prefect maintenance make this the safe choice. Use the official Python SDK
+        directly only if you're building MCP infrastructure (proxy, gateway, spec tooling) that requires
+        low-level transport control.
+      </div>
+    </section>
+
+    <section id="official-go-sdk">
+      <h2>Official Go SDK — score 92.77, rank #16</h2>
+
+      <p>
+        <a href="/tool/modelcontextprotocol--go-sdk/" class="inline-link">modelcontextprotocol/go-sdk</a> is
+        Anthropic's official Go implementation, released in early 2026. At score 92.77 and rank #16, it's
+        already in the top 0.1% of all indexed repositories despite being newer than mcp-go.
+      </p>
+
+      <p>
+        The 96 contributors and 87% issue close rate are strong signals for a young project — the Anthropic
+        team is clearly staffing it properly. With 1,040 inbound dependents already, it's picking up adoption
+        from teams who want spec-guaranteed behavior or prefer Anthropic's official support posture.
+      </p>
+
+      <p>
+        The key trade-off: mcp-go has a 2.9-point score advantage (96.09 vs 92.77) and 2.85x more dependents,
+        representing years of established adoption. The official SDK offers spec parity guarantees that a
+        community library technically can't make. For teams with compliance requirements or those contributing
+        to the MCP specification itself, the official SDK is the right call.
+      </p>
+
+      <div class="verdict-box secondary-box">
+        <strong>Best for:</strong> Teams that need guaranteed spec parity, are building MCP infrastructure,
+        or have organizational policies preferring Anthropic-maintained dependencies. For standard MCP server
+        development, mcp-go's larger ecosystem gives it the edge.
+      </div>
+    </section>
+
+    <section id="fastmcp-typescript">
+      <h2>FastMCP (TypeScript) — score 89.71, rank #41</h2>
+
+      <p>
+        <a href="/tool/punkpeye--fastmcp/" class="inline-link">punkpeye/fastmcp</a> brings the FastMCP
+        developer experience — decorator-style tool registration, auto-schema generation from TypeScript
+        types — to the TypeScript ecosystem. Score 89.71, rank #41, 1,303 inbound dependents.
+      </p>
+
+      <p>
+        With 2,999 stars and 56 contributors, it's a smaller community than its Python counterpart but
+        growing. The 69% issue close rate is the lowest among the community frameworks here, though still
+        reasonable for a project of its age. The last commit on March 6, 2026 shows active maintenance.
+      </p>
+
+      <p>
+        The case for punkpeye/fastmcp over the official TypeScript SDK is the same as in Python: less
+        boilerplate, faster iteration, more ergonomic API. The case against: 1,303 dependents vs the
+        TypeScript SDK's 0 recorded (actual usage is higher, but not through fastmcp's transitive chain).
+        For TypeScript teams already familiar with the official SDK's patterns, the migration cost may not
+        be worth the ergonomic gain.
+      </p>
+
+      <div class="verdict-box secondary-box">
+        <strong>Best for:</strong> TypeScript developers who want FastAPI-style ergonomics and are starting
+        a new MCP server project. Score 89.71 confirms meaningful ecosystem traction. If you're already
+        invested in the official TypeScript SDK patterns, the gain from switching is moderate.
+      </div>
+    </section>
+
+    <section id="official-sdks">
+      <h2>Official Python &amp; TypeScript SDKs</h2>
+
+      <h3>modelcontextprotocol/python-sdk — score 74.90, rank #262</h3>
+      <p>
+        The official Python SDK has 22,124 stars and 181 contributors — larger star count than FastMCP —
+        but scores 20.71 points lower. The gap is almost entirely explained by the dependents signal: 0
+        recorded vs FastMCP's 7,819. The official SDK also carries a 65% issue close rate, reflecting
+        the reality that many open issues are spec-level discussions that stay open for governance reasons.
+      </p>
+      <p>
+        This isn't a weak project. Score 74.90 and rank #262 out of 25,750 puts it in the top 1%. But the
+        AgentRank model accurately reflects ecosystem behavior: Python developers primarily reach for FastMCP,
+        not the official SDK, when building MCP servers.
+      </p>
+
+      <h3>modelcontextprotocol/typescript-sdk — score 70.73, rank #336</h3>
+      <p>
+        The official TypeScript SDK (<code>@modelcontextprotocol/sdk</code> on npm) is the reference
+        implementation for TypeScript. Score 70.73, rank #336, 11,842 stars, 152 contributors.
+        The 58% issue close rate is the lowest in this list — partly spec governance, partly the larger
+        surface area of a reference implementation. Zero recorded dependents reflects the same transitive
+        dependency dynamic as the Python SDK.
+      </p>
+      <p>
+        Use the official TypeScript SDK when you need complete protocol coverage, are building tooling that
+        targets multiple MCP clients, or are contributing to spec development. The official SDK exposes
+        transport-layer internals that community frameworks abstract away.
+      </p>
+
+      <div class="verdict-box secondary-box">
+        <strong>Official SDKs are not the wrong choice.</strong> They are the right choice for protocol-level
+        work and infrastructure. The community frameworks simply win on application developer ergonomics —
+        which is what most MCP server projects need.
+      </div>
+    </section>
+
+    <section id="decision-guide">
+      <h2>Decision guide: which framework to pick</h2>
+
+      <div class="decision-grid">
+        <div class="decision-card">
+          <div class="decision-lang">Python</div>
+          <div class="decision-pick"><a href="/tool/PrefectHQ--fastmcp/" class="inline-link">PrefectHQ/fastmcp</a></div>
+          <div class="decision-score">score 95.61 · #6 globally</div>
+          <p class="decision-reason">7,819 dependents. Fastest time to a working server. Wraps the official SDK under the hood.</p>
+          <div class="decision-exception">Unless: You need transport-layer control → use <a href="/tool/modelcontextprotocol--python-sdk/" class="inline-link">official python-sdk</a></div>
+        </div>
+
+        <div class="decision-card">
+          <div class="decision-lang">Go</div>
+          <div class="decision-pick"><a href="/tool/mark3labs--mcp-go/" class="inline-link">mark3labs/mcp-go</a></div>
+          <div class="decision-score">score 96.09 · #4 globally</div>
+          <p class="decision-reason">Highest-scored framework in the index. 90% issue close rate. 2,963 dependents from years of production use.</p>
+          <div class="decision-exception">Unless: You need official Anthropic spec parity → use <a href="/tool/modelcontextprotocol--go-sdk/" class="inline-link">official go-sdk</a> (score 92.77 · #16)</div>
+        </div>
+
+        <div class="decision-card">
+          <div class="decision-lang">TypeScript</div>
+          <div class="decision-pick"><a href="/tool/punkpeye--fastmcp/" class="inline-link">punkpeye/fastmcp</a></div>
+          <div class="decision-score">score 89.71 · #41 globally</div>
+          <p class="decision-reason">FastAPI-style DX for TypeScript. 1,303 dependents. Best choice for new projects prioritizing velocity.</p>
+          <div class="decision-exception">Unless: You need full protocol surface → use <a href="/tool/modelcontextprotocol--typescript-sdk/" class="inline-link">@modelcontextprotocol/sdk</a> (score 70.73 · #336)</div>
+        </div>
+      </div>
+
+      <p>
+        The pattern holds across all three languages: <strong>community frameworks win on application
+        development, official SDKs win on protocol-level infrastructure work.</strong> Most developers
+        are building application-layer MCP servers, which is why the community frameworks dominate the
+        AgentRank top 10.
+      </p>
+    </section>
+
+    <section id="quick-start">
+      <h2>Quick-start code</h2>
+
+      <h3>mcp-go — the minimal Go server</h3>
+      <pre class="code-block"><code>go get github.com/mark3labs/mcp-go</code></pre>
+
+      <pre class="code-block"><code>{`package main
+
+import (
+    "context"
+    "fmt"
+    "github.com/mark3labs/mcp-go/mcp"
+    "github.com/mark3labs/mcp-go/server"
+)
+
+func main() {
+    s := server.NewMCPServer("My Server", "1.0.0")
+
+    addTool := mcp.NewTool("add",
+        mcp.WithDescription("Add two numbers"),
+        mcp.WithNumber("a", mcp.Required()),
+        mcp.WithNumber("b", mcp.Required()),
+    )
+
+    s.AddTool(addTool, func(ctx context.Context, req mcp.CallToolRequest) (*mcp.CallToolResult, error) {
+        a := req.Params.Arguments["a"].(float64)
+        b := req.Params.Arguments["b"].(float64)
+        return mcp.NewToolResultText(fmt.Sprintf("%g", a+b)), nil
+    })
+
+    server.ServeStdio(s)
+}`}</code></pre>
+
+      <h3>FastMCP — the minimal Python server</h3>
+      <pre class="code-block"><code>pip install fastmcp</code></pre>
+
+      <pre class="code-block"><code>{`from fastmcp import FastMCP
+
+mcp = FastMCP("My Server")
+
+@mcp.tool()
+def add(a: float, b: float) -> float:
+    """Add two numbers."""
+    return a + b
+
+if __name__ == "__main__":
+    mcp.run()`}</code></pre>
+
+      <h3>FastMCP TypeScript — the minimal TypeScript server</h3>
+      <pre class="code-block"><code>npm install fastmcp</code></pre>
+
+      <pre class="code-block"><code>{`import { FastMCP } from "fastmcp";
+import { z } from "zod";
+
+const server = new FastMCP({ name: "My Server", version: "1.0.0" });
+
+server.addTool({
+  name: "add",
+  description: "Add two numbers",
+  parameters: z.object({ a: z.number(), b: z.number() }),
+  execute: async ({ a, b }) => String(a + b),
+});
+
+server.start({ transportType: "stdio" });`}</code></pre>
+
+      <h3>Official TypeScript SDK — the minimal server</h3>
+      <pre class="code-block"><code>npm install @modelcontextprotocol/sdk</code></pre>
+
+      <pre class="code-block"><code>{`import { Server } from "@modelcontextprotocol/sdk/server/index.js";
+import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
+import { CallToolRequestSchema } from "@modelcontextprotocol/sdk/types.js";
+
+const server = new Server({ name: "My Server", version: "1.0.0" });
+
+server.setRequestHandler(CallToolRequestSchema, async (request) => {
+  if (request.params.name === "add") {
+    const { a, b } = request.params.arguments as { a: number; b: number };
+    return { content: [{ type: "text", text: String(a + b) }] };
+  }
+  throw new Error("Unknown tool");
+});
+
+const transport = new StdioServerTransport();
+await server.connect(transport);`}</code></pre>
+
+      <p>
+        The boilerplate difference is visible. Community frameworks (mcp-go, FastMCP) register tools
+        declaratively with type inference. The official SDKs require explicit schema definitions and
+        request handler dispatch. Neither is wrong — it's a trade-off between expressiveness and
+        protocol transparency.
+      </p>
+
+      <div class="cta-box">
+        <p>
+          <strong>See full scores and signals:</strong> Every framework above is tracked live in the
+          <a href="/">AgentRank index</a> — 25,750 repositories, scored nightly.
+        </p>
+        <p>
+          <strong>Python deep dive:</strong> <a href="/blog/fastmcp-vs-official-mcp-sdk/">FastMCP vs Official Python SDK</a> —
+          detailed signal breakdown and production guidance.
+        </p>
+      </div>
+    </section>
+
+    <RelatedPosts posts={relatedPosts} />
+    <BlogSubscribeCTA source="blog" />
+    <footer class="post-footer">
+      <p class="methodology">
+        <strong>Methodology:</strong> Data from the AgentRank index crawled March 19, 2026.
+        Scores computed using: stars 15%, freshness 25%, issue health 25%, contributors 10%, inbound dependents 25%.
+        25,750 repositories indexed. Issue close rate = closed_issues / (open_issues + closed_issues).
+        Dependents = GitHub package dependents as reported by the GitHub dependency graph API.
+      </p>
+      <p class="share-line">
+        Found this useful? <a href="https://x.com/AgentRank_ai" target="_blank" rel="noopener noreferrer">Follow @AgentRank_ai</a> for
+        weekly ecosystem updates, biggest movers, and new tool spotlights.
+      </p>
+    </footer>
+  </article>
+
+  <style>
+    .blog-post {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 2rem 0 3rem;
+    }
+
+    .inline-link {
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    .breadcrumb {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      margin-bottom: 0.75rem;
+    }
+
+    .breadcrumb span {
+      margin: 0 0.25rem;
+      opacity: 0.5;
+    }
+
+    .post-header {
+      margin-bottom: 2rem;
+      padding-bottom: 1.5rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .post-header h1 {
+      font-size: 1.6rem;
+      font-weight: 700;
+      line-height: 1.3;
+      margin-bottom: 0.75rem;
+    }
+
+    .post-meta {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      flex-wrap: wrap;
+      margin-bottom: 1rem;
+    }
+
+    .sep { opacity: 0.4; }
+
+    .lede {
+      font-size: 1rem;
+      line-height: 1.7;
+      color: var(--text);
+      opacity: 0.9;
+    }
+
+    .toc {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 1rem 1.25rem;
+      margin-bottom: 2.5rem;
+      font-size: 0.82rem;
+    }
+
+    .toc strong {
+      display: block;
+      margin-bottom: 0.6rem;
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+    }
+
+    .toc ol {
+      margin: 0;
+      padding-left: 1.2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+    }
+
+    .toc a { color: var(--text-muted); }
+    .toc a:hover { color: var(--accent); }
+
+    section { margin-bottom: 3rem; }
+
+    section h2 {
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin-bottom: 0.75rem;
+      padding-bottom: 0.4rem;
+      border-bottom: 2px solid var(--accent);
+      display: inline-block;
+    }
+
+    section h3 {
+      font-size: 0.95rem;
+      font-weight: 700;
+      margin: 1.5rem 0 0.5rem;
+      color: var(--text);
+    }
+
+    section p {
+      font-size: 0.9rem;
+      line-height: 1.75;
+      color: var(--text);
+      opacity: 0.9;
+      margin-bottom: 0.9rem;
+    }
+
+    .table-wrapper {
+      overflow-x: auto;
+      margin: 1rem 0 0.5rem;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.82rem;
+    }
+
+    .data-table th {
+      text-align: left;
+      font-weight: 600;
+      color: var(--text-muted);
+      border-bottom: 1px solid var(--border);
+      padding: 0.4rem 0.75rem 0.4rem 0;
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      white-space: nowrap;
+    }
+
+    .data-table td {
+      padding: 0.45rem 0.75rem 0.45rem 0;
+      border-bottom: 1px solid var(--border);
+      color: var(--text);
+      vertical-align: top;
+    }
+
+    .data-table tr:last-child td { border-bottom: none; }
+
+    .row-highlight td {
+      background: color-mix(in srgb, var(--accent) 4%, transparent);
+    }
+
+    .num {
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .tool-cell {
+      display: flex;
+      flex-direction: column;
+      gap: 0.15rem;
+    }
+
+    .tool-link {
+      font-weight: 600;
+      color: var(--accent);
+      font-size: 0.78rem;
+    }
+
+    .tool-meta {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+    }
+
+    .score-cell {
+      color: var(--accent);
+      font-weight: 700;
+    }
+
+    .rank-cell {
+      color: var(--text-muted);
+      font-size: 0.75rem;
+    }
+
+    .table-note {
+      font-size: 0.75rem !important;
+      color: var(--text-muted) !important;
+      margin-top: 0.5rem !important;
+    }
+
+    .insight-box {
+      background: color-mix(in srgb, var(--accent) 6%, var(--bg-surface));
+      border: 1px solid var(--accent);
+      border-radius: 4px;
+      padding: 0.875rem 1rem;
+      margin-top: 1.25rem;
+      font-size: 0.88rem;
+      line-height: 1.6;
+    }
+
+    .verdict-box {
+      border-radius: 4px;
+      padding: 0.875rem 1rem;
+      margin-top: 1.25rem;
+      font-size: 0.88rem;
+      line-height: 1.6;
+    }
+
+    .highlight-box {
+      background: color-mix(in srgb, var(--accent) 8%, var(--bg-surface));
+      border: 1px solid var(--accent);
+    }
+
+    .secondary-box {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+    }
+
+    .decision-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 1rem;
+      margin: 1.25rem 0;
+    }
+
+    .decision-card {
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 1rem;
+      background: var(--bg-surface);
+    }
+
+    .decision-lang {
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: var(--text-muted);
+      margin-bottom: 0.4rem;
+    }
+
+    .decision-pick {
+      font-size: 0.88rem;
+      font-weight: 700;
+      margin-bottom: 0.2rem;
+    }
+
+    .decision-score {
+      font-size: 0.72rem;
+      color: var(--accent);
+      font-weight: 600;
+      margin-bottom: 0.6rem;
+    }
+
+    .decision-reason {
+      font-size: 0.82rem !important;
+      margin-bottom: 0.6rem !important;
+      opacity: 0.85;
+    }
+
+    .decision-exception {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      border-top: 1px solid var(--border);
+      padding-top: 0.5rem;
+      line-height: 1.5;
+    }
+
+    .code-block {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 0.875rem 1rem;
+      font-size: 0.78rem;
+      line-height: 1.6;
+      overflow-x: auto;
+      margin: 0.75rem 0 1rem;
+    }
+
+    .code-block code {
+      font-family: monospace;
+      color: var(--text);
+    }
+
+    .cta-box {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      border-radius: 4px;
+      padding: 1rem 1.25rem;
+      margin-top: 1.5rem;
+    }
+
+    .cta-box p {
+      margin-bottom: 0.5rem;
+      font-size: 0.88rem !important;
+    }
+
+    .cta-box p:last-child { margin-bottom: 0; }
+
+    .post-footer {
+      margin-top: 3rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--border);
+    }
+
+    .methodology {
+      font-size: 0.75rem !important;
+      color: var(--text-muted) !important;
+      opacity: 1 !important;
+    }
+
+    .share-line {
+      font-size: 0.82rem !important;
+      margin-top: 0.75rem;
+    }
+
+    @media (max-width: 640px) {
+      .post-header h1 { font-size: 1.3rem; }
+      .rank-cell { display: none; }
+      .decision-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</Base>
