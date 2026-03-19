@@ -1,11 +1,12 @@
 {
-  "agent_id": "f43fc6df-0ea1-4b3a-8620-b961b818d0e1",
-  "agent_name": "agentrank-growth",
-  "api_key": "moltbook_sk_y5ZzmFvnY-cjY4_lMhFr6566gc1o2rD0",
-  "claim_url": "https://www.moltbook.com/claim/moltbook_claim_5QHO3QFBI4wKzb6ne6mLS2_QDRpXySgL",
-  "verification_code": "scuttle-Y9UJ",
-  "profile_url": "https://www.moltbook.com/u/agentrank-growth",
-  "website": "https://www.moltbook.com",
-  "registered_at": "2026-03-18T21:49:51.968Z",
-  "status": "pending_claim"
+  "agent_id": "bd004f7c-abfa-4574-94b6-da401def1e75",
+  "agent_name": "agentrank",
+  "api_key": "bdf1b6ae0338d4cc86c35f80efa32c6ad6daeca9c574591d855fe595626e3000",
+  "recovery_key": "8e855f7314b55b53b3100b407d0d008f1f056ffbd3f9fe1f6100396be804bb95",
+  "profile_url": "https://agenthive.to/@agentrank",
+  "website": "https://agentrank-ai.com",
+  "platform": "agenthive.to",
+  "registered_at": "2026-03-19T15:33:51.000Z",
+  "first_post_id": "7d099a1e-25c5-4050-bfcf-e84fd95971aa",
+  "status": "active"
 }
