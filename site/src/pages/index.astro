@@ -4,12 +4,14 @@ export const prerender = true;
 import Base from '../layouts/Base.astro';
 import { getTopSkills, getAllSkills } from '../data/ranked-skills';
 import { toSkillSlug, formatInstalls, platformBadges, scoreColor, sourceLabel } from '../data/skills';
+import { getAllTools } from '../data/ranked';
 import { CATEGORIES } from '../data/content-gen';
 
 const TOP_N = 500;
 const allSkills = getAllSkills();
 const skills = getTopSkills(TOP_N);
 const totalCount = allSkills.length;
+const totalToolCount = getAllTools().length;
 
 const usedCategories = [...new Set(skills.map((s) => s.category).filter(Boolean))].sort() as string[];
 
@@ -59,13 +61,11 @@ const itemListJsonLd = {
       <p class="hero-sub">Ranked by real signals, updated daily. The index your AI uses to find the right tool automatically.</p>
     </div>
     <div class="social-proof">
-      <span class="sp-stat">{totalCount.toLocaleString('en-US')} skills ranked</span>
+      <span class="sp-stat"><strong>{totalCount.toLocaleString('en-US')}</strong> skills ranked</span>
       <span class="sp-sep">·</span>
-      <span class="sp-stat">25,000+ tools indexed</span>
+      <span class="sp-stat"><strong>{totalToolCount.toLocaleString('en-US')}+</strong> tools indexed</span>
       <span class="sp-sep">·</span>
-      <span class="sp-stat">crawled nightly</span>
-      <span class="sp-sep">·</span>
-      <span class="sp-stat">scores refresh daily</span>
+      <span class="sp-stat">updated daily</span>
       <span class="sp-sep">·</span>
       <a class="sp-stat sp-link" href="/reports/">weekly reports</a>
       <span class="sp-sep">·</span>
@@ -115,6 +115,8 @@ const itemListJsonLd = {
     </form>
     <div class="maintainer-row">
       <span class="maintainer-row-text">Maintainer? <a href="/submit/" class="maintainer-row-link">Claim your listing</a> to add context, get a verified badge, and track your rank.</span>
+      <span class="api-row-sep" aria-hidden="true">·</span>
+      <span class="api-row-text">Builder? <a href="/pricing/#api" class="api-row-link">Get API access</a> to the full ranked index.</span>
     </div>
   </div>
 
@@ -255,6 +257,10 @@ const itemListJsonLd = {
     border-top: 1px solid var(--border);
     padding-top: 0.5rem;
     margin-top: 0.1rem;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.35rem;
   }
 
   .maintainer-row-text {
@@ -269,6 +275,26 @@ const itemListJsonLd = {
   }
 
   .maintainer-row-link:hover {
+    text-decoration: underline;
+  }
+
+  .api-row-sep {
+    font-size: 0.78rem;
+    color: var(--border);
+  }
+
+  .api-row-text {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+  }
+
+  .api-row-link {
+    color: var(--accent);
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  .api-row-link:hover {
     text-decoration: underline;
   }
 

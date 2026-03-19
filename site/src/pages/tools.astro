@@ -41,6 +41,8 @@ const itemListJsonLd = {
   jsonLd={itemListJsonLd}
   ogImage="/og/tools.png"
 >
+  <BlogSubscribeCTA source="tools" />
+
   <div class="controls">
     <div class="search-wrap">
       <input type="text" id="search" placeholder="Search tools..." autocomplete="off" />
@@ -55,8 +57,6 @@ const itemListJsonLd = {
       <button class="filter-chip" data-cat={cat}>{CATEGORIES[cat] || cat}</button>
     ))}
   </div>
-
-  <BlogSubscribeCTA source="tools" />
 
   <div class="table-wrap">
     <table id="leaderboard">

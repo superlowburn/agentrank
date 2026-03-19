@@ -26,3 +26,23 @@
 
 # Old /how-to-choose-mcp-server slug (corrected to include "an")
 /blog/how-to-choose-mcp-server/    /blog/how-to-choose-an-mcp-server/    301
+
+# Common nav patterns that hit 404
+/search               /tools/           301
+/search/              /tools/           301
+/skills               /                 301
+/skills/              /                 301
+/tool                 /tools/           301
+/tool/                /tools/           301
+/submit               /submit/          301
+/signup               /pricing/         301
+/signup/              /pricing/         301
+/register             /pricing/         301
+/register/            /pricing/         301
+/api                  /api-docs/        301
+/api/                 /api-docs/        301
+/docs                 /docs/            301
+/compare              /compare/         301
+/pricing              /pricing/         301
+/news                 /news/            301
+/blog                 /blog/            301

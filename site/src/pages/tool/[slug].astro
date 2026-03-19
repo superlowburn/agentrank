@@ -376,6 +376,20 @@ Astro.response.headers.set('Cache-Control', 'public, max-age=60, s-maxage=3600, 
 
   {tool.description && <p class="description">{tool.description}</p>}
 
+  <div class="install-cta-box">
+    <div class="install-cta-content">
+      <div class="install-cta-left">
+        <strong class="install-cta-title">Use {tool.full_name} in Claude Code</strong>
+        <span class="install-cta-sub">Install AgentRank MCP — your AI finds the right tool automatically</span>
+      </div>
+      <a href="/pricing/" class="api-key-btn">Get API Access &rarr;</a>
+    </div>
+    <div class="install-cta-cmd-wrap">
+      <code class="install-cta-cmd">claude mcp add agentrank -- npx -y agentrank-mcp-server</code>
+      <button class="install-copy-btn copy-btn" data-copy="claude mcp add agentrank -- npx -y agentrank-mcp-server">Copy</button>
+    </div>
+  </div>
+
   <section class="summary">
     <h3>Overview</h3>
     <p class="summary-text">{summary}</p>
@@ -789,8 +803,102 @@ Astro.response.headers.set('Cache-Control', 'public, max-age=60, s-maxage=3600, 
 
   .description {
     color: var(--text-muted);
-    margin-bottom: 2rem;
+    margin-bottom: 1rem;
     font-size: 0.9rem;
+  }
+
+  .install-cta-box {
+    background: color-mix(in srgb, var(--accent) 8%, var(--bg-surface));
+    border: 1px solid color-mix(in srgb, var(--accent) 40%, transparent);
+    border-radius: 6px;
+    padding: 1rem 1.25rem;
+    margin-bottom: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .install-cta-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .install-cta-left {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+  }
+
+  .install-cta-title {
+    font-size: 0.9rem;
+    color: var(--text);
+  }
+
+  .install-cta-sub {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+  }
+
+  .api-key-btn {
+    background: var(--accent);
+    color: #000;
+    border: none;
+    border-radius: 4px;
+    padding: 0.4rem 0.9rem;
+    font-size: 0.82rem;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: opacity 0.15s;
+    flex-shrink: 0;
+  }
+
+  .api-key-btn:hover {
+    opacity: 0.85;
+    text-decoration: none;
+  }
+
+  .install-cta-cmd-wrap {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 0.4rem 0.75rem;
+    overflow: hidden;
+  }
+
+  .install-cta-cmd {
+    font-family: ui-monospace, monospace;
+    font-size: 0.78rem;
+    color: var(--text);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    flex: 1;
+  }
+
+  .install-copy-btn {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+    border-radius: 3px;
+    padding: 0.2rem 0.5rem;
+    font-size: 0.72rem;
+    cursor: pointer;
+    white-space: nowrap;
+    flex-shrink: 0;
+    transition: color 0.15s, border-color 0.15s;
+  }
+
+  .install-copy-btn:hover {
+    color: var(--accent);
+    border-color: var(--accent);
   }
 
   section {

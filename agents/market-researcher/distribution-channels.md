@@ -1,210 +1,169 @@
-# AgentRank Distribution Hit List
-*Research completed: March 18, 2026*
+# AgentRank Distribution Channels
+*Research completed: March 19, 2026*
 
-Media channels covering MCP servers, agent tools, AI developer tooling, and the broader agent ecosystem. Prioritized for AgentRank outreach and launch strategy.
-
----
-
-## Tier 1 — High Priority
-
-### 1. TLDR AI
-- **URL:** https://tldr.tech/ai
-- **Type:** Newsletter (daily)
-- **Audience size:** 1.25M+ subscribers
-- **Relevance:** Daily digest for AI practitioners and developers. Covers OSS tools, GitHub projects, new registries. Direct fit for AgentRank.
-- **Submission process:** Submit a link via the "Submit" button on tldr.tech. Curators review community submissions; strong GitHub traction helps. Paid sponsorship also available (advertise.tldr.tech).
-- **Example coverage:** Regular coverage of MCP ecosystem tools, OSS AI tooling releases.
-- **Priority:** High
-
-### 2. Latent Space (Podcast + Newsletter)
-- **URL:** https://latent.space / https://open.spotify.com/show/2p7zZVwVF6Yk0Zsb4QmT7t
-- **Type:** Podcast + Substack newsletter
-- **Audience size:** 200K+ subscribers, 10M+ all-time listeners; top 3 AI podcast on Apple
-- **Relevance:** Explicitly "by and for AI engineers." Covered MCP security, agentic architecture, and featured MCP co-creator David Soria Parra. Deeply embedded in the ecosystem AgentRank serves.
-- **Submission process:** Cold pitch to swyx (@swyx on X) or Alessio Fanelli. DM or email podcast@latent.space. Show HN + strong data signal helps. Founders/maintainers get priority.
-- **Example coverage:** MCP co-creator episode; agentic patterns deep dives.
-- **Priority:** High
-
-### 3. The Pragmatic Engineer
-- **URL:** https://newsletter.pragmaticengineer.com
-- **Type:** Newsletter + Podcast
-- **Audience size:** 500K+ total subscribers; largest paid tech newsletter by revenue
-- **Relevance:** Covered MCP protocol extensively, including the co-creator interview and the rise of MCP-native coding workflows. Senior engineering audience — exactly AgentRank's user persona.
-- **Submission process:** Cold pitch to Gergely Orosz (gergely@pragmaticengineer.com or @GergelyOrosz on X). Story must have data, credibility, and industry relevance. Not a link dump — pitch a story angle.
-- **Example coverage:** "AI Tooling for Software Engineers in 2026" (Jan 2026); MCP protocol adoption deep dive.
-- **Priority:** High
-
-### 4. The New Stack
-- **URL:** https://thenewstack.io
-- **Type:** Blog / Publication / Newsletter
-- **Audience size:** ~1M+ monthly readers; editorial newsletter with broad dev readership
-- **Relevance:** Has published extensively on MCP: "MCP's biggest growing pains for production use," "AI Engineering Trends 2025," and "5 Key Trends Shaping Agentic Development in 2026." Strong coverage of developer tooling and OSS ecosystems.
-- **Submission process:** Contributed articles accepted at thenewstack.io/contributions. Editorial pitch via editors@thenewstack.io. "Show HN"-style tool launches often picked up by their editorial team.
-- **Example coverage:** https://thenewstack.io/model-context-protocol-roadmap-2026/
-- **Priority:** High
-
-### 5. Hacker News (Show HN)
-- **URL:** https://news.ycombinator.com/submit
-- **Type:** Community / Link aggregator
-- **Audience size:** ~10M+ monthly uniques; front-page posts get 50K–500K views
-- **Relevance:** Multiple MCP server repos reached HN front page in 2025 ("Show HN: mcp-agent," etc.). Developer community actively engaged with MCP tooling. A good Show HN for AgentRank could be the single biggest launch driver.
-- **Submission process:** Submit "Show HN: AgentRank — daily-updated ranked index of every MCP server and agent tool" at news.ycombinator.com/submit. Post when US East Coast wakes up (9–10am ET). Founder in comments is critical.
-- **Example coverage:** https://news.ycombinator.com/item?id=42867050 (Show HN: mcp-agent)
-- **Priority:** High
-
-### 6. Official MCP Community Discord
-- **URL:** https://discord.com/invite/model-context-protocol-1312302100125843476
-- **Type:** Discord community
-- **Audience size:** 11,658 members (as of March 2026); growing ~100+ new contributors/week
-- **Relevance:** The official gathering space for MCP ecosystem participants. Builders, maintainers, and power users. Announcing a ranked MCP server index here reaches the exact audience who would care most.
-- **Submission process:** Join and post in #showcase or #tools channel. No formal process — introduce AgentRank and invite feedback. High-signal community; low noise tolerance for self-promo, so lead with value and data.
-- **Example coverage:** Direct community discussion of MCP servers and tooling.
-- **Priority:** High
-
-### 7. The Rundown AI
-- **URL:** https://www.therundown.ai
-- **Type:** Newsletter (daily)
-- **Audience size:** 1.75M+ subscribers; 10K+ new subscribers daily
-- **Relevance:** Largest independent AI media newsletter. Covers tools, launches, ecosystem news. Broad AI audience — not deeply technical, but reach is massive and includes many developer-adjacent readers.
-- **Submission process:** Submit story/link via therundown.ai website (submit form). Cold pitch to editorial team at hello@therundown.ai. High volume inbox — lead with the data story angle ("ranked index of 6,400+ MCP servers, updated daily").
-- **Example coverage:** Regular coverage of MCP ecosystem milestones.
-- **Priority:** High
+All channels where AgentRank should be listed, posted, or submitted. Covers tool directories, product directories, developer communities, Discord/Slack, and media channels.
 
 ---
 
-## Tier 2 — Medium Priority
+## Category 1: MCP / AI Tool Directories
 
-### 8. AI Engineering Podcast
-- **URL:** https://www.aiengineeringpodcast.com
-- **Type:** Podcast
-- **Audience size:** ~50K+ listeners (estimated); focused practitioner audience
-- **Relevance:** Dedicated to AI engineering practice. Recent episodes cover MCP security (with Kubernetes co-creator), agentic SaaS, and practical agent architecture. Guest-driven format — AgentRank founder could pitch as a guest discussing MCP ecosystem data.
-- **Submission process:** Pitch via contact form at aiengineeringpodcast.com. Guest pitches with data-backed angles preferred.
-- **Example coverage:** Episode on MCP for enterprise-grade AI agent deployments (Jan 2026).
-- **Priority:** Medium
+These require submitting AgentRank's MCP server (not the website itself). AgentRank already ships an MCP server on npm — all of these are free and high-priority.
 
-### 9. Ben's Bites
-- **URL:** https://www.bensbites.com / https://news.bensbites.com
-- **Type:** Newsletter + Community news platform
-- **Audience size:** 100K+ subscribers
-- **Relevance:** Daily AI news aggregator with an active community submission system. Covers OSS tools, launches, ecosystem products. Highly used by AI practitioners and founders.
-- **Submission process:** Community can submit posts at news.bensbites.com — top-voted posts get included in the daily newsletter. Direct pitch to Ben Tossell (@bentossell on X) also works for notable launches.
-- **Example coverage:** Regular coverage of MCP tools, Anthropic ecosystem.
-- **Priority:** Medium
+| # | Name | URL | Traffic | Submission | Cost | Priority |
+|---|------|-----|---------|------------|------|----------|
+| 1 | **awesome-mcp-servers** | github.com/punkpeye/awesome-mcp-servers | 83.5K GitHub stars | Submit a PR per CONTRIBUTING.md | Free | **Very High** |
+| 2 | **Smithery** | smithery.ai | 289K/mo (fast growth) | smithery.ai/new — enter HTTPS URL, complete publish flow | Free | **High** |
+| 3 | **mcp.so** | mcp.so | 156K/mo | GitHub issue at github.com/chatmcp/mcp-directory/issues/1 | Free | **High** |
+| 4 | **Cursor Directory** | cursor.directory | 180K/mo (40K+ community) | Submit PR to GitHub repo | Free | **High** |
+| 5 | **Official MCP Registry** | registry.modelcontextprotocol.io | Machine-readable (clients auto-pull) | `mcp-publisher login` + `mcp-publisher publish` (npm package required) | Free | **Critical** |
+| 6 | **PulseMCP** | pulsemcp.com | ~50K/mo (estimated) | pulsemcp.com/submit — provide GitHub URL | Free | **High** |
+| 7 | **Glama** | glama.ai/mcp | 98K/mo | Add `glama.json` to repo root, then claim via GitHub auth | Free | **High** |
+| 8 | **mcpservers.org** | mcpservers.org | Included in awesome-mcp-servers traffic | mcpservers.org/submit (no PRs to repo) | Free | **Medium** |
 
-### 10. Fireship (YouTube)
-- **URL:** https://www.youtube.com/@Fireship
-- **Type:** YouTube channel
-- **Audience size:** 4.06M subscribers
-- **Relevance:** Fast-paced "100 Seconds" and "Code Report" videos for developers. Covers new dev tools with high production velocity. Has covered AI coding tools, model releases, and tooling trends. A "AgentRank in 100 seconds" style video would be organic fit.
-- **Submission process:** Not directly pitchable — Fireship (@fireship_dev) selects topics autonomously. Best strategy: get on HN front page or hit critical mass of developer chatter; Fireship covers what devs are already talking about. Note: Fireship is merging with ui.dev.
-- **Example coverage:** Extensive AI coding tool reviews; MCP would fit the "new protocol in 100 seconds" format.
-- **Priority:** Medium
-
-### 11. Matt Wolfe (YouTube)
-- **URL:** https://www.youtube.com/@mreflow
-- **Type:** YouTube channel
-- **Audience size:** ~700K subscribers
-- **Relevance:** Reviews AI tools with accessible format. Large general AI audience that includes developers and AI-curious builders. Covers MCP tools and agent ecosystem trends.
-- **Submission process:** Pitch via mattwolfe.com or @mattshumer/@mreflow on X. Tool review pitches accepted; provide free access and data. Not deeply technical — frame AgentRank as a leaderboard for discovering the best AI tools.
-- **Example coverage:** AI tool roundups; coverage of MCP ecosystem growth.
-- **Priority:** Medium
-
-### 12. Wes Roth (YouTube)
-- **URL:** https://www.youtube.com/@WesRoth
-- **Type:** YouTube channel
-- **Audience size:** 305K subscribers
-- **Relevance:** Covers AI tool breakthroughs and developer news. More technically focused than Matt Wolfe. Covers MCP ecosystem, agent tools, coding assistants.
-- **Submission process:** Pitch via @WesCodes on X. Direct DM with context and data. Tool review + data story angle works well.
-- **Example coverage:** AI tool breakdowns, MCP coverage.
-- **Priority:** Medium
-
-### 13. MCP Contributors Discord
-- **URL:** https://discord.com/invite/6CSzBmMkjX
-- **Type:** Discord community (contributor-focused)
-- **Audience size:** 3,734 members
-- **Relevance:** Core MCP builders and contributors. Smaller but higher-signal than the community Discord. Announcing AgentRank here reaches the maintainers whose tools AgentRank would be ranking — activating the vanity loop directly.
-- **Submission process:** Join and introduce AgentRank in #general or appropriate channel. Frame it as a resource for maintainers to track their own ranking and ecosystem visibility. Invite top-ranked maintainers to claim their listing.
-- **Example coverage:** Direct contributor coordination around MCP spec, server implementations.
-- **Priority:** Medium
-
-### 14. DEV Community (dev.to)
-- **URL:** https://dev.to
-- **Type:** Developer blog / community
-- **Audience size:** ~1M+ monthly readers; active AI/MCP writing community
-- **Relevance:** Active "AI Weekly" and MCP-focused posts get strong organic traction here. The "AI Weekly: Agents Take Over, MCP Evolves" post shows editorial appetite for ecosystem coverage.
-- **Submission process:** Create an account and publish an article. Use tags: #ai, #mcp, #agents, #opensource. No pitch required — just publish. Top posts get featured in DEV newsletter.
-- **Example coverage:** https://dev.to/alexmercedcoder/ai-weekly-agents-take-over-mcp-evolves-and-models-battle-for-code-5cm0
-- **Priority:** Medium
-
-### 15. r/LocalLLaMA (Reddit)
-- **URL:** https://reddit.com/r/LocalLLaMA
-- **Type:** Reddit community
-- **Audience size:** ~400K+ members
-- **Relevance:** Highly active community for local AI, MCP integrations, and agent tools. Members actively share and discuss MCP server lists, local agent frameworks, and tooling. Strong overlap with AgentRank's core audience.
-- **Submission process:** Submit post to subreddit. Format: "I built AgentRank — a ranked index of 6,400+ MCP servers updated daily. Here's the methodology." Include data, link, and invite feedback. Be present in comments.
-- **Example coverage:** Active MCP server discovery threads, agent framework comparisons.
-- **Priority:** Medium
+**Note:** mcp.run is defunct (redirects to turbomcp.ai). Skip it.
 
 ---
 
-## Tier 3 — Lower Priority / Niche
+## Category 2: Product / AI Tool Directories
 
-### 16. InfoQ
-- **URL:** https://www.infoq.com
-- **Type:** Blog / Podcast / Newsletter
-- **Audience size:** ~2M+ monthly readers; enterprise developer audience
-- **Relevance:** Year-end panel discussed MCP/Agent2Agent interoperability as a top 2025 trend. Enterprise developer audience — useful for credibility and later-stage awareness.
-- **Submission process:** Editorial pitch at infoq.com/contact; also accepts practitioner articles. Topic must have enterprise angle.
-- **Example coverage:** https://www.infoq.com/podcasts/2025-year-review/
-- **Priority:** Low
+These accept the AgentRank website itself, not just the MCP server.
 
-### 17. r/ClaudeAI (Reddit)
-- **URL:** https://reddit.com/r/ClaudeAI
-- **Type:** Reddit community
-- **Audience size:** ~200K+ members
-- **Relevance:** Active Claude/Anthropic user community. Heavy MCP discussion since AgentRank's tools are Claude-compatible. Good for organic discovery, especially if AgentRank surfaces tools that work well with Claude.
-- **Submission process:** Submit post to subreddit. Angle: "I built a daily-updated ranked index of MCP servers so you can find the best ones for Claude."
-- **Example coverage:** Active MCP server recommendation threads.
-- **Priority:** Low
-
-### 18. Dave Ebbelaar (YouTube / LinkedIn)
-- **URL:** https://youtube.com/@daveebbelaar / https://linkedin.com/in/daveebbelaar
-- **Type:** YouTube channel + LinkedIn creator
-- **Audience size:** ~100K+ subscribers (estimated); strong LinkedIn engagement
-- **Relevance:** Highly specific to MCP and agent tools. Posted about MCP community debate directly; has tutorial series on building with MCP. Very targeted audience — smaller but extremely relevant.
-- **Submission process:** DM on LinkedIn or @daveebbelaar on X. Pitch: share the AgentRank dataset and rankings methodology; offer it as a resource for his tutorials.
-- **Example coverage:** MCP server build tutorials; commentary on MCP ecosystem debates.
-- **Priority:** Low
-
-### 19. AI Agents Podcast (Spotify)
-- **URL:** https://creators.spotify.com/pod/profile/ai-agents-podcast
-- **Type:** Podcast
-- **Audience size:** ~10K–50K listeners (estimated)
-- **Relevance:** Dedicated to AI agents; covered "Best AI Agents in 2025" and MCP as enabling protocol for autonomous agents.
-- **Submission process:** Reach out via Spotify podcast contact or find host on LinkedIn/X for guest pitch.
-- **Example coverage:** "The Best AI Agents in 2025" episode (EP31).
-- **Priority:** Low
+| # | Name | URL | Traffic | Submission | Cost | Priority |
+|---|------|-----|---------|------------|------|----------|
+| 9 | **There's An AI For That** | theresanaiforthat.com | 7.8M/mo | Free via monthly X thread for indie makers; paid featured placement available | Free/Paid | **High** |
+| 10 | **Product Hunt** | producthunt.com | 3–8M/mo | Free to list; plan a launch event, not a passive listing | Free | **High** |
+| 11 | **AlternativeTo** | alternativeto.net | 1–3M/mo | Free; register + "Add new application"; approved in 1–2 days | Free | **Medium** |
+| 12 | **Futurepedia** | futurepedia.io | ~400K/mo | Paid only: $247 basic, $497 verified (includes newsletter feature) | $247–$497 | **Medium** |
+| 13 | **Toolify.ai** | toolify.ai | ~5M/mo | Paid submit; includes dofollow backlinks | $49–$99 | **Medium** |
+| 14 | **G2** | g2.com | 5M/mo | Free basic via sell.g2.com/create-a-profile; B2B focus | Free | **Low** |
+| 15 | **Slant** | slant.co | 57K/mo | Community-driven; add AgentRank as answer to "Best MCP server directories" | Free | **Low** |
 
 ---
 
-## Summary by Priority
+## Category 3: Discord Communities
+
+| # | Name | URL | Members | How to Post | Priority |
+|---|------|-----|---------|-------------|----------|
+| 16 | **Model Context Protocol (Official)** | discord.com/invite/model-context-protocol-1312302100125843476 | 11,683 | Post in #showcase or #tools; lead with data, not promotion | **High** |
+| 17 | **Anthropic / Claude** | discord.com/invite/6PPFFzqPDZ | 71,013 | Featured Projects / MCP discussion channels; API developers are MCP adopters | **High** |
+| 18 | **CrewAI** | discord.com/invite/X4JWnZnxPb | 9,257 | Post in #resources — frame as "find MCP servers your crew agents can use" | **High** |
+| 19 | **AutoGen / AG2** | aka.ms/autogen-discord | 14,000+ | Post in community resources channel; multi-agent builders need tooling discovery | **High** |
+| 20 | **Hugging Face** | discord.com/invite/hugging-face-879548962464493619 | 208,584 | Find #tools-and-resources; HF has a growing agents segment | **Medium** |
+| 21 | **Learn AI Together** | discord.com/invite/learnaitogether | 92,198 | Showcase/resources channel; broad reach, lower MCP density | **Medium** |
+| 22 | **OpenAI** | discord.com/invite/openai | 856,573 | Large but noisy; frame as tool-agnostic (all agent tools, not just Claude) | **Medium** |
+| 23 | **AI Agency Alliance** | discord.com/invite/ai-automation-community-902668725298278470 | 12,909 | Post as resource for discovering MCP integrations for automations | **Medium** |
+| 24 | **MCP Contributors (core)** | discord.com/invite/6CSzBmMkjX | ~3,734 | Core MCP builders; introduce AgentRank as maintainer visibility tool | **Medium** |
+
+---
+
+## Category 4: Slack Communities
+
+| # | Name | URL | How to Post | Priority |
+|---|------|-----|-------------|----------|
+| 25 | **LangChain Community** | langchain.com/join-community | Slack workspace; post as resource, not lead gen; LangGraph builders use MCP integrations | **High** |
+| 26 | **MLOps Community** | join.slack.com/t/mlops-community/... | 27,900 members; #tools-and-resources; technically rigorous audience, frame with methodology | **Medium** |
+
+---
+
+## Category 5: Reddit Communities
+
+| # | Name | URL | Members | How to Post | Priority |
+|---|------|-----|---------|-------------|----------|
+| 27 | **r/LocalLLaMA** | reddit.com/r/LocalLLaMA | ~995K | "I ranked every MCP server by GitHub health signals" — methodology post, not link drop | **High** |
+| 28 | **r/ClaudeAI** | reddit.com/r/ClaudeAI | Active, growing | "Find the best MCP servers for your Claude setup" — extremely on-topic | **High** |
+| 29 | **r/MachineLearning** | reddit.com/r/MachineLearning | 3M+ | Requires substantive methodology post; no link drops; community respects rigor | **Medium** |
+| 30 | **r/ChatGPT** | reddit.com/r/ChatGPT | 1.2M | Only if framing as broadly tool-agnostic | **Low** |
+| 31 | **r/artificial** | reddit.com/r/artificial | 1.5M | General AI news; broad reach, low MCP density | **Low** |
+
+*Note: No meaningful r/mcp or r/modelcontextprotocol subreddit exists — MCP conversation on Reddit lives in r/ClaudeAI and r/LocalLLaMA.*
+
+---
+
+## Category 6: Developer Community Platforms
+
+| # | Name | URL | Audience | How to Post | Priority |
+|---|------|-----|---------|-------------|----------|
+| 32 | **Hacker News (Show HN)** | news.ycombinator.com/submit | ~10M monthly uniques | "Show HN: AgentRank — daily-updated ranked index of every MCP server" — post 9–10am ET, founder in comments | **High** |
+| 33 | **DEV Community (dev.to)** | dev.to | 1M+/mo | Create account, publish article with tags #ai #mcp #agents #opensource; no pitch needed | **Medium** |
+| 34 | **Hashnode** | hashnode.com | ~500K/mo developers | Publish technical article about AgentRank methodology; good SEO | **Medium** |
+| 35 | **Medium / Towards Data Science** | medium.com / towardsdatascience.com | 3M+/mo (TDS) | Publish data-driven piece on MCP ecosystem trends; links back to AgentRank | **Medium** |
+
+---
+
+## Category 7: Media Channels (Newsletters / Podcasts / YouTube)
+
+These require outreach, not just form submissions.
+
+| # | Name | URL | Audience | Submission / Pitch | Priority |
+|---|------|-----|---------|-------------------|----------|
+| 36 | **TLDR AI** | tldr.tech/ai | 1.25M+ subscribers | Submit via Submit button on tldr.tech; paid sponsorship also available | **High** |
+| 37 | **The Rundown AI** | therundown.ai | 1.75M+ subscribers | hello@therundown.ai; lead with data story ("ranked index of 25K+ MCP servers") | **High** |
+| 38 | **Hacker News (Show HN)** | *(see above)* | — | — | **High** |
+| 39 | **Latent Space** | latent.space | 200K+ subscribers, 10M+ all-time listeners | Cold pitch swyx (@swyx on X) or podcast@latent.space; founder + data angle | **High** |
+| 40 | **The Pragmatic Engineer** | newsletter.pragmaticengineer.com | 500K+ subscribers | Pitch Gergely Orosz (@GergelyOrosz on X); must have data + industry angle | **High** |
+| 41 | **The New Stack** | thenewstack.io | 1M+ monthly readers | Contributed articles at thenewstack.io/contributions; editorial pitch editors@thenewstack.io | **High** |
+| 42 | **Ben's Bites** | bensbites.com / news.bensbites.com | 100K+ subscribers | Community submit at news.bensbites.com; DM @bentossell on X for notable launches | **Medium** |
+| 43 | **AI Engineering Podcast** | aiengineeringpodcast.com | ~50K+ listeners | Pitch via contact form; guest pitch with data-backed angle | **Medium** |
+| 44 | **Fireship (YouTube)** | youtube.com/@Fireship | 4.06M subscribers | Not directly pitchable; best strategy: HN front page first, Fireship follows developer chatter | **Medium** |
+| 45 | **Matt Wolfe (YouTube)** | youtube.com/@mreflow | ~700K subscribers | Pitch via mattwolfe.com or @mreflow on X; provide free access + data | **Medium** |
+| 46 | **Wes Roth (YouTube)** | youtube.com/@WesRoth | 305K subscribers | DM @WesCodes on X; technical angle works well | **Medium** |
+| 47 | **Dave Ebbelaar** | youtube.com/@daveebbelaar | ~100K subscribers | DM on LinkedIn; extremely MCP-specific audience; offer dataset for tutorials | **Medium** |
+| 48 | **InfoQ** | infoq.com | 2M+ monthly readers | Editorial pitch at infoq.com/contact; needs enterprise angle | **Low** |
+| 49 | **AI Agents Podcast** | creators.spotify.com/pod/profile/ai-agents-podcast | ~10–50K listeners | Find host on LinkedIn/X for guest pitch | **Low** |
+
+---
+
+## Current Presence
+
+| Channel | Status |
+|---------|--------|
+| @AgentRank_ai on X (Twitter) | Active — tweet bot running |
+| awesome-mcp-servers (punkpeye) | Unknown — check if PR submitted |
+| Official MCP Registry | Submitted (AUT-21 — needs device auth from Steve) |
+| Smithery | Submitted (AUT-21 — pending) |
+| Other directories | Not yet submitted |
+
+---
+
+## Recommended Submission Sequence
+
+### Immediate (free, no approval needed)
+1. **awesome-mcp-servers PR** — highest SEO/authority backlink
+2. **mcp.so** — GitHub issue, 5 minutes
+3. **PulseMCP** — form submit
+4. **Glama** — add `glama.json` to repo
+5. **Cursor Directory PR**
+6. **AlternativeTo** — free listing for the website
+
+### Requires Steve approval (public-facing content)
+7. **Show HN** — drafts ready (see AUT-28); post 9–10am ET, Steve in comments
+8. **r/LocalLLaMA post** — methodology post
+9. **r/ClaudeAI post** — Claude-specific angle
+10. **TLDR AI submission** — newsletter link submission
+11. **Product Hunt launch** — time to a milestone; plan as proper launch event
+12. **TAAFT (There's An AI For That)** — watch for monthly X thread; submit via indie maker slot
+
+### Outreach (Steve or Growth Engineer)
+13. **MCP Community Discord** — post in #showcase
+14. **Claude Discord** — featured projects channel
+15. **LangChain Slack** — resources channel
+16. **Latent Space** — cold pitch swyx
+17. **The Pragmatic Engineer** — cold pitch Gergely
+
+### Paid (defer until monetization is live)
+18. **Futurepedia** — $497 verified listing + newsletter feature
+19. **Toolify.ai** — $49–$99 for dofollow backlinks
+
+---
+
+## Priority Summary
 
 | Priority | Channels |
 |----------|----------|
-| **High** | TLDR AI, Latent Space, The Pragmatic Engineer, The New Stack, Hacker News, MCP Community Discord, The Rundown AI |
-| **Medium** | AI Engineering Podcast, Ben's Bites, Fireship, Matt Wolfe, Wes Roth, MCP Contributors Discord, DEV Community, r/LocalLLaMA |
-| **Low** | InfoQ, r/ClaudeAI, Dave Ebbelaar, AI Agents Podcast |
-
----
-
-## Recommended Launch Sequence
-
-1. **Day 1:** Post "Show HN: AgentRank" on Hacker News at 9am ET. Be in comments all day.
-2. **Day 1:** Post intro in MCP Community Discord #showcase channel.
-3. **Day 1:** Tweet/post from @AgentRank_ai tagging top 10 ranked maintainers.
-4. **Day 2:** Submit to TLDR AI and Ben's Bites (community submissions). Tag The Rundown AI.
-5. **Week 1:** Publish a DEV.to article: "How We Ranked 6,400+ MCP Servers." Post in r/LocalLLaMA.
-6. **Week 2:** Cold pitch Latent Space (swyx) and The Pragmatic Engineer (Gergely) with data story.
-7. **Week 3:** Pitch AI Engineering Podcast and Matt Wolfe/Wes Roth YouTube with offer of tool access + data.
-8. **Ongoing:** Post weekly data stories to keep community channels warm ("biggest movers this week").
+| **Critical (free, do now)** | Official MCP Registry, awesome-mcp-servers PR |
+| **High (free, do now)** | Smithery, mcp.so, Cursor Directory, PulseMCP, Glama, TAAFT, AlternativeTo |
+| **High (needs Steve)** | Show HN, r/LocalLLaMA, r/ClaudeAI, Product Hunt, TLDR AI, The Rundown AI |
+| **High (outreach)** | MCP Discord, Claude Discord, LangChain Slack, Latent Space, The Pragmatic Engineer |
+| **Medium (ongoing)** | Ben's Bites, DEV.to, Hashnode, AutoGen/CrewAI Discord, r/MachineLearning, YouTube creators |
+| **Paid (after monetization)** | Futurepedia, Toolify.ai |
+| **Low** | G2, Slant, InfoQ, r/artificial, r/ChatGPT |
