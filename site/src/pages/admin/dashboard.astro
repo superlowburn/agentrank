@@ -42,6 +42,10 @@ if (!env.DASH_TOKEN) {
       skillInstalls,
       dailyTraffic30d,
       emailSubscribers,
+      apiKeysSummary,
+      apiKeysActive,
+      topPages30d,
+      utmSources30d,
     ] = await Promise.all([
       totalsQuery('-1 day'),
       totalsQuery('-7 days'),
@@ -87,6 +91,36 @@ if (!env.DASH_TOKEN) {
         GROUP BY day ORDER BY day ASC
       `).all(),
       db.prepare(`SELECT COUNT(*) AS total FROM email_subscribers`).first(),
+      // API keys by tier
+      db.prepare(`
+        SELECT
+          COUNT(*) AS total_keys,
+          SUM(CASE WHEN tier='free' THEN 1 ELSE 0 END) AS free_keys,
+          SUM(CASE WHEN tier='pro' THEN 1 ELSE 0 END) AS pro_keys,
+          SUM(CASE WHEN tier='enterprise' THEN 1 ELSE 0 END) AS enterprise_keys
+        FROM api_keys WHERE is_active = 1
+      `).first().catch(() => null),
+      // Active keys in different windows (from api_usage)
+      Promise.all([
+        db.prepare(`SELECT COUNT(DISTINCT api_key_id) AS n FROM api_usage WHERE date >= date('now', '-1 day')`).first().catch(() => ({ n: 0 })),
+        db.prepare(`SELECT COUNT(DISTINCT api_key_id) AS n FROM api_usage WHERE date >= date('now', '-7 days')`).first().catch(() => ({ n: 0 })),
+        db.prepare(`SELECT COUNT(DISTINCT api_key_id) AS n FROM api_usage WHERE date >= date('now', '-30 days')`).first().catch(() => ({ n: 0 })),
+      ]),
+      // Top page paths (30d, human only)
+      db.prepare(`
+        SELECT path, COUNT(*) AS views
+        FROM request_log
+        WHERE ts > datetime('now', '-30 days') AND type = 'page' AND is_bot = 0
+        GROUP BY path ORDER BY views DESC LIMIT 15
+      `).all(),
+      // UTM sources (30d)
+      db.prepare(`
+        SELECT utm_source, COUNT(*) AS visits
+        FROM request_log
+        WHERE ts > datetime('now', '-30 days')
+          AND utm_source IS NOT NULL AND utm_source != ''
+        GROUP BY utm_source ORDER BY visits DESC LIMIT 15
+      `).all(),
     ]);
 
     metrics = {
@@ -99,6 +133,14 @@ if (!env.DASH_TOKEN) {
       skillInstalls: skillInstalls.results,
       dailyTraffic30d: dailyTraffic30d.results,
       emailSubscribers: emailSubscribers?.total ?? 0,
+      apiKeysSummary,
+      apiKeysActive: {
+        last24h: (apiKeysActive[0] as any)?.n ?? 0,
+        last7d: (apiKeysActive[1] as any)?.n ?? 0,
+        last30d: (apiKeysActive[2] as any)?.n ?? 0,
+      },
+      topPages30d: topPages30d.results,
+      utmSources30d: utmSources30d.results,
     };
   } catch (e: any) {
     error = e.message;
@@ -413,6 +455,83 @@ function fmtNum(n: any) {
           </table>
         ) : (
           <p style="color: var(--text-muted); font-size: 0.82rem;">No skill pings recorded yet. Pings arrive when the AgentRank skill loads.</p>
+        )}
+      </section>
+
+      <!-- API Keys -->
+      {metrics.apiKeysSummary && (
+        <section>
+          <h2>API Keys</h2>
+          <div class="dash-grid">
+            <div class="stat-card">
+              <div class="label">Total active keys</div>
+              <div class="value">{fmtNum(metrics.apiKeysSummary?.total_keys ?? 0)}</div>
+              <div class="sub">
+                {fmtNum(metrics.apiKeysSummary?.free_keys ?? 0)} free ·
+                {fmtNum(metrics.apiKeysSummary?.pro_keys ?? 0)} pro ·
+                {fmtNum(metrics.apiKeysSummary?.enterprise_keys ?? 0)} enterprise
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="label">Keys used (24h)</div>
+              <div class="value">{fmtNum(metrics.apiKeysActive?.last24h ?? 0)}</div>
+              <div class="sub">unique keys with requests</div>
+            </div>
+            <div class="stat-card">
+              <div class="label">Keys used (7d)</div>
+              <div class="value">{fmtNum(metrics.apiKeysActive?.last7d ?? 0)}</div>
+              <div class="sub">unique keys with requests</div>
+            </div>
+            <div class="stat-card">
+              <div class="label">Keys used (30d)</div>
+              <div class="value">{fmtNum(metrics.apiKeysActive?.last30d ?? 0)}</div>
+              <div class="sub">unique keys with requests</div>
+            </div>
+          </div>
+        </section>
+      )}
+
+      <!-- Top Pages -->
+      <section>
+        <h2>Top Pages (30d, human only)</h2>
+        {metrics.topPages30d?.length > 0 ? (
+          <table>
+            <thead>
+              <tr><th>Path</th><th>Views</th></tr>
+            </thead>
+            <tbody>
+              {metrics.topPages30d.map((r: any) => (
+                <tr>
+                  <td>{r.path}</td>
+                  <td>{fmtNum(r.views)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        ) : (
+          <p style="color: var(--text-muted); font-size: 0.82rem;">No page views recorded yet.</p>
+        )}
+      </section>
+
+      <!-- UTM Sources -->
+      <section>
+        <h2>Traffic Sources / UTM (30d)</h2>
+        {metrics.utmSources30d?.length > 0 ? (
+          <table>
+            <thead>
+              <tr><th>utm_source</th><th>Visits</th></tr>
+            </thead>
+            <tbody>
+              {metrics.utmSources30d.map((r: any) => (
+                <tr>
+                  <td>{r.utm_source}</td>
+                  <td>{fmtNum(r.visits)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        ) : (
+          <p style="color: var(--text-muted); font-size: 0.82rem;">No UTM-tagged traffic recorded yet.</p>
         )}
       </section>
 

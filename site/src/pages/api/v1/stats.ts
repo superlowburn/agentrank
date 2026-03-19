@@ -24,7 +24,7 @@ export const GET: APIRoute = async ({ locals }) => {
   try {
     const cutoff = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
 
-    const [toolsRow, skillsRow, weekRow, avgRow, catRow] = await Promise.all([
+    const [toolsRow, skillsRow, weekRow, avgRow, catRow, apiRequestsRow, skillInstallsRow] = await Promise.all([
       db.prepare('SELECT COUNT(*) AS n FROM tools WHERE score IS NOT NULL').first<{ n: number }>(),
       db.prepare('SELECT COUNT(*) AS n FROM skills WHERE score IS NOT NULL').first<{ n: number }>(),
       db.prepare("SELECT COUNT(*) AS n FROM tools WHERE last_commit_at >= ?1").bind(cutoff).first<{ n: number }>(),
@@ -36,6 +36,8 @@ export const GET: APIRoute = async ({ locals }) => {
            SELECT category FROM skills WHERE category IS NOT NULL
          )`
       ).first<{ n: number }>(),
+      db.prepare("SELECT COUNT(*) AS n FROM request_log WHERE type = 'api'").first<{ n: number }>(),
+      db.prepare('SELECT COUNT(DISTINCT ip_hash) AS n FROM skill_pings').first<{ n: number }>().catch(() => ({ n: 0 })),
     ]);
 
     return json({
@@ -44,6 +46,8 @@ export const GET: APIRoute = async ({ locals }) => {
       toolsUpdatedWeek: weekRow?.n ?? 0,
       averageScore: avgRow?.avg ?? null,
       totalCategories: catRow?.n ?? 0,
+      totalApiRequestsServed: apiRequestsRow?.n ?? 0,
+      totalSkillInstalls: skillInstallsRow?.n ?? 0,
       generatedAt: new Date().toISOString(),
     }, 200, {
       'Cache-Control': 'public, s-maxage=3600, max-age=3600',
