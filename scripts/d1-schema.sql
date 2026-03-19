@@ -410,3 +410,20 @@ CREATE TABLE IF NOT EXISTS submissions (
   status TEXT NOT NULL DEFAULT 'pending',
   submitted_at TEXT NOT NULL DEFAULT (datetime('now'))
 );
+
+-- Sponsor interest — /advertise page form submissions; survives pipeline DROP/CREATE cycles
+CREATE TABLE IF NOT EXISTS sponsor_interest (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  name TEXT NOT NULL,
+  email TEXT NOT NULL,
+  tool_url TEXT,
+  tier TEXT NOT NULL DEFAULT 'growth',
+  ip_hash TEXT,
+  submitted_at TEXT NOT NULL DEFAULT (datetime('now'))
+);
+CREATE INDEX IF NOT EXISTS idx_si_email ON sponsor_interest(email);
+CREATE INDEX IF NOT EXISTS idx_si_submitted ON sponsor_interest(submitted_at);
+-- Migration (run once on existing D1):
+-- CREATE TABLE IF NOT EXISTS sponsor_interest (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL, email TEXT NOT NULL, tool_url TEXT, tier TEXT NOT NULL DEFAULT 'growth', ip_hash TEXT, submitted_at TEXT NOT NULL DEFAULT (datetime('now')));
+-- CREATE INDEX IF NOT EXISTS idx_si_email ON sponsor_interest(email);
+-- CREATE INDEX IF NOT EXISTS idx_si_submitted ON sponsor_interest(submitted_at);

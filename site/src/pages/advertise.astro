@@ -1,0 +1,859 @@
+---
+export const prerender = true;
+import Base from '../layouts/Base.astro';
+---
+
+<Base
+  title="Advertise on AgentRank — Sponsored Listings for MCP Servers"
+  description="Get your MCP server in front of thousands of developers evaluating tools. Sponsored listings on AgentRank deliver featured placement, enhanced descriptions, and full analytics."
+  activeTab="pricing"
+  keywords="advertise MCP server, sponsored listing AgentRank, MCP tool promotion, developer advertising"
+  canonicalUrl="https://agentrank-ai.com/advertise/"
+>
+
+  <!-- Hero -->
+  <section class="adv-hero">
+    <div class="adv-hero-inner">
+      <p class="adv-eyebrow">Sponsored Listings</p>
+      <h1 class="adv-h1">Get your MCP server<br><span class="adv-h1-accent">in front of the right developers</span></h1>
+      <p class="adv-sub">AgentRank indexes every MCP server and agent tool on GitHub. Developers use it daily to evaluate and choose tools. Sponsored listings put your tool at the top — when it matters most.</p>
+      <a href="#interest-form" class="adv-cta-hero">Get featured &darr;</a>
+    </div>
+    <div class="adv-stats">
+      <div class="adv-stat">
+        <span class="adv-stat-num">25,000+</span>
+        <span class="adv-stat-label">tools indexed</span>
+      </div>
+      <div class="adv-stat">
+        <span class="adv-stat-num">daily</span>
+        <span class="adv-stat-label">score updates</span>
+      </div>
+      <div class="adv-stat">
+        <span class="adv-stat-num">1,000+</span>
+        <span class="adv-stat-label">developers/week</span>
+      </div>
+      <div class="adv-stat">
+        <span class="adv-stat-num">AI-native</span>
+        <span class="adv-stat-label">MCP server access</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- What you get -->
+  <section class="adv-section">
+    <h2 class="adv-section-title">What sponsored listings include</h2>
+    <div class="adv-features">
+      <div class="adv-feature">
+        <div class="adv-feature-icon">&#9650;</div>
+        <h3>Featured placement</h3>
+        <p>Your tool appears at the top of its category page — above organic results. Every developer browsing that category sees you first.</p>
+      </div>
+      <div class="adv-feature">
+        <div class="adv-feature-icon">&#9632;</div>
+        <h3>Enhanced listing</h3>
+        <p>Add your logo, a custom tagline, documentation links, and a call-to-action button. Stands out visually in the leaderboard.</p>
+      </div>
+      <div class="adv-feature">
+        <div class="adv-feature-icon">&#9660;</div>
+        <h3>Analytics dashboard</h3>
+        <p>See how many developers viewed your listing, clicked through, and compared your tool. Real data, updated daily.</p>
+      </div>
+      <div class="adv-feature">
+        <div class="adv-feature-icon">&#9679;</div>
+        <h3>Homepage sidebar</h3>
+        <p>Your tool appears in the sponsored section on the AgentRank homepage — the highest-traffic page on the site.</p>
+      </div>
+      <div class="adv-feature">
+        <div class="adv-feature-icon">&#10003;</div>
+        <h3>Verified Publisher badge</h3>
+        <p>A "Verified" badge appears on your listing, signaling to developers that you're an active, committed maintainer.</p>
+      </div>
+      <div class="adv-feature">
+        <div class="adv-feature-icon">&#8635;</div>
+        <h3>Priority indexing</h3>
+        <p>New commits to your repo are reflected in the index within 24 hours — instead of waiting for the weekly cycle.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Pricing tiers -->
+  <section class="adv-section">
+    <h2 class="adv-section-title">Pricing</h2>
+    <p class="adv-section-sub">All tiers include featured placement, enhanced listings, and analytics. Tiers differ by reach.</p>
+    <div class="adv-tiers">
+
+      <div class="adv-tier">
+        <div class="adv-tier-head">
+          <span class="adv-tier-name">Starter</span>
+          <div class="adv-tier-price">$199<span class="adv-tier-mo">/mo</span></div>
+          <p class="adv-tier-desc">Category placement for one vertical. Good for focused tools with a clear niche.</p>
+        </div>
+        <ul class="adv-tier-list">
+          <li>Featured in 1 category page</li>
+          <li>Enhanced listing (logo, tagline, CTA)</li>
+          <li>Analytics: views + click-throughs</li>
+          <li>Verified Publisher badge</li>
+          <li>Priority indexing (24h)</li>
+        </ul>
+        <button class="adv-tier-btn" data-tier="starter" onclick="document.getElementById('interest-form').scrollIntoView({behavior:'smooth'});document.querySelector('[name=tier][value=starter]').checked=true;">Get started &rarr;</button>
+      </div>
+
+      <div class="adv-tier adv-tier-featured">
+        <div class="adv-tier-badge">Most Popular</div>
+        <div class="adv-tier-head">
+          <span class="adv-tier-name">Growth</span>
+          <div class="adv-tier-price">$299<span class="adv-tier-mo">/mo</span></div>
+          <p class="adv-tier-desc">Multi-category placement plus homepage sidebar. Best value for tools targeting multiple use cases.</p>
+        </div>
+        <ul class="adv-tier-list">
+          <li>Featured in up to 3 category pages</li>
+          <li>Homepage sidebar placement</li>
+          <li>Enhanced listing (logo, tagline, CTA)</li>
+          <li>Full analytics dashboard</li>
+          <li>Verified Publisher badge</li>
+          <li>Priority indexing (24h)</li>
+          <li>Slack channel for listing updates</li>
+        </ul>
+        <button class="adv-tier-btn adv-tier-btn-featured" data-tier="growth" onclick="document.getElementById('interest-form').scrollIntoView({behavior:'smooth'});document.querySelector('[name=tier][value=growth]').checked=true;">Get started &rarr;</button>
+      </div>
+
+      <div class="adv-tier">
+        <div class="adv-tier-head">
+          <span class="adv-tier-name">Featured</span>
+          <div class="adv-tier-price">$499<span class="adv-tier-mo">/mo</span></div>
+          <p class="adv-tier-desc">Maximum visibility across all relevant categories plus editorial placement. For tools competing at the top.</p>
+        </div>
+        <ul class="adv-tier-list">
+          <li>Featured in all relevant categories</li>
+          <li>Homepage hero placement</li>
+          <li>Enhanced listing with video embed</li>
+          <li>Full analytics + comparison funnel data</li>
+          <li>Verified Publisher badge</li>
+          <li>Priority indexing (real-time)</li>
+          <li>Dedicated Slack + quarterly review call</li>
+          <li>Newsletter feature (monthly digest)</li>
+        </ul>
+        <button class="adv-tier-btn" data-tier="featured" onclick="document.getElementById('interest-form').scrollIntoView({behavior:'smooth'});document.querySelector('[name=tier][value=featured]').checked=true;">Get started &rarr;</button>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Social proof -->
+  <section class="adv-section adv-proof-section">
+    <h2 class="adv-section-title">Who uses AgentRank</h2>
+    <div class="adv-proof-grid">
+      <div class="adv-proof-card">
+        <p class="adv-proof-quote">"When I'm evaluating which database MCP server to use, I search AgentRank first. The scores tell me what's actively maintained."</p>
+        <span class="adv-proof-attr">— Developer building a Claude-powered data pipeline</span>
+      </div>
+      <div class="adv-proof-card">
+        <p class="adv-proof-quote">"We check our AgentRank score after every release. It's the clearest signal we have that our maintenance effort is showing up in search results."</p>
+        <span class="adv-proof-attr">— Maintainer of a top-10 MCP server</span>
+      </div>
+      <div class="adv-proof-card">
+        <p class="adv-proof-quote">"I use the MCP server to let Claude recommend tools automatically. The sponsored tools show up when I ask 'what should I use for X.'"</p>
+        <span class="adv-proof-attr">— AI engineer at a fintech startup</span>
+      </div>
+    </div>
+    <div class="adv-numbers">
+      <div class="adv-number">
+        <span class="adv-number-val">25,000+</span>
+        <span class="adv-number-lbl">tools indexed</span>
+      </div>
+      <div class="adv-number">
+        <span class="adv-number-val">13,000+</span>
+        <span class="adv-number-lbl">skills ranked</span>
+      </div>
+      <div class="adv-number">
+        <span class="adv-number-val">daily</span>
+        <span class="adv-number-lbl">score refreshes</span>
+      </div>
+      <div class="adv-number">
+        <span class="adv-number-val">npm + pip</span>
+        <span class="adv-number-lbl">MCP server installs</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Interest capture form -->
+  <section class="adv-section" id="interest-form">
+    <div class="adv-form-wrap">
+      <div class="adv-form-copy">
+        <h2>Interested in sponsoring?</h2>
+        <p>Fill in your details and we'll send you placement availability, audience data for your category, and a custom proposal within 24 hours.</p>
+        <p class="adv-form-note">No commitment required. We only take sponsors where the traffic numbers make sense for your tool.</p>
+        <p class="adv-form-email">Prefer email? <a href="mailto:hello@agentrank-ai.com?subject=Sponsored%20Listing%20Interest">hello@agentrank-ai.com</a></p>
+      </div>
+      <form class="adv-form" id="advertise-form" novalidate>
+        <input type="text" name="_hp" class="hp-field" tabindex="-1" autocomplete="off" aria-hidden="true" />
+
+        <div class="adv-field">
+          <label for="adv-name">Your name</label>
+          <input type="text" id="adv-name" name="name" placeholder="Jane Smith" autocomplete="name" required />
+        </div>
+
+        <div class="adv-field">
+          <label for="adv-email">Work email</label>
+          <input type="email" id="adv-email" name="email" placeholder="jane@yourcompany.com" autocomplete="email" required />
+        </div>
+
+        <div class="adv-field">
+          <label for="adv-tool-url">Tool URL <span class="adv-optional">(optional)</span></label>
+          <input type="url" id="adv-tool-url" name="tool_url" placeholder="https://github.com/you/your-mcp-server" />
+        </div>
+
+        <div class="adv-field">
+          <label>Tier of interest</label>
+          <div class="adv-tier-radio">
+            <label class="adv-radio-label"><input type="radio" name="tier" value="starter" /> Starter — $199/mo</label>
+            <label class="adv-radio-label adv-radio-default"><input type="radio" name="tier" value="growth" checked /> Growth — $299/mo</label>
+            <label class="adv-radio-label"><input type="radio" name="tier" value="featured" /> Featured — $499/mo</label>
+          </div>
+        </div>
+
+        <button type="submit" class="adv-submit" id="adv-submit-btn">Send inquiry &rarr;</button>
+        <p class="adv-form-status" id="adv-form-status" aria-live="polite"></p>
+      </form>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="adv-section adv-faq">
+    <h2 class="adv-section-title">FAQ</h2>
+    <dl class="adv-faq-list">
+
+      <dt>When does sponsorship go live?</dt>
+      <dd>Sponsorships are manually activated by our team within 1–2 business days of payment. We'll confirm your category placement and listing details before going live.</dd>
+
+      <dt>Are sponsored listings labeled?</dt>
+      <dd>Yes, always. Sponsored placements carry a visible "Sponsored" label. We don't disguise paid placement as organic rankings — that's how we keep the index trustworthy.</dd>
+
+      <dt>Can I sponsor multiple categories?</dt>
+      <dd>Growth and Featured tiers include multi-category placement. If you need a custom arrangement, email us and we'll work something out.</dd>
+
+      <dt>What if my tool isn't in the index yet?</dt>
+      <dd>We'll add it. If your tool is on GitHub and matches MCP server or agent tool patterns, it gets indexed automatically. If not, we can manually add it as part of the sponsorship onboarding.</dd>
+
+      <dt>Can I cancel anytime?</dt>
+      <dd>Yes. Sponsorships are month-to-month. Cancel before your next billing date and you'll stay live through the end of the period.</dd>
+
+      <dt>Do you offer annual pricing?</dt>
+      <dd>Annual billing with 2 months free is available on request. Email us after submitting your inquiry.</dd>
+
+    </dl>
+  </section>
+
+</Base>
+
+<style>
+  /* ── Layout ── */
+  .adv-section {
+    max-width: 900px;
+    margin: 0 auto 4rem;
+    padding: 0 1rem;
+  }
+
+  /* ── Hero ── */
+  .adv-hero {
+    max-width: 900px;
+    margin: 0 auto 4rem;
+    padding: 3rem 1rem 0;
+  }
+
+  .adv-hero-inner {
+    margin-bottom: 2.5rem;
+  }
+
+  .adv-eyebrow {
+    font-size: 0.68rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--accent);
+    font-weight: 700;
+    margin-bottom: 1rem;
+  }
+
+  .adv-h1 {
+    font-size: clamp(1.4rem, 3vw, 2.2rem);
+    font-weight: 700;
+    line-height: 1.2;
+    margin-bottom: 1rem;
+    color: var(--text);
+  }
+
+  .adv-h1-accent {
+    color: var(--accent);
+  }
+
+  .adv-sub {
+    font-size: 0.88rem;
+    color: var(--text-muted);
+    max-width: 580px;
+    line-height: 1.65;
+    margin-bottom: 1.5rem;
+  }
+
+  .adv-cta-hero {
+    display: inline-block;
+    background: var(--accent);
+    color: var(--bg);
+    font-size: 0.8rem;
+    font-weight: 700;
+    padding: 0.6rem 1.2rem;
+    border-radius: 4px;
+    text-decoration: none;
+    letter-spacing: 0.03em;
+    transition: opacity 0.15s;
+  }
+
+  .adv-cta-hero:hover {
+    opacity: 0.85;
+  }
+
+  .adv-stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    overflow: hidden;
+  }
+
+  .adv-stat {
+    background: var(--bg-surface);
+    padding: 1.25rem 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+  }
+
+  .adv-stat-num {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--accent);
+  }
+
+  .adv-stat-label {
+    font-size: 0.68rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  /* ── Section titles ── */
+  .adv-section-title {
+    font-size: 1rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    color: var(--text);
+  }
+
+  .adv-section-sub {
+    font-size: 0.82rem;
+    color: var(--text-muted);
+    margin-bottom: 1.5rem;
+    line-height: 1.6;
+  }
+
+  /* ── Features grid ── */
+  .adv-features {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    margin-top: 1.5rem;
+  }
+
+  .adv-feature {
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 1.25rem;
+  }
+
+  .adv-feature-icon {
+    font-size: 0.9rem;
+    color: var(--accent);
+    margin-bottom: 0.6rem;
+  }
+
+  .adv-feature h3 {
+    font-size: 0.8rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    color: var(--text);
+  }
+
+  .adv-feature p {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    line-height: 1.6;
+  }
+
+  /* ── Pricing tiers ── */
+  .adv-tiers {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 1rem;
+    margin-top: 1.5rem;
+    align-items: start;
+  }
+
+  .adv-tier {
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1.5rem;
+    position: relative;
+  }
+
+  .adv-tier-featured {
+    border-color: var(--accent);
+  }
+
+  .adv-tier-badge {
+    position: absolute;
+    top: -0.65rem;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--accent);
+    color: var(--bg);
+    font-size: 0.58rem;
+    font-weight: 700;
+    padding: 0.18rem 0.6rem;
+    border-radius: 20px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    white-space: nowrap;
+  }
+
+  .adv-tier-head {
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 1.25rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .adv-tier-name {
+    display: block;
+    font-size: 0.62rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-muted);
+    margin-bottom: 0.5rem;
+  }
+
+  .adv-tier-price {
+    font-size: 2rem;
+    font-weight: 700;
+    line-height: 1;
+    margin-bottom: 0.5rem;
+    color: var(--text);
+  }
+
+  .adv-tier-mo {
+    font-size: 0.9rem;
+    font-weight: 400;
+    color: var(--text-muted);
+  }
+
+  .adv-tier-desc {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    line-height: 1.55;
+  }
+
+  .adv-tier-list {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .adv-tier-list li {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    padding-left: 1rem;
+    position: relative;
+  }
+
+  .adv-tier-list li::before {
+    content: '→';
+    position: absolute;
+    left: 0;
+    color: var(--accent);
+    font-size: 0.7rem;
+  }
+
+  .adv-tier-btn {
+    width: 100%;
+    padding: 0.55rem;
+    background: var(--bg-hover);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    color: var(--text);
+    font-family: inherit;
+    font-size: 0.78rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s;
+    letter-spacing: 0.02em;
+  }
+
+  .adv-tier-btn:hover {
+    background: var(--border);
+    border-color: var(--text-muted);
+  }
+
+  .adv-tier-btn-featured {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: var(--bg);
+  }
+
+  .adv-tier-btn-featured:hover {
+    opacity: 0.85;
+    background: var(--accent);
+    border-color: var(--accent);
+  }
+
+  /* ── Social proof ── */
+  .adv-proof-section {
+    border-top: 1px solid var(--border);
+    padding-top: 2.5rem;
+  }
+
+  .adv-proof-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 1rem;
+    margin: 1.5rem 0 2.5rem;
+  }
+
+  .adv-proof-card {
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 1.25rem;
+  }
+
+  .adv-proof-quote {
+    font-size: 0.78rem;
+    line-height: 1.65;
+    color: var(--text);
+    margin-bottom: 0.75rem;
+    font-style: italic;
+  }
+
+  .adv-proof-attr {
+    font-size: 0.68rem;
+    color: var(--text-muted);
+  }
+
+  .adv-numbers {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+  }
+
+  .adv-number {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+  }
+
+  .adv-number-val {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--accent);
+  }
+
+  .adv-number-lbl {
+    font-size: 0.68rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  /* ── Interest form ── */
+  .adv-form-wrap {
+    display: grid;
+    grid-template-columns: 1fr 1.4fr;
+    gap: 3rem;
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 2rem;
+  }
+
+  .adv-form-copy h2 {
+    font-size: 1rem;
+    font-weight: 700;
+    margin-bottom: 0.75rem;
+    color: var(--text);
+  }
+
+  .adv-form-copy p {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    line-height: 1.65;
+    margin-bottom: 0.75rem;
+  }
+
+  .adv-form-note {
+    font-size: 0.73rem !important;
+    border-left: 2px solid var(--border);
+    padding-left: 0.75rem;
+  }
+
+  .adv-form-email {
+    font-size: 0.75rem !important;
+    margin-top: 1rem;
+  }
+
+  .adv-form-email a {
+    color: var(--accent);
+    text-decoration: none;
+  }
+
+  .adv-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .adv-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+  }
+
+  .adv-field label {
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-muted);
+    font-weight: 600;
+  }
+
+  .adv-optional {
+    font-weight: 400;
+    text-transform: none;
+    letter-spacing: 0;
+    font-size: 0.7rem;
+  }
+
+  .adv-field input[type="text"],
+  .adv-field input[type="email"],
+  .adv-field input[type="url"] {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 0.5rem 0.75rem;
+    color: var(--text);
+    font-family: inherit;
+    font-size: 0.82rem;
+    transition: border-color 0.15s;
+    outline: none;
+    width: 100%;
+  }
+
+  .adv-field input:focus {
+    border-color: var(--accent);
+  }
+
+  .adv-field input::placeholder {
+    color: var(--text-muted);
+    opacity: 0.6;
+  }
+
+  .adv-tier-radio {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    margin-top: 0.1rem;
+  }
+
+  .adv-radio-label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    cursor: pointer;
+    text-transform: none;
+    letter-spacing: 0;
+    font-weight: 400;
+  }
+
+  .adv-radio-default {
+    color: var(--text);
+  }
+
+  .adv-radio-label input[type="radio"] {
+    accent-color: var(--accent);
+  }
+
+  .adv-submit {
+    padding: 0.65rem 1.25rem;
+    background: var(--accent);
+    color: var(--bg);
+    border: none;
+    border-radius: 4px;
+    font-family: inherit;
+    font-size: 0.82rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: opacity 0.15s;
+    letter-spacing: 0.03em;
+    align-self: flex-start;
+  }
+
+  .adv-submit:hover {
+    opacity: 0.85;
+  }
+
+  .adv-submit:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .adv-form-status {
+    font-size: 0.78rem;
+    min-height: 1.2em;
+    color: var(--text-muted);
+  }
+
+  .adv-form-status.success {
+    color: var(--accent);
+  }
+
+  .adv-form-status.error {
+    color: #f87171;
+  }
+
+  /* ── FAQ ── */
+  .adv-faq-list {
+    margin-top: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .adv-faq-list dt {
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: var(--text);
+    padding: 1rem 0 0.3rem;
+    border-top: 1px solid var(--border);
+  }
+
+  .adv-faq-list dt:first-child {
+    border-top: none;
+    padding-top: 0;
+  }
+
+  .adv-faq-list dd {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    line-height: 1.65;
+    margin: 0 0 0.75rem;
+  }
+
+  /* ── Honeypot ── */
+  .hp-field {
+    position: absolute;
+    left: -9999px;
+    opacity: 0;
+    pointer-events: none;
+    tab-index: -1;
+  }
+
+  /* ── Responsive ── */
+  @media (max-width: 760px) {
+    .adv-stats {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .adv-features {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .adv-tiers {
+      grid-template-columns: 1fr;
+    }
+
+    .adv-proof-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .adv-numbers {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .adv-form-wrap {
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+    }
+  }
+
+  @media (max-width: 520px) {
+    .adv-features {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+
+<script>
+  const form = document.getElementById('advertise-form') as HTMLFormElement;
+  const btn = document.getElementById('adv-submit-btn') as HTMLButtonElement;
+  const status = document.getElementById('adv-form-status') as HTMLParagraphElement;
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const name = (form.querySelector('#adv-name') as HTMLInputElement).value.trim();
+    const email = (form.querySelector('#adv-email') as HTMLInputElement).value.trim();
+    const tool_url = (form.querySelector('#adv-tool-url') as HTMLInputElement).value.trim();
+    const tier = (form.querySelector('[name="tier"]:checked') as HTMLInputElement)?.value || 'growth';
+    const hp = (form.querySelector('[name="_hp"]') as HTMLInputElement).value;
+
+    if (!name) { showStatus('Please enter your name.', 'error'); return; }
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { showStatus('Please enter a valid email address.', 'error'); return; }
+
+    btn.disabled = true;
+    btn.textContent = 'Sending…';
+    status.textContent = '';
+    status.className = 'adv-form-status';
+
+    try {
+      const res = await fetch('/api/advertise', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, email, tool_url: tool_url || undefined, tier, _hp: hp }),
+      });
+      const data = await res.json();
+
+      if (data.success) {
+        showStatus('Got it — we\'ll be in touch within 24 hours.', 'success');
+        form.reset();
+        btn.textContent = 'Sent ✓';
+      } else {
+        showStatus(data.error || 'Something went wrong. Please try again.', 'error');
+        btn.disabled = false;
+        btn.textContent = 'Send inquiry →';
+      }
+    } catch {
+      showStatus('Network error. Please try again.', 'error');
+      btn.disabled = false;
+      btn.textContent = 'Send inquiry →';
+    }
+  });
+
+  function showStatus(msg: string, type: 'success' | 'error') {
+    status.textContent = msg;
+    status.className = `adv-form-status ${type}`;
+  }
+</script>
