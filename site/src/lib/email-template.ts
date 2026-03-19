@@ -44,6 +44,21 @@ export interface DigestData {
     stars: number;
     language: string;
   }>;
+  featured_tool?: {
+    full_name: string;
+    rank: number;
+    score: number;
+    stars: number;
+    description: string | null;
+    language: string | null;
+  };
+  top_trending_skills?: Array<{
+    slug: string;
+    name: string | null;
+    rank: number | null;
+    score: number | null;
+    installs: number;
+  }>;
   featured_blog?: {
     title: string;
     url: string;
@@ -219,6 +234,58 @@ function buildHtml(data: DigestData): string {
       </td>
     </tr>` : '';
 
+  // --- Featured tool spotlight ---
+  const featuredToolHtml = data.featured_tool ? `
+    <tr>
+      <td style="padding:0 0 32px;">
+        <h2 style="margin:0 0 14px;font-size:11px;font-weight:700;color:#4b5563;text-transform:uppercase;letter-spacing:1.5px;">Tool Spotlight</h2>
+        <div style="background:#111111;border:1px solid #1a1a1a;border-left:3px solid #6366f1;border-radius:0 8px 8px 0;padding:18px 20px;">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;">
+            <div>
+              <span style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#6366f1;background:#1a1a2e;border-radius:3px;padding:2px 6px;">#${data.featured_tool.rank} This Week</span>
+            </div>
+            <div style="text-align:right;">
+              <span style="font-size:20px;font-weight:800;color:#6366f1;">${data.featured_tool.score.toFixed(1)}</span>
+              <span style="font-size:10px;color:#4b5563;margin-left:3px;">pts</span>
+            </div>
+          </div>
+          <a href="${ghUrl(data.featured_tool.full_name)}" style="color:#e5e5e5;text-decoration:none;font-size:18px;font-weight:700;display:block;margin-bottom:4px;">${shortName(data.featured_tool.full_name)}</a>
+          <div style="font-size:11px;color:#4b5563;margin-bottom:10px;">${data.featured_tool.full_name.split('/')[0]}${data.featured_tool.language ? ' &bull; ' + data.featured_tool.language : ''} &bull; &#9733; ${data.featured_tool.stars.toLocaleString()}</div>
+          ${data.featured_tool.description ? `<p style="margin:0 0 12px;color:#9ca3af;font-size:13px;line-height:1.6;">${data.featured_tool.description.slice(0, 200)}${data.featured_tool.description.length > 200 ? '…' : ''}</p>` : ''}
+          <a href="${toolUrl(data.featured_tool.full_name)}" style="color:#6366f1;font-size:13px;text-decoration:none;font-weight:600;">View on AgentRank &rarr;</a>
+        </div>
+      </td>
+    </tr>` : '';
+
+  // --- Trending skills ---
+  const trendingSkillsHtml = data.top_trending_skills && data.top_trending_skills.length ? `
+    <tr>
+      <td style="padding:0 0 32px;">
+        <h2 style="margin:0 0 14px;font-size:11px;font-weight:700;color:#4b5563;text-transform:uppercase;letter-spacing:1.5px;">Trending Skills</h2>
+        <table width="100%" cellpadding="0" cellspacing="0">
+          <thead><tr>
+            <th style="text-align:left;font-size:9px;text-transform:uppercase;letter-spacing:1px;color:#374151;padding:0 0 8px;border-bottom:1px solid #1a1a1a;">#</th>
+            <th style="text-align:left;font-size:9px;text-transform:uppercase;letter-spacing:1px;color:#374151;padding:0 10px 8px;border-bottom:1px solid #1a1a1a;">Skill</th>
+            <th style="text-align:right;font-size:9px;text-transform:uppercase;letter-spacing:1px;color:#374151;padding:0 8px 8px;border-bottom:1px solid #1a1a1a;">Score</th>
+            <th style="text-align:right;font-size:9px;text-transform:uppercase;letter-spacing:1px;color:#374151;padding:0 0 8px 8px;border-bottom:1px solid #1a1a1a;">Installs</th>
+          </tr></thead>
+          <tbody>${data.top_trending_skills.slice(0, 5).map(s => `
+            <tr>
+              <td style="padding:10px 0;border-bottom:1px solid #141414;color:#374151;font-size:12px;font-weight:700;width:28px;">${s.rank ?? '—'}</td>
+              <td style="padding:10px 10px;border-bottom:1px solid #141414;">
+                <a href="https://agentrank-ai.com/skill/${s.slug}/" style="color:#e5e5e5;text-decoration:none;font-weight:600;font-size:14px;">${s.name ?? s.slug}</a>
+              </td>
+              <td style="padding:10px 8px;border-bottom:1px solid #141414;text-align:right;color:#6366f1;font-weight:700;font-size:13px;white-space:nowrap;">${s.score != null ? s.score.toFixed(1) : '—'}</td>
+              <td style="padding:10px 0 10px 8px;border-bottom:1px solid #141414;text-align:right;color:#6b7280;font-size:12px;white-space:nowrap;">${s.installs.toLocaleString()}</td>
+            </tr>`).join('')}
+          </tbody>
+        </table>
+        <div style="margin-top:14px;text-align:right;">
+          <a href="https://agentrank-ai.com/skills/" style="color:#6366f1;font-size:12px;text-decoration:none;font-weight:600;">All skills &rarr;</a>
+        </div>
+      </td>
+    </tr>` : '';
+
   // --- Top news ---
   const CATEGORY_LABELS: Record<string, string> = {
     launch: 'Launch',
@@ -317,6 +384,12 @@ function buildHtml(data: DigestData): string {
           <!-- New Entries -->
           ${newEntriesHtml}
 
+          <!-- Featured Tool Spotlight -->
+          ${featuredToolHtml}
+
+          <!-- Trending Skills -->
+          ${trendingSkillsHtml}
+
           <!-- Featured Blog -->
           ${featuredHtml}
 
@@ -377,6 +450,14 @@ function buildText(data: DigestData): string {
     .map(e => `  ${e.full_name} — ${e.score.toFixed(1)} pts, ${e.stars.toLocaleString()} stars`)
     .join('\n') || '';
 
+  const featuredToolSection = data.featured_tool
+    ? `\nTOOL SPOTLIGHT — #${data.featured_tool.rank} THIS WEEK\n${sub}\n${data.featured_tool.full_name} — ${data.featured_tool.score.toFixed(1)} pts, ${data.featured_tool.stars.toLocaleString()} stars\n${data.featured_tool.description ? data.featured_tool.description.slice(0, 200) + (data.featured_tool.description.length > 200 ? '…' : '') + '\n' : ''}https://agentrank-ai.com/tool/${data.featured_tool.full_name}/\n`
+    : '';
+
+  const trendingSkillsSection = data.top_trending_skills && data.top_trending_skills.length
+    ? `\nTRENDING SKILLS\n${sub}\n${data.top_trending_skills.slice(0, 5).map(s => `  ${s.rank ?? '?'}. ${s.name ?? s.slug} — ${s.score != null ? s.score.toFixed(1) + ' pts' : ''}, ${s.installs.toLocaleString()} installs`).join('\n')}\n`
+    : '';
+
   const featuredSection = data.featured_blog
     ? `\nFEATURED ARTICLE\n${sub}\n${data.featured_blog.title}\n${data.featured_blog.url}\n`
     : '';
@@ -414,7 +495,7 @@ ${top10Lines}
 BIGGEST MOVERS UP
 ${sub}
 ${gainerLines}
-${losersSection}${newSection}${newsSection}${featuredSection}
+${losersSection}${newSection}${featuredToolSection}${trendingSkillsSection}${newsSection}${featuredSection}
 View the full leaderboard: https://agentrank-ai.com/
 ${sub}
 You're receiving this because you subscribed to AgentRank.

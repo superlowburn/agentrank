@@ -64,7 +64,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
 
   const db: D1Database = env.DB;
 
-  const [statsRow, top10Result, gainersResult, losersResult, newEntriesResult, subsResult] = await Promise.all([
+  const [statsRow, top10Result, gainersResult, losersResult, newEntriesResult, trendingSkillsResult, featuredToolResult, subsResult] = await Promise.all([
     // Stats: counts and avg score from today's snapshot
     db.prepare(`
       SELECT
@@ -156,6 +156,28 @@ export const POST: APIRoute = async ({ request, locals }) => {
       LIMIT 10
     `).bind(today, prevDate).all().catch(() => ({ results: [] as unknown[] })),
 
+    // Top trending skills by rank
+    db.prepare(`
+      SELECT s.slug, s.name, s.score, s.rank, COALESCE(s.installs, 0) AS installs
+      FROM skills s
+      WHERE s.rank IS NOT NULL
+      ORDER BY s.rank ASC
+      LIMIT 5
+    `).all().catch(() => ({ results: [] as unknown[] })),
+
+    // Featured tool: top-ranked tool with description
+    db.prepare(`
+      SELECT rh.tool_full_name AS full_name, rh.rank, rh.score, rh.stars,
+             COALESCE(t.description, '') AS description,
+             COALESCE(t.language, '') AS language
+      FROM rank_history rh
+      LEFT JOIN tools t ON t.full_name = rh.tool_full_name
+      WHERE rh.snapshot_date = ?1 AND rh.tool_type = 'tool'
+      ORDER BY rh.rank ASC
+      LIMIT 1
+    `).bind(today).first<{ full_name: string; rank: number; score: number; stars: number; description: string; language: string }>()
+      .catch(() => null),
+
     // Subscribers
     db.prepare(`SELECT email FROM email_subscribers ORDER BY subscribed_at ASC`)
       .all().catch(() => ({ results: [] as unknown[] })),
@@ -201,6 +223,23 @@ export const POST: APIRoute = async ({ request, locals }) => {
 
   stats.new_tools_this_week = new_entries.length;
 
+  const top_trending_skills = (trendingSkillsResult.results || []).map((r: any) => ({
+    slug: r.slug,
+    name: r.name ?? null,
+    rank: r.rank ?? null,
+    score: typeof r.score === 'number' ? Math.round(r.score * 10) / 10 : null,
+    installs: r.installs ?? 0,
+  }));
+
+  const featured_tool = featuredToolResult ? {
+    full_name: featuredToolResult.full_name,
+    rank: featuredToolResult.rank,
+    score: Math.round(featuredToolResult.score * 10) / 10,
+    stars: featuredToolResult.stars,
+    description: featuredToolResult.description || null,
+    language: featuredToolResult.language || null,
+  } : undefined;
+
   const subscribers = (subsResult.results || []).map((r: any) => r.email as string);
 
   if (subscribers.length === 0) {
@@ -225,6 +264,8 @@ export const POST: APIRoute = async ({ request, locals }) => {
         gainers,
         losers,
         new_entries,
+        featured_tool,
+        top_trending_skills: top_trending_skills.length ? top_trending_skills : undefined,
         unsubscribe_url,
       };
 
