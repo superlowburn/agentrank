@@ -154,16 +154,31 @@ const ogImageHeight = ogImage ? '630' : '500';
         border-bottom-color: var(--accent);
       }
 
-      .badge-beta {
+      .badge-beta, .badge-free {
         font-size: 0.6rem;
         text-transform: lowercase;
-        border: 1px solid var(--accent);
-        color: var(--accent);
         border-radius: 3px;
         padding: 0.05rem 0.3rem;
         line-height: 1.3;
+      }
+
+      .badge-beta {
+        border: 1px solid var(--accent);
+        color: var(--accent);
         font-weight: 400;
         vertical-align: middle;
+      }
+
+      .badge-free {
+        border: 1px solid var(--text-muted);
+        color: var(--text-muted);
+        font-weight: 400;
+        vertical-align: middle;
+      }
+
+      .nav-health-check .badge-free {
+        border-color: #22c55e;
+        color: #22c55e;
       }
 
       header .tagline {
@@ -289,6 +304,7 @@ const ogImageHeight = ogImage ? '630' : '500';
           <nav class="tabs">
             <a href="/" class={activeTab === 'skills' ? 'active' : ''}>Skills</a>
             <a href="/tools/" class={activeTab === 'tools' ? 'active' : ''}>Tools</a>
+            <a href="/check/" class={`nav-health-check${activeTab === 'check' ? ' active' : ''}`}>Health Check <span class="badge-free">free</span></a>
             <a href="/movers/" class={activeTab === 'movers' ? 'active' : ''}>Movers</a>
             <a href="/trends/" class={activeTab === 'trends' ? 'active' : ''}>Trends</a>
             <a href="/agents/" class={activeTab === 'agents' ? 'active' : ''}>Agents <span class="badge-beta">beta</span></a>
