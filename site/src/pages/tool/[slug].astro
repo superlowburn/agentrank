@@ -210,6 +210,7 @@ if (scoreHistory.length >= 2) {
 }
 
 const totalTools = (await env.DB.prepare('SELECT COUNT(*) as count FROM tools').first())?.count as number || 0;
+const toolCategory = row.category as string | null;
 const shortName = tool.full_name.includes('/') ? tool.full_name.split('/')[1] : tool.full_name;
 const toolPageTitle = `${shortName} MCP Server — AgentRank`;
 const toolMetaDesc = (() => {
@@ -277,7 +278,6 @@ const keywordsStr = [...new Set([...tool.matched_queries, ...githubTopics])].joi
 const ogImage = tool.rank <= 200 ? `/og/tool/${slug}.png` : undefined;
 
 // Category-to-blog mapping for contextual cross-links
-const toolCategory = row.category as string | null;
 const CATEGORY_BLOG_MAP: Record<string, { href: string; title: string }[]> = {
   database: [
     { href: '/blog/best-mcp-servers-database/', title: 'Best MCP Servers for Database' },
@@ -357,28 +357,29 @@ let relatedTools: Record<string, unknown>[] = [];
 const primaryQuery = tool.matched_queries[0] || null;
 if (toolCategory) {
   const categoryRows = await env.DB.prepare(
-    `SELECT full_name, score, rank, description FROM tools
+    `SELECT full_name, score, stars, description FROM tools
      WHERE full_name != ? AND score IS NOT NULL AND category = ?
-     ORDER BY score DESC LIMIT 6`
+     ORDER BY ABS(score - ${tool.score}) ASC LIMIT 6`
   ).bind(tool.full_name, toolCategory).all();
   relatedTools = (categoryRows.results || []) as Record<string, unknown>[];
 }
 if (relatedTools.length < 3 && primaryQuery) {
   const queryRows = await env.DB.prepare(
-    `SELECT full_name, score, rank, description FROM tools
+    `SELECT full_name, score, stars, description FROM tools
      WHERE full_name != ? AND score IS NOT NULL AND matched_queries LIKE ?
-     ORDER BY score DESC LIMIT 6`
+     ORDER BY ABS(score - ${tool.score}) ASC LIMIT 6`
   ).bind(tool.full_name, `%${primaryQuery}%`).all();
   relatedTools = (queryRows.results || []) as Record<string, unknown>[];
 }
 if (relatedTools.length < 3) {
   const topRows = await env.DB.prepare(
-    `SELECT full_name, score, rank, description FROM tools
+    `SELECT full_name, score, stars, description FROM tools
      WHERE full_name != ? AND score IS NOT NULL
      ORDER BY score DESC LIMIT 6`
   ).bind(tool.full_name).all();
   relatedTools = (topRows.results || []) as Record<string, unknown>[];
 }
+const similarToolSlugs = relatedTools.map(r => toSlug(r.full_name as string)).join(',');
 
 const categoryLabel = toolCategory
   ? (CATEGORIES[toolCategory] ?? toolCategory.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase()))
@@ -689,21 +690,34 @@ Astro.response.headers.set('Cache-Control', 'public, max-age=60, s-maxage=3600, 
   {relatedTools.length > 0 && (
     <section class="related">
       <h3>{categoryLabel ? `Similar ${categoryLabel} Tools` : 'Top Ranked Tools'}</h3>
-      <div class="related-list">
-        {relatedTools.map((r) => (
-          <a href={`/tool/${(r.full_name as string).replace('/', '--')}/`} class="related-item">
-            <div class="related-left">
-              <span class="related-name">{r.full_name as string}</span>
-              {(r.description as string | null) && (
-                <span class="related-desc">{(r.description as string).slice(0, 120)}{(r.description as string).length > 120 ? '…' : ''}</span>
+      <div class="similar-grid">
+        {relatedTools.map((r) => {
+          const rSlug = toSlug(r.full_name as string);
+          const rShortName = (r.full_name as string).includes('/') ? (r.full_name as string).split('/')[1] : r.full_name as string;
+          const rDesc = r.description as string | null;
+          return (
+            <a href={`/tool/${rSlug}/`} class="similar-card">
+              <div class="similar-card-top">
+                <span class="similar-name">{rShortName}</span>
+                <span class="similar-score" style={`color: ${scoreColor((r.score as number) || 0)}`}>
+                  {((r.score as number) || 0).toFixed(1)}
+                </span>
+              </div>
+              <div class="similar-stars">&#9733; {formatStars((r.stars as number) || 0)}</div>
+              {rDesc && (
+                <p class="similar-desc">{rDesc.slice(0, 100)}{rDesc.length > 100 ? '…' : ''}</p>
               )}
-            </div>
-            <span class="related-score" style={`color: ${scoreColor(r.score as number)}`}>
-              {(r.score as number).toFixed(1)}
-            </span>
-          </a>
-        ))}
+            </a>
+          );
+        })}
       </div>
+      {relatedTools.length >= 2 && (
+        <div class="similar-compare">
+          <a href={`/compare/?tools=${slug},${similarToolSlugs}`} class="compare-cta">
+            Compare {tool.full_name.split('/')[1] ?? tool.full_name} vs similar tools &rarr;
+          </a>
+        </div>
+      )}
     </section>
   )}
 
@@ -1661,54 +1675,82 @@ Astro.response.headers.set('Cache-Control', 'public, max-age=60, s-maxage=3600, 
     text-decoration: underline;
   }
 
-  .related-list {
+  .similar-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 0.6rem;
+  }
+
+  .similar-card {
     display: flex;
     flex-direction: column;
-    gap: 0.35rem;
-  }
-
-  .related-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    gap: 1rem;
-    padding: 0.5rem 0.75rem;
+    gap: 0.25rem;
+    padding: 0.65rem 0.75rem;
     background: var(--bg-surface);
     border: 1px solid var(--border);
-    border-radius: 4px;
+    border-radius: 6px;
     text-decoration: none;
     font-size: 0.8rem;
+    transition: border-color 0.15s;
   }
 
-  .related-item:hover {
+  .similar-card:hover {
     border-color: var(--accent);
     text-decoration: none;
   }
 
-  .related-left {
+  .similar-card-top {
     display: flex;
-    flex-direction: column;
-    gap: 0.15rem;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 0.5rem;
+  }
+
+  .similar-name {
+    color: var(--text);
+    font-weight: 600;
+    font-size: 0.78rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
     min-width: 0;
   }
 
-  .related-name {
-    color: var(--text);
-    font-weight: 500;
+  .similar-score {
+    font-weight: 700;
+    font-size: 0.85rem;
+    flex-shrink: 0;
   }
 
-  .related-desc {
+  .similar-stars {
     font-size: 0.7rem;
     color: var(--text-muted);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
   }
 
-  .related-score {
-    font-weight: 700;
-    font-size: 0.8rem;
-    flex-shrink: 0;
+  .similar-desc {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    line-height: 1.4;
+    margin: 0;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .similar-compare {
+    margin-top: 0.6rem;
+    text-align: right;
+  }
+
+  .compare-cta {
+    font-size: 0.78rem;
+    color: var(--accent);
+    text-decoration: none;
+  }
+
+  .compare-cta:hover {
+    text-decoration: underline;
   }
 
   @media (prefers-color-scheme: light) {

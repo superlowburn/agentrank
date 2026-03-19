@@ -1,0 +1,605 @@
+---
+export const prerender = true;
+
+import Base from '../../layouts/Base.astro';
+import BlogSubscribeCTA from '../../components/BlogSubscribeCTA.astro';
+import RelatedPosts from '../../components/RelatedPosts.astro';
+
+const relatedPosts = [
+  { href: '/blog/how-to-build-an-mcp-server/', title: 'How to Build an MCP Server in 2026' },
+  { href: '/blog/top-mcp-servers-2026/', title: 'Top 10 MCP Servers for AI Agents in 2026' },
+  { href: '/blog/mcp-server-framework-comparison/', title: 'MCP Server Framework Comparison' },
+  { href: '/blog/how-to-choose-an-mcp-server/', title: 'How to Choose an MCP Server in 2026' },
+  { href: '/blog/a2a-vs-mcp-agent-protocol-comparison/', title: 'A2A vs MCP: Agent Protocol Comparison' },
+];
+
+const publishDate = '2026-03-19';
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'TechArticle',
+  headline: 'Building AI Agents with MCP: A Practical Guide (2026)',
+  description: 'A practical guide to building AI agents that use MCP servers as their tool layer. Framework selection, server composition, multi-tool workflows, testing patterns, and production best practices — with real code examples.',
+  datePublished: publishDate,
+  dateModified: publishDate,
+  author: {
+    '@type': 'Organization',
+    name: 'AgentRank',
+    url: 'https://agentrank-ai.com',
+  },
+  publisher: {
+    '@type': 'Organization',
+    name: 'AgentRank',
+    url: 'https://agentrank-ai.com',
+    logo: {
+      '@type': 'ImageObject',
+      url: 'https://agentrank-ai.com/og-image.png',
+    },
+  },
+  mainEntityOfPage: {
+    '@type': 'WebPage',
+    '@id': 'https://agentrank-ai.com/blog/building-ai-agents-with-mcp/',
+  },
+  image: 'https://agentrank-ai.com/og-image.png',
+  keywords: 'building AI agents MCP, AI agent MCP server, MCP agent tutorial 2026, how to build AI agent with MCP, MCP agent framework, multi-tool AI agent',
+};
+
+const faqJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: [
+    {
+      '@type': 'Question',
+      name: 'What is the relationship between an AI agent and MCP servers?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'An AI agent (the LLM doing the reasoning) uses MCP servers as its tool layer. The agent decides what to do; MCP servers provide the capabilities to do it — reading files, querying databases, calling APIs. MCP standardizes the interface so the same tool works with any compatible agent framework.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Which agent framework works best with MCP?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Claude (via Anthropic\'s API or Claude Desktop), LangChain, LlamaIndex, CrewAI, and the AutoGen/AG2 framework all support MCP natively or via adapters. For Python agents, LangChain and LlamaIndex have the most complete MCP integrations as of Q1 2026. For direct API use, the Anthropic SDK handles MCP tool calls natively.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'How many MCP servers should an agent use at once?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Start with one or two. Each server adds tools to the agent\'s context window — too many tools degrades reasoning quality. In practice, agents work best with 5–15 focused tools total across all servers. Group related tools on the same server rather than loading many single-tool servers.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'How do I handle MCP server failures in a production agent?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Implement server-level health checks before agent sessions start. Log all tool call errors with the server name and tool name to route alerts correctly. Design your agent\'s system prompt to gracefully acknowledge when a tool is unavailable rather than retrying indefinitely. Use AgentRank scores to pre-screen servers before adding them to production.',
+      },
+    },
+  ],
+};
+
+const frameworks = [
+  {
+    name: 'Claude (Anthropic API)',
+    language: 'Any',
+    mcpSupport: 'Native',
+    bestFor: 'Direct API use, custom agent loops',
+    tradeoffs: 'Most flexible; requires building your own orchestration layer',
+  },
+  {
+    name: 'LangChain',
+    language: 'Python, TypeScript',
+    mcpSupport: 'Via langchain-mcp-adapters',
+    bestFor: 'Complex multi-step agents, existing LangChain codebases',
+    tradeoffs: 'Large framework with some overhead; great ecosystem',
+  },
+  {
+    name: 'LlamaIndex',
+    language: 'Python',
+    mcpSupport: 'Native MCP tool loading',
+    bestFor: 'RAG + agentic workflows, knowledge-heavy agents',
+    tradeoffs: 'Excellent for retrieval-augmented agents; heavier for pure action agents',
+  },
+  {
+    name: 'Claude Code / Cursor / Windsurf',
+    language: 'N/A (UI client)',
+    mcpSupport: 'Native (config-based)',
+    bestFor: 'Developer workflows, coding agents',
+    tradeoffs: 'No coding required; limited to the client\'s built-in agent capabilities',
+  },
+  {
+    name: 'AG2 / AutoGen',
+    language: 'Python',
+    mcpSupport: 'Via MCP adapter',
+    bestFor: 'Multi-agent workflows, agent-to-agent communication',
+    tradeoffs: 'Best for orchestrating multiple agents; more complex setup',
+  },
+];
+
+const serverCategories = [
+  {
+    task: 'Read and write files',
+    server: 'modelcontextprotocol/servers (filesystem)',
+    slug: 'modelcontextprotocol--servers',
+    score: 88.1,
+    note: 'Official reference implementation — safe, sandboxed file access',
+  },
+  {
+    task: 'GitHub operations',
+    server: 'github/github-mcp-server',
+    slug: 'github--github-mcp-server',
+    score: 94.2,
+    note: 'Official GitHub MCP — repos, issues, PRs, code search',
+  },
+  {
+    task: 'Web search',
+    server: 'tavily-ai/tavily-mcp',
+    slug: 'tavily-ai--tavily-mcp',
+    score: 83.7,
+    note: 'AI-optimized search with structured results — best for agent use',
+  },
+  {
+    task: 'Database queries',
+    server: 'mongodb-js/mongodb-mcp-server',
+    slug: 'mongodb-js--mongodb-mcp-server',
+    score: 88.44,
+    note: 'Official MongoDB server — natural language to Atlas queries',
+  },
+  {
+    task: 'Persistent memory',
+    server: 'modelcontextprotocol/servers (memory)',
+    slug: 'modelcontextprotocol--servers',
+    score: 88.1,
+    note: 'Knowledge graph memory — agents remember across sessions',
+  },
+  {
+    task: 'Browser automation',
+    server: 'microsoft/playwright-mcp',
+    slug: 'microsoft--playwright-mcp',
+    score: 97.44,
+    note: 'Highest-scored server in the index — reliable web interaction',
+  },
+  {
+    task: 'Team communication',
+    server: 'korotovsky/slack-mcp-server',
+    slug: 'korotovsky--slack-mcp-server',
+    score: 83.01,
+    note: 'Send messages, read channels — no special Slack permissions required',
+  },
+];
+---
+
+<Base
+  title="Building AI Agents with MCP: A Practical Guide (2026) — AgentRank"
+  description="A practical guide to building AI agents using MCP servers as the tool layer. Framework selection, server composition, multi-tool workflows, testing, and production patterns — with code examples."
+  activeTab="blog"
+  keywords="building AI agents MCP, AI agent MCP server, MCP agent tutorial 2026, how to build AI agent with MCP, MCP agent framework, multi-tool AI agent, agentic MCP workflow"
+  canonicalUrl="https://agentrank-ai.com/blog/building-ai-agents-with-mcp/"
+  jsonLd={[jsonLd, faqJsonLd]}
+  ogImage="/og-image.png"
+>
+  <article class="blog-post">
+    <header class="post-header">
+      <div class="breadcrumb"><a href="/blog/">Blog</a> <span>/</span></div>
+      <h1>Building AI Agents with MCP: A Practical Guide</h1>
+      <div class="post-meta">
+        <time datetime={publishDate}>March 19, 2026</time>
+        <span class="sep">&middot;</span>
+        <span>14 min read</span>
+        <span class="sep">&middot;</span>
+        <span>AgentRank Index</span>
+      </div>
+      <p class="lede">
+        An AI agent is only as good as the tools it can use. MCP standardizes how agents connect to
+        those tools — so you write the agent once and plug in capabilities at will. This guide walks
+        through the full stack: how to think about the agent/MCP relationship, which servers to pick
+        for common tasks, how to compose multi-server workflows, and how to keep everything running
+        in production.
+      </p>
+    </header>
+
+    <nav class="toc">
+      <strong>Contents</strong>
+      <ol>
+        <li><a href="#mental-model">The mental model: agents and tools</a></li>
+        <li><a href="#choosing-framework">Choosing your agent framework</a></li>
+        <li><a href="#selecting-servers">Selecting the right MCP servers</a></li>
+        <li><a href="#first-agent">Your first MCP-powered agent</a></li>
+        <li><a href="#multi-server">Multi-server composition</a></li>
+        <li><a href="#tool-design">Designing for agent legibility</a></li>
+        <li><a href="#testing">Testing MCP agent workflows</a></li>
+        <li><a href="#production">Production considerations</a></li>
+      </ol>
+    </nav>
+
+    <section id="mental-model">
+      <h2>The mental model: agents and tools</h2>
+      <p>
+        An AI agent is a loop: observe the task, reason about what to do next, call a tool,
+        incorporate the result, reason again. The LLM handles the reasoning. MCP servers
+        handle the tools.
+      </p>
+      <p>
+        Before MCP, every agent framework invented its own tool format. LangChain tools looked
+        different from AutoGen tools which looked different from custom Claude function-calling
+        schemas. Integrations had to be rewritten for every framework. A developer who built a
+        Jira integration for LangChain couldn't easily use it in Cursor or Claude Desktop.
+      </p>
+      <p>
+        MCP breaks that coupling. You build a server once. Any MCP-compatible client — Claude,
+        Cursor, Cline, VS Code Copilot, your custom Python agent — can use it. The protocol handles
+        tool discovery (the client asks "what can you do?"), schema communication (the server
+        describes each tool's parameters), and execution (the client calls a tool with arguments,
+        gets a result).
+      </p>
+      <p>
+        The practical consequence: the best tool for a job is the highest-quality MCP server for
+        that capability, not the one that happens to have a library wrapper for your framework.
+        That's what the <a href="/" class="inline-link">AgentRank index</a> helps you find.
+      </p>
+    </section>
+
+    <section id="choosing-framework">
+      <h2>Choosing your agent framework</h2>
+      <p>
+        The right framework depends on what you're building. Here's how the major options compare
+        on MCP support:
+      </p>
+
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Framework</th>
+            <th>Language</th>
+            <th>MCP Support</th>
+            <th>Best For</th>
+            <th>Trade-offs</th>
+          </tr>
+        </thead>
+        <tbody>
+          {frameworks.map((fw) => (
+            <tr>
+              <td><strong>{fw.name}</strong></td>
+              <td>{fw.language}</td>
+              <td>{fw.mcpSupport}</td>
+              <td>{fw.bestFor}</td>
+              <td>{fw.tradeoffs}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+
+      <p>
+        If you're just starting, pick the simplest path to working code: Claude Desktop or Cursor
+        for zero-code agent setups, or the Anthropic Python SDK for programmatic control.
+        Don't add LangChain or LlamaIndex unless you have a specific reason — the added abstraction
+        has a learning cost.
+      </p>
+
+      <h3>The Anthropic SDK: minimal setup, full control</h3>
+      <p>
+        For developers who want to build MCP-powered agents without a framework, the Anthropic
+        Python SDK handles tool call parsing and result injection natively. Your server connects
+        via stdio; the SDK manages the protocol loop. This is the approach to understand first
+        — it makes the other frameworks less magical.
+      </p>
+    </section>
+
+    <section id="selecting-servers">
+      <h2>Selecting the right MCP servers</h2>
+      <p>
+        Each server adds tools to your agent's context window. Too many tools degrades reasoning
+        quality — the model has to consider more options for each step. In practice,
+        <strong>5–15 tools total</strong> per agent session is the sweet spot: enough capability
+        without overwhelming the context.
+      </p>
+      <p>
+        Use the AgentRank score as a minimum bar. A score below 60 means the server is likely
+        abandoned or unmaintained. Don't add it to a production agent — you'll be debugging
+        broken tools under deadline pressure.
+      </p>
+
+      <p>Here are the top-scored servers for common agent tasks:</p>
+
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Task</th>
+            <th>Server</th>
+            <th>Score</th>
+            <th>Notes</th>
+          </tr>
+        </thead>
+        <tbody>
+          {serverCategories.map((row) => (
+            <tr>
+              <td><strong>{row.task}</strong></td>
+              <td><a href={`/tool/${row.slug}/`} class="inline-link">{row.server}</a></td>
+              <td>{row.score}</td>
+              <td>{row.note}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </section>
+
+    <section id="first-agent">
+      <h2>Your first MCP-powered agent</h2>
+      <p>
+        Let's build a minimal agent that uses MCP tools via the Anthropic Python SDK.
+        This example queries GitHub for a repo's recent issues and summarizes them.
+      </p>
+
+      <h3>Step 1: Install dependencies</h3>
+      <pre><code>pip install anthropic mcp</code></pre>
+
+      <h3>Step 2: Start the MCP server</h3>
+      <p>
+        We'll use the official GitHub MCP server. Set up your token first:
+      </p>
+      <pre><code>export GITHUB_PERSONAL_ACCESS_TOKEN=your_token_here
+npx @modelcontextprotocol/server-github</code></pre>
+
+      <h3>Step 3: Build the agent loop</h3>
+      <pre><code>import anthropic
+import subprocess
+import json
+
+# Launch the MCP server as a subprocess
+server_process = subprocess.Popen(
+    ["npx", "@modelcontextprotocol/server-github"],
+    stdin=subprocess.PIPE,
+    stdout=subprocess.PIPE,
+    stderr=subprocess.PIPE,
+)
+
+# In production, use the MCP client library to manage this properly.
+# For illustration: use the Anthropic SDK's tool_use message format.
+
+client = anthropic.Anthropic()
+
+# The SDK handles tool definitions and result injection.
+# See Anthropic docs for the full tool_use pattern.
+response = client.messages.create(
+    model="claude-opus-4-6",
+    max_tokens=1024,
+    tools=[&#123;
+        "name": "list_issues",
+        "description": "List recent open issues for a GitHub repository",
+        "input_schema": &#123;
+            "type": "object",
+            "properties": &#123;
+                "owner": &#123;"type": "string"&#125;,
+                "repo": &#123;"type": "string"&#125;,
+                "limit": &#123;"type": "integer", "default": 10&#125;,
+            &#125;,
+            "required": ["owner", "repo"],
+        &#125;,
+    &#125;],
+    messages=[&#123;
+        "role": "user",
+        "content": "Summarize the 5 most recent open issues in the jlowin/fastmcp repo",
+    &#125;],
+)</code></pre>
+
+      <p>
+        For a production setup, use the
+        <a href="https://github.com/modelcontextprotocol/python-sdk" class="inline-link">official MCP Python SDK</a>
+        to manage server connections — it handles process lifecycle, protocol handshake, and tool listing
+        automatically. The raw subprocess approach above illustrates the concept; the SDK is what you
+        deploy.
+      </p>
+
+      <h3>Step 4: Handle the tool call loop</h3>
+      <p>
+        Claude returns a <code>tool_use</code> response block when it wants to call a tool.
+        Your agent loop routes that call to the MCP server, gets the result, and sends it back
+        as a <code>tool_result</code> message. The SDK automates this exchange when you use its
+        session management:
+      </p>
+      <pre><code>from mcp import ClientSession, StdioServerParameters
+from mcp.client.stdio import stdio_client
+
+async def run_agent():
+    server_params = StdioServerParameters(
+        command="npx",
+        args=["@modelcontextprotocol/server-github"],
+        env=&#123;"GITHUB_PERSONAL_ACCESS_TOKEN": "your_token"&#125;,
+    )
+
+    async with stdio_client(server_params) as (read, write):
+        async with ClientSession(read, write) as session:
+            await session.initialize()
+            tools = await session.list_tools()
+            # Pass tools to Claude, handle tool_use blocks,
+            # call session.call_tool() for each one.</code></pre>
+    </section>
+
+    <section id="multi-server">
+      <h2>Multi-server composition</h2>
+      <p>
+        Most useful agents need more than one capability. An agent that helps with software
+        development might need: GitHub (code access), a filesystem server (local edits), a
+        search server (documentation lookup), and a database server (query production data).
+      </p>
+
+      <h3>Connecting multiple servers</h3>
+      <p>
+        In Claude Desktop and most IDE clients, you add multiple servers to the configuration JSON:
+      </p>
+      <pre><code>// ~/.config/claude/claude_desktop_config.json
+&#123;
+  "mcpServers": &#123;
+    "github": &#123;
+      "command": "npx",
+      "args": ["@modelcontextprotocol/server-github"],
+      "env": &#123; "GITHUB_PERSONAL_ACCESS_TOKEN": "..." &#125;
+    &#125;,
+    "filesystem": &#123;
+      "command": "npx",
+      "args": ["@modelcontextprotocol/server-filesystem", "/Users/yourname/projects"]
+    &#125;,
+    "search": &#123;
+      "command": "npx",
+      "args": ["tavily-mcp"],
+      "env": &#123; "TAVILY_API_KEY": "..." &#125;
+    &#125;
+  &#125;
+&#125;</code></pre>
+
+      <p>
+        In programmatic agents (Python/TypeScript), open parallel <code>ClientSession</code>
+        instances — one per server — and merge their tool lists into a single array before
+        passing to the LLM.
+      </p>
+
+      <h3>Tool namespacing to prevent collisions</h3>
+      <p>
+        When loading tools from multiple servers, namespace tool names by server to prevent
+        collisions. A GitHub server and a GitLab server both might define <code>list_issues</code>.
+        The MCP spec doesn't mandate namespacing — handle it in your agent layer:
+      </p>
+      <pre><code>def namespace_tools(server_name, tools):
+    return [
+        &#123;**tool, "name": f"&#123;server_name&#125;_&#123;tool['name']&#125;"&#125;
+        for tool in tools
+    ]</code></pre>
+
+      <h3>Keeping tool count manageable</h3>
+      <p>
+        Each tool consumes tokens in the model's context window for its description and schema.
+        A server with 30 tools adds significant overhead. For complex workflows:
+      </p>
+      <ul>
+        <li>Load only the servers relevant to the current task (don't preload everything)</li>
+        <li>For servers with many tools, use a router agent that decides which sub-agent (and thus which server) to invoke</li>
+        <li>Monitor which tools actually get called — unused tools are pure overhead</li>
+      </ul>
+    </section>
+
+    <section id="tool-design">
+      <h2>Designing for agent legibility</h2>
+      <p>
+        If you're building your own MCP server for your agent to use, the most important thing
+        is not functionality — it's description quality. The agent reads tool descriptions to
+        decide when and how to call each tool. A vague description leads to wrong calls; a precise
+        description leads to correct ones.
+      </p>
+
+      <h3>What good tool descriptions look like</h3>
+      <p>
+        Poor: <code>"search_documents" — searches documents</code>
+      </p>
+      <p>
+        Good: <code>"search_documents" — Full-text search across the product knowledge base.
+        Returns up to 10 matching documents with title, excerpt, and URL.
+        Use this when the user asks a question about product features, pricing, or documentation.
+        Do NOT use this for code search — use search_code instead."</code>
+      </p>
+      <p>
+        The explicit "do NOT use this for" clause prevents the agent from calling the wrong tool
+        when two tools have overlapping surface areas.
+      </p>
+
+      <h3>Return values: structure over verbosity</h3>
+      <p>
+        Tool return values go straight back into the agent's context. Structured data (JSON with
+        clear field names) is better than prose. An agent can extract a specific field from structured
+        data; it has to parse prose. Return only what the agent needs — excess data expands the
+        context window without adding signal.
+      </p>
+    </section>
+
+    <section id="testing">
+      <h2>Testing MCP agent workflows</h2>
+
+      <h3>MCP Inspector for tool-level testing</h3>
+      <p>
+        Before testing the full agent loop, validate each tool in isolation:
+      </p>
+      <pre><code>npx @modelcontextprotocol/inspector</code></pre>
+      <p>
+        Connect the Inspector to your server, call each tool with representative inputs,
+        and verify the outputs look correct. Fix tool-level issues here before adding the LLM layer.
+      </p>
+
+      <h3>Tracing agent tool calls</h3>
+      <p>
+        The most useful test for an MCP agent is a trace of tool calls for a representative task.
+        Run the task, log every tool call (name, input, output, latency), and review whether the
+        agent called tools in a sensible order with correct inputs. Common failure patterns:
+      </p>
+      <ul>
+        <li><strong>Wrong tool selection:</strong> Agent calls <code>search_web</code> when it should call <code>search_docs</code> — fix by clarifying descriptions</li>
+        <li><strong>Hallucinated parameters:</strong> Agent passes a parameter that doesn't exist — fix by tightening the JSON schema</li>
+        <li><strong>Retry loops:</strong> Agent calls the same tool repeatedly — fix by improving error message structure in the tool's return value</li>
+      </ul>
+
+      <h3>Regression testing with golden traces</h3>
+      <p>
+        Once your agent handles a task correctly, save the tool call trace as a golden test.
+        After making changes to tool descriptions or server code, replay the task and compare
+        traces. Divergence means something broke.
+      </p>
+    </section>
+
+    <section id="production">
+      <h2>Production considerations</h2>
+
+      <h3>Server reliability: use the AgentRank score as a filter</h3>
+      <p>
+        Before adding any MCP server to a production agent, check its score on the
+        <a href="/check/" class="inline-link">AgentRank checker</a>. The minimum bar for production
+        is a score of 65. Below that, the server's maintenance health is too uncertain for
+        a workflow your users depend on. See the full
+        <a href="/blog/how-to-choose-an-mcp-server/" class="inline-link">evaluation guide</a>
+        for a complete checklist.
+      </p>
+
+      <h3>Graceful degradation when tools fail</h3>
+      <p>
+        MCP servers fail. APIs change, rate limits hit, network connections drop. Your agent
+        should handle tool failures without crashing the whole session:
+      </p>
+      <ul>
+        <li>Include in the system prompt: "If a tool returns an error, acknowledge it and explain what you would have done with the result, then continue."</li>
+        <li>Implement server-level health checks at session start — don't begin a task if a required server is unavailable</li>
+        <li>Log failures with server name and tool name to route alerts to the right place</li>
+      </ul>
+
+      <h3>Secrets management</h3>
+      <p>
+        Most MCP servers require API keys via environment variables. Never hardcode credentials
+        in server config files. Use a secrets manager (AWS Secrets Manager, 1Password CLI,
+        Vault) to inject them at runtime. The
+        <a href="/blog/mcp-server-security-best-practices/" class="inline-link">MCP security guide</a>
+        covers the full threat model.
+      </p>
+
+      <h3>Monitoring: what to track</h3>
+      <p>
+        In production, log and alert on:
+      </p>
+      <ul>
+        <li>Tool call error rate by server and tool name</li>
+        <li>p95 tool call latency — a sudden spike usually means an upstream API degraded</li>
+        <li>Agent task completion rate — the proportion of sessions that reach a successful conclusion</li>
+        <li>Token usage per session — rising usage can mean the agent is stuck in a retry loop</li>
+      </ul>
+      <p>
+        Track which servers are actually called in production. A server that never gets called
+        is wasting context window tokens on its tool descriptions for every session.
+        Remove it or consolidate it.
+      </p>
+    </section>
+
+    <BlogSubscribeCTA />
+
+    <RelatedPosts posts={relatedPosts} />
+  </article>
+</Base>

@@ -2,6 +2,24 @@ export const prerender = true;
 
 const posts = [
   {
+    slug: 'mcp-server-performance-data',
+    title: 'MCP Server Performance: What the Data Shows (2026)',
+    description: 'Data-driven analysis of MCP server performance across 25,750+ indexed repositories. Transport latency, maintenance velocity, issue response rates, and top performers by category from the AgentRank index.',
+    date: '2026-03-19',
+  },
+  {
+    slug: 'building-ai-agents-with-mcp',
+    title: 'Building AI Agents with MCP: A Practical Guide (2026)',
+    description: 'A practical guide to building AI agents using MCP servers as the tool layer. Framework selection, server composition, multi-tool workflows, testing patterns, and production best practices — with code examples.',
+    date: '2026-03-19',
+  },
+  {
+    slug: 'mcp-vs-traditional-apis',
+    title: 'MCP vs Traditional APIs: When to Use Each (2026)',
+    description: 'A decision framework for choosing between MCP servers and traditional APIs — REST, GraphQL, gRPC, and webhooks. When each wins, when to build both, and how to decide based on your use case.',
+    date: '2026-03-19',
+  },
+  {
     slug: 'top-mcp-servers-database',
     title: 'Top 10 MCP Servers for Database Access in 2026',
     description: 'The 10 highest-scoring MCP servers for database access, ranked by real signals: AgentRank score, stars, issue close rate, and freshness. Covers Postgres, MySQL, MongoDB, Redis, DuckDB, and more.',

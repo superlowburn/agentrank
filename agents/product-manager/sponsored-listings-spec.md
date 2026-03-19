@@ -217,7 +217,7 @@ CREATE INDEX IF NOT EXISTS idx_sponsor_events_tool ON sponsor_events(tool_full_n
 
 ---
 
-## 6. Pricing (Already on pricing page)
+## 8. Pricing (Already on pricing page)
 
 | Tier | Monthly | Annual | Placement |
 |------|---------|--------|-----------|
@@ -227,7 +227,7 @@ CREATE INDEX IF NOT EXISTS idx_sponsor_events_tool ON sponsor_events(tool_full_n
 
 ---
 
-## 7. Build Priority (for Founding Engineer)
+## 9. Build Priority (for Founding Engineer)
 
 1. **D1 migration** — add 3 columns to tools, create sponsor_events table
 2. **Homepage featured section** — render sponsored tools above leaderboard
@@ -241,7 +241,7 @@ Items 1-4 are the MVP. Ship those first, iterate on 5-7.
 
 ---
 
-## 8. What This Spec Intentionally Skips (v2+)
+## 10. What This Spec Intentionally Skips (v2+)
 
 - Logo upload (use GitHub avatar for now)
 - Slack channel provisioning
@@ -254,7 +254,7 @@ Items 1-4 are the MVP. Ship those first, iterate on 5-7.
 
 ---
 
-## 9. Success Criteria
+## 11. Success Criteria
 
 - Sponsored tools render correctly on homepage and category pages
 - "Sponsored" label is always visible
@@ -264,7 +264,7 @@ Items 1-4 are the MVP. Ship those first, iterate on 5-7.
 
 ---
 
-## 10. Blocked On
+## 12. Blocked On
 
 - **Stripe price IDs:** Steve needs to create products in Stripe dashboard and set env vars (or we use test mode price IDs for dev)
 - For development/testing: use Stripe test mode — no blocker

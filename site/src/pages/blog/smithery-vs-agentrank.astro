@@ -1,0 +1,679 @@
+---
+export const prerender = true;
+
+import Base from '../../layouts/Base.astro';
+import BlogSubscribeCTA from '../../components/BlogSubscribeCTA.astro';
+import RelatedPosts from '../../components/RelatedPosts.astro';
+
+const relatedPosts = [
+  { href: '/blog/mcp-server-directory-comparison-2026/', title: 'AgentRank vs Smithery vs Glama vs MCP.so: All MCP Directories Compared' },
+  { href: '/blog/how-to-evaluate-mcp-server-quality/', title: 'How to Evaluate MCP Server Quality Before Installing' },
+  { href: '/blog/top-mcp-servers-2026/', title: 'Top 10 MCP Servers for AI Agents in 2026' },
+  { href: '/blog/how-agentrank-scores-mcp-servers/', title: 'How AgentRank Scores MCP Servers' },
+  { href: '/blog/mcp-server-landscape-q1-2026/', title: 'The MCP Server Landscape: Q1 2026' },
+];
+
+const publishDate = '2026-03-19';
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: 'Smithery vs AgentRank: Which MCP Directory Should You Use?',
+  description: 'A direct head-to-head comparison of Smithery.ai and AgentRank — coverage, ranking methodology, API access, and when to use each. For developers choosing between MCP server directories.',
+  datePublished: publishDate,
+  dateModified: publishDate,
+  author: {
+    '@type': 'Organization',
+    name: 'AgentRank',
+    url: 'https://agentrank-ai.com',
+  },
+  publisher: {
+    '@type': 'Organization',
+    name: 'AgentRank',
+    url: 'https://agentrank-ai.com',
+    logo: {
+      '@type': 'ImageObject',
+      url: 'https://agentrank-ai.com/og-image.png',
+    },
+  },
+  mainEntityOfPage: {
+    '@type': 'WebPage',
+    '@id': 'https://agentrank-ai.com/blog/smithery-vs-agentrank/',
+  },
+  image: 'https://agentrank-ai.com/og-image.png',
+  keywords: 'smithery vs agentrank, smithery.ai alternative, best mcp server directory, mcp server discovery, agentrank vs smithery, mcp directory comparison 2026',
+};
+
+const faqJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: [
+    {
+      '@type': 'Question',
+      name: 'What is the difference between Smithery and AgentRank?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Smithery.ai is primarily a hosted deployment platform for MCP servers — you can run servers through Smithery without managing your own infrastructure. AgentRank is a discovery and ranking platform that indexes 25,000+ MCP repositories and scores each one by five quality signals (freshness, issue health, dependents, stars, contributors). Smithery has ~4,000 listings; AgentRank has 25,000+. They solve different problems.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Does Smithery have a quality score for MCP servers?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Smithery ranks by platform usage — how many times a server has been deployed or run through Smithery. This reflects popularity within the Smithery platform, not objective quality or maintenance health. AgentRank computes a transparent composite score from five GitHub signals and publishes the scoring methodology.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Which is better for finding niche MCP servers: Smithery or AgentRank?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'AgentRank is significantly better for niche discovery. With 25,000+ indexed repositories vs Smithery\'s ~4,000, the coverage gap is substantial. Servers that exist on GitHub but haven\'t been submitted to Smithery (the vast majority) are only discoverable via AgentRank.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Can I use both Smithery and AgentRank together?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Yes, and that\'s the recommended workflow for many developers. Use AgentRank to discover and evaluate quality across the full ecosystem, then deploy through Smithery if you want hosted infrastructure management. They complement each other rather than compete.',
+      },
+    },
+  ],
+};
+
+const comparison = [
+  { dimension: 'Coverage', smithery: '~4,000 tools', agentrank: '25,000+ tools' },
+  { dimension: 'Update frequency', smithery: 'Continuous (platform-driven)', agentrank: 'Nightly crawl' },
+  { dimension: 'Ranking method', smithery: 'Smithery platform usage', agentrank: 'Composite quality score (5 signals)' },
+  { dimension: 'Scoring transparency', smithery: 'Opaque', agentrank: 'Fully documented' },
+  { dimension: 'Public API', smithery: 'Yes (auth required)', agentrank: 'Yes (no key for basic access)' },
+  { dimension: 'Hosted deployment', smithery: 'Yes — core feature', agentrank: 'No' },
+  { dimension: 'Open data', smithery: 'No', agentrank: 'Yes' },
+  { dimension: 'Freshness signal', smithery: 'No', agentrank: 'Yes (25% weight)' },
+  { dimension: 'Issue health signal', smithery: 'No', agentrank: 'Yes (25% weight)' },
+  { dimension: 'Claim listing', smithery: 'Via server submission', agentrank: 'Yes — free claim flow' },
+];
+---
+
+<Base
+  title="Smithery vs AgentRank: Which MCP Directory Should You Use? — AgentRank"
+  description="A direct head-to-head comparison of Smithery.ai and AgentRank on coverage, ranking methodology, API access, and when to use each. For developers choosing an MCP server directory in 2026."
+  activeTab="blog"
+  keywords="smithery vs agentrank, smithery alternative, best mcp directory, mcp server discovery, agentrank mcp, mcp directory comparison 2026, smithery.ai review"
+  canonicalUrl="https://agentrank-ai.com/blog/smithery-vs-agentrank/"
+  jsonLd={[jsonLd, faqJsonLd]}
+  ogImage="/og-image.png"
+>
+  <article class="blog-post">
+    <header class="post-header">
+      <div class="breadcrumb"><a href="/blog/">Blog</a> <span>/</span></div>
+      <h1>Smithery vs AgentRank: Which MCP Directory Should You Use?</h1>
+      <div class="post-meta">
+        <time datetime={publishDate}>March 19, 2026</time>
+        <span class="sep">&middot;</span>
+        <span>8 min read</span>
+        <span class="sep">&middot;</span>
+        <span>Directory Comparison</span>
+      </div>
+      <p class="lede">
+        Smithery and AgentRank are the two most-referenced MCP directories in the ecosystem right now.
+        They are not the same kind of product. One is a hosted deployment platform with a directory on the side.
+        The other is a discovery and ranking engine with 6x the coverage. This is a direct comparison
+        across coverage, methodology, API, and use case fit — with a clear recommendation for each scenario.
+      </p>
+    </header>
+
+    <nav class="toc">
+      <strong>Contents</strong>
+      <ol>
+        <li><a href="#comparison">Side-by-side comparison</a></li>
+        <li><a href="#coverage">Coverage gap</a></li>
+        <li><a href="#methodology">Ranking methodology</a></li>
+        <li><a href="#api">API and programmatic access</a></li>
+        <li><a href="#deployment">Deployment: where Smithery wins</a></li>
+        <li><a href="#verdict">When to use each</a></li>
+      </ol>
+    </nav>
+
+    <section id="comparison">
+      <h2>Side-by-side comparison</h2>
+      <p>
+        The most important thing to understand upfront: Smithery and AgentRank are solving different
+        primary problems. Smithery's core product is hosted MCP server deployment — the directory
+        is a byproduct. AgentRank's core product is the ranked index — discovery is the primary value.
+        That shapes every difference in the table below.
+      </p>
+
+      <div class="table-wrapper">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Dimension</th>
+              <th>Smithery.ai</th>
+              <th>AgentRank</th>
+            </tr>
+          </thead>
+          <tbody>
+            {comparison.map((row) => (
+              <tr>
+                <td class="dim-cell">{row.dimension}</td>
+                <td class="smithery-cell">{row.smithery}</td>
+                <td class="agentrank-cell">{row.agentrank}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <p class="table-note">Data as of March 2026. Coverage figures from publicly available platform data.</p>
+    </section>
+
+    <section id="coverage">
+      <h2>Coverage gap</h2>
+      <p>
+        Smithery lists approximately 4,000 MCP servers. AgentRank indexes 25,000+. That 6x gap reflects
+        how each platform adds tools.
+      </p>
+      <p>
+        <strong>Smithery adds servers by submission.</strong> A maintainer (or the community) submits
+        a server to be deployed on Smithery's infrastructure. This means Smithery's catalog skews toward
+        servers that maintainers actively want to support and promote — the motivated subset of the ecosystem.
+      </p>
+      <p>
+        <strong>AgentRank adds servers by crawling.</strong> The nightly crawler runs GitHub searches
+        across MCP-related patterns and ingests every matching repository automatically. New repos appear
+        in the index without any action from the maintainer. The result is broader coverage, including
+        early-stage projects, niche tools, and servers that haven't been submitted anywhere else.
+      </p>
+      <p>
+        If you're asking "does an MCP server exist for X?" — you'll get more complete answers from
+        AgentRank. The 21,000 servers that appear in AgentRank but not Smithery are real GitHub projects.
+        Some are actively maintained. Some are abandoned. The score separates the two.
+      </p>
+    </section>
+
+    <section id="methodology">
+      <h2>Ranking methodology</h2>
+
+      <h3>Smithery: platform usage signals</h3>
+      <p>
+        Smithery surfaces tools based on how often they've been deployed or run through the Smithery
+        platform. This is a legitimate signal — servers with more Smithery installs are clearly being
+        used by real developers. But it measures adoption specifically within Smithery's ecosystem.
+      </p>
+      <p>
+        The limitation: a server can have massive real-world adoption on GitHub, heavy use in production
+        agent workflows, and active weekly development — and rank poorly on Smithery because it hasn't
+        been installed through Smithery specifically. Stars, commits, issue health, and ecosystem
+        dependents are not factored in.
+      </p>
+      <p>
+        The ranking methodology is not publicly documented. You can't inspect the weights or reproduce
+        the scores.
+      </p>
+
+      <h3>AgentRank: composite quality score</h3>
+      <p>
+        AgentRank computes a 0–100 composite score from five GitHub signals for every indexed tool:
+      </p>
+      <ul>
+        <li><strong>Freshness (25%)</strong> — days since last commit; scores decay past 90 days idle</li>
+        <li><strong>Issue health (25%)</strong> — closed issues divided by total; measures maintainer responsiveness</li>
+        <li><strong>Inbound dependents (25%)</strong> — repos that depend on this one; the strongest real adoption signal</li>
+        <li><strong>Stars (15%)</strong> — normalized popularity signal</li>
+        <li><strong>Contributors (10%)</strong> — bus factor proxy; single-maintainer risk reduction</li>
+      </ul>
+      <p>
+        The weights reflect a specific philosophy: maintenance signals should outweigh popularity signals
+        because they predict future reliability. A server with an 80% issue close rate and weekly commits
+        will be easier to depend on than a 5,000-star server that last committed in 2024.
+      </p>
+      <p>
+        The scoring weights and methodology are <a href="/methodology/" class="inline-link">fully documented</a>.
+        Every tool in the index is scored by the same formula — no editorial exceptions.
+      </p>
+    </section>
+
+    <section id="api">
+      <h2>API and programmatic access</h2>
+      <p>
+        Both platforms offer APIs. They're built for different use cases.
+      </p>
+
+      <div class="api-compare">
+        <div class="api-card">
+          <h3>Smithery API</h3>
+          <p>
+            Smithery's API is deployment-oriented. It supports listing, searching, and triggering
+            server runs on the Smithery platform. Requires authentication. Well-suited for applications
+            that want to spin up hosted MCP servers programmatically.
+          </p>
+          <p>
+            For discovery queries — "find me the best MCP servers for database operations" — the API
+            covers Smithery's ~4,000 catalog, ranked by Smithery usage. No composite quality score
+            is returned with results.
+          </p>
+          <p class="api-detail">Auth required &middot; ~4,000 tools &middot; Deployment-focused</p>
+        </div>
+
+        <div class="api-card api-card--highlight">
+          <h3>AgentRank API</h3>
+          <p>
+            AgentRank's REST API is discovery-oriented. Query by keyword, category, score range, or
+            language. Every result includes the full score breakdown: the composite score plus the
+            individual signal values (freshness, issue health, dependents, stars, contributors).
+          </p>
+          <p>
+            Basic queries require no API key. Agents can select MCP tools programmatically using
+            quality signals as filters — not just name matching or popularity sorting.
+          </p>
+          <p class="api-detail">No key for basic access &middot; 25,000+ tools &middot; Score breakdown per result</p>
+        </div>
+      </div>
+
+      <p>
+        For agentic tool selection — an agent that decides which MCP server to use for a task — the
+        AgentRank API is more useful. The score breakdown allows conditional logic: "select the freshest
+        server with &gt;80% issue close rate that handles database queries." Smithery's API doesn't expose
+        those signals.
+      </p>
+    </section>
+
+    <section id="deployment">
+      <h2>Deployment: where Smithery wins</h2>
+      <p>
+        One area where Smithery has no competition from AgentRank: hosted infrastructure.
+      </p>
+      <p>
+        If you want to use an MCP server without running it yourself — no Docker container, no Node
+        process to manage, no server to monitor — Smithery's hosted deployment is a real differentiator.
+        You get a managed endpoint. Updates are handled by the platform. For developers who want
+        zero-configuration MCP access and don't have infrastructure in place, that's significant.
+      </p>
+      <p>
+        AgentRank does not offer hosting. It's a directory and scoring engine. It tells you what's worth
+        installing; it doesn't run it for you. If you need hosted deployment alongside a discovery layer,
+        the practical workflow is to discover via AgentRank, then deploy through Smithery.
+      </p>
+    </section>
+
+    <section id="verdict">
+      <h2>When to use each</h2>
+
+      <div class="use-case-list">
+        <div class="use-case">
+          <h3>Use AgentRank when you need to discover what exists</h3>
+          <p>
+            25,000+ indexed repos vs 4,000. If a server exists on GitHub, AgentRank has it. For
+            any discovery question — "is there an MCP server for Notion?", "what database MCP servers
+            are actively maintained?", "which tools have the best issue health?" — AgentRank's
+            coverage and quality signals give you more signal.
+          </p>
+        </div>
+
+        <div class="use-case">
+          <h3>Use AgentRank when quality comparison matters</h3>
+          <p>
+            When you have several candidate servers for the same category, AgentRank's composite score
+            lets you compare on objective signals. Sort by score within a category, examine freshness
+            and issue health, check dependent count. Smithery shows you which servers are popular on
+            Smithery; AgentRank shows you which are actively maintained in the broader ecosystem.
+          </p>
+        </div>
+
+        <div class="use-case">
+          <h3>Use AgentRank for agentic tool selection pipelines</h3>
+          <p>
+            If you're building an agent that selects MCP tools programmatically, AgentRank's API
+            returns quality scores with every result. You can filter by score threshold, sort by
+            freshness, and return only servers with &gt;85% issue close rates. No equivalent capability
+            in Smithery's API today.
+          </p>
+        </div>
+
+        <div class="use-case">
+          <h3>Use Smithery when you want hosted, zero-infrastructure deployment</h3>
+          <p>
+            Smithery's core value is managed hosting. If you've identified the server you want (via
+            AgentRank or elsewhere) and it's available on Smithery, you can deploy without setting up
+            your own infrastructure. That's a legitimate time-saving tradeoff for many teams.
+          </p>
+        </div>
+
+        <div class="use-case">
+          <h3>Use both together</h3>
+          <p>
+            The strongest workflow: use AgentRank to discover and evaluate quality across the full 25,000+
+            ecosystem, then check Smithery to see if your chosen server is available for hosted deployment.
+            The two platforms are complementary more often than they're competitive.
+          </p>
+        </div>
+
+        <div class="use-case">
+          <h3>As an MCP server maintainer</h3>
+          <p>
+            List on both. Submit to Smithery for deployment reach in that audience.
+            <a href="/claim/" class="inline-link">Claim your AgentRank listing</a> to add context to
+            your entry and ensure the description is accurate. Your AgentRank score is computed
+            automatically from your GitHub repo's health signals — you don't need to do anything to appear.
+          </p>
+        </div>
+      </div>
+
+      <div class="cta-box">
+        <p>
+          <strong>Browse the full AgentRank index:</strong> <a href="/">25,000+ MCP servers, scored daily</a> — find what Smithery's catalog doesn't cover.
+        </p>
+        <p>
+          <strong>API access:</strong> Query for tools by quality score, category, or keyword. <a href="/docs/">API docs here.</a>
+        </p>
+        <p>
+          <strong>Scoring methodology:</strong> Freshness 25%, issue health 25%, dependents 25%, stars 15%, contributors 10%.
+          <a href="/methodology/">Full docs.</a>
+        </p>
+      </div>
+    </section>
+
+    <RelatedPosts posts={relatedPosts} />
+    <BlogSubscribeCTA source="blog" />
+    <footer class="post-footer">
+      <p class="methodology">
+        <strong>Methodology note:</strong> Coverage figures estimated from publicly available platform data as of March 2026.
+        Smithery feature descriptions based on publicly documented behavior. AgentRank data from nightly index crawl.
+        Contact us if any figures are out of date.
+      </p>
+      <p class="share-line">
+        Found this useful? <a href="https://x.com/AgentRank_ai" target="_blank" rel="noopener noreferrer">Follow @AgentRank_ai</a> for
+        weekly ecosystem updates and new MCP tool coverage.
+      </p>
+    </footer>
+  </article>
+
+  <style>
+    .blog-post {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 2rem 0 3rem;
+    }
+
+    .breadcrumb {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      margin-bottom: 0.75rem;
+    }
+
+    .breadcrumb span {
+      margin: 0 0.25rem;
+      opacity: 0.5;
+    }
+
+    .post-header {
+      margin-bottom: 2rem;
+      padding-bottom: 1.5rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .post-header h1 {
+      font-size: 1.6rem;
+      font-weight: 700;
+      line-height: 1.3;
+      margin-bottom: 0.75rem;
+    }
+
+    .post-meta {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      flex-wrap: wrap;
+      margin-bottom: 1rem;
+    }
+
+    .sep {
+      opacity: 0.4;
+    }
+
+    .lede {
+      font-size: 1rem;
+      line-height: 1.7;
+      color: var(--text);
+      opacity: 0.9;
+    }
+
+    .toc {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 1rem 1.25rem;
+      margin-bottom: 2.5rem;
+      font-size: 0.82rem;
+    }
+
+    .toc strong {
+      display: block;
+      margin-bottom: 0.6rem;
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+    }
+
+    .toc ol {
+      margin: 0;
+      padding-left: 1.2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+    }
+
+    .toc a {
+      color: var(--text-muted);
+    }
+
+    .toc a:hover {
+      color: var(--accent);
+    }
+
+    section {
+      margin-bottom: 3rem;
+    }
+
+    section h2 {
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin-bottom: 0.75rem;
+      padding-bottom: 0.4rem;
+      border-bottom: 2px solid var(--accent);
+      display: inline-block;
+    }
+
+    section h3 {
+      font-size: 0.95rem;
+      font-weight: 700;
+      margin: 1.5rem 0 0.5rem;
+      color: var(--text);
+    }
+
+    section p {
+      font-size: 0.9rem;
+      line-height: 1.75;
+      color: var(--text);
+      opacity: 0.9;
+      margin-bottom: 0.9rem;
+    }
+
+    section ul {
+      font-size: 0.9rem;
+      line-height: 1.75;
+      color: var(--text);
+      opacity: 0.9;
+      padding-left: 1.4rem;
+      margin-bottom: 0.9rem;
+    }
+
+    section ul li {
+      margin-bottom: 0.35rem;
+    }
+
+    .inline-link {
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    .table-wrapper {
+      overflow-x: auto;
+      margin: 1rem 0 0.5rem;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.82rem;
+    }
+
+    .data-table th {
+      text-align: left;
+      font-weight: 600;
+      color: var(--text-muted);
+      border-bottom: 1px solid var(--border);
+      padding: 0.4rem 0.75rem 0.4rem 0;
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+
+    .data-table td {
+      padding: 0.5rem 0.75rem 0.5rem 0;
+      border-bottom: 1px solid var(--border);
+      color: var(--text);
+      vertical-align: top;
+      font-size: 0.85rem;
+    }
+
+    .data-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .dim-cell {
+      font-weight: 600;
+      color: var(--text-muted) !important;
+      font-size: 0.78rem !important;
+      white-space: nowrap;
+    }
+
+    .agentrank-cell {
+      background: rgba(0, 255, 148, 0.04);
+    }
+
+    .table-note {
+      font-size: 0.75rem !important;
+      color: var(--text-muted) !important;
+      margin-top: 0.5rem !important;
+    }
+
+    .api-compare {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.75rem;
+      margin: 1rem 0;
+    }
+
+    .api-card {
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 0.875rem 1rem;
+    }
+
+    .api-card--highlight {
+      border-top: 2px solid var(--accent);
+    }
+
+    .api-card h3 {
+      font-size: 0.88rem !important;
+      font-weight: 700;
+      margin: 0 0 0.5rem 0 !important;
+    }
+
+    .api-card p {
+      font-size: 0.82rem !important;
+      margin-bottom: 0.5rem !important;
+    }
+
+    .api-detail {
+      font-size: 0.72rem !important;
+      color: var(--text-muted) !important;
+      margin-bottom: 0 !important;
+    }
+
+    .use-case-list {
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+      margin-top: 1rem;
+    }
+
+    .use-case {
+      border-left: 3px solid var(--accent);
+      padding: 0.75rem 0 0.75rem 1rem;
+    }
+
+    .use-case h3 {
+      margin-top: 0 !important;
+      margin-bottom: 0.4rem !important;
+      font-size: 0.88rem !important;
+    }
+
+    .use-case p {
+      margin-bottom: 0 !important;
+      font-size: 0.85rem !important;
+    }
+
+    .cta-box {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      border-radius: 4px;
+      padding: 1rem 1.25rem;
+      margin-top: 1.5rem;
+    }
+
+    .cta-box p {
+      font-size: 0.88rem !important;
+      margin-bottom: 0.5rem;
+    }
+
+    .cta-box p:last-child {
+      margin-bottom: 0;
+    }
+
+    .post-footer {
+      margin-top: 3rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--border);
+    }
+
+    .methodology {
+      font-size: 0.75rem !important;
+      color: var(--text-muted) !important;
+      opacity: 1 !important;
+    }
+
+    .share-line {
+      font-size: 0.82rem !important;
+      margin-top: 0.75rem;
+    }
+
+    @media (max-width: 640px) {
+      .post-header h1 {
+        font-size: 1.3rem;
+      }
+
+      .api-compare {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</Base>

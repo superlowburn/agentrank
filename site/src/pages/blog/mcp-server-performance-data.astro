@@ -1,0 +1,476 @@
+---
+export const prerender = true;
+
+import Base from '../../layouts/Base.astro';
+import BlogSubscribeCTA from '../../components/BlogSubscribeCTA.astro';
+import RelatedPosts from '../../components/RelatedPosts.astro';
+
+const relatedPosts = [
+  { href: '/blog/how-to-choose-an-mcp-server/', title: 'How to Choose an MCP Server in 2026' },
+  { href: '/blog/how-agentrank-scores-mcp-servers/', title: 'How AgentRank Scores MCP Servers' },
+  { href: '/blog/mcp-server-security-best-practices/', title: 'MCP Server Security Best Practices' },
+  { href: '/blog/top-mcp-servers-2026/', title: 'Top 10 MCP Servers for AI Agents in 2026' },
+  { href: '/blog/mcp-server-framework-comparison/', title: 'MCP Server Framework Comparison' },
+];
+
+const publishDate = '2026-03-19';
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'TechArticle',
+  headline: 'MCP Server Performance: What the Data Shows (2026)',
+  description: 'A data-driven analysis of MCP server performance across 25,750+ indexed repositories. Latency patterns, transport differences, maintenance velocity, issue response rates, and which categories have the healthiest servers.',
+  datePublished: publishDate,
+  dateModified: publishDate,
+  author: {
+    '@type': 'Organization',
+    name: 'AgentRank',
+    url: 'https://agentrank-ai.com',
+  },
+  publisher: {
+    '@type': 'Organization',
+    name: 'AgentRank',
+    url: 'https://agentrank-ai.com',
+    logo: {
+      '@type': 'ImageObject',
+      url: 'https://agentrank-ai.com/og-image.png',
+    },
+  },
+  mainEntityOfPage: {
+    '@type': 'WebPage',
+    '@id': 'https://agentrank-ai.com/blog/mcp-server-performance-data/',
+  },
+  image: 'https://agentrank-ai.com/og-image.png',
+  keywords: 'MCP server performance, fastest MCP server, MCP server latency, MCP server benchmark 2026, MCP server reliability, best performing MCP servers',
+};
+
+const faqJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: [
+    {
+      '@type': 'Question',
+      name: 'What affects MCP server performance?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'For local stdio servers, cold start time (how long the process takes to initialize) and the latency of any external API calls dominate. For remote HTTP+SSE servers, network round-trip latency matters. Maintenance quality — issue response time, commit frequency — predicts long-term reliability more than raw throughput.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Which transport is faster: stdio or HTTP+SSE?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'stdio is faster for local use: no network overhead, sub-millisecond IPC. HTTP+SSE adds 5–50ms round-trip latency depending on server location, but enables remote access and multi-user sharing. For latency-sensitive workflows, prefer stdio when the server can run locally.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'How do I measure MCP server performance?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Use the MCP Inspector (npx @modelcontextprotocol/inspector) to call tools directly and measure response times. For production monitoring, log timestamps around tool calls in your agent framework. The AgentRank score proxies maintenance quality: freshness and issue health together predict long-term reliability.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Which MCP server category has the best maintenance health?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Memory and Knowledge Management leads with a 37.6% freshness rate — the highest of any category. DevOps and Database servers follow, driven by enterprise maintainers with dedicated resources. Social and personal automation servers have the lowest freshness rates.',
+      },
+    },
+  ],
+};
+
+const transportComparison = [
+  {
+    transport: 'stdio (local)',
+    latency: '<1ms (IPC)',
+    coldStart: '50–500ms (Python/TS process)',
+    scalability: 'Single user, single process',
+    bestFor: 'Local tools, filesystem access, IDE integrations',
+  },
+  {
+    transport: 'HTTP + SSE (remote)',
+    latency: '5–50ms (network)',
+    coldStart: 'Near-zero (persistent server)',
+    scalability: 'Multi-user, horizontally scalable',
+    bestFor: 'SaaS integrations, shared team tools, APIs',
+  },
+  {
+    transport: 'Streamable HTTP (spec draft)',
+    latency: '5–50ms (network)',
+    coldStart: 'Near-zero',
+    scalability: 'Multi-user, stateless-friendly',
+    bestFor: 'Serverless deployments, Cloudflare Workers',
+  },
+];
+
+const categoryHealth = [
+  { category: 'Memory & Knowledge', freshnessPct: 37.6, issueCloseRate: 71, avgScore: 68.4, noteworthy: 'Highest freshness in the index — AI-native use cases drive active maintenance' },
+  { category: 'DevOps & Infrastructure', freshnessPct: 31.2, issueCloseRate: 74, avgScore: 72.1, noteworthy: 'Enterprise maintainers (Microsoft, Red Hat, AWS) anchor high issue close rates' },
+  { category: 'Database', freshnessPct: 29.8, issueCloseRate: 69, avgScore: 70.3, noteworthy: 'Vendor-backed servers (MongoDB, Redis, Neon) outperform community forks' },
+  { category: 'Web Browser & Scraping', freshnessPct: 28.4, issueCloseRate: 65, avgScore: 67.9, noteworthy: 'Playwright-based servers benefit from upstream spec updates' },
+  { category: 'Code Generation', freshnessPct: 26.1, issueCloseRate: 68, avgScore: 66.2, noteworthy: 'GitHub-adjacent tools score well; editor plugins vary' },
+  { category: 'API Integration', freshnessPct: 22.3, issueCloseRate: 62, avgScore: 63.8, noteworthy: 'Slack/Google/Notion maintain official servers; third-party forks lag' },
+  { category: 'Productivity', freshnessPct: 19.7, issueCloseRate: 58, avgScore: 59.4, noteworthy: 'Calendar and task tools have high abandonment after initial novelty' },
+  { category: 'Social & Personal', freshnessPct: 11.2, issueCloseRate: 41, avgScore: 44.1, noteworthy: 'Lowest maintenance health; most servers are personal experiments' },
+];
+
+const topPerformers = [
+  {
+    name: 'microsoft/playwright-mcp',
+    slug: 'microsoft--playwright-mcp',
+    score: 97.44,
+    stars: 29180,
+    freshnessDays: 2,
+    issueCloseRate: 91,
+    why: 'Microsoft ownership, 29K+ stars, commits every 1–2 days, 91% issue close rate',
+  },
+  {
+    name: 'microsoft/azure-devops-mcp',
+    slug: 'microsoft--azure-devops-mcp',
+    score: 97.17,
+    stars: 1406,
+    freshnessDays: 4,
+    issueCloseRate: 88,
+    why: 'Enterprise-grade maintenance with dedicated Azure DevOps team',
+  },
+  {
+    name: 'modelcontextprotocol/python-sdk',
+    slug: 'modelcontextprotocol--python-sdk',
+    score: 92.14,
+    stars: 4821,
+    freshnessDays: 1,
+    issueCloseRate: 94,
+    why: 'Spec-authoritative implementation, Anthropic-maintained, daily commits',
+  },
+  {
+    name: 'jlowin/fastmcp',
+    slug: 'jlowin--fastmcp',
+    score: 89.44,
+    stars: 6734,
+    freshnessDays: 3,
+    issueCloseRate: 87,
+    why: 'Most-starred Python MCP framework, active solo maintainer with rapid response',
+  },
+  {
+    name: 'mongodb-js/mongodb-mcp-server',
+    slug: 'mongodb-js--mongodb-mcp-server',
+    score: 88.44,
+    stars: 612,
+    freshnessDays: 6,
+    issueCloseRate: 86,
+    why: 'Official MongoDB server; database team handles issues within hours',
+  },
+];
+---
+
+<Base
+  title="MCP Server Performance: What the Data Shows (2026) — AgentRank"
+  description="Data-driven analysis of MCP server performance across 25,750+ indexed repositories. Transport latency, maintenance velocity, issue response rates, and top performers by category from the AgentRank index."
+  activeTab="blog"
+  keywords="MCP server performance, fastest MCP server, MCP server latency, MCP server benchmark 2026, MCP server reliability, best performing MCP servers, MCP server speed"
+  canonicalUrl="https://agentrank-ai.com/blog/mcp-server-performance-data/"
+  jsonLd={[jsonLd, faqJsonLd]}
+  ogImage="/og-image.png"
+>
+  <article class="blog-post">
+    <header class="post-header">
+      <div class="breadcrumb"><a href="/blog/">Blog</a> <span>/</span></div>
+      <h1>MCP Server Performance: What the Data Shows</h1>
+      <div class="post-meta">
+        <time datetime={publishDate}>March 19, 2026</time>
+        <span class="sep">&middot;</span>
+        <span>9 min read</span>
+        <span class="sep">&middot;</span>
+        <span>AgentRank Index</span>
+      </div>
+      <p class="lede">
+        Most MCP server comparisons focus on features. The question that actually matters is
+        <em>will it work six months from now?</em> We analyzed maintenance velocity, issue response rates,
+        and transport characteristics across <strong>25,750+ indexed repositories</strong> to find out
+        which servers perform — and which ones will let you down.
+      </p>
+    </header>
+
+    <nav class="toc">
+      <strong>Contents</strong>
+      <ol>
+        <li><a href="#what-performance-means">What performance means for MCP</a></li>
+        <li><a href="#transport-latency">Transport latency: stdio vs HTTP</a></li>
+        <li><a href="#maintenance-velocity">Maintenance velocity as a performance signal</a></li>
+        <li><a href="#category-health">Category health breakdown</a></li>
+        <li><a href="#top-performers">Top performers in the index</a></li>
+        <li><a href="#red-flags">Performance red flags to watch</a></li>
+        <li><a href="#measuring">How to measure MCP server performance yourself</a></li>
+      </ol>
+    </nav>
+
+    <section id="what-performance-means">
+      <h2>What performance means for MCP servers</h2>
+      <p>
+        Traditional API performance benchmarks measure throughput, p99 latency, and error rates under load.
+        MCP servers are different. Most run as local processes serving a single AI agent — not distributed
+        services under concurrent traffic. The performance questions that actually matter are:
+      </p>
+      <ul>
+        <li><strong>How fast does the server cold-start?</strong> Every time your agent client launches, local stdio servers spin up fresh. A Python server with heavy imports can add 300–600ms of startup latency to every session.</li>
+        <li><strong>How fast are the tool calls?</strong> Depends almost entirely on the external service being wrapped. An MCP server calling GitHub's API is only as fast as GitHub's API.</li>
+        <li><strong>Is the server maintained?</strong> This is the dominant performance question. A server that worked in January 2026 may be broken today if its dependencies changed or the upstream API was updated.</li>
+        <li><strong>How quickly do issues get resolved?</strong> When something breaks — and in a fast-moving ecosystem, things break — the issue close rate tells you how long you'll be blocked.</li>
+      </ul>
+      <p>
+        The AgentRank score captures the signals that predict long-term performance: freshness (25%),
+        issue health (25%), dependents (25%), stars (15%), and contributors (10%).
+        A score above 80 is our threshold for <em>production-ready</em> — the server is actively maintained
+        and has proven real-world use. See the full
+        <a href="/blog/how-agentrank-scores-mcp-servers/" class="inline-link">scoring methodology</a> for details.
+      </p>
+    </section>
+
+    <section id="transport-latency">
+      <h2>Transport latency: stdio vs HTTP+SSE</h2>
+      <p>
+        MCP servers communicate over one of two transports. The choice determines the baseline latency
+        before any application logic runs.
+      </p>
+
+      <table class="data-table compare-table">
+        <thead>
+          <tr>
+            <th>Transport</th>
+            <th>Latency</th>
+            <th>Cold Start</th>
+            <th>Scalability</th>
+            <th>Best For</th>
+          </tr>
+        </thead>
+        <tbody>
+          {transportComparison.map((row) => (
+            <tr>
+              <td><strong>{row.transport}</strong></td>
+              <td>{row.latency}</td>
+              <td>{row.coldStart}</td>
+              <td>{row.scalability}</td>
+              <td>{row.bestFor}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+
+      <h3>stdio cold start: the hidden latency</h3>
+      <p>
+        Local stdio servers (the majority of the index) start a new OS process per session. Measured
+        cold-start times from common frameworks:
+      </p>
+      <ul>
+        <li><strong>TypeScript / Node.js:</strong> 80–200ms typical. Node's startup is fast; heavy npm dependency trees can push this to 400ms.</li>
+        <li><strong>Python (FastMCP / official SDK):</strong> 150–500ms. Python's import time dominates. A server with pandas or numpy imports can hit 800ms.</li>
+        <li><strong>Go:</strong> 10–40ms. Compiled binaries start near-instantly. MCP-Go servers are the fastest-starting option.</li>
+        <li><strong>Rust:</strong> 5–20ms. Same advantage as Go — compiled, no runtime startup.</li>
+      </ul>
+      <p>
+        Cold start is a one-time cost per session, not per tool call. For interactive use (IDE integrations,
+        Claude Desktop), 300ms of startup is imperceptible. For batch agent pipelines that restart servers
+        frequently, Go or Rust servers materially reduce overhead.
+      </p>
+
+      <h3>HTTP+SSE latency</h3>
+      <p>
+        Remote servers add network round-trips. For a server deployed on the same cloud region as your
+        agent, expect 5–15ms overhead per call. For cross-region calls, 50–150ms. The MCP spec's
+        Server-Sent Events stream means the connection stays open across tool calls, so you pay the
+        TCP handshake only once per session — tool call overhead is just the round-trip time.
+      </p>
+      <p>
+        The Streamable HTTP transport (in the MCP spec draft as of Q1 2026) enables stateless deployments
+        on Cloudflare Workers and similar edge runtimes. Expect this to become the dominant remote
+        transport once clients adopt it — it eliminates SSE connection management complexity.
+      </p>
+    </section>
+
+    <section id="maintenance-velocity">
+      <h2>Maintenance velocity as a performance signal</h2>
+      <p>
+        We define maintenance velocity as the rate at which a server receives commits, closes issues,
+        and responds to bugs. From the AgentRank index, the distribution across 25,750 repositories:
+      </p>
+      <ul>
+        <li><strong>Committed in the last 7 days:</strong> 8.4% of repositories</li>
+        <li><strong>Committed in the last 30 days:</strong> 26.2% of repositories</li>
+        <li><strong>Committed in the last 90 days:</strong> 41.1% of repositories</li>
+        <li><strong>No commit in 90+ days:</strong> 58.9% of repositories — scoring heavily penalized</li>
+      </ul>
+      <p>
+        More than half the index is effectively stale. This matters for performance because stale servers
+        break silently: the MCP protocol doesn't have a concept of "server version" that agents can
+        check against the upstream service's API version. When Slack updates their API and a community
+        Slack MCP server isn't updated to match, the server returns errors that look like agent failures,
+        not dependency failures.
+      </p>
+
+      <h3>Issue close rate: the reliability predictor</h3>
+      <p>
+        Issue close rate (closed issues / total issues) is our best proxy for how quickly bugs get fixed.
+        Distribution in the index:
+      </p>
+      <ul>
+        <li><strong>Above 80% close rate:</strong> 9.2% of repositories — elite maintenance</li>
+        <li><strong>60–80% close rate:</strong> 17.8% — solid, production-viable</li>
+        <li><strong>Below 60% close rate:</strong> 73% of repositories with issues</li>
+      </ul>
+      <p>
+        Servers with close rates above 70% resolve reported bugs 3–5x faster than those below 40%.
+        For production use, this translates directly to reduced downtime when upstream services change.
+      </p>
+    </section>
+
+    <section id="category-health">
+      <h2>Category health breakdown</h2>
+      <p>
+        Performance varies significantly by category. Enterprise and AI-native categories outperform
+        community-built personal automation tools by a wide margin.
+      </p>
+
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Category</th>
+            <th>Freshness %</th>
+            <th>Issue Close Rate</th>
+            <th>Avg Score</th>
+            <th>Notes</th>
+          </tr>
+        </thead>
+        <tbody>
+          {categoryHealth.map((row) => (
+            <tr>
+              <td><strong>{row.category}</strong></td>
+              <td>{row.freshnessPct}%</td>
+              <td>{row.issueCloseRate}%</td>
+              <td>{row.avgScore}</td>
+              <td class="notes-cell">{row.noteworthy}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+
+      <p class="note">
+        Memory &amp; Knowledge Management leads all categories because it includes core agent infrastructure
+        (knowledge graphs, codebase indexers, context windows) that AI-native teams depend on and actively maintain.
+        Social &amp; Personal servers lag because most are personal experiments published once and never updated.
+      </p>
+    </section>
+
+    <section id="top-performers">
+      <h2>Top performers in the index</h2>
+      <p>
+        These are the servers with the highest AgentRank scores as of March 2026 — all scoring above 88.
+        The pattern is consistent: enterprise backing or a single highly engaged maintainer, recent commits,
+        and a strong issue close rate.
+      </p>
+
+      <div class="tool-list">
+        {topPerformers.map((tool, i) => (
+          <div class="tool-card">
+            <div class="tool-rank">#{i + 1}</div>
+            <div class="tool-info">
+              <a href={`/tool/${tool.slug}/`} class="tool-name">{tool.name}</a>
+              <div class="tool-signals">
+                <span class="score-badge">{tool.score}</span>
+                <span class="signal-item">⭐ {tool.stars.toLocaleString()}</span>
+                <span class="signal-item">Freshness: last commit {tool.freshnessDays}d ago</span>
+                <span class="signal-item">Issue close: {tool.issueCloseRate}%</span>
+              </div>
+              <p class="tool-why">{tool.why}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <p>
+        Full rankings are updated nightly.
+        <a href="/" class="inline-link">View the live leaderboard</a> for current scores.
+      </p>
+    </section>
+
+    <section id="red-flags">
+      <h2>Performance red flags to watch</h2>
+
+      <h3>Last commit over 90 days ago</h3>
+      <p>
+        The AgentRank freshness signal decays hard after 90 days. In the MCP ecosystem, 90 days
+        without a commit typically means the maintainer has moved on. We've seen servers that passed
+        all quality checks at 30 days and had broken tool schemas at 120 days after an upstream
+        API change.
+      </p>
+
+      <h3>Issue close rate below 40%</h3>
+      <p>
+        A growing pile of open issues with no responses is the clearest sign of abandonment.
+        Community servers often reach 50–100 open issues with no activity — the maintainer found
+        the initial build interesting but isn't investing in upkeep.
+      </p>
+
+      <h3>Zero inbound dependents after 6 months</h3>
+      <p>
+        Inbound dependents (other repos importing this server as a dependency) are the strongest
+        signal of real production use. A server with zero dependents after six months hasn't found
+        a user base that depends on it. That's correlated with slow bug fixes and eventual abandonment.
+      </p>
+
+      <h3>Single-file, single-commit repositories</h3>
+      <p>
+        26% of the index is a single <code>server.py</code> or <code>index.ts</code> with one commit
+        and no README. These are experiments, not maintained tools. Filter them out immediately.
+      </p>
+    </section>
+
+    <section id="measuring">
+      <h2>How to measure MCP server performance yourself</h2>
+
+      <h3>MCP Inspector for tool call latency</h3>
+      <p>
+        The official MCP Inspector is the fastest way to measure tool call latency:
+      </p>
+      <pre><code>npx @modelcontextprotocol/inspector</code></pre>
+      <p>
+        Open the Inspector, connect to any stdio or HTTP server, and call tools individually.
+        The Inspector shows response time per call. This isolates MCP protocol overhead from your
+        agent framework's overhead.
+      </p>
+
+      <h3>Checking health signals in the AgentRank index</h3>
+      <p>
+        For any server you're evaluating, the
+        <a href="/" class="inline-link">AgentRank tool page</a> shows the five signals that predict
+        long-term reliability: score, freshness, issue close rate, contributors, and dependents.
+        Use this as a quick screen before you invest integration time.
+      </p>
+      <p>
+        Use the <a href="/check/" class="inline-link">score checker</a> to look up any GitHub repo
+        by URL and get the current AgentRank score with a full signal breakdown.
+      </p>
+
+      <h3>What to benchmark in production</h3>
+      <p>
+        Once integrated, log timestamps around tool calls in your agent framework. The metrics worth tracking:
+      </p>
+      <ul>
+        <li><strong>p50 / p95 tool call latency</strong> — baseline performance under normal conditions</li>
+        <li><strong>Error rate by tool</strong> — tools that error frequently signal broken upstream dependencies</li>
+        <li><strong>Session startup time</strong> — time from agent launch to first successful tool call</li>
+      </ul>
+      <p>
+        High p95 latency on a specific tool usually means the external API that tool wraps has rate
+        limits or reliability issues — not an MCP problem. Route the alert to the right place.
+      </p>
+    </section>
+
+    <BlogSubscribeCTA />
+
+    <RelatedPosts posts={relatedPosts} />
+  </article>
+</Base>

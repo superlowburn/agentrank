@@ -1,0 +1,678 @@
+---
+export const prerender = true;
+
+import Base from '../../layouts/Base.astro';
+import BlogSubscribeCTA from '../../components/BlogSubscribeCTA.astro';
+import RelatedPosts from '../../components/RelatedPosts.astro';
+
+const relatedPosts = [
+  { href: '/blog/top-mcp-servers-2026/', title: 'Top 10 MCP Servers for AI Agents in 2026 (Ranked by Real Data)' },
+  { href: '/blog/how-to-evaluate-mcp-server-quality/', title: 'How to Evaluate MCP Server Quality Before Installing' },
+  { href: '/blog/how-to-choose-an-mcp-server/', title: 'How to Choose an MCP Server in 2026' },
+  { href: '/blog/best-mcp-servers-code-generation/', title: 'Best MCP Servers for Code Generation in 2026' },
+  { href: '/blog/mcp-server-directory-comparison-2026/', title: 'Every MCP Directory Compared (2026)' },
+];
+
+const publishDate = '2026-03-19';
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: 'Top 10 MCP Servers Every AI Developer Should Install in 2026',
+  description: 'The 10 most essential MCP servers for AI developers in 2026. Curated from the AgentRank index by score and practical utility — browser automation, web search, code intelligence, database access, and more.',
+  datePublished: publishDate,
+  dateModified: publishDate,
+  author: {
+    '@type': 'Organization',
+    name: 'AgentRank',
+    url: 'https://agentrank-ai.com',
+  },
+  publisher: {
+    '@type': 'Organization',
+    name: 'AgentRank',
+    url: 'https://agentrank-ai.com',
+    logo: {
+      '@type': 'ImageObject',
+      url: 'https://agentrank-ai.com/og-image.png',
+    },
+  },
+  mainEntityOfPage: {
+    '@type': 'WebPage',
+    '@id': 'https://agentrank-ai.com/blog/top-10-mcp-servers-every-ai-developer-2026/',
+  },
+  image: 'https://agentrank-ai.com/og-image.png',
+  keywords: 'must have mcp servers 2026, best mcp servers to install, essential mcp servers ai developers, top mcp servers install, mcp server recommendations 2026, ai developer tools mcp',
+};
+
+const tools = [
+  {
+    rank: 1,
+    name: 'microsoft/playwright-mcp',
+    slug: 'microsoft--playwright-mcp',
+    score: 94.26,
+    stars: 28849,
+    category: 'Browser Automation',
+    why: 'If your agent needs to navigate the web, Microsoft\'s Playwright MCP is the standard. 97.1% issue close rate, 62 contributors, actively maintained by Microsoft. Browser automation, form filling, screenshots, and end-to-end testing — all exposed as MCP tools. This is the browser arm of any serious agent stack.',
+    install: '@microsoft/playwright-mcp',
+  },
+  {
+    rank: 2,
+    name: 'perplexityai/modelcontextprotocol',
+    slug: 'perplexityai--modelcontextprotocol',
+    score: 94.27,
+    stars: 2016,
+    category: 'Web Search',
+    why: 'Every agent needs a live internet connection. Perplexity\'s official MCP server gives any MCP-connected agent access to real-time web search. An agent running on static training data misses everything that happened after its cutoff. This closes that gap. Official backing means it tracks the Perplexity API directly.',
+    install: '@perplexityai/mcp-server',
+  },
+  {
+    rank: 3,
+    name: 'oraios/serena',
+    slug: 'oraios--serena',
+    score: 93.61,
+    stars: 21474,
+    category: 'Code Intelligence',
+    why: 'For developers building coding agents, Serena is the semantic layer between your agent and the codebase. It provides symbol navigation, definition lookup, and semantic code search via MCP — not raw file reads, but language-server-level context. 134 contributors makes this a community standard, not a side project.',
+    install: null,
+  },
+  {
+    rank: 4,
+    name: 'microsoft/azure-devops-mcp',
+    slug: 'microsoft--azure-devops-mcp',
+    score: 97.17,
+    stars: 1406,
+    category: 'DevOps',
+    why: 'Teams on Azure DevOps can wire their agent directly to work items, PRs, pipelines, and repositories. An agent that can create issues, check build status, and review PRs without leaving the conversation eliminates a class of context-switching entirely. 96.8% issue close rate — the most responsive server in the top 10.',
+    install: '@azure-devops/mcp-server',
+  },
+  {
+    rank: 5,
+    name: 'zcaceres/markdownify-mcp',
+    slug: 'zcaceres--markdownify-mcp',
+    score: 94.73,
+    stars: 2449,
+    category: 'Content Processing',
+    why: 'Agents read Markdown. The web is HTML. markdownify-mcp converts anything — URLs, PDFs, Word documents, HTML — to clean Markdown. 100% issue close rate. Zero open issues. For any agent workflow that ingests web or document content, this is the preprocessing layer that reduces token cost and improves signal quality.',
+    install: '@zcaceres/markdownify-mcp',
+  },
+  {
+    rank: 6,
+    name: 'samanhappy/mcphub',
+    slug: 'samanhappy--mcphub',
+    score: 94.47,
+    stars: 1876,
+    category: 'Orchestration',
+    why: 'Once your agent stack grows beyond two or three MCP servers, you need an orchestration layer. MCPHub manages multiple servers in a unified hub — load balancing, failover, endpoint isolation. 23 contributors and active development signal this is a real infrastructure project. Install before you need it.',
+    install: null,
+  },
+  {
+    rank: 7,
+    name: 'Pimzino/spec-workflow-mcp',
+    slug: 'Pimzino--spec-workflow-mcp',
+    score: 96.02,
+    stars: 3999,
+    category: 'Dev Workflow',
+    why: 'Spec-driven development for agents: give the agent a spec, it breaks tasks down, executes them, and reports progress via a VSCode extension dashboard. 97.7% issue close rate (130/133). This is the closest thing to a production agentic development loop in MCP form. Essential for developers building with AI coding agents.',
+    install: null,
+  },
+  {
+    rank: 8,
+    name: 'mcp-use/mcp-use',
+    slug: 'mcp-use--mcp-use',
+    score: 93.1,
+    stars: 9434,
+    category: 'Frameworks',
+    why: 'If you\'re building multi-model workflows — Claude for reasoning, a smaller model for classification, different LLMs for different tasks — mcp-use is the framework that connects any LLM to any MCP server. 377 dependent repos confirm this is infrastructure other tools are building on top of.',
+    install: 'mcp-use',
+  },
+  {
+    rank: 9,
+    name: 'laravel/boost',
+    slug: 'laravel--boost',
+    score: 96.94,
+    stars: 3333,
+    category: 'Web Dev (PHP)',
+    why: 'For Laravel developers, Boost gives AI assistants context about your application: artisan commands, routes, models, and database schema. 1,032 dependent repos and 76 contributors. The Laravel community adopted this quickly once it landed — if you work in PHP, this is table stakes.',
+    install: null,
+  },
+  {
+    rank: 10,
+    name: 'CoplayDev/unity-mcp',
+    slug: 'CoplayDev--unity-mcp',
+    score: 98.67,
+    stars: 7003,
+    category: 'Game Dev',
+    why: 'The highest-scoring MCP server in the index. Direct AI control over Unity Editor — asset management, scene creation, script editing. 95.7% issue close rate across 369 issues. If you touch Unity at all, this fundamentally changes how fast you can work. The score reflects what the community thinks of it.',
+    install: null,
+  },
+];
+
+const faqJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: [
+    {
+      '@type': 'Question',
+      name: 'What MCP servers should every AI developer install?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'The most universally useful MCP servers are microsoft/playwright-mcp for browser automation, perplexityai/modelcontextprotocol for live web search, and oraios/serena for code intelligence. These three give any agent browser access, live internet knowledge, and deep codebase understanding. Add zcaceres/markdownify-mcp for document processing and samanhappy/mcphub for orchestration when your stack grows.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'How were these MCP servers selected?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Selected from the AgentRank index based on composite quality score (freshness, issue health, dependents, stars, contributors) combined with practical utility across different developer workflows. All servers listed have scores above 93 out of 100 and cover complementary use cases a well-equipped AI developer would need.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'How do I install MCP servers?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'MCP servers are typically installed via npm (for Node.js/TypeScript servers) or pip (for Python servers). Add them to your MCP client configuration — Claude Desktop, Cursor, or similar. See the individual repository README for specific install instructions.',
+      },
+    },
+  ],
+};
+---
+
+<Base
+  title="Top 10 MCP Servers Every AI Developer Should Install in 2026 — AgentRank"
+  description="The 10 most essential MCP servers for AI developers in 2026. Curated from 25,000+ in the AgentRank index by quality score and practical utility — browser automation, web search, code intelligence, DevOps, and more."
+  activeTab="blog"
+  keywords="must have mcp servers 2026, essential mcp servers, best mcp servers install, top mcp servers ai developers, mcp server recommendations 2026, playwright mcp, perplexity mcp, serena mcp"
+  canonicalUrl="https://agentrank-ai.com/blog/top-10-mcp-servers-every-ai-developer-2026/"
+  jsonLd={[jsonLd, faqJsonLd]}
+  ogImage="/og-image.png"
+>
+  <article class="blog-post">
+    <header class="post-header">
+      <div class="breadcrumb"><a href="/blog/">Blog</a> <span>/</span></div>
+      <h1>Top 10 MCP Servers Every AI Developer Should Install in 2026</h1>
+      <div class="post-meta">
+        <time datetime={publishDate}>March 19, 2026</time>
+        <span class="sep">&middot;</span>
+        <span>10 min read</span>
+        <span class="sep">&middot;</span>
+        <span>Developer Tools</span>
+      </div>
+      <p class="lede">
+        The AgentRank index tracks 25,000+ MCP servers. Most are niche, experimental, or unmaintained.
+        These 10 are not. Selected by quality score and practical utility, this is the stack a working
+        AI developer should have configured — browser automation, live web search, code intelligence,
+        DevOps integration, document processing, and orchestration. One server per category, all
+        actively maintained, all in the top 5% of the index.
+      </p>
+    </header>
+
+    <nav class="toc">
+      <strong>Contents</strong>
+      <ol>
+        <li><a href="#list">The 10 servers</a></li>
+        <li><a href="#starter-stack">The starter stack (3 installs)</a></li>
+        <li><a href="#how-to-install">How to install MCP servers</a></li>
+        <li><a href="#score-note">A note on scores</a></li>
+      </ol>
+    </nav>
+
+    <section id="list">
+      <h2>The 10 servers</h2>
+      <p>
+        Scored by the AgentRank composite: freshness (25%), issue health (25%), inbound dependents (25%),
+        stars (15%), contributors (10%). All servers here scored above 93/100. Average across the full
+        index is 29.6 — these are genuine outliers.
+      </p>
+
+      {tools.map((tool) => (
+        <div class="tool-card">
+          <div class="tool-header">
+            <div class="tool-meta-row">
+              <span class="tool-rank">#{tool.rank}</span>
+              <a href={`/tool/${tool.slug}/`} class="tool-name">{tool.name}</a>
+              <span class="tool-score">{tool.score}</span>
+            </div>
+            <div class="tool-sub-row">
+              <span class="tool-category">{tool.category}</span>
+              <span class="tool-stars">{tool.stars.toLocaleString('en-US')} stars</span>
+            </div>
+          </div>
+          <p class="tool-why">{tool.why}</p>
+          {tool.install && (
+            <div class="install-block">
+              <span class="install-label">Install:</span>
+              <code>npm install {tool.install}</code>
+            </div>
+          )}
+        </div>
+      ))}
+    </section>
+
+    <section id="starter-stack">
+      <h2>The starter stack (3 installs)</h2>
+      <p>
+        If you want to start immediately and not think about it: install these three.
+      </p>
+      <div class="starter-grid">
+        <div class="starter-card">
+          <h3>Browser — Playwright MCP</h3>
+          <p>Your agent's eyes. Automates any browser interaction: navigation, forms, screenshots, scraping.</p>
+          <code>npm install @microsoft/playwright-mcp</code>
+        </div>
+        <div class="starter-card">
+          <h3>Search — Perplexity MCP</h3>
+          <p>Live internet access. Your agent answers questions about events that happened after its training cutoff.</p>
+          <code>npm install @perplexityai/mcp-server</code>
+        </div>
+        <div class="starter-card">
+          <h3>Documents — Markdownify MCP</h3>
+          <p>Clean document ingestion. Converts URLs, PDFs, HTML to agent-readable Markdown. Zero open issues.</p>
+          <code>npm install @zcaceres/markdownify-mcp</code>
+        </div>
+      </div>
+      <p>
+        Browser + search + document processing covers the majority of web-based agent tasks. Everything
+        else on this list is additive on top of that foundation.
+      </p>
+    </section>
+
+    <section id="how-to-install">
+      <h2>How to install MCP servers</h2>
+      <p>
+        MCP servers are configured in your client's config file. For <strong>Claude Desktop</strong>,
+        edit <code>claude_desktop_config.json</code>. For <strong>Cursor</strong>, see Settings &rsaquo;
+        MCP Servers. For <strong>Windsurf</strong>, see the MCP configuration panel.
+      </p>
+      <p>
+        General pattern for a Node.js server:
+      </p>
+      <pre><code>{`{
+  "mcpServers": {
+    "playwright": {
+      "command": "npx",
+      "args": ["-y", "@microsoft/playwright-mcp"]
+    }
+  }
+}`}</code></pre>
+      <p>
+        Check each server's GitHub README for the exact configuration. Most TypeScript/Node.js servers
+        follow the same pattern. Python servers use <code>uvx</code> or <code>python -m</code> instead of <code>npx</code>.
+      </p>
+      <p>
+        You can also use <strong>mcp-get</strong> for one-command installation into Claude Desktop:
+      </p>
+      <pre><code>npx @michaellatman/mcp-get@latest install @microsoft/playwright-mcp</code></pre>
+    </section>
+
+    <section id="score-note">
+      <h2>A note on scores</h2>
+      <p>
+        The AgentRank scores above reflect the nightly crawl from March 2026. Scores change nightly as
+        GitHub signals update — a server that ships a major update or closes a backlog of issues can
+        move significantly within a week.
+      </p>
+      <p>
+        The five signals and their weights:
+      </p>
+      <ul>
+        <li><strong>Freshness (25%)</strong> — days since last commit; decays past 90 days idle</li>
+        <li><strong>Issue health (25%)</strong> — closed issues / total issues; measures maintainer responsiveness</li>
+        <li><strong>Inbound dependents (25%)</strong> — repos that depend on this tool; real adoption signal</li>
+        <li><strong>Stars (15%)</strong> — normalized popularity</li>
+        <li><strong>Contributors (10%)</strong> — bus factor proxy</li>
+      </ul>
+      <p>
+        The score is not a measure of features. A server with 3 focused, perfectly-maintained tools
+        can score higher than a server with 50 tools and a neglected issue queue. That's intentional.
+        <a href="/methodology/" class="inline-link">Full methodology here.</a>
+      </p>
+
+      <div class="cta-box">
+        <p>
+          <strong>See the live rankings:</strong> <a href="/">agentrank-ai.com</a> — 25,000+ tools, scores updated nightly.
+        </p>
+        <p>
+          <strong>Browse by category:</strong> <a href="/tools/">Filter by dev category, language, or score range.</a>
+        </p>
+        <p>
+          <strong>Maintain an MCP server?</strong> <a href="/claim/">Claim your listing</a> to add documentation and context to your entry.
+        </p>
+      </div>
+    </section>
+
+    <RelatedPosts posts={relatedPosts} />
+    <BlogSubscribeCTA source="blog" />
+    <footer class="post-footer">
+      <p class="methodology">
+        <strong>Methodology:</strong> Data from the AgentRank index crawled March 2026. Scores: stars 15%, freshness 25%,
+        issue health 25%, contributors 10%, inbound dependents 25%. 25,000+ total repositories indexed.
+        Selection criteria: score &gt;93, active maintenance, complementary categories covering common AI developer workflows.
+      </p>
+      <p class="share-line">
+        Found this useful? <a href="https://x.com/AgentRank_ai" target="_blank" rel="noopener noreferrer">Follow @AgentRank_ai</a> for
+        weekly ecosystem updates and new tool spotlights.
+      </p>
+    </footer>
+  </article>
+
+  <style>
+    .blog-post {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 2rem 0 3rem;
+    }
+
+    .breadcrumb {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      margin-bottom: 0.75rem;
+    }
+
+    .breadcrumb span {
+      margin: 0 0.25rem;
+      opacity: 0.5;
+    }
+
+    .post-header {
+      margin-bottom: 2rem;
+      padding-bottom: 1.5rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .post-header h1 {
+      font-size: 1.6rem;
+      font-weight: 700;
+      line-height: 1.3;
+      margin-bottom: 0.75rem;
+    }
+
+    .post-meta {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      flex-wrap: wrap;
+      margin-bottom: 1rem;
+    }
+
+    .sep {
+      opacity: 0.4;
+    }
+
+    .lede {
+      font-size: 1rem;
+      line-height: 1.7;
+      color: var(--text);
+      opacity: 0.9;
+    }
+
+    .toc {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 1rem 1.25rem;
+      margin-bottom: 2.5rem;
+      font-size: 0.82rem;
+    }
+
+    .toc strong {
+      display: block;
+      margin-bottom: 0.6rem;
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+    }
+
+    .toc ol {
+      margin: 0;
+      padding-left: 1.2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+    }
+
+    .toc a {
+      color: var(--text-muted);
+    }
+
+    .toc a:hover {
+      color: var(--accent);
+    }
+
+    section {
+      margin-bottom: 3rem;
+    }
+
+    section h2 {
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin-bottom: 0.75rem;
+      padding-bottom: 0.4rem;
+      border-bottom: 2px solid var(--accent);
+      display: inline-block;
+    }
+
+    section h3 {
+      font-size: 0.95rem;
+      font-weight: 700;
+      margin: 1.5rem 0 0.5rem;
+      color: var(--text);
+    }
+
+    section p {
+      font-size: 0.9rem;
+      line-height: 1.75;
+      color: var(--text);
+      opacity: 0.9;
+      margin-bottom: 0.9rem;
+    }
+
+    section ul {
+      font-size: 0.9rem;
+      line-height: 1.75;
+      color: var(--text);
+      opacity: 0.9;
+      padding-left: 1.4rem;
+      margin-bottom: 0.9rem;
+    }
+
+    section ul li {
+      margin-bottom: 0.35rem;
+    }
+
+    section pre {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 0.75rem 1rem;
+      overflow-x: auto;
+      margin: 0.75rem 0;
+    }
+
+    section pre code {
+      font-size: 0.78rem;
+      color: var(--text);
+      font-family: 'JetBrains Mono', 'Fira Code', monospace;
+    }
+
+    .inline-link {
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    /* Tool cards */
+    .tool-card {
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 1rem 1.25rem;
+      margin-bottom: 0.875rem;
+    }
+
+    .tool-header {
+      margin-bottom: 0.6rem;
+    }
+
+    .tool-meta-row {
+      display: flex;
+      align-items: baseline;
+      gap: 0.6rem;
+      margin-bottom: 0.2rem;
+    }
+
+    .tool-rank {
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      min-width: 1.5rem;
+    }
+
+    .tool-name {
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: var(--accent);
+      flex: 1;
+    }
+
+    .tool-score {
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--accent);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .tool-sub-row {
+      display: flex;
+      gap: 0.75rem;
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      padding-left: 2.1rem;
+    }
+
+    .tool-why {
+      font-size: 0.875rem !important;
+      line-height: 1.65 !important;
+      color: var(--text) !important;
+      opacity: 0.9;
+      margin-bottom: 0 !important;
+    }
+
+    .install-block {
+      margin-top: 0.6rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.78rem;
+    }
+
+    .install-label {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      font-weight: 600;
+      flex-shrink: 0;
+    }
+
+    .install-block code {
+      font-family: 'JetBrains Mono', 'Fira Code', monospace;
+      font-size: 0.78rem;
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      padding: 0.15rem 0.5rem;
+      border-radius: 3px;
+      color: var(--text);
+    }
+
+    /* Starter grid */
+    .starter-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 0.75rem;
+      margin: 1rem 0;
+    }
+
+    .starter-card {
+      border: 1px solid var(--border);
+      border-top: 2px solid var(--accent);
+      border-radius: 4px;
+      padding: 0.875rem 1rem;
+    }
+
+    .starter-card h3 {
+      font-size: 0.82rem !important;
+      margin: 0 0 0.4rem 0 !important;
+      font-weight: 700;
+    }
+
+    .starter-card p {
+      font-size: 0.8rem !important;
+      margin-bottom: 0.6rem !important;
+      line-height: 1.5 !important;
+    }
+
+    .starter-card code {
+      font-family: 'JetBrains Mono', 'Fira Code', monospace;
+      font-size: 0.7rem;
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      padding: 0.2rem 0.4rem;
+      border-radius: 3px;
+      color: var(--text);
+      display: block;
+      word-break: break-all;
+    }
+
+    .cta-box {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      border-radius: 4px;
+      padding: 1rem 1.25rem;
+      margin-top: 1.5rem;
+    }
+
+    .cta-box p {
+      font-size: 0.88rem !important;
+      margin-bottom: 0.5rem;
+    }
+
+    .cta-box p:last-child {
+      margin-bottom: 0;
+    }
+
+    .post-footer {
+      margin-top: 3rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--border);
+    }
+
+    .methodology {
+      font-size: 0.75rem !important;
+      color: var(--text-muted) !important;
+      opacity: 1 !important;
+    }
+
+    .share-line {
+      font-size: 0.82rem !important;
+      margin-top: 0.75rem;
+    }
+
+    @media (max-width: 640px) {
+      .post-header h1 {
+        font-size: 1.3rem;
+      }
+
+      .starter-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .tool-sub-row {
+        flex-wrap: wrap;
+      }
+    }
+  </style>
+</Base>

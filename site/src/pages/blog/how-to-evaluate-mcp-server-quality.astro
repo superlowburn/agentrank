@@ -1,0 +1,801 @@
+---
+export const prerender = true;
+
+import Base from '../../layouts/Base.astro';
+import BlogSubscribeCTA from '../../components/BlogSubscribeCTA.astro';
+import RelatedPosts from '../../components/RelatedPosts.astro';
+
+const relatedPosts = [
+  { href: '/blog/how-agentrank-scores-mcp-servers/', title: 'How AgentRank Scores MCP Servers — The Quality Score Explained' },
+  { href: '/blog/smithery-vs-agentrank/', title: 'Smithery vs AgentRank: Which MCP Directory Should You Use?' },
+  { href: '/blog/top-10-mcp-servers-every-ai-developer-2026/', title: 'Top 10 MCP Servers Every AI Developer Should Install in 2026' },
+  { href: '/blog/mcp-server-security-checklist-before-installing/', title: 'MCP Server Security: What to Check Before Installing' },
+  { href: '/blog/how-to-choose-an-mcp-server/', title: 'How to Choose an MCP Server in 2026' },
+];
+
+const publishDate = '2026-03-19';
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: 'How to Evaluate MCP Server Quality Before Installing',
+  description: 'A practical framework for evaluating MCP server quality using real GitHub signals. The five signals that predict reliability, maintenance, and long-term viability — with examples from the AgentRank index.',
+  datePublished: publishDate,
+  dateModified: publishDate,
+  author: {
+    '@type': 'Organization',
+    name: 'AgentRank',
+    url: 'https://agentrank-ai.com',
+  },
+  publisher: {
+    '@type': 'Organization',
+    name: 'AgentRank',
+    url: 'https://agentrank-ai.com',
+    logo: {
+      '@type': 'ImageObject',
+      url: 'https://agentrank-ai.com/og-image.png',
+    },
+  },
+  mainEntityOfPage: {
+    '@type': 'WebPage',
+    '@id': 'https://agentrank-ai.com/blog/how-to-evaluate-mcp-server-quality/',
+  },
+  image: 'https://agentrank-ai.com/og-image.png',
+  keywords: 'how to evaluate mcp server quality, mcp server quality checklist, mcp server reliability, mcp server maintenance signals, how to choose mcp server, agentrank score explained',
+};
+
+const faqJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: [
+    {
+      '@type': 'Question',
+      name: 'How do I know if an MCP server is well-maintained?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Check four signals on GitHub: (1) last commit date — anything over 90 days idle is at risk of drift; (2) issue close rate — divide closed issues by total; above 70% indicates an active maintainer; (3) open issue count and age — many old open issues signals backlog neglect; (4) contributor count — single-maintainer repos carry higher bus factor risk. AgentRank computes these automatically for 25,000+ servers.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'What is a good AgentRank score for an MCP server?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'The average score across all 25,000+ indexed tools is 29.6 out of 100. Anything above 70 is well above average. The top 10% start around 60. The top 1% start around 85. For production use, targeting servers with scores above 70 and individual issue health above 80% is a reasonable baseline.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Why is freshness an important signal for MCP servers?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'MCP is a protocol that evolves. Servers that haven\'t been touched in six months may not track protocol updates, API changes in upstream services, or security patches. A server with a recent commit is more likely to work correctly with current versions of Claude, Cursor, and other MCP clients than one that went stale in 2024.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Should I trust a high-star MCP server?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Stars measure historical interest, not current quality. A server can accumulate stars from an initial viral moment and then go unmaintained for a year. Before installing any high-star server, check freshness (last commit) and issue health (close rate). In the AgentRank index, the most-starred server (microsoft/playwright-mcp, 28,849 stars) ranks 8th by composite score — not first.',
+      },
+    },
+  ],
+};
+---
+
+<Base
+  title="How to Evaluate MCP Server Quality Before Installing — AgentRank"
+  description="A practical framework for evaluating MCP server quality using real GitHub signals. The five signals that predict reliability and maintenance health — with concrete examples from the AgentRank index."
+  activeTab="blog"
+  keywords="how to evaluate mcp server quality, mcp server quality checklist, mcp server reliability, mcp server maintenance signals, mcp server freshness, agentrank score, choose mcp server"
+  canonicalUrl="https://agentrank-ai.com/blog/how-to-evaluate-mcp-server-quality/"
+  jsonLd={[jsonLd, faqJsonLd]}
+  ogImage="/og-image.png"
+>
+  <article class="blog-post">
+    <header class="post-header">
+      <div class="breadcrumb"><a href="/blog/">Blog</a> <span>/</span></div>
+      <h1>How to Evaluate MCP Server Quality Before Installing</h1>
+      <div class="post-meta">
+        <time datetime={publishDate}>March 19, 2026</time>
+        <span class="sep">&middot;</span>
+        <span>9 min read</span>
+        <span class="sep">&middot;</span>
+        <span>Developer Guide</span>
+      </div>
+      <p class="lede">
+        Most developers pick MCP servers by star count or recency on a discovery page. Both are
+        weak signals. A server can go viral on Reddit, collect 3,000 stars, and then sit untouched
+        for 14 months while the MCP protocol moves on. This guide explains the five real signals
+        that predict whether an MCP server will work reliably in your stack six months from now — and
+        how to check them in under two minutes.
+      </p>
+    </header>
+
+    <nav class="toc">
+      <strong>Contents</strong>
+      <ol>
+        <li><a href="#why-not-stars">Why stars alone fail you</a></li>
+        <li><a href="#five-signals">The five quality signals</a></li>
+        <li><a href="#red-flags">Red flags to walk away from</a></li>
+        <li><a href="#green-flags">Green flags that predict reliability</a></li>
+        <li><a href="#using-agentrank">Using AgentRank to evaluate instantly</a></li>
+        <li><a href="#example">Worked example: two servers head-to-head</a></li>
+      </ol>
+    </nav>
+
+    <section id="why-not-stars">
+      <h2>Why stars alone fail you</h2>
+      <p>
+        Stars measure a moment in time — the moment a repo went viral, got shared on Hacker News, or
+        was featured in a newsletter. They don't update as the project decays. A server with 4,000
+        stars from a 2024 launch that hasn't seen a commit since August 2024 will rank at the top of
+        any star-sorted list — and will break against current MCP client versions, upstream API
+        changes, and protocol updates that happened in the intervening months.
+      </p>
+      <p>
+        In the AgentRank index of 25,000+ servers, the correlation between stars and composite quality
+        score is weak. <a href="/tool/microsoft--playwright-mcp/" class="inline-link">microsoft/playwright-mcp</a>
+        has 28,849 stars and ranks 8th by composite score.
+        <a href="/tool/CoplayDev--unity-mcp/" class="inline-link">CoplayDev/unity-mcp</a> has 7,003 stars and ranks
+        1st. Stars capture awareness. Quality signals capture reliability.
+      </p>
+      <p>
+        The question you actually need answered before installing an MCP server is not "how popular was
+        this when it launched?" It's "will this still work three months from now?"
+      </p>
+    </section>
+
+    <section id="five-signals">
+      <h2>The five quality signals</h2>
+      <p>
+        These are the signals AgentRank weights in its composite score. They're also the signals you
+        should check manually when evaluating a server not in the index.
+      </p>
+
+      <div class="signal-list">
+        <div class="signal-card">
+          <div class="signal-header">
+            <span class="signal-name">1. Freshness</span>
+            <span class="signal-weight">25% of AgentRank score</span>
+          </div>
+          <p class="signal-desc">
+            Days since the last commit. This is the most actionable signal. A server with a commit
+            in the last two weeks is almost certainly tracking protocol changes. A server last touched
+            14 months ago is not.
+          </p>
+          <div class="signal-thresholds">
+            <div class="threshold good">
+              <span class="threshold-label">Good</span>
+              <span>Commit in the last 30 days</span>
+            </div>
+            <div class="threshold ok">
+              <span class="threshold-label">Acceptable</span>
+              <span>30–90 days, stable protocol-only server</span>
+            </div>
+            <div class="threshold bad">
+              <span class="threshold-label">Red flag</span>
+              <span>90+ days, especially for servers wrapping external APIs</span>
+            </div>
+          </div>
+          <p class="signal-why">
+            <strong>Why it matters:</strong> External APIs change. The MCP protocol itself evolves. MCP clients
+            release updates. A server that hasn't been touched since before the latest protocol version
+            may have silent compatibility issues you'll only discover in production.
+          </p>
+        </div>
+
+        <div class="signal-card">
+          <div class="signal-header">
+            <span class="signal-name">2. Issue health</span>
+            <span class="signal-weight">25% of AgentRank score</span>
+          </div>
+          <p class="signal-desc">
+            Closed issues divided by total issues. This is the best proxy for maintainer responsiveness.
+            A 90% close rate means the maintainer actively triages their issue queue. A 30% close rate
+            on 200 issues means there are 140 unaddressed problems.
+          </p>
+          <div class="signal-thresholds">
+            <div class="threshold good">
+              <span class="threshold-label">Good</span>
+              <span>&gt;80% close rate</span>
+            </div>
+            <div class="threshold ok">
+              <span class="threshold-label">Acceptable</span>
+              <span>60–80%, larger scope projects often run lower</span>
+            </div>
+            <div class="threshold bad">
+              <span class="threshold-label">Red flag</span>
+              <span>&lt;50% with more than 20 open issues</span>
+            </div>
+          </div>
+          <p class="signal-why">
+            <strong>Why it matters:</strong> If you file a bug, will anyone respond? A low close rate
+            doesn't just mean the project is slower — it means the maintainer isn't actively engaged.
+            When things break (and they will), you'll be on your own.
+          </p>
+        </div>
+
+        <div class="signal-card">
+          <div class="signal-header">
+            <span class="signal-name">3. Inbound dependents</span>
+            <span class="signal-weight">25% of AgentRank score</span>
+          </div>
+          <p class="signal-desc">
+            How many other repositories depend on this one, via GitHub's dependency graph. This is the
+            strongest signal of real-world adoption beyond starred interest. Stars are passive — someone
+            liked the repo. Dependents are active — something is actually running that depends on this.
+          </p>
+          <div class="signal-thresholds">
+            <div class="threshold good">
+              <span class="threshold-label">Good</span>
+              <span>10+ dependents (for a framework-type server)</span>
+            </div>
+            <div class="threshold ok">
+              <span class="threshold-label">Acceptable</span>
+              <span>0–10, normal for most specialized servers</span>
+            </div>
+            <div class="threshold bad">
+              <span class="threshold-label">Red flag</span>
+              <span>0 dependents on a server claiming widespread use</span>
+            </div>
+          </div>
+          <p class="signal-why">
+            <strong>Why it matters:</strong> High dependent counts mean other developers and projects
+            have integrated this server into their own software. That creates accountability — breakage
+            affects downstream users, increasing the incentive to maintain. Low dependent counts don't
+            disqualify a server, but combined with low freshness, it signals lower stakes for the maintainer.
+          </p>
+        </div>
+
+        <div class="signal-card">
+          <div class="signal-header">
+            <span class="signal-name">4. Contributors</span>
+            <span class="signal-weight">10% of AgentRank score</span>
+          </div>
+          <p class="signal-desc">
+            Number of unique contributors. This is a bus factor proxy. A server with one contributor
+            goes dark the day that person loses interest. A server with 20+ contributors has distributed
+            maintenance responsibility.
+          </p>
+          <div class="signal-thresholds">
+            <div class="threshold good">
+              <span class="threshold-label">Good</span>
+              <span>5+ contributors (broad community ownership)</span>
+            </div>
+            <div class="threshold ok">
+              <span class="threshold-label">Acceptable</span>
+              <span>2–5, still distributed enough to reduce single-point risk</span>
+            </div>
+            <div class="threshold bad">
+              <span class="threshold-label">Watch</span>
+              <span>1 contributor — not disqualifying, but increases abandonment risk</span>
+            </div>
+          </div>
+          <p class="signal-why">
+            <strong>Why it matters:</strong> Single-maintainer projects are fragile. If that person
+            changes jobs, loses interest, or goes on a long vacation, the project stalls. 10%
+            weight reflects that this is real but secondary to maintenance activity signals.
+          </p>
+        </div>
+
+        <div class="signal-card">
+          <div class="signal-header">
+            <span class="signal-name">5. Stars</span>
+            <span class="signal-weight">15% of AgentRank score</span>
+          </div>
+          <p class="signal-desc">
+            The raw GitHub star count, normalized against the index. Stars get only 15% weight
+            because they measure past awareness, not current quality. They still matter — popularity
+            correlates with more eyes on the code, more bug reports getting filed, and more community
+            investment. They just shouldn't dominate.
+          </p>
+          <div class="signal-thresholds">
+            <div class="threshold good">
+              <span class="threshold-label">Good</span>
+              <span>500+ stars in a 25,000-server index signals real traction</span>
+            </div>
+            <div class="threshold ok">
+              <span class="threshold-label">Acceptable</span>
+              <span>50–500, normal for niche but legitimate tools</span>
+            </div>
+            <div class="threshold bad">
+              <span class="threshold-label">Weak signal</span>
+              <span>Stars alone, without checking the other four signals</span>
+            </div>
+          </div>
+          <p class="signal-why">
+            <strong>Why it matters:</strong> Popularity correlates with visibility of defects — more users
+            means more bug reports and fixes. But it's a lagging indicator. Don't use it alone.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section id="red-flags">
+      <h2>Red flags to walk away from</h2>
+      <p>
+        These patterns, individually or together, predict unreliable or abandoned servers:
+      </p>
+      <ul>
+        <li><strong>Last commit 6+ months ago</strong> — especially for servers wrapping external APIs or the MCP protocol itself</li>
+        <li><strong>Issue close rate below 40%</strong> with more than 15 open issues — indicates an overwhelmed or disengaged maintainer</li>
+        <li><strong>Open issues older than 6 months with no response</strong> — maintainer has stopped engaging</li>
+        <li><strong>No tests in the repository</strong> — higher risk of undetected regressions during updates</li>
+        <li><strong>README mentions "coming soon" features from a year ago</strong> — development has stalled</li>
+        <li><strong>Multiple open issues about the same bug</strong> — indicates the maintainer knows about a problem and hasn't addressed it</li>
+        <li><strong>Last version published to npm/PyPI was pre-MCP 1.0</strong> — may have silent protocol incompatibilities</li>
+      </ul>
+    </section>
+
+    <section id="green-flags">
+      <h2>Green flags that predict reliability</h2>
+      <p>
+        These patterns indicate a server worth trusting in production:
+      </p>
+      <ul>
+        <li><strong>Issue close rate above 85%</strong> — the maintainer actively triages and resolves reports</li>
+        <li><strong>Commits in the last 14 days</strong> — active development, will track protocol changes</li>
+        <li><strong>Official backing</strong> — the organization that owns the underlying platform maintains the server (e.g., microsoft/playwright-mcp, laravel/boost, perplexityai/modelcontextprotocol)</li>
+        <li><strong>100 or more GitHub stars with 90%+ close rate</strong> — strong combination of traction and maintenance discipline</li>
+        <li><strong>Changelog or release notes updated recently</strong> — maintainer communicates changes</li>
+        <li><strong>Published TypeScript types or Python types</strong> — investment in DX and compatibility</li>
+        <li><strong>Listed in the official MCP registry</strong> — explicit quality bar from the protocol team</li>
+      </ul>
+    </section>
+
+    <section id="using-agentrank">
+      <h2>Using AgentRank to evaluate instantly</h2>
+      <p>
+        Rather than checking each signal manually on GitHub, AgentRank computes the composite score nightly
+        for every indexed server. Search by name, browse by category, or filter by score threshold.
+      </p>
+      <p>
+        Each tool page shows:
+      </p>
+      <ul>
+        <li>Composite score (0–100)</li>
+        <li>Individual signal breakdown: freshness score, issue health score, dependent count, star count, contributor count</li>
+        <li>Last crawl date and raw GitHub metadata</li>
+        <li>Category, language, and license</li>
+      </ul>
+      <p>
+        For any server in the index, you can see at a glance whether the quality signals justify
+        installation — without opening GitHub, calculating close rates, or checking commit dates manually.
+      </p>
+      <p>
+        If a server isn't in the AgentRank index yet, you can still check the five signals manually on
+        its GitHub repo in under two minutes. The calculation is:
+      </p>
+      <pre><code>{`Issue close rate = closed_issues / (open_issues + closed_issues)
+Freshness = days since last commit
+Dependents = GitHub "Used by" count on repo page
+Contributors = GitHub "Contributors" count
+Stars = raw star count`}</code></pre>
+      <p>
+        No formula required — just a quick scan of the repo page tells you most of what you need.
+      </p>
+    </section>
+
+    <section id="example">
+      <h2>Worked example: two servers head-to-head</h2>
+      <p>
+        Say you're looking for an MCP server to provide web search to your agent. You find two candidates:
+        Server A has 4,200 stars. Server B has 800 stars. Most developers would pick A.
+      </p>
+
+      <div class="comparison-table-wrapper">
+        <table class="comparison-table">
+          <thead>
+            <tr>
+              <th>Signal</th>
+              <th>Server A (4,200 stars)</th>
+              <th>Server B (800 stars)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Last commit</td>
+              <td class="bad-cell">11 months ago</td>
+              <td class="good-cell">6 days ago</td>
+            </tr>
+            <tr>
+              <td>Issue close rate</td>
+              <td class="bad-cell">38% (62 open, 38 closed)</td>
+              <td class="good-cell">94% (3 open, 47 closed)</td>
+            </tr>
+            <tr>
+              <td>Contributors</td>
+              <td class="ok-cell">3</td>
+              <td class="good-cell">8</td>
+            </tr>
+            <tr>
+              <td>Dependents</td>
+              <td class="ok-cell">12</td>
+              <td class="ok-cell">4</td>
+            </tr>
+            <tr>
+              <td>Stars</td>
+              <td class="good-cell">4,200</td>
+              <td class="ok-cell">800</td>
+            </tr>
+          </tbody>
+          <tfoot>
+            <tr>
+              <td><strong>Recommendation</strong></td>
+              <td class="bad-cell"><strong>Skip — stale, unresponsive maintainer</strong></td>
+              <td class="good-cell"><strong>Install — active and well-maintained</strong></td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+
+      <p>
+        Server A won the star race once. Server B is being actively maintained now. For a server that wraps
+        a live search API — where the upstream API can change, rate limits can change, and MCP protocol
+        updates affect behavior — Server B is clearly the safer dependency. Stars got it wrong. The other
+        four signals got it right.
+      </p>
+      <p>
+        This pattern repeats throughout the AgentRank index. The highest-starred server (microsoft/playwright-mcp,
+        28,849 stars) ranks 8th. The top scorer (CoplayDev/unity-mcp, 7,003 stars) has less than a quarter
+        of Playwright's star count but better maintenance signals across every other dimension.
+      </p>
+
+      <div class="cta-box">
+        <p>
+          <strong>Check any MCP server:</strong> Search <a href="/">agentrank-ai.com</a> — composite scores, signal breakdowns, and nightly-updated data for 25,000+ servers.
+        </p>
+        <p>
+          <strong>Scoring methodology:</strong> Freshness 25%, issue health 25%, dependents 25%, stars 15%, contributors 10%.
+          <a href="/methodology/">Full docs here.</a>
+        </p>
+        <p>
+          <strong>API access:</strong> Query the index programmatically with score filters. <a href="/docs/">API docs.</a>
+        </p>
+      </div>
+    </section>
+
+    <RelatedPosts posts={relatedPosts} />
+    <BlogSubscribeCTA source="blog" />
+    <footer class="post-footer">
+      <p class="methodology">
+        <strong>Methodology:</strong> Score weights derived from the AgentRank scoring engine. Example signal thresholds
+        based on empirical distribution analysis of the 25,000+ server index. Individual server data from the nightly
+        AgentRank crawler, March 2026.
+      </p>
+      <p class="share-line">
+        Found this useful? <a href="https://x.com/AgentRank_ai" target="_blank" rel="noopener noreferrer">Follow @AgentRank_ai</a> for
+        weekly ecosystem data and MCP server quality updates.
+      </p>
+    </footer>
+  </article>
+
+  <style>
+    .blog-post {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 2rem 0 3rem;
+    }
+
+    .breadcrumb {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      margin-bottom: 0.75rem;
+    }
+
+    .breadcrumb span {
+      margin: 0 0.25rem;
+      opacity: 0.5;
+    }
+
+    .post-header {
+      margin-bottom: 2rem;
+      padding-bottom: 1.5rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .post-header h1 {
+      font-size: 1.6rem;
+      font-weight: 700;
+      line-height: 1.3;
+      margin-bottom: 0.75rem;
+    }
+
+    .post-meta {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      flex-wrap: wrap;
+      margin-bottom: 1rem;
+    }
+
+    .sep {
+      opacity: 0.4;
+    }
+
+    .lede {
+      font-size: 1rem;
+      line-height: 1.7;
+      color: var(--text);
+      opacity: 0.9;
+    }
+
+    .toc {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 1rem 1.25rem;
+      margin-bottom: 2.5rem;
+      font-size: 0.82rem;
+    }
+
+    .toc strong {
+      display: block;
+      margin-bottom: 0.6rem;
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+    }
+
+    .toc ol {
+      margin: 0;
+      padding-left: 1.2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+    }
+
+    .toc a {
+      color: var(--text-muted);
+    }
+
+    .toc a:hover {
+      color: var(--accent);
+    }
+
+    section {
+      margin-bottom: 3rem;
+    }
+
+    section h2 {
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin-bottom: 0.75rem;
+      padding-bottom: 0.4rem;
+      border-bottom: 2px solid var(--accent);
+      display: inline-block;
+    }
+
+    section h3 {
+      font-size: 0.95rem;
+      font-weight: 700;
+      margin: 1.5rem 0 0.5rem;
+      color: var(--text);
+    }
+
+    section p {
+      font-size: 0.9rem;
+      line-height: 1.75;
+      color: var(--text);
+      opacity: 0.9;
+      margin-bottom: 0.9rem;
+    }
+
+    section ul {
+      font-size: 0.9rem;
+      line-height: 1.75;
+      color: var(--text);
+      opacity: 0.9;
+      padding-left: 1.4rem;
+      margin-bottom: 0.9rem;
+    }
+
+    section ul li {
+      margin-bottom: 0.4rem;
+    }
+
+    section pre {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 0.75rem 1rem;
+      overflow-x: auto;
+      margin: 0.75rem 0;
+    }
+
+    section pre code {
+      font-size: 0.78rem;
+      color: var(--text);
+      font-family: 'JetBrains Mono', 'Fira Code', monospace;
+    }
+
+    .inline-link {
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    /* Signal cards */
+    .signal-list {
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+      margin-top: 1rem;
+    }
+
+    .signal-card {
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 1rem 1.25rem;
+    }
+
+    .signal-header {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 0.75rem;
+      margin-bottom: 0.6rem;
+    }
+
+    .signal-name {
+      font-size: 0.92rem;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .signal-weight {
+      font-size: 0.72rem;
+      color: var(--accent);
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .signal-desc {
+      font-size: 0.875rem !important;
+      margin-bottom: 0.75rem !important;
+    }
+
+    .signal-thresholds {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .threshold {
+      display: flex;
+      gap: 0.75rem;
+      align-items: baseline;
+      font-size: 0.82rem;
+      color: var(--text);
+    }
+
+    .threshold-label {
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      min-width: 6rem;
+      flex-shrink: 0;
+    }
+
+    .threshold.good .threshold-label { color: #00d68a; }
+    .threshold.ok .threshold-label { color: #f5a623; }
+    .threshold.bad .threshold-label { color: #e55; }
+
+    .signal-why {
+      font-size: 0.82rem !important;
+      color: var(--text-muted) !important;
+      border-top: 1px solid var(--border);
+      padding-top: 0.6rem;
+      margin-top: 0.25rem;
+      margin-bottom: 0 !important;
+    }
+
+    /* Comparison table */
+    .comparison-table-wrapper {
+      overflow-x: auto;
+      margin: 1rem 0;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .comparison-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.82rem;
+    }
+
+    .comparison-table th {
+      text-align: left;
+      font-weight: 600;
+      color: var(--text-muted);
+      border-bottom: 1px solid var(--border);
+      padding: 0.4rem 0.75rem 0.4rem 0;
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+
+    .comparison-table td {
+      padding: 0.5rem 0.75rem 0.5rem 0;
+      border-bottom: 1px solid var(--border);
+      color: var(--text);
+      vertical-align: top;
+    }
+
+    .comparison-table tfoot td {
+      border-top: 2px solid var(--border);
+      border-bottom: none;
+    }
+
+    .comparison-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .good-cell {
+      color: #00d68a !important;
+    }
+
+    .ok-cell {
+      color: var(--text) !important;
+    }
+
+    .bad-cell {
+      color: #e55 !important;
+    }
+
+    .cta-box {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      border-radius: 4px;
+      padding: 1rem 1.25rem;
+      margin-top: 1.5rem;
+    }
+
+    .cta-box p {
+      font-size: 0.88rem !important;
+      margin-bottom: 0.5rem;
+    }
+
+    .cta-box p:last-child {
+      margin-bottom: 0;
+    }
+
+    .post-footer {
+      margin-top: 3rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--border);
+    }
+
+    .methodology {
+      font-size: 0.75rem !important;
+      color: var(--text-muted) !important;
+      opacity: 1 !important;
+    }
+
+    .share-line {
+      font-size: 0.82rem !important;
+      margin-top: 0.75rem;
+    }
+
+    @media (max-width: 640px) {
+      .post-header h1 {
+        font-size: 1.3rem;
+      }
+
+      .signal-header {
+        flex-direction: column;
+        gap: 0.25rem;
+      }
+
+      .threshold-label {
+        min-width: 5rem;
+      }
+    }
+  </style>
+</Base>

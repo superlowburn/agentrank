@@ -1,9 +1,9 @@
 # Sponsored Listing Targets — AgentRank
 
 **Research date:** 2026-03-19
-**Task:** AUT-327
+**Task:** AUT-327 (original 20) + AUT-411 (Microsoft, Firecrawl additions)
 **Builds on:** AUT-315 (sponsored-listing-prospects.md), AUT-303 (sponsored-leads.md), AUT-290 (original 20)
-**Purpose:** Sales-ready target list of 20 commercial MCP tool companies for paid placement outreach once the sponsored listings feature is live.
+**Purpose:** Sales-ready target list of commercial MCP tool companies for paid placement outreach once the sponsored listings feature is live.
 
 ---
 
@@ -41,6 +41,8 @@
 | 18 | Prefect (fastmcp) | PrefectHQ/fastmcp | 95.61 | #6 | 23,775 | Freemium | 3 |
 | 19 | Redis Ltd | redis/mcp-redis | 88.84 | #53 | 454 | Freemium | 3 |
 | 20 | Neon | neondatabase/mcp-server-neon | 78.58 | #195 | 564 | Freemium | 3 |
+| 21 | Microsoft (Playwright team) | microsoft/playwright-mcp | 94.23 | #2 | 29,150 | Free | 2 |
+| 22 | Firecrawl | firecrawl/firecrawl-mcp-server | 73.94 | #303 | 5,798 | Freemium | 2 |
 
 ---
 
@@ -153,9 +155,9 @@
 - **Website:** grafana.com
 - **MCP tool:** [grafana/mcp-grafana](https://agentrank-ai.com/tools/grafana/mcp-grafana) — Grafana observability MCP
 - **AR score/rank:** 67.36 | #398
-- **Funding:** $658M raised, ~$400M ARR, $6.6B valuation. Pre-IPO.
-- **Key contact:** grafana.com/about/contact — DevRel/ecosystem partnerships
-- **Pitch hook:** Pre-IPO = maximum developer mindshare investment. At #398, clear room to improve visibility. $499/mo is a coordinator-level decision at this company size.
+- **Funding:** $791M raised, $6B+ valuation, $270M ARR. **Just closed $250M round Feb 25, 2026** (Lightspeed, Lead Edge, GIC, Sequoia). Pre-IPO.
+- **Key contact:** grafana.com/contact/ | k6 Champions Program (community advocacy)
+- **Pitch hook:** Fresh $250M raise (3 weeks ago). At #398, there's clear room to improve visibility over competitors. Timing is perfect: new capital means fresh marketing budget, and the DevRel team will be looking for fast wins. "You just closed $250M. Your MCP server ranks #398 — sponsored listing moves you to featured placement for developers choosing their observability stack."
 - **Suggested price:** $499/mo
 
 ---
@@ -189,9 +191,9 @@
 - **Website:** sentry.io
 - **MCP tool:** [getsentry/sentry-mcp](https://agentrank-ai.com/tools/getsentry/sentry-mcp) — error monitoring MCP
 - **AR score/rank:** 83.61 | #116
-- **Funding:** ~$217M raised (Series E), ~$100M ARR
-- **Key contact:** David Cramer (CTO/co-founder) — @zeeg on X
-- **Pitch hook:** Developer-led company, strong OSS DNA. Unique category (no competitors in index). David Cramer (@zeeg) is active on X and responds to developer ecosystem discussions.
+- **Funding:** $217M raised (Series E, May 2022), $3B+ valuation, ~418 employees
+- **Key contact:** David Cramer (CPO/co-founder) — @zeeg on X | sentry.io/sponsorship/
+- **Pitch hook:** Sentry launched MCP Server Monitoring in Aug 2025 — their own MCP server hit 30M requests/month with 17.8K weekly npm downloads. They're betting the MCP ecosystem is a growth vector. A ranked listing on the #1 MCP index validates that bet. They have a formal sponsorship program (sentry.io/sponsorship/) and a dedicated DevRel team — budget exists and the process is known.
 - **Suggested price:** $299/mo
 
 ---
@@ -249,9 +251,9 @@
 - **Website:** notion.so
 - **MCP tool:** [makenotion/notion-mcp-server](https://agentrank-ai.com/tools/makenotion/notion-mcp-server) — official Notion MCP
 - **AR score/rank:** 77.72 | #209
-- **Funding:** ~$343M raised (Series C), $10B valuation
-- **Key contact:** partnerships@notion.so
-- **Pitch hook:** 4,059 stars (4th most-starred in index) but rank #209. Star/rank gap: "You have more stars than 99% of our index but you're ranked #209." $199/mo is trivial at $10B valuation.
+- **Funding:** $418M raised (Series D), $11B valuation. Proven OSS sponsor: $10K+ to Babel.
+- **Key contact:** partnerships@notion.so | partner program: notion.com/partners
+- **Pitch hook:** Notion launched 3.0: Agents (Sept 2025) — MCP is their core AI play. 4,059 stars (4th most-starred in index) but ranked #209. Star/rank gap: "You're betting big on agents and MCP — be the top workspace tool developers find." $199/mo is noise at $11B valuation. They have confirmed OSS sponsorship history.
 - **Suggested price:** $199/mo
 
 ---
@@ -315,6 +317,8 @@
 | 10 | **MotherDuck** | @ryguyrg on X | $399/mo | DevRel DNA (Ryan Boyd co-founder) |
 | 11 | **Bright Data** | brightdata.com/contact | $399/mo | Category owner, commercial mindset |
 | 12 | **Sentry** | @zeeg on X | $299/mo | Active founder, DevRel culture |
+| 13 | **Microsoft (Playwright)** | devrel@microsoft.com / @playwrightweb on X | $499/mo | #2 ranked tool, enormous DevRel budget |
+| 14 | **Firecrawl** | @mendableai on X / hello@firecrawl.dev | $299/mo | YC-backed, developer-first, MCP is a GTM channel |
 
 ### Tier 3 — Follow-up wave (longer cycle)
 
@@ -346,4 +350,33 @@ For: Bright Data, Apollo GraphQL, Sentry, Stacklok
 
 ---
 
-*Researched by Market Researcher (AUT-327). Sources: AUT-315 (sponsored-listing-prospects.md), AUT-303 (sponsored-leads.md), AUT-290 (prior 20 profiles), AgentRank DB, company websites, GitHub, Crunchbase, public funding announcements.*
+---
+
+### 21. Microsoft (Playwright Team) — TIER 2 / MEDIUM-HIGH LIKELIHOOD
+
+- **Website:** playwright.dev / microsoft.com
+- **MCP tool:** [microsoft/playwright-mcp](https://agentrank-ai.com/tools/microsoft/playwright-mcp) — browser automation MCP (also: azure-devops-mcp #2, mcp-for-beginners #4, 34 tools total in index)
+- **AR score/rank:** 94.23 | #2 (playwright-mcp is 2nd highest-ranked tool globally)
+- **Funding:** Public (NASDAQ: MSFT), ~$3.4T market cap
+- **Size:** 220,000+ employees; Playwright team is ~20 engineers based in Prague/Seattle
+- **Key contacts:** DevRel: @playwrightweb on X | Azure DevRel: @azuredevrel | developer@microsoft.com
+- **Pitch hook:** Playwright-mcp is #2 in the entire index (29,150 stars). Microsoft has 34 tools in the index — the single largest commercial presence. Sponsorship at the enterprise tier ($499/mo) is noise-level spend with outsized developer mindshare return. Best path: target Playwright team directly (fast OSS decisions) or Azure DevRel (larger budget, slower process).
+- **Caution:** Enterprise procurement for broad Microsoft outreach; Playwright OSS team moves faster. Frame as "ecosystem partner" not "advertising."
+- **Suggested price:** $499/mo (Playwright team) or $999/mo enterprise (Azure DevRel)
+
+---
+
+### 22. Firecrawl — TIER 2 / MEDIUM-HIGH LIKELIHOOD
+
+- **Website:** firecrawl.dev
+- **MCP tool:** [firecrawl/firecrawl-mcp-server](https://agentrank-ai.com/tools/firecrawl/firecrawl-mcp-server) — web crawling/scraping for AI agents
+- **AR score/rank:** 73.94 | #303
+- **Funding:** YC S22 + Series A $14.5M (August 2025, Nexus); $16.2M total
+- **Size:** ~25–41 employees, San Francisco
+- **Key contacts:** Eric Ciarla (CEO/co-founder) — @ericciarla on X | eric@firecrawl.dev
+- **Pitch hook:** 5,798 stars (7th most-starred in the entire index) but only ranked #303. That star/rank gap is the pitch — same message as 21st.dev: "You have more stars than 98% of tools we index, but you're ranked #303 because freshness and issue health count." Directly competes with Bright Data (#113) and Jina AI in the index. Series A was August 2025 — they're in aggressive growth phase right now, actively hiring marketing roles.
+- **Suggested price:** $299/mo
+
+---
+
+*Researched by Market Researcher (AUT-327 original 20; AUT-411 added Microsoft + Firecrawl). Sources: AUT-315 (sponsored-listing-prospects.md), AUT-303 (sponsored-leads.md), AUT-290 (prior 20 profiles), AgentRank DB (25,750 tools), company websites, GitHub, Crunchbase, public funding announcements.*
