@@ -217,7 +217,27 @@ Everything is free and open source. Happy to answer questions.
 
 ---
 
-## 8. Upvote Strategy
+## 8. @AgentRank_ai Launch Day Tweet
+
+Post from the @AgentRank_ai brand account at 12:20 AM PT on launch day (after Steve posts maker comment, after Tweet A from @comforteagle).
+
+```
+We launched on @ProductHunt today.
+
+AgentRank: a live, daily-ranked index of 25,000+ MCP servers and AI agent tools — scored from real GitHub signals, updated every night.
+
+Your AI recommends tools from frozen training data. We show what's actually alive right now.
+
+[Product Hunt link] #MCP #AI #buildinpublic
+```
+
+**Note:** This is a brand account announcement, not a personal one. Keep it factual and link-forward. Do not reply to @comforteagle contacts from this account.
+
+**Requires Steve's approval before posting.**
+
+---
+
+## 9. Upvote Strategy
 
 ### The 4-Hour Rule
 Get to 100 upvotes before 4 AM PT on launch day. This is the single most important execution target. Everything in this section is designed to hit that window.
@@ -257,7 +277,7 @@ Get to 100 upvotes before 4 AM PT on launch day. This is the single most importa
 
 ---
 
-## 9. Launch Day Timeline
+## 10. Launch Day Timeline
 
 | Time (PT) | Action |
 |-----------|--------|
@@ -277,7 +297,7 @@ Get to 100 upvotes before 4 AM PT on launch day. This is the single most importa
 
 ---
 
-## 10. Pre-Launch Checklist
+## 11. Pre-Launch Checklist
 
 ### 4-6 Weeks Before
 - [ ] Create Product Hunt Ship "Upcoming Product" page
@@ -312,7 +332,7 @@ Get to 100 upvotes before 4 AM PT on launch day. This is the single most importa
 
 ---
 
-## 11. Key Notes for Steve
+## 12. Key Notes for Steve
 
 1. **Self-hunt.** 79% of featured posts in 2025 were self-hunted. You don't need a well-known Hunter unless you personally know someone with 5k+ PH followers active in AI/dev tools.
 

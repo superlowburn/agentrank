@@ -114,4 +114,5 @@ For teams building multi-model setups — running Claude for reasoning, a smalle
 
 - [Browse the full live leaderboard](https://agentrank-ai.com/tools/) — 25,000+ tools, updated nightly
 - [Read the scoring methodology](https://agentrank-ai.com/methodology/)
+- [API docs](https://agentrank-ai.com/docs/api/) — query rankings programmatically (free)
 - [The State of MCP in 2026](https://agentrank-ai.com/blog/state-of-mcp-2026/) — full ecosystem data

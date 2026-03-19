@@ -104,4 +104,5 @@ Framework that connects any LLM to any MCP server. **377 dependent repos** — e
 
 - [Browse the full live leaderboard](https://agentrank-ai.com/tools/) — 25,000+ tools, updated nightly
 - [Scoring methodology](https://agentrank-ai.com/methodology/)
+- [API docs](https://agentrank-ai.com/docs/api/) — query rankings programmatically (free)
 - [The State of MCP Ecosystem in 2026](https://agentrank-ai.com/blog/state-of-mcp-2026/)

@@ -116,4 +116,5 @@ Data from the [AgentRank index](https://agentrank-ai.com) — 25,000+ MCP server
 
 - [Browse the full leaderboard](https://agentrank-ai.com/tools/)
 - [Top 10 deep dives](https://agentrank-ai.com/blog/top-mcp-servers-2026/)
+- [API docs](https://agentrank-ai.com/docs/api/) — query the index programmatically (free)
 - [Scoring methodology](https://agentrank-ai.com/methodology/)
