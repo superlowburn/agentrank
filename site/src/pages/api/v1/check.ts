@@ -34,9 +34,26 @@ async function checkHourlyLimit(db: any, ip: string): Promise<{ allowed: boolean
   }
 }
 
+function logCheckEvent(db: any, runtime: any, params: { repo: string | null; found: boolean; status_code: number; ip_country: string | null; referrer: string | null }) {
+  const stmt = db.prepare(
+    `INSERT INTO analytics_events (event_type, repo, found, status_code, ip_country, referrer)
+     VALUES ('check', ?1, ?2, ?3, ?4, ?5)`
+  ).bind(params.repo, params.found ? 1 : 0, params.status_code, params.ip_country, params.referrer);
+
+  if (runtime?.ctx?.waitUntil) {
+    runtime.ctx.waitUntil(stmt.run());
+  } else {
+    stmt.run().catch(() => {});
+  }
+}
+
 export const GET: APIRoute = async ({ url, locals, request }) => {
-  const { env } = (locals as any).runtime;
+  const runtime = (locals as any).runtime;
+  const { env } = runtime;
   const ip = request.headers.get('cf-connecting-ip') ?? request.headers.get('x-forwarded-for') ?? '0.0.0.0';
+  const ipCountry = request.headers.get('cf-ipcountry') ?? null;
+  const rawReferrer = request.headers.get('referer') ?? null;
+  const referrer = rawReferrer ? (() => { try { const u = new URL(rawReferrer); return (u.origin + u.pathname).slice(0, 500); } catch { return rawReferrer.slice(0, 500); } })() : null;
 
   const rl = await checkHourlyLimit(env.DB, ip);
   const rlHeaders: Record<string, string> = {
@@ -68,6 +85,7 @@ export const GET: APIRoute = async ({ url, locals, request }) => {
     const row = await env.DB.prepare('SELECT * FROM tools WHERE full_name = ?').bind(repo).first();
 
     if (!row) {
+      logCheckEvent(env.DB, runtime, { repo, found: false, status_code: 404, ip_country: ipCountry, referrer });
       return json({ found: false, repo }, 404, rlHeaders);
     }
 
@@ -89,6 +107,8 @@ export const GET: APIRoute = async ({ url, locals, request }) => {
       : { stars: 0.16, freshness: 0.30, issueHealth: 0.32, contributors: 0.12, dependents: 0.00, descriptionQuality: 0.07, licenseHealth: 0.03 };
 
     const score = Math.round((row.score as number) * 10) / 10;
+
+    logCheckEvent(env.DB, runtime, { repo, found: true, status_code: 200, ip_country: ipCountry, referrer });
 
     return json(
       {

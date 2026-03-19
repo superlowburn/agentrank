@@ -367,6 +367,25 @@ CREATE INDEX IF NOT EXISTS idx_sponsor_events_tool ON sponsor_events(tool_full_n
 -- CREATE TABLE IF NOT EXISTS sponsor_events (id INTEGER PRIMARY KEY AUTOINCREMENT, tool_full_name TEXT NOT NULL, event_type TEXT NOT NULL, page_type TEXT, created_at INTEGER NOT NULL DEFAULT (unixepoch()));
 -- CREATE INDEX IF NOT EXISTS idx_sponsor_events_tool ON sponsor_events(tool_full_name, created_at);
 
+-- Analytics events — detailed /check endpoint usage tracking
+-- survives pipeline DROP/CREATE cycles
+CREATE TABLE IF NOT EXISTS analytics_events (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  ts TEXT NOT NULL DEFAULT (datetime('now')),
+  event_type TEXT NOT NULL DEFAULT 'check',  -- 'check'
+  repo TEXT,                                  -- GitHub owner/repo checked
+  found INTEGER NOT NULL DEFAULT 0,           -- 1 = found in index, 0 = not found
+  status_code INTEGER NOT NULL DEFAULT 200,
+  ip_country TEXT,
+  referrer TEXT                               -- HTTP Referer (origin+path only)
+);
+CREATE INDEX IF NOT EXISTS idx_ae_ts ON analytics_events(ts);
+CREATE INDEX IF NOT EXISTS idx_ae_repo ON analytics_events(repo) WHERE repo IS NOT NULL;
+-- Migration (run once on existing D1):
+-- CREATE TABLE IF NOT EXISTS analytics_events (id INTEGER PRIMARY KEY AUTOINCREMENT, ts TEXT NOT NULL DEFAULT (datetime('now')), event_type TEXT NOT NULL DEFAULT 'check', repo TEXT, found INTEGER NOT NULL DEFAULT 0, status_code INTEGER NOT NULL DEFAULT 200, ip_country TEXT, referrer TEXT);
+-- CREATE INDEX IF NOT EXISTS idx_ae_ts ON analytics_events(ts);
+-- CREATE INDEX IF NOT EXISTS idx_ae_repo ON analytics_events(repo) WHERE repo IS NOT NULL;
+
 -- Submissions table — survives pipeline DROP/CREATE cycles
 CREATE TABLE IF NOT EXISTS submissions (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
