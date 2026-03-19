@@ -1,0 +1,598 @@
+---
+export const prerender = false;
+import Base from '../../../layouts/Base.astro';
+import { parseSessionCookie, verifySession, clearSessionCookie } from '../../../lib/session';
+
+const { env } = (Astro.locals as any).runtime;
+const secret = env.DASH_TOKEN || 'fallback-secret';
+
+const cookieValue = parseSessionCookie(Astro.request);
+const session = cookieValue ? await verifySession(secret, cookieValue) : null;
+---
+
+<Base
+  title="Developer Dashboard — AgentRank"
+  description="Manage your AgentRank API keys, view usage stats, and control access."
+  activeTab="api"
+  canonicalUrl="https://agentrank-ai.com/developer/dashboard/"
+>
+
+  <style>
+    .hero {
+      margin-bottom: 2rem;
+    }
+    .hero h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 0.35rem;
+    }
+    .hero p {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
+
+    /* Auth gate */
+    .auth-gate {
+      max-width: 440px;
+      margin-top: 3rem;
+    }
+    .auth-gate h2 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+    }
+    .auth-gate p {
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      margin-bottom: 1.5rem;
+      line-height: 1.6;
+    }
+    .btn-github {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: #f0f6fc;
+      color: #0d1117;
+      border: 1px solid #30363d;
+      border-radius: 6px;
+      padding: 0.6rem 1.2rem;
+      font-family: inherit;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background 0.15s;
+    }
+    .btn-github:hover { background: #e6f0f9; text-decoration: none; }
+    .btn-github svg { width: 18px; height: 18px; }
+
+    /* Dashboard layout */
+    .dashboard { display: none; }
+    .dashboard.loaded { display: block; }
+
+    .user-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 2rem;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+    .user-bar strong { color: var(--text); }
+    .btn-signout {
+      background: none;
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      border-radius: 4px;
+      padding: 0.3rem 0.65rem;
+      font-family: inherit;
+      font-size: 0.78rem;
+      cursor: pointer;
+      transition: color 0.15s;
+    }
+    .btn-signout:hover { color: var(--text); }
+
+    .section-title {
+      font-size: 0.85rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      margin-bottom: 1rem;
+    }
+
+    /* Keys list */
+    .keys-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      margin-bottom: 2rem;
+    }
+
+    .key-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 1rem 1.1rem;
+    }
+
+    .key-card-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 0.6rem;
+      gap: 0.75rem;
+    }
+
+    .key-name {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      flex: 1;
+      min-width: 0;
+    }
+
+    .key-name-text {
+      font-weight: 600;
+      font-size: 0.88rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .rename-input {
+      display: none;
+      background: var(--bg);
+      border: 1px solid var(--accent);
+      color: var(--text);
+      border-radius: 4px;
+      padding: 0.2rem 0.5rem;
+      font-family: inherit;
+      font-size: 0.85rem;
+      flex: 1;
+      min-width: 0;
+    }
+    .rename-input.visible { display: block; }
+
+    .key-actions {
+      display: flex;
+      gap: 0.4rem;
+      flex-shrink: 0;
+    }
+
+    .btn-action {
+      background: none;
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      border-radius: 4px;
+      padding: 0.25rem 0.55rem;
+      font-family: inherit;
+      font-size: 0.75rem;
+      cursor: pointer;
+      transition: color 0.15s, border-color 0.15s;
+      white-space: nowrap;
+    }
+    .btn-action:hover { color: var(--text); border-color: var(--text-muted); }
+    .btn-action.danger:hover { color: #ef4444; border-color: #ef4444; }
+    .btn-action.confirm { color: var(--accent); border-color: var(--accent); }
+
+    .key-meta {
+      display: flex;
+      gap: 1.25rem;
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      flex-wrap: wrap;
+    }
+    .key-meta strong { color: var(--text); }
+
+    .tier-badge {
+      display: inline-block;
+      font-size: 0.68rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      border: 1px solid var(--accent);
+      color: var(--accent);
+      border-radius: 3px;
+      padding: 0.05rem 0.35rem;
+    }
+    .tier-badge.pro { border-color: #f59e0b; color: #f59e0b; }
+
+    .usage-bar-wrap {
+      margin-top: 0.6rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+    .usage-bar-track {
+      flex: 1;
+      height: 6px;
+      background: var(--bg);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+    .usage-bar-fill {
+      height: 100%;
+      background: var(--accent);
+      border-radius: 3px;
+      min-width: 0;
+      transition: width 0.3s;
+    }
+    .usage-bar-fill.warn { background: #f59e0b; }
+    .usage-bar-fill.full { background: #ef4444; }
+
+    /* Create key section */
+    .create-section {
+      margin-bottom: 2.5rem;
+    }
+
+    .create-row {
+      display: flex;
+      gap: 0.5rem;
+      align-items: flex-end;
+      max-width: 440px;
+    }
+
+    .create-row input {
+      flex: 1;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 0.5rem 0.75rem;
+      border-radius: 4px;
+      font-family: inherit;
+      font-size: 0.85rem;
+    }
+    .create-row input:focus { outline: 1px solid var(--accent); border-color: var(--accent); }
+
+    .btn-primary {
+      background: var(--accent);
+      color: #000;
+      border: none;
+      border-radius: 4px;
+      padding: 0.55rem 1rem;
+      font-family: inherit;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: opacity 0.15s;
+    }
+    .btn-primary:hover { opacity: 0.85; }
+    .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    .create-msg {
+      margin-top: 0.6rem;
+      font-size: 0.82rem;
+      min-height: 1em;
+    }
+    .create-msg.error { color: #ef4444; }
+    .create-msg.success { color: var(--accent); }
+
+    .new-key-reveal {
+      display: none;
+      margin-top: 1rem;
+      padding: 0.9rem 1rem;
+      background: var(--bg-surface);
+      border: 1px solid var(--accent);
+      border-radius: 6px;
+    }
+    .new-key-reveal.visible { display: block; }
+    .new-key-reveal h4 {
+      font-size: 0.85rem;
+      color: var(--accent);
+      margin-bottom: 0.35rem;
+    }
+    .new-key-reveal p {
+      font-size: 0.78rem;
+      color: #f59e0b;
+      margin-bottom: 0.6rem;
+    }
+    .key-copy-row {
+      display: flex;
+      gap: 0.5rem;
+      align-items: center;
+    }
+    .key-copy-row code {
+      flex: 1;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 0.35rem 0.55rem;
+      font-size: 0.8rem;
+      word-break: break-all;
+    }
+    .btn-copy {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      border-radius: 4px;
+      padding: 0.3rem 0.6rem;
+      font-family: inherit;
+      font-size: 0.75rem;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: color 0.15s;
+    }
+    .btn-copy:hover { color: var(--text); }
+
+    /* Loading state */
+    .loading {
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      padding: 1rem 0;
+    }
+
+    .empty-state {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      border: 1px dashed var(--border);
+      border-radius: 6px;
+      padding: 1.5rem;
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .links-row {
+      margin-top: 2rem;
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      display: flex;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+    }
+
+    .error-state {
+      color: #ef4444;
+      font-size: 0.85rem;
+      padding: 1rem 0;
+    }
+  </style>
+
+  <div class="hero">
+    <h1>Developer Dashboard</h1>
+    <p>Manage your API keys and usage.</p>
+  </div>
+
+  {!session ? (
+    <div class="auth-gate">
+      <h2>Sign in to manage your API keys</h2>
+      <p>Connect your GitHub account to create API keys, view usage stats, and manage access.</p>
+      <a href="/api/auth/github/developer" class="btn-github">
+        <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+          <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/>
+        </svg>
+        Sign in with GitHub
+      </a>
+    </div>
+  ) : (
+    <div class="dashboard loaded" id="dashboard">
+      <div class="user-bar">
+        <span>Signed in as <strong>@{session.username}</strong></span>
+        <button class="btn-signout" id="btn-signout" type="button">Sign out</button>
+      </div>
+
+      <div class="section-title">Your API Keys</div>
+      <div class="keys-list" id="keys-list">
+        <div class="loading">Loading...</div>
+      </div>
+
+      <div class="create-section">
+        <div class="section-title">Create New Key</div>
+        <div class="create-row">
+          <input type="text" id="new-key-name" placeholder="Key name (e.g. My project)" maxlength="100" />
+          <button class="btn-primary" id="btn-create" type="button">Create key</button>
+        </div>
+        <div class="create-msg" id="create-msg" aria-live="polite"></div>
+        <div class="new-key-reveal" id="new-key-reveal">
+          <h4>New API key created</h4>
+          <p>Copy this key now — it will not be shown again.</p>
+          <div class="key-copy-row">
+            <code id="new-key-value"></code>
+            <button class="btn-copy" id="btn-new-copy" type="button">Copy</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="links-row">
+        <a href="/developer/">Get started guide</a>
+        <a href="/developer/usage/">Check usage by key</a>
+        <a href="/docs/">API reference</a>
+        <a href="/pricing/">Upgrade to Pro</a>
+      </div>
+    </div>
+  )}
+
+  {session && (
+    <script>
+      const DAILY_LIMITS: Record<string, number | null> = { free: 100, pro: 10000, enterprise: null };
+
+      function escHtml(s: string | null | undefined): string {
+        return (s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+      }
+
+      function fmtDate(iso: string | null): string {
+        if (!iso) return 'never';
+        return iso.slice(0, 10);
+      }
+
+      function renderKeys(keys: any[]) {
+        const list = document.getElementById('keys-list')!;
+        if (!keys.length) {
+          list.innerHTML = '<div class="empty-state">No active keys. Create your first key below.</div>';
+          return;
+        }
+
+        list.innerHTML = keys.map(k => {
+          const limit = DAILY_LIMITS[k.tier] ?? 100;
+          const pct = limit ? Math.min(100, Math.round((k.requestsToday / limit) * 100)) : 0;
+          const barClass = pct >= 100 ? 'full' : pct >= 80 ? 'warn' : '';
+          const limitLabel = limit === null ? 'unlimited' : limit.toLocaleString();
+          return `
+          <div class="key-card" data-key-id="${escHtml(k.id)}">
+            <div class="key-card-top">
+              <div class="key-name">
+                <span class="key-name-text" data-name="${escHtml(k.name)}">${escHtml(k.name)}</span>
+                <input class="rename-input" type="text" maxlength="100" placeholder="Key name" />
+              </div>
+              <div class="key-actions">
+                <button class="btn-action btn-rename" type="button">Rename</button>
+                <button class="btn-action danger btn-revoke" type="button">Revoke</button>
+              </div>
+            </div>
+            <div class="key-meta">
+              <span><span class="tier-badge ${k.tier === 'pro' ? 'pro' : ''}">${escHtml(k.tier)}</span></span>
+              <span>Prefix: <strong>${escHtml(k.prefix)}</strong></span>
+              <span>Created: <strong>${fmtDate(k.createdAt)}</strong></span>
+              <span>Last used: <strong>${fmtDate(k.lastUsedAt)}</strong></span>
+            </div>
+            ${limit !== null ? `
+            <div class="usage-bar-wrap">
+              <span>${k.requestsToday.toLocaleString()} / ${limitLabel} today</span>
+              <div class="usage-bar-track">
+                <div class="usage-bar-fill ${barClass}" style="width:${pct}%"></div>
+              </div>
+              <span>${pct}%</span>
+            </div>` : ''}
+          </div>`;
+        }).join('');
+
+        // Attach event listeners
+        list.querySelectorAll('.key-card').forEach(card => {
+          const keyId = (card as HTMLElement).dataset.keyId!;
+          const nameSpan = card.querySelector('.key-name-text') as HTMLElement;
+          const renameInput = card.querySelector('.rename-input') as HTMLInputElement;
+          const renameBtn = card.querySelector('.btn-rename') as HTMLButtonElement;
+          const revokeBtn = card.querySelector('.btn-revoke') as HTMLButtonElement;
+
+          // Rename flow
+          renameBtn.addEventListener('click', async () => {
+            if (renameInput.classList.contains('visible')) {
+              // Confirm rename
+              const newName = renameInput.value.trim();
+              if (!newName) { renameInput.classList.remove('visible'); nameSpan.style.display = ''; renameBtn.textContent = 'Rename'; return; }
+              renameBtn.disabled = true;
+              try {
+                const res = await fetch('/api/developer/rename', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ keyId, name: newName }),
+                });
+                if (res.ok) {
+                  nameSpan.textContent = newName;
+                  nameSpan.dataset.name = newName;
+                }
+              } catch { /* ignore */ }
+              renameInput.classList.remove('visible');
+              nameSpan.style.display = '';
+              renameBtn.textContent = 'Rename';
+              renameBtn.disabled = false;
+            } else {
+              // Start rename
+              renameInput.value = nameSpan.dataset.name ?? '';
+              renameInput.classList.add('visible');
+              nameSpan.style.display = 'none';
+              renameBtn.textContent = 'Save';
+              renameInput.focus();
+            }
+          });
+
+          // Revoke flow
+          revokeBtn.addEventListener('click', async () => {
+            if (!revokeBtn.classList.contains('confirm')) {
+              revokeBtn.classList.add('confirm');
+              revokeBtn.textContent = 'Confirm revoke';
+              setTimeout(() => { revokeBtn.classList.remove('confirm'); revokeBtn.textContent = 'Revoke'; }, 4000);
+              return;
+            }
+            revokeBtn.disabled = true;
+            try {
+              const res = await fetch('/api/developer/revoke', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ keyId }),
+              });
+              if (res.ok) {
+                (card as HTMLElement).style.opacity = '0.4';
+                setTimeout(() => card.remove(), 400);
+              }
+            } catch { /* ignore */ }
+            revokeBtn.disabled = false;
+          });
+        });
+      }
+
+      // Load keys
+      async function loadKeys() {
+        try {
+          const res = await fetch('/api/developer/keys');
+          if (!res.ok) throw new Error(`HTTP ${res.status}`);
+          const data = await res.json() as any;
+          renderKeys(data.keys ?? []);
+        } catch (e) {
+          document.getElementById('keys-list')!.innerHTML =
+            `<div class="error-state">Failed to load keys. ${(e as Error).message}</div>`;
+        }
+      }
+
+      loadKeys();
+
+      // Create key
+      const createBtn = document.getElementById('btn-create') as HTMLButtonElement;
+      const createMsg = document.getElementById('create-msg') as HTMLElement;
+      const newKeyReveal = document.getElementById('new-key-reveal') as HTMLElement;
+      const newKeyValue = document.getElementById('new-key-value') as HTMLElement;
+      const newKeyCopyBtn = document.getElementById('btn-new-copy') as HTMLButtonElement;
+      const newKeyNameInput = document.getElementById('new-key-name') as HTMLInputElement;
+
+      createBtn.addEventListener('click', async () => {
+        const name = newKeyNameInput.value.trim() || 'New key';
+        createBtn.disabled = true;
+        createMsg.textContent = '';
+        createMsg.className = 'create-msg';
+        newKeyReveal.classList.remove('visible');
+
+        try {
+          const res = await fetch('/api/developer/keys', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name }),
+          });
+          const data = await res.json() as any;
+
+          if (res.ok && data.key) {
+            newKeyValue.textContent = data.key;
+            newKeyReveal.classList.add('visible');
+            newKeyNameInput.value = '';
+            loadKeys(); // refresh key list
+          } else {
+            createMsg.textContent = data.error || 'Something went wrong.';
+            createMsg.className = 'create-msg error';
+          }
+        } catch {
+          createMsg.textContent = 'Network error. Please try again.';
+          createMsg.className = 'create-msg error';
+        } finally {
+          createBtn.disabled = false;
+        }
+      });
+
+      newKeyCopyBtn?.addEventListener('click', () => {
+        const key = newKeyValue?.textContent ?? '';
+        if (!key) return;
+        navigator.clipboard.writeText(key).then(() => {
+          newKeyCopyBtn.textContent = 'Copied!';
+          setTimeout(() => { newKeyCopyBtn.textContent = 'Copy'; }, 2000);
+        });
+      });
+
+      // Sign out
+      document.getElementById('btn-signout')?.addEventListener('click', async () => {
+        await fetch('/api/developer/signout', { method: 'POST' });
+        window.location.href = '/developer/';
+      });
+    </script>
+  )}
+
+</Base>

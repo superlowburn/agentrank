@@ -1,4 +1,6 @@
 import type { APIRoute } from 'astro';
+import { signSession, buildSessionCookie } from '../../../../lib/session';
+import { generateApiKey } from '../../../../lib/api-auth';
 
 export const prerender = false;
 
@@ -19,11 +21,14 @@ export const GET: APIRoute = async ({ request, locals }) => {
   const stateParam = url.searchParams.get('state');
   const errorParam = url.searchParams.get('error');
 
-  const redirect = (path: string) =>
-    new Response(null, { status: 302, headers: { Location: new URL(path, url.origin).toString() } });
+  const redirect = (path: string, extraHeaders?: Headers) => {
+    const headers = extraHeaders ?? new Headers();
+    headers.set('Location', new URL(path, url.origin).toString());
+    return new Response(null, { status: 302, headers });
+  };
 
-  // Decode state early so we can redirect to the right tool page on errors
-  let stateData: { tool: string; type: string; nonce: string } | null = null;
+  // Decode state early so we can redirect to the right page on errors
+  let stateData: { tool?: string; type?: string; intent?: string; nonce: string } | null = null;
   if (stateParam) {
     try {
       stateData = JSON.parse(atob(stateParam));
@@ -32,20 +37,22 @@ export const GET: APIRoute = async ({ request, locals }) => {
     }
   }
 
+  const isDeveloperFlow = stateData?.intent === 'developer';
   const toolPath = stateData?.tool ? `/claim/${stateData.tool}/` : '/';
+  const errorRedirect = isDeveloperFlow ? '/developer/?error=' : `${toolPath}?error=`;
 
   if (errorParam || !code || !stateParam) {
-    return redirect(`${toolPath}?error=cancelled`);
+    return redirect(`${errorRedirect}cancelled`);
   }
 
   if (!stateData) {
-    return redirect(`${toolPath}?error=invalid_state`);
+    return redirect(`${errorRedirect}invalid_state`);
   }
 
   // CSRF check — nonce in state must match nonce cookie
   const cookies = parseCookies(request.headers.get('cookie') || '');
   if (!stateData.nonce || cookies.oauth_nonce !== stateData.nonce) {
-    return redirect(`/claim/${stateData.tool}/?error=csrf`);
+    return redirect(`${errorRedirect}csrf`);
   }
 
   // Exchange code for access token
@@ -61,12 +68,12 @@ export const GET: APIRoute = async ({ request, locals }) => {
   });
 
   if (!tokenRes.ok) {
-    return redirect(`/claim/${stateData.tool}/?error=token`);
+    return redirect(`${errorRedirect}token`);
   }
 
   const tokenData = (await tokenRes.json()) as { access_token?: string; error?: string };
   if (!tokenData.access_token || tokenData.error) {
-    return redirect(`/claim/${stateData.tool}/?error=token`);
+    return redirect(`${errorRedirect}token`);
   }
 
   // Get authenticated user info
@@ -75,12 +82,45 @@ export const GET: APIRoute = async ({ request, locals }) => {
   });
 
   if (!userRes.ok) {
-    return redirect(`/claim/${stateData.tool}/?error=user`);
+    return redirect(`${errorRedirect}user`);
   }
 
   const user = (await userRes.json()) as { login: string; id: number };
 
-  // Verify contributor/owner status
+  // === Developer dashboard flow ===
+  if (isDeveloperFlow) {
+    const secret = env.DASH_TOKEN || 'fallback-secret';
+
+    // Ensure user has at least one active API key (create free key if not)
+    const existingKey = await env.DB.prepare(
+      `SELECT id FROM api_keys WHERE github_user_id = ? AND is_active = 1 LIMIT 1`
+    ).bind(user.id).first<{ id: string }>();
+
+    if (!existingKey) {
+      try {
+        const { id, keyHash, keyPrefix } = await generateApiKey('free');
+        await env.DB.prepare(
+          `INSERT INTO api_keys (id, key_hash, key_prefix, name, tier, github_user_id, github_username, is_active)
+           VALUES (?1, ?2, ?3, 'Default', 'free', ?4, ?5, 1)`
+        ).bind(id, keyHash, keyPrefix, user.id, user.login).run();
+      } catch {
+        // Ignore insert errors (e.g. race conditions) — key may already exist
+      }
+    }
+
+    // Set signed session cookie and redirect to dashboard
+    const sessionValue = await signSession(secret, { userId: user.id, username: user.login });
+    const headers = new Headers();
+    headers.append('Set-Cookie', `oauth_nonce=; HttpOnly; Secure; SameSite=Lax; Path=/api/auth/github/callback; Max-Age=0`);
+    headers.append('Set-Cookie', buildSessionCookie(sessionValue));
+    return redirect('/developer/dashboard/', headers);
+  }
+
+  // === Claim flow ===
+  if (!stateData.tool) {
+    return redirect('/?error=invalid_state');
+  }
+
   const fullName = stateData.tool.replace('--', '/');
   const [owner, repo] = fullName.split('/');
   let isContributor = false;
