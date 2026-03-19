@@ -1,0 +1,619 @@
+---
+export const prerender = true;
+
+import Base from '../../layouts/Base.astro';
+import BlogSubscribeCTA from '../../components/BlogSubscribeCTA.astro';
+import RelatedPosts from '../../components/RelatedPosts.astro';
+
+const relatedPosts = [
+  { href: '/blog/exa-mcp-vs-firecrawl-mcp/', title: 'Exa MCP vs Firecrawl MCP: Which Web Research Tool?' },
+  { href: '/blog/tavily-mcp-vs-brave-search-mcp/', title: 'Tavily MCP vs Brave Search MCP: Which Web Search Server?' },
+  { href: '/blog/best-mcp-servers-web-browser/', title: 'Best MCP Servers for Browser Automation in 2026' },
+  { href: '/blog/best-mcp-servers-data-science/', title: 'Best MCP Servers for Data Science in 2026' },
+];
+
+const publishDate = '2026-03-19';
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: 'Best MCP Servers for Web Scraping and Research in 2026',
+  description: 'The top-ranked MCP servers for web scraping, web search, and research — Tavily, Exa, Firecrawl, Brave, and Apify scored by real GitHub signals from the AgentRank index.',
+  datePublished: publishDate,
+  dateModified: publishDate,
+  author: {
+    '@type': 'Organization',
+    name: 'AgentRank',
+    url: 'https://agentrank-ai.com',
+  },
+  publisher: {
+    '@type': 'Organization',
+    name: 'AgentRank',
+    url: 'https://agentrank-ai.com',
+    logo: {
+      '@type': 'ImageObject',
+      url: 'https://agentrank-ai.com/og-image.png',
+    },
+  },
+  mainEntityOfPage: {
+    '@type': 'WebPage',
+    '@id': 'https://agentrank-ai.com/blog/best-mcp-servers-web-scraping-research/',
+  },
+  image: 'https://agentrank-ai.com/og-image.png',
+  keywords: 'best MCP servers web scraping, web research MCP server, Tavily MCP, Exa MCP server, Firecrawl MCP, Brave search MCP, web scraping AI agent 2026',
+};
+
+const tools = [
+  {
+    rank: 1,
+    name: 'tavily-ai/tavily-mcp',
+    slug: 'tavily-ai--tavily-mcp',
+    score: 81.36,
+    stars: 1410,
+    lang: 'JavaScript',
+    contributors: 14,
+    lastCommit: '2026-03-13',
+    desc: 'Official Tavily MCP server — search, extract, crawl, and map in one production-ready server',
+    useCase: 'Search + Extract + Crawl',
+    highlight: 'Highest score in the research category at 81.36. Covers search, extraction, site mapping, and crawling — a complete research pipeline in one server.',
+  },
+  {
+    rank: 2,
+    name: 'exa-labs/exa-mcp-server',
+    slug: 'exa-labs--exa-mcp-server',
+    score: 76.64,
+    stars: 4035,
+    lang: 'TypeScript',
+    contributors: 19,
+    lastCommit: '2026-03-17',
+    desc: 'Official Exa Labs MCP server — semantic web search and crawling for AI agents',
+    useCase: 'Semantic Search + Crawl',
+    highlight: '4,035 stars and the most recently committed search server (March 17). Best for finding semantically relevant pages, not just keyword matches.',
+  },
+  {
+    rank: 3,
+    name: 'firecrawl/firecrawl-mcp-server',
+    slug: 'firecrawl--firecrawl-mcp-server',
+    score: 73.94,
+    stars: 5798,
+    lang: 'JavaScript',
+    contributors: 21,
+    lastCommit: '2026-03-13',
+    desc: 'Official Firecrawl MCP server — web scraping, full-site crawling, and structured data extraction',
+    useCase: 'Web Scraping / Crawling',
+    highlight: 'Most-starred web research server at 5,798 stars. Best for structured data extraction from specific URLs or full-site crawls.',
+  },
+  {
+    rank: 4,
+    name: 'brave/brave-search-mcp-server',
+    slug: 'brave--brave-search-mcp-server',
+    score: 70.32,
+    stars: 774,
+    lang: 'TypeScript',
+    contributors: 17,
+    lastCommit: '2026-03-13',
+    desc: 'Official Brave Search MCP server — privacy-first web and local search via Brave\'s independent index',
+    useCase: 'Privacy-first Search',
+    highlight: 'Official Brave browser server. Independent search index with no Google tracking. Best for privacy-sensitive workflows.',
+  },
+  {
+    rank: 5,
+    name: 'apify/apify-mcp-server',
+    slug: 'apify--apify-mcp-server',
+    score: 64.4,
+    stars: 899,
+    lang: 'TypeScript',
+    contributors: 14,
+    lastCommit: '2026-03-13',
+    desc: 'Official Apify MCP server — access 19,000+ pre-built web scrapers and data extraction Actors',
+    useCase: 'Data Extraction / Actors',
+    highlight: 'One server for 19,000+ ready-to-run scrapers. Social media, e-commerce, job boards, maps — covered.',
+  },
+  {
+    rank: 6,
+    name: 'jae-jae/fetcher-mcp',
+    slug: 'jae-jae--fetcher-mcp',
+    score: 43.9,
+    stars: 1008,
+    lang: 'TypeScript',
+    contributors: 5,
+    lastCommit: '2026-01-14',
+    desc: 'Lightweight MCP server for fetching web page content via Playwright headless browser',
+    useCase: 'Page Fetch / Extraction',
+    highlight: 'Over 1,000 stars. Simple and reliable — fetch a URL, get clean content back. Handles JS-heavy pages.',
+  },
+];
+
+const stats = {
+  totalSearchTools: 820,
+  avgSearchScore: 28.4,
+  topScore: 81.36,
+};
+
+const faqJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: [
+    {
+      '@type': 'Question',
+      name: 'What is the best MCP server for web scraping?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Firecrawl MCP (firecrawl/firecrawl-mcp-server) scores 73.94 in the AgentRank index with 5,798 stars — best for structured data extraction and full-site crawling. Tavily MCP scores higher (81.36) overall because it also covers search and site mapping. For pure scraping of known URLs, use Firecrawl. For research workflows that start with search, use Tavily.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'What is the best MCP server for web search?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Tavily MCP (tavily-ai/tavily-mcp) is the top-scored web search MCP server at 81.36 in the AgentRank index. It supports real-time search, content extraction, and site crawling. Exa MCP (score 76.64) is the best alternative for semantic/AI-native search. Brave Search MCP (score 70.32) is best for privacy-first search using Brave\'s independent index.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Should I use Exa or Firecrawl for web research?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Use Exa MCP when you need semantically relevant search results — finding content by concept rather than keywords. Exa scores 76.64 with 4,035 stars. Use Firecrawl MCP when you need to extract structured data from specific URLs or crawl entire websites. Firecrawl scores 73.94 with 5,798 stars. They are complementary: Exa for discovery, Firecrawl for extraction.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Is there an MCP server for Brave Search?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Yes — brave/brave-search-mcp-server is the official Brave Search MCP server. It scores 70.32 in the AgentRank index with 774 GitHub stars and 17 contributors. It supports both web search and local search via Brave\'s independent index, without Google tracking. Last committed March 13, 2026.',
+      },
+    },
+  ],
+};
+---
+
+<Base
+  title="Best MCP Servers for Web Scraping and Research in 2026 — AgentRank"
+  description="Top-ranked MCP servers for web scraping and research: Tavily (81.36), Exa (76.64), Firecrawl (73.94), Brave (70.32), Apify (64.4). Real AgentRank scores updated March 2026."
+  activeTab="blog"
+  keywords="best MCP servers web scraping, web research MCP server 2026, Tavily MCP server, Exa MCP server, Firecrawl MCP, Brave search MCP, web scraping AI agent, MCP server for research"
+  canonicalUrl="https://agentrank-ai.com/blog/best-mcp-servers-web-scraping-research/"
+  jsonLd={[jsonLd, faqJsonLd]}
+  ogImage="/og/blog.png"
+>
+  <article class="blog-post">
+    <header class="post-header">
+      <div class="breadcrumb"><a href="/blog/">Blog</a> <span>/</span></div>
+      <h1>Best MCP Servers for Web Scraping and Research in 2026</h1>
+      <div class="post-meta">
+        <time datetime={publishDate}>March 19, 2026</time>
+        <span class="sep">&middot;</span>
+        <span>5 min read</span>
+        <span class="sep">&middot;</span>
+        <span>AgentRank Index</span>
+      </div>
+      <p class="lede">
+        Web research is one of the most common tasks AI agents get. The quality of the MCP server
+        determines whether the agent gets clean, useful data or garbage. We scored
+        <strong>{stats.totalSearchTools} search and scraping tools</strong> in the AgentRank index.
+        These six are the ones that actually work in production.
+      </p>
+    </header>
+
+    <nav class="toc">
+      <strong>Contents</strong>
+      <ol>
+        <li><a href="#rankings">Rankings by score</a></li>
+        <li><a href="#by-use-case">Choosing by use case</a></li>
+        <li><a href="#search-vs-scrape">Search vs. scraping vs. crawling</a></li>
+        <li><a href="#methodology">Methodology</a></li>
+      </ol>
+    </nav>
+
+    <section id="rankings">
+      <h2>Top web scraping and research MCP servers</h2>
+      <p>
+        Ranked by the composite AgentRank score — a weighted blend of stars (15%), freshness (25%),
+        issue health (25%), contributors (10%), and inbound dependents (25%).
+        Average score across all {stats.totalSearchTools} search and scraping tools is <strong>{stats.avgSearchScore}</strong>.
+        The tools below are in the top tier.
+      </p>
+
+      <table class="data-table top-table">
+        <thead>
+          <tr>
+            <th class="num">#</th>
+            <th>Repository</th>
+            <th class="num">Score</th>
+            <th class="num">Stars</th>
+            <th>Use Case</th>
+            <th>Lang</th>
+          </tr>
+        </thead>
+        <tbody>
+          {tools.map((tool) => (
+            <tr>
+              <td class="num rank-num">{tool.rank}</td>
+              <td class="tool-cell">
+                <a href={`/tool/${tool.slug}/`} class="tool-link">{tool.name}</a>
+                <span class="tool-desc">{tool.desc}</span>
+              </td>
+              <td class="num score-cell">{tool.score}</td>
+              <td class="num">{tool.stars.toLocaleString('en-US')}</td>
+              <td class="use-case">{tool.useCase}</td>
+              <td class="lang-badge">{tool.lang}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </section>
+
+    <section id="by-use-case">
+      <h2>Choosing by use case</h2>
+
+      <h3>Full research pipeline (search + extract + crawl)</h3>
+      <p>
+        <a href="/tool/tavily-ai--tavily-mcp/" class="inline-link">tavily-ai/tavily-mcp</a> leads
+        the category at <strong>81.36</strong> because it does everything: real-time web search,
+        content extraction from URLs, site crawling, and site mapping. 1,410 stars and 14 contributors.
+        If your agent needs to go from a question to a structured answer — search for sources, extract
+        the relevant content, organize it — Tavily covers the full pipeline without chaining multiple servers.
+      </p>
+
+      <h3>Semantic / AI-native search</h3>
+      <p>
+        <a href="/tool/exa-labs--exa-mcp-server/" class="inline-link">exa-labs/exa-mcp-server</a> scores
+        <strong>76.64</strong> with 4,035 stars and the most recent commit of any search server (March 17).
+        Exa's search engine is optimized for semantic similarity — finding pages that are conceptually
+        related to your query, not just keyword-matched. The AgentRank score advantage over Firecrawl
+        comes partly from better issue health: a 59% issue-close rate vs. Firecrawl's alarming backlog.
+        Use Exa when keyword search returns noise and you need conceptually relevant results.
+      </p>
+
+      <h3>Web scraping and structured data extraction</h3>
+      <p>
+        <a href="/tool/firecrawl--firecrawl-mcp-server/" class="inline-link">firecrawl/firecrawl-mcp-server</a> is
+        the most-starred web research server in the index at <strong>5,798 stars</strong> — but scores
+        <strong>73.94</strong>, slightly behind Exa, due to an open issue backlog. It's a crawl-first tool:
+        turn any URL into clean markdown, extract structured data from pages, or batch-crawl entire sites.
+        21 contributors, official Firecrawl team maintenance. If your agent needs to scrape specific URLs
+        or extract structured data from pages, Firecrawl is the right call.
+      </p>
+
+      <h3>Privacy-first search</h3>
+      <p>
+        <a href="/tool/brave--brave-search-mcp-server/" class="inline-link">brave/brave-search-mcp-server</a> scores
+        <strong>70.32</strong> with 774 stars and 17 contributors. Official Brave browser team server.
+        It uses Brave's independent search index — no Google data, no Google tracking. Supports both web
+        search and local search. If your workflow requires an independent search index or if data
+        privacy is a hard requirement, this is the only major search MCP with its own non-Google index.
+      </p>
+
+      <h3>Pre-built scrapers at scale (Apify)</h3>
+      <p>
+        <a href="/tool/apify--apify-mcp-server/" class="inline-link">apify/apify-mcp-server</a> takes
+        a different approach at <strong>64.4</strong>: one MCP server that exposes 19,000+ pre-built
+        Apify Actors — ready-to-run scrapers for social media, e-commerce, job boards, maps, and more.
+        899 stars, 14 contributors, official Apify team server. If you need data from a specific platform
+        (LinkedIn, Instagram, Amazon, Google Maps), there's almost certainly a pre-built Actor for it.
+        Far cheaper than building a custom scraper.
+      </p>
+
+      <h3>Simple page fetch</h3>
+      <p>
+        <a href="/tool/jae-jae--fetcher-mcp/" class="inline-link">jae-jae/fetcher-mcp</a> scores
+        <strong>43.9</strong> with 1,008 stars but a January 14 last commit date — the freshness penalty
+        explains the score gap. For simple use cases (fetch a URL, return clean text), it's the
+        lightest-weight option in this list. Playwright-powered so it handles JavaScript-rendered pages.
+        Only 5 contributors and no recent commits means you're accepting maintenance risk.
+      </p>
+    </section>
+
+    <section id="search-vs-scrape">
+      <h2>Search vs. scraping vs. crawling</h2>
+      <p>
+        These terms get conflated. They're different operations with different right tools:
+      </p>
+
+      <h3>Web search</h3>
+      <p>
+        Give the agent a query, get back a list of URLs and snippets. No page content — just metadata.
+        Best for: finding sources, discovering what exists on a topic.
+        Tools: <a href="/tool/tavily-ai--tavily-mcp/" class="inline-link">Tavily</a>,
+        <a href="/tool/exa-labs--exa-mcp-server/" class="inline-link">Exa</a>,
+        <a href="/tool/brave--brave-search-mcp-server/" class="inline-link">Brave</a>.
+      </p>
+
+      <h3>Web scraping</h3>
+      <p>
+        Fetch a specific URL and extract its content — as clean text, as markdown, or as structured data.
+        Best for: extracting information from known pages.
+        Tools: <a href="/tool/firecrawl--firecrawl-mcp-server/" class="inline-link">Firecrawl</a>,
+        <a href="/tool/jae-jae--fetcher-mcp/" class="inline-link">fetcher-mcp</a>.
+      </p>
+
+      <h3>Site crawling</h3>
+      <p>
+        Follow links from a starting URL to index an entire site. Best for: building knowledge bases
+        from documentation, analyzing a full domain, bulk data extraction.
+        Tools: <a href="/tool/firecrawl--firecrawl-mcp-server/" class="inline-link">Firecrawl</a>,
+        <a href="/tool/tavily-ai--tavily-mcp/" class="inline-link">Tavily</a> (partial crawl support).
+      </p>
+
+      <h3>Pre-built extraction</h3>
+      <p>
+        Run a specific extractor tuned for a platform (LinkedIn profiles, Amazon prices, Google Maps listings).
+        Best for: platform-specific structured data without custom scraper development.
+        Tool: <a href="/tool/apify--apify-mcp-server/" class="inline-link">Apify</a>.
+      </p>
+
+      <div class="cta-box">
+        <p>
+          <strong>Compare head-to-head:</strong> <a href="/blog/exa-mcp-vs-firecrawl-mcp/">Exa vs. Firecrawl</a>
+          and <a href="/blog/tavily-mcp-vs-brave-search-mcp/">Tavily vs. Brave Search</a> — detailed breakdowns.
+        </p>
+        <p>
+          <strong>Use these in your editor:</strong> <a href="/integrations/">Install AgentRank in Cursor, VS Code, or Claude Code</a> — query live web research tool rankings from inside your AI assistant.
+        </p>
+        <p>
+          <strong>Building a web scraping MCP server?</strong> <a href="/submit/">Submit it</a> to get indexed and scored.
+        </p>
+      </div>
+    </section>
+
+    <RelatedPosts posts={relatedPosts} />
+    <BlogSubscribeCTA source="blog" />
+    <footer class="post-footer">
+      <p class="methodology">
+        <strong>Methodology:</strong> Data from the AgentRank index crawled March 2026.
+        Scores computed using: stars 15%, freshness 25%, issue health 25%, contributors 10%, inbound dependents 25%. <a href="/methodology/">Full scoring methodology →</a>
+        Tools classified as "web search / scraping" via keyword matching on description, topics, and repo name.
+        Only non-archived repositories included.
+      </p>
+      <p class="share-line">
+        Found this useful? <a href="https://x.com/AgentRank_ai" target="_blank" rel="noopener noreferrer">Follow @AgentRank_ai</a> for
+        weekly ecosystem updates, biggest movers, and new tool spotlights.
+      </p>
+    </footer>
+  </article>
+
+  <style>
+    .blog-post {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 2rem 0 3rem;
+    }
+
+    .breadcrumb {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      margin-bottom: 0.75rem;
+    }
+
+    .breadcrumb span {
+      margin: 0 0.25rem;
+      opacity: 0.5;
+    }
+
+    .post-header {
+      margin-bottom: 2rem;
+      padding-bottom: 1.5rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .post-header h1 {
+      font-size: 1.6rem;
+      font-weight: 700;
+      line-height: 1.3;
+      margin-bottom: 0.75rem;
+    }
+
+    .post-meta {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      flex-wrap: wrap;
+      margin-bottom: 1rem;
+    }
+
+    .sep {
+      opacity: 0.4;
+    }
+
+    .lede {
+      font-size: 1rem;
+      line-height: 1.7;
+      color: var(--text);
+      opacity: 0.9;
+    }
+
+    .toc {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 1rem 1.25rem;
+      margin-bottom: 2.5rem;
+      font-size: 0.82rem;
+    }
+
+    .toc strong {
+      display: block;
+      margin-bottom: 0.6rem;
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+    }
+
+    .toc ol {
+      margin: 0;
+      padding-left: 1.2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+    }
+
+    .toc a {
+      color: var(--text-muted);
+    }
+
+    .toc a:hover {
+      color: var(--accent);
+    }
+
+    section {
+      margin-bottom: 3rem;
+    }
+
+    section h2 {
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin-bottom: 0.75rem;
+      padding-bottom: 0.4rem;
+      border-bottom: 2px solid var(--accent);
+      display: inline-block;
+    }
+
+    section h3 {
+      font-size: 0.95rem;
+      font-weight: 700;
+      margin: 1.5rem 0 0.5rem;
+      color: var(--text);
+    }
+
+    section p {
+      font-size: 0.9rem;
+      line-height: 1.75;
+      color: var(--text);
+      opacity: 0.9;
+      margin-bottom: 0.9rem;
+    }
+
+    .inline-link {
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.82rem;
+      margin: 1rem 0 1.25rem;
+    }
+
+    .data-table th {
+      text-align: left;
+      font-weight: 600;
+      color: var(--text-muted);
+      border-bottom: 1px solid var(--border);
+      padding: 0.4rem 0.75rem 0.4rem 0;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+
+    .data-table td {
+      padding: 0.45rem 0.75rem 0.45rem 0;
+      border-bottom: 1px solid var(--border);
+      color: var(--text);
+      vertical-align: top;
+    }
+
+    .data-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .num {
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .rank-num {
+      color: var(--text-muted);
+      font-weight: 700;
+    }
+
+    .top-table .tool-cell {
+      display: flex;
+      flex-direction: column;
+      gap: 0.2rem;
+    }
+
+    .tool-link {
+      font-weight: 600;
+      color: var(--accent);
+      font-size: 0.82rem;
+    }
+
+    .tool-desc {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      font-weight: 400;
+    }
+
+    .score-cell {
+      color: var(--accent);
+      font-weight: 700;
+    }
+
+    .use-case {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      white-space: nowrap;
+    }
+
+    .lang-badge {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      white-space: nowrap;
+    }
+
+    .cta-box {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      border-radius: 4px;
+      padding: 1rem 1.25rem;
+      margin-top: 1.5rem;
+    }
+
+    .cta-box p {
+      margin-bottom: 0.5rem;
+    }
+
+    .cta-box p:last-child {
+      margin-bottom: 0;
+    }
+
+    .post-footer {
+      margin-top: 3rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--border);
+    }
+
+    .methodology {
+      font-size: 0.75rem !important;
+      color: var(--text-muted) !important;
+      opacity: 1 !important;
+    }
+
+    .share-line {
+      font-size: 0.82rem !important;
+      margin-top: 0.75rem;
+    }
+
+    @media (max-width: 640px) {
+      .post-header h1 {
+        font-size: 1.3rem;
+      }
+
+      .data-table {
+        font-size: 0.75rem;
+      }
+
+      .use-case {
+        display: none;
+      }
+    }
+  </style>
+</Base>
