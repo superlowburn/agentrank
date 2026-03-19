@@ -1,0 +1,528 @@
+---
+export const prerender = false;
+import Base from '../../layouts/Base.astro';
+
+const { env } = (Astro.locals as any).runtime;
+const token = Astro.url.searchParams.get('token') || '';
+const range = Astro.url.searchParams.get('range') || '30d';
+
+const rangeLabel: Record<string, string> = { '7d': '7 days', '30d': '30 days', 'all': 'all time' };
+const windowClause: Record<string, string> = {
+  '7d': "datetime('now', '-7 days')",
+  '30d': "datetime('now', '-30 days')",
+  'all': "datetime('2000-01-01')",
+};
+const window = windowClause[range] ?? windowClause['30d'];
+const activeRange = Object.keys(windowClause).includes(range) ? range : '30d';
+
+let metrics: any = null;
+let error: string | null = null;
+
+if (!env.DASH_TOKEN) {
+  error = 'DASH_TOKEN not configured.';
+} else if (!token || token !== env.DASH_TOKEN) {
+  error = 'Unauthorized. Add ?token=YOUR_DASH_TOKEN to the URL.';
+} else {
+  try {
+    const db = env.DB;
+
+    const [
+      totals,
+      botHuman,
+      dailyRequests,
+      topEndpoints,
+      topSearchQueries,
+      topReferrers,
+      emailTotal,
+      emailGrowth,
+    ] = await Promise.all([
+
+      // Overall totals
+      db.prepare(`
+        SELECT
+          COUNT(*) AS total,
+          SUM(CASE WHEN type='page' THEN 1 ELSE 0 END) AS page_visits,
+          SUM(CASE WHEN type='api' THEN 1 ELSE 0 END) AS api_calls,
+          SUM(CASE WHEN type='mcp' THEN 1 ELSE 0 END) AS mcp_calls
+        FROM request_log
+        WHERE ts > ${window}
+      `).first(),
+
+      // Bot vs human breakdown
+      db.prepare(`
+        SELECT
+          SUM(CASE WHEN is_bot = 0 THEN 1 ELSE 0 END) AS human,
+          SUM(CASE WHEN is_bot = 1 THEN 1 ELSE 0 END) AS bot,
+          COUNT(*) AS total
+        FROM request_log
+        WHERE ts > ${window}
+      `).first(),
+
+      // API requests per day (last 30 rows max)
+      db.prepare(`
+        SELECT
+          date(ts) AS day,
+          SUM(CASE WHEN type='page' THEN 1 ELSE 0 END) AS page_visits,
+          SUM(CASE WHEN type='api' THEN 1 ELSE 0 END) AS api_calls,
+          SUM(CASE WHEN type='mcp' THEN 1 ELSE 0 END) AS mcp_calls,
+          SUM(CASE WHEN is_bot = 0 THEN 1 ELSE 0 END) AS human_total,
+          SUM(CASE WHEN is_bot = 1 THEN 1 ELSE 0 END) AS bot_total,
+          COUNT(*) AS total
+        FROM request_log
+        WHERE ts > ${window}
+        GROUP BY day
+        ORDER BY day DESC
+        LIMIT 60
+      `).all(),
+
+      // Top endpoints by request count
+      db.prepare(`
+        SELECT
+          path,
+          COUNT(*) AS calls,
+          SUM(CASE WHEN is_bot = 0 THEN 1 ELSE 0 END) AS human_calls,
+          ROUND(AVG(duration_ms), 0) AS avg_ms
+        FROM request_log
+        WHERE ts > ${window}
+        GROUP BY path
+        ORDER BY calls DESC
+        LIMIT 20
+      `).all(),
+
+      // Top search queries (from /api/search and /api/v1/search)
+      db.prepare(`
+        SELECT
+          query,
+          COUNT(*) AS searches,
+          SUM(CASE WHEN is_bot = 0 THEN 1 ELSE 0 END) AS human_searches
+        FROM request_log
+        WHERE ts > ${window}
+          AND query IS NOT NULL AND query != ''
+          AND (path LIKE '/api/search%' OR path LIKE '/api/v1/search%')
+        GROUP BY query
+        ORDER BY searches DESC
+        LIMIT 25
+      `).all(),
+
+      // Top referrers (human page visits only)
+      db.prepare(`
+        SELECT referrer, COUNT(*) AS visits
+        FROM request_log
+        WHERE ts > ${window}
+          AND type = 'page'
+          AND is_bot = 0
+          AND referrer IS NOT NULL AND referrer != ''
+          AND referrer NOT LIKE '%agentrank-ai.com%'
+        GROUP BY referrer
+        ORDER BY visits DESC
+        LIMIT 20
+      `).all(),
+
+      // Email subscriber total + confirmed
+      db.prepare(`
+        SELECT
+          COUNT(*) AS total,
+          SUM(CASE WHEN confirmed = 1 THEN 1 ELSE 0 END) AS confirmed
+        FROM email_subscribers
+      `).first(),
+
+      // Email subscriber growth per day (filtered by range)
+      db.prepare(`
+        SELECT
+          date(subscribed_at) AS day,
+          COUNT(*) AS new_subs,
+          SUM(CASE WHEN confirmed = 1 THEN 1 ELSE 0 END) AS confirmed
+        FROM email_subscribers
+        WHERE subscribed_at > ${window}
+        GROUP BY day
+        ORDER BY day DESC
+        LIMIT 30
+      `).all(),
+    ]);
+
+    metrics = {
+      totals,
+      botHuman,
+      dailyRequests: dailyRequests.results,
+      topEndpoints: topEndpoints.results,
+      topSearchQueries: topSearchQueries.results,
+      topReferrers: topReferrers.results,
+      emailTotal,
+      emailGrowth: emailGrowth.results,
+    };
+  } catch (e: any) {
+    error = e.message;
+  }
+}
+
+function fmtNum(n: any) {
+  if (n == null) return '—';
+  const num = Number(n);
+  if (isNaN(num)) return '—';
+  return num.toLocaleString();
+}
+
+function pct(a: any, b: any) {
+  const na = Number(a), nb = Number(b);
+  if (!nb || isNaN(na) || isNaN(nb)) return '—';
+  return (na / nb * 100).toFixed(1) + '%';
+}
+
+const baseUrl = `/admin/analytics?token=${encodeURIComponent(token)}`;
+---
+
+<Base title="Admin Analytics — AgentRank">
+  <style>
+    .page-header {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+    }
+    .page-header h1 { font-size: 1.1rem; font-weight: 700; }
+    .page-header p { color: var(--text-muted); font-size: 0.82rem; margin-top: 0.2rem; }
+
+    .range-tabs {
+      display: flex;
+      gap: 0.5rem;
+    }
+    .range-tab {
+      padding: 0.3rem 0.75rem;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      background: transparent;
+      color: var(--text-muted);
+      font-size: 0.78rem;
+      text-decoration: none;
+      transition: border-color 0.15s, color 0.15s;
+    }
+    .range-tab:hover, .range-tab.active {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    .stat-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+    .stat-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 1rem;
+    }
+    .stat-card .label {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.35rem;
+    }
+    .stat-card .value {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--accent);
+      font-variant-numeric: tabular-nums;
+    }
+    .stat-card .sub {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      margin-top: 0.25rem;
+    }
+
+    section {
+      margin-bottom: 2.5rem;
+    }
+    h2 {
+      font-size: 0.85rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      margin-bottom: 0.75rem;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 0.4rem;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.82rem;
+    }
+    th {
+      text-align: left;
+      padding: 0.4rem 0.6rem;
+      color: var(--text-muted);
+      font-weight: 500;
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      border-bottom: 1px solid var(--border);
+    }
+    td {
+      padding: 0.4rem 0.6rem;
+      border-bottom: 1px solid var(--border);
+      word-break: break-all;
+    }
+    td.num {
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+      word-break: normal;
+    }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: var(--bg-surface); }
+
+    .empty { color: var(--text-muted); font-size: 0.82rem; padding: 0.5rem 0; }
+
+    .error-box {
+      background: #2a1212;
+      border: 1px solid #7f1d1d;
+      border-radius: 6px;
+      padding: 1.25rem;
+      color: #fca5a5;
+      margin-bottom: 1.5rem;
+    }
+
+    .bot-badge {
+      display: inline-block;
+      font-size: 0.65rem;
+      padding: 0.1rem 0.4rem;
+      border-radius: 3px;
+      background: rgba(248,113,113,0.15);
+      color: #f87171;
+      margin-left: 0.4rem;
+    }
+    .human-badge {
+      display: inline-block;
+      font-size: 0.65rem;
+      padding: 0.1rem 0.4rem;
+      border-radius: 3px;
+      background: rgba(34,197,94,0.12);
+      color: var(--accent);
+      margin-left: 0.4rem;
+    }
+
+    .two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+    }
+    @media (max-width: 800px) {
+      .two-col { grid-template-columns: 1fr; }
+    }
+  </style>
+
+  <div class="page-header">
+    <div>
+      <h1>Admin Analytics</h1>
+      <p>Showing {rangeLabel[activeRange] ?? '30 days'} of data. Updated on page load.</p>
+    </div>
+    <div class="range-tabs">
+      <a href={`${baseUrl}&range=7d`} class={`range-tab${activeRange === '7d' ? ' active' : ''}`}>7d</a>
+      <a href={`${baseUrl}&range=30d`} class={`range-tab${activeRange === '30d' ? ' active' : ''}`}>30d</a>
+      <a href={`${baseUrl}&range=all`} class={`range-tab${activeRange === 'all' ? ' active' : ''}`}>All time</a>
+    </div>
+  </div>
+
+  {error && <div class="error-box">{error}</div>}
+
+  {metrics && (
+    <>
+      <!-- Summary stats -->
+      <div class="stat-grid">
+        <div class="stat-card">
+          <div class="label">Total Requests</div>
+          <div class="value">{fmtNum(metrics.totals?.total)}</div>
+          <div class="sub">{rangeLabel[activeRange]}</div>
+        </div>
+        <div class="stat-card">
+          <div class="label">Page Visits</div>
+          <div class="value">{fmtNum(metrics.totals?.page_visits)}</div>
+          <div class="sub">{pct(metrics.totals?.page_visits, metrics.totals?.total)} of total</div>
+        </div>
+        <div class="stat-card">
+          <div class="label">API Calls</div>
+          <div class="value">{fmtNum(metrics.totals?.api_calls)}</div>
+          <div class="sub">{pct(metrics.totals?.api_calls, metrics.totals?.total)} of total</div>
+        </div>
+        <div class="stat-card">
+          <div class="label">MCP Calls</div>
+          <div class="value">{fmtNum(metrics.totals?.mcp_calls)}</div>
+          <div class="sub">{pct(metrics.totals?.mcp_calls, metrics.totals?.total)} of total</div>
+        </div>
+        <div class="stat-card">
+          <div class="label">Human Traffic</div>
+          <div class="value">{fmtNum(metrics.botHuman?.human)}</div>
+          <div class="sub">{pct(metrics.botHuman?.human, metrics.botHuman?.total)} of total</div>
+        </div>
+        <div class="stat-card">
+          <div class="label">Bot Traffic</div>
+          <div class="value" style="color: #f87171">{fmtNum(metrics.botHuman?.bot)}</div>
+          <div class="sub">{pct(metrics.botHuman?.bot, metrics.botHuman?.total)} of total</div>
+        </div>
+        <div class="stat-card">
+          <div class="label">Email Subscribers</div>
+          <div class="value">{fmtNum(metrics.emailTotal?.total)}</div>
+          <div class="sub">{fmtNum(metrics.emailTotal?.confirmed)} confirmed</div>
+        </div>
+      </div>
+
+      <!-- API Requests Per Day -->
+      <section>
+        <h2>Requests Per Day</h2>
+        {metrics.dailyRequests?.length > 0 ? (
+          <table>
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th class="num">Pages</th>
+                <th class="num">API</th>
+                <th class="num">MCP</th>
+                <th class="num">Human</th>
+                <th class="num">Bots</th>
+                <th class="num">Total</th>
+              </tr>
+            </thead>
+            <tbody>
+              {metrics.dailyRequests.map((r: any) => (
+                <tr>
+                  <td>{r.day}</td>
+                  <td class="num">{fmtNum(r.page_visits)}</td>
+                  <td class="num">{fmtNum(r.api_calls)}</td>
+                  <td class="num">{fmtNum(r.mcp_calls)}</td>
+                  <td class="num">{fmtNum(r.human_total)}</td>
+                  <td class="num" style="color: #f87171">{fmtNum(r.bot_total)}</td>
+                  <td class="num">{fmtNum(r.total)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        ) : (
+          <p class="empty">No data for this period.</p>
+        )}
+      </section>
+
+      <div class="two-col">
+        <!-- Top Endpoints -->
+        <section>
+          <h2>Top Endpoints by Request Count</h2>
+          {metrics.topEndpoints?.length > 0 ? (
+            <table>
+              <thead>
+                <tr>
+                  <th>Endpoint</th>
+                  <th class="num">Total</th>
+                  <th class="num">Human</th>
+                  <th class="num">Avg ms</th>
+                </tr>
+              </thead>
+              <tbody>
+                {metrics.topEndpoints.map((r: any) => (
+                  <tr>
+                    <td>{r.path}</td>
+                    <td class="num">{fmtNum(r.calls)}</td>
+                    <td class="num">{fmtNum(r.human_calls)}</td>
+                    <td class="num">{r.avg_ms != null ? r.avg_ms : '—'}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          ) : (
+            <p class="empty">No endpoint data yet.</p>
+          )}
+        </section>
+
+        <!-- Top Search Queries -->
+        <section>
+          <h2>Top Search Queries</h2>
+          {metrics.topSearchQueries?.length > 0 ? (
+            <table>
+              <thead>
+                <tr>
+                  <th>Query</th>
+                  <th class="num">Searches</th>
+                  <th class="num">Human</th>
+                </tr>
+              </thead>
+              <tbody>
+                {metrics.topSearchQueries.map((r: any) => (
+                  <tr>
+                    <td>{r.query}</td>
+                    <td class="num">{fmtNum(r.searches)}</td>
+                    <td class="num">{fmtNum(r.human_searches)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          ) : (
+            <p class="empty">No search queries logged yet.</p>
+          )}
+        </section>
+      </div>
+
+      <div class="two-col">
+        <!-- Referral Sources -->
+        <section>
+          <h2>Top Referral Sources (human page visits)</h2>
+          {metrics.topReferrers?.length > 0 ? (
+            <table>
+              <thead>
+                <tr>
+                  <th>Referrer</th>
+                  <th class="num">Visits</th>
+                </tr>
+              </thead>
+              <tbody>
+                {metrics.topReferrers.map((r: any) => (
+                  <tr>
+                    <td>{r.referrer}</td>
+                    <td class="num">{fmtNum(r.visits)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          ) : (
+            <p class="empty">No external referrers in this period.</p>
+          )}
+        </section>
+
+        <!-- Email Growth -->
+        <section>
+          <h2>Email Subscriber Growth</h2>
+          {metrics.emailGrowth?.length > 0 ? (
+            <table>
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th class="num">New Subs</th>
+                  <th class="num">Confirmed</th>
+                </tr>
+              </thead>
+              <tbody>
+                {metrics.emailGrowth.map((r: any) => (
+                  <tr>
+                    <td>{r.day}</td>
+                    <td class="num">{fmtNum(r.new_subs)}</td>
+                    <td class="num">{fmtNum(r.confirmed)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          ) : (
+            <p class="empty">No subscribers in this period.</p>
+          )}
+        </section>
+      </div>
+
+      <p style="color: var(--text-muted); font-size: 0.72rem; margin-top: 1rem;">
+        Data from D1 request_log. Human traffic excludes known bot user-agents.
+        For detailed charts, see <a href={`/analytics?token=${encodeURIComponent(token)}`} style="color: var(--accent)">Analytics</a> or
+        <a href={`/admin/dashboard?token=${encodeURIComponent(token)}`} style="color: var(--accent)">Admin Dashboard</a>.
+      </p>
+    </>
+  )}
+</Base>
