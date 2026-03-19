@@ -76,14 +76,19 @@ export const GET: APIRoute = async ({ url, locals }) => {
         : `https://agentrank-ai.com/skill/${(r.full_name as string).replace(/\//g, '--').replace(/:/g, '-')}/`,
     }));
 
-    return json({
-      movers,
-      meta: { today, prev_date: prevDate, days, count: movers.length },
-    });
+    return json(
+      { movers, meta: { today, prev_date: prevDate, days, count: movers.length } },
+      200,
+      { 'Cache-Control': 'public, s-maxage=300, max-age=300' }
+    );
   } catch (e: any) {
     // rank_history may not exist yet (before first snapshot)
     if ((e.message || '').includes('no such table')) {
-      return json({ movers: [], meta: { today, prev_date: prevDate, days, count: 0, note: 'rank_history table not yet populated' } });
+      return json(
+        { movers: [], meta: { today, prev_date: prevDate, days, count: 0, note: 'rank_history table not yet populated' } },
+        200,
+        { 'Cache-Control': 'public, s-maxage=300, max-age=300' }
+      );
     }
     return json({ error: 'Database error', detail: e.message }, 500);
   }

@@ -103,7 +103,7 @@ function buildToolResponse(row: any, id: string, rlHeaders: Record<string, strin
       },
     },
     200,
-    { ...rlHeaders, 'Cache-Control': 'public, s-maxage=300, max-age=60' }
+    { ...rlHeaders, 'Cache-Control': 'public, s-maxage=3600, max-age=3600' }
   );
 }
 
@@ -134,7 +134,7 @@ function buildSkillResponse(row: any, id: string, rlHeaders: Record<string, stri
       },
     },
     200,
-    { ...rlHeaders, 'Cache-Control': 'public, s-maxage=300, max-age=60' }
+    { ...rlHeaders, 'Cache-Control': 'public, s-maxage=3600, max-age=3600' }
   );
 }
 
