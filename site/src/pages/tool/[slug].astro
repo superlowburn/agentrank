@@ -42,6 +42,8 @@ const readmeExcerpt = row.readme_excerpt as string | null;
 const githubTopics: string[] = JSON.parse(row.github_topics as string || '[]');
 const glamaDownloads = (row.glama_weekly_downloads as number) || 0;
 const glamaToolCalls = (row.glama_tool_calls as number) || 0;
+const npmWeeklyDownloads = (row.npm_weekly_downloads as number) || 0;
+const npmPackage = row.npm_package as string | null;
 
 const totalIssues = tool.open_issues + tool.closed_issues;
 const issueHealth = totalIssues > 0 ? (tool.closed_issues / totalIssues) : 0.5;
@@ -95,6 +97,13 @@ const signals = [
     bar: Math.min(100, tool.dependents > 0 ? Math.log(1 + tool.dependents) / Math.log(1 + 100000) * 100 : 0),
     weight: 25,
     driver: `${tool.dependents > 0 ? tool.dependents.toLocaleString('en-US') : 'No'} dependent${tool.dependents !== 1 ? 's' : ''} → ${tool.dependents > 1000 ? 'widely adopted' : tool.dependents > 100 ? 'gaining traction' : tool.dependents > 0 ? 'few downstream users' : 'no downstream usage'}`,
+  },
+  {
+    name: 'npm Downloads',
+    value: npmWeeklyDownloads > 0 ? npmWeeklyDownloads.toLocaleString('en-US') + '/wk' : 'N/A',
+    bar: npmWeeklyDownloads > 0 ? Math.min(100, Math.log(1 + npmWeeklyDownloads) / Math.log(1 + 10000) * 100) : -1,
+    weight: npmWeeklyDownloads > 0 ? 13 : 0,
+    driver: npmWeeklyDownloads > 0 ? `${npmWeeklyDownloads.toLocaleString('en-US')} weekly installs → ${npmWeeklyDownloads > 5000 ? 'widely installed' : npmWeeklyDownloads > 1000 ? 'gaining traction' : 'early adoption'}` : '',
   },
   { name: 'Forks', value: tool.forks.toLocaleString('en-US'), bar: Math.min(100, Math.log(1 + tool.forks) / Math.log(1 + 50000) * 100), weight: 0, driver: '' },
   { name: 'Description', value: descQuality === 0 ? 'None' : descQuality === 0.3 ? 'Brief' : descQuality === 0.7 ? 'Good' : 'Detailed', bar: descQuality * 100, weight: 0, driver: '' },
@@ -210,6 +219,7 @@ const widgetSvgSnippet = `[![AgentRank](${SITE_URL}/api/embed/${slug}.svg)](${ba
 
 const jsonLd = generateToolJsonLd({ ...tool, github_topics: githubTopics, category: row.category as string | null }, pageUrl);
 const keywordsStr = [...new Set([...tool.matched_queries, ...githubTopics])].join(', ');
+const ogImage = tool.rank <= 200 ? `/og/tool/${slug}.png` : undefined;
 
 // Category-to-blog mapping for contextual cross-links
 const toolCategory = row.category as string | null;
@@ -311,7 +321,7 @@ if (relatedTools.length < 3) {
 Astro.response.headers.set('Cache-Control', 'public, max-age=60, s-maxage=3600, stale-while-revalidate=86400');
 ---
 
-<Base title={`${tool.full_name} — AgentRank`} description={summary} activeTab="tools" jsonLd={jsonLd} keywords={keywordsStr} canonicalUrl={pageUrl}>
+<Base title={`${tool.full_name} — AgentRank`} description={summary} activeTab="tools" jsonLd={jsonLd} keywords={keywordsStr} canonicalUrl={pageUrl} ogImage={ogImage}>
   <nav class="breadcrumb" aria-label="breadcrumb">
     <a href="/">Home</a>
     <span class="breadcrumb-sep" aria-hidden="true">&rsaquo;</span>
@@ -373,6 +383,14 @@ Astro.response.headers.set('Cache-Control', 'public, max-age=60, s-maxage=3600, 
       </span>
       {glamaDownloads > 0 && <span class="eco-pill">{glamaDownloads.toLocaleString('en-US')} weekly downloads</span>}
       {glamaToolCalls > 0 && <span class="eco-pill">{glamaToolCalls.toLocaleString('en-US')} tool calls</span>}
+      {npmWeeklyDownloads > 0 && npmPackage && (
+        <a class="eco-pill eco-pill-link" href={`https://www.npmjs.com/package/${npmPackage}`} target="_blank" rel="noopener noreferrer">
+          {npmWeeklyDownloads.toLocaleString('en-US')} npm/wk
+        </a>
+      )}
+      {npmWeeklyDownloads > 0 && !npmPackage && (
+        <span class="eco-pill">{npmWeeklyDownloads.toLocaleString('en-US')} npm/wk</span>
+      )}
     </div>
     {githubTopics.length > 0 && (
       <div class="topics">
@@ -1232,6 +1250,15 @@ Astro.response.headers.set('Cache-Control', 'public, max-age=60, s-maxage=3600, 
     background: var(--bg-surface);
     border: 1px solid var(--border);
     color: var(--text-muted);
+  }
+
+  .eco-pill-link {
+    text-decoration: none;
+    cursor: pointer;
+  }
+  .eco-pill-link:hover {
+    color: var(--accent);
+    border-color: var(--accent);
   }
 
   .lang-pill {

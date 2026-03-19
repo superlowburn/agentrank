@@ -21,6 +21,8 @@ CREATE TABLE tools (
   github_topics TEXT NOT NULL DEFAULT '[]',
   glama_weekly_downloads INTEGER NOT NULL DEFAULT 0,
   glama_tool_calls INTEGER NOT NULL DEFAULT 0,
+  npm_weekly_downloads INTEGER NOT NULL DEFAULT 0,
+  npm_package TEXT,
   category TEXT
 );
 
@@ -29,6 +31,8 @@ CREATE INDEX idx_tools_rank ON tools(rank);
 CREATE INDEX idx_tools_score ON tools(score DESC);
 -- Migration (run once on existing D1 if pipeline hasn't rebuilt the table):
 -- ALTER TABLE tools ADD COLUMN category TEXT;
+-- ALTER TABLE tools ADD COLUMN npm_weekly_downloads INTEGER NOT NULL DEFAULT 0;
+-- ALTER TABLE tools ADD COLUMN npm_package TEXT;
 
 DROP TABLE IF EXISTS skills;
 
