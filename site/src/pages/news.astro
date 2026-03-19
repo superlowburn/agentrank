@@ -151,9 +151,13 @@ const MOCK_NEWS_ITEMS: NewsItem[] = [
   },
 ];
 
+// Set 5-minute cache so Cloudflare serves fresh data without hammering D1
+Astro.response.headers.set('Cache-Control', 'public, max-age=300, s-maxage=300');
+
 let items: NewsItem[] = [];
 let totalItems = 0;
 let isMock = false;
+let lastUpdated: string | null = null;
 
 try {
   const { env } = Astro.locals.runtime;
@@ -162,6 +166,11 @@ try {
     ? [activeCategory, limit, offset]
     : [limit, offset];
   const bindOffset = activeCategory !== 'all' ? 1 : 0;
+
+  const latestResult = await env.DB.prepare(
+    `SELECT MAX(published_at) as latest FROM news_items WHERE status = 'published'`
+  ).first<{ latest: string | null }>();
+  lastUpdated = latestResult?.latest ?? null;
 
   const countStmt = env.DB.prepare(
     `SELECT COUNT(*) as n FROM news_items WHERE status = 'published' ${categoryClause}`
@@ -262,6 +271,12 @@ function buildUrl(cat: Category, pg: number): string {
   <div class="news-header">
     <h2>Ecosystem News</h2>
     <p class="news-desc">Releases, movers, new tools, and trending activity — sourced from GitHub signals.</p>
+    <div class="news-header-row">
+      <a href="/reports/" class="reports-link">Weekly ecosystem reports &rarr;</a>
+      {!isMock && lastUpdated && (
+        <span class="last-updated">Updated {relativeTime(lastUpdated)}</span>
+      )}
+    </div>
   </div>
 
   <nav class="cat-tabs" aria-label="News categories">
@@ -354,6 +369,27 @@ function buildUrl(cat: Category, pg: number): string {
   .news-desc {
     color: var(--text-muted);
     font-size: 0.82rem;
+  }
+
+  .news-header-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 0.4rem;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .reports-link {
+    font-size: 0.78rem;
+    color: var(--accent);
+    text-decoration: none;
+  }
+  .reports-link:hover { text-decoration: underline; }
+
+  .last-updated {
+    font-size: 0.72rem;
+    color: var(--text-muted);
   }
 
   .cat-tabs {

@@ -318,6 +318,167 @@ async function getNewTools(db: D1Database, today: string): Promise<NewTool[]> {
   return (result.results || []) as NewTool[];
 }
 
+// ---------------------------------------------------------------------------
+// ISO week helpers
+// ---------------------------------------------------------------------------
+
+function getISOWeek(date: Date): { week: number; year: number } {
+  const d = new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate()));
+  // Set to nearest Thursday: current date + 4 - current day number, make Sunday's day number 7
+  d.setUTCDate(d.getUTCDate() + 4 - (d.getUTCDay() || 7));
+  const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
+  const week = Math.ceil((((d.getTime() - yearStart.getTime()) / 86400000) + 1) / 7);
+  return { week, year: d.getUTCFullYear() };
+}
+
+function getWeekSlug(date: Date): string {
+  const { week, year } = getISOWeek(date);
+  return `week-${year}-w${String(week).padStart(2, '0')}`;
+}
+
+function getMondayOf(date: Date): Date {
+  const d = new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate()));
+  const day = d.getUTCDay();
+  const diff = day === 0 ? -6 : 1 - day;
+  d.setUTCDate(d.getUTCDate() + diff);
+  return d;
+}
+
+// ---------------------------------------------------------------------------
+// Weekly ecosystem report — generated on Mondays, stored in weekly_reports
+// ---------------------------------------------------------------------------
+
+async function generateWeeklyReport(db: D1Database, today: string): Promise<void> {
+  const date = new Date(today + 'T00:00:00Z');
+  const monday = getMondayOf(date);
+  const sunday = new Date(monday);
+  sunday.setUTCDate(sunday.getUTCDate() + 6);
+
+  const weekStart = monday.toISOString().slice(0, 10);
+  const weekEnd = sunday.toISOString().slice(0, 10);
+  const { week, year } = getISOWeek(monday);
+  const id = getWeekSlug(monday);
+
+  // Check if already generated for this week
+  const existing = await db.prepare('SELECT id FROM weekly_reports WHERE id = ?').bind(id).first();
+  if (existing) {
+    console.log(`[cron-snapshot] generateWeeklyReport: ${id} already exists, skipping`);
+    return;
+  }
+
+  const d7Ago = new Date(today + 'T00:00:00Z');
+  d7Ago.setUTCDate(d7Ago.getUTCDate() - 7);
+  const prevDate = d7Ago.toISOString().slice(0, 10);
+
+  // 1. Top 10 tools
+  const top10Result = await db
+    .prepare('SELECT full_name, rank, score, stars, category FROM tools WHERE rank IS NOT NULL ORDER BY rank ASC LIMIT 10')
+    .all<{ full_name: string; rank: number; score: number; stars: number; category: string | null }>();
+  const top10 = top10Result.results ?? [];
+
+  // 2. Total tool count
+  const countResult = await db
+    .prepare('SELECT COUNT(*) as n FROM tools WHERE score IS NOT NULL')
+    .first<{ n: number }>();
+  const totalTools = countResult?.n ?? 0;
+
+  // 3. Biggest movers (top 5 gainers + top 5 losers)
+  const moversResult = await db
+    .prepare(`
+      SELECT cur.tool_full_name AS full_name, cur.tool_type,
+             cur.rank AS current_rank, prev.rank AS prev_rank,
+             (prev.rank - cur.rank) AS rank_delta,
+             cur.score AS current_score, cur.stars
+      FROM rank_history cur
+      JOIN rank_history prev
+        ON cur.tool_full_name = prev.tool_full_name
+       AND cur.tool_type = prev.tool_type
+       AND prev.snapshot_date = ?1
+      WHERE cur.snapshot_date = ?2
+        AND cur.rank <= 500
+        AND prev.rank <= 500
+        AND ABS(prev.rank - cur.rank) >= 3
+      ORDER BY ABS(prev.rank - cur.rank) DESC
+      LIMIT 20
+    `)
+    .bind(prevDate, today)
+    .all<{ full_name: string; tool_type: string; current_rank: number; prev_rank: number; rank_delta: number; current_score: number; stars: number }>();
+  const allMovers = moversResult.results ?? [];
+  const gainers = allMovers.filter(m => m.rank_delta > 0).slice(0, 5);
+  const losers = allMovers.filter(m => m.rank_delta < 0).slice(0, 5);
+  const biggestMovers = [...gainers, ...losers];
+
+  // 4. New tools this week
+  const newToolsResult = await db
+    .prepare(`
+      SELECT cur.tool_full_name AS full_name, cur.tool_type, cur.rank, cur.score, cur.stars
+      FROM rank_history cur
+      WHERE cur.snapshot_date = ?1
+        AND NOT EXISTS (
+          SELECT 1 FROM rank_history old
+          WHERE old.tool_full_name = cur.tool_full_name
+            AND old.tool_type = cur.tool_type
+            AND old.snapshot_date < ?2
+        )
+      ORDER BY cur.score DESC
+      LIMIT 20
+    `)
+    .bind(today, prevDate)
+    .all<{ full_name: string; tool_type: string; rank: number; score: number; stars: number }>();
+  const newTools = newToolsResult.results ?? [];
+
+  // 5. Notable releases from news_items this week
+  const releasesResult = await db
+    .prepare(`
+      SELECT title, summary, source_url, related_tool_slugs, published_at
+      FROM news_items
+      WHERE category = 'release'
+        AND status = 'published'
+        AND published_at >= ?1
+        AND published_at <= ?2
+      ORDER BY published_at DESC
+      LIMIT 10
+    `)
+    .bind(weekStart, weekEnd + 'T23:59:59')
+    .all<{ title: string; summary: string | null; source_url: string; related_tool_slugs: string | null; published_at: string }>();
+  const notableReleases = releasesResult.results ?? [];
+
+  // 6. Category stats — count tools per category
+  const catResult = await db
+    .prepare(`
+      SELECT category, COUNT(*) as count
+      FROM tools
+      WHERE category IS NOT NULL AND score IS NOT NULL
+      GROUP BY category
+      ORDER BY count DESC
+      LIMIT 20
+    `)
+    .all<{ category: string; count: number }>();
+  const categoryStats: Record<string, number> = {};
+  for (const row of catResult.results ?? []) {
+    categoryStats[row.category] = row.count;
+  }
+
+  await db
+    .prepare(`
+      INSERT OR REPLACE INTO weekly_reports
+        (id, week_start, week_end, week_number, year, total_tools, new_tools_count,
+         top_10, biggest_movers, new_tools, notable_releases, category_stats, generated_at)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, datetime('now'))
+    `)
+    .bind(
+      id, weekStart, weekEnd, week, year, totalTools, newTools.length,
+      JSON.stringify(top10),
+      JSON.stringify(biggestMovers),
+      JSON.stringify(newTools),
+      JSON.stringify(notableReleases),
+      JSON.stringify(categoryStats)
+    )
+    .run();
+
+  console.log(`[cron-snapshot] generateWeeklyReport: stored ${id} (week ${week}/${year}, ${newTools.length} new tools, ${biggestMovers.length} movers, ${notableReleases.length} releases)`);
+}
+
 // --- Tweet generators ---
 
 function generateMoversTweet(movers: Mover[]): string {
@@ -431,10 +592,11 @@ const STATIC_URLS = [
 ];
 
 async function submitIndexNow(db: D1Database): Promise<void> {
-  const [toolRows, skillRows, categoryRows] = await Promise.all([
+  const [toolRows, skillRows, categoryRows, reportRows] = await Promise.all([
     db.prepare('SELECT full_name FROM tools WHERE score IS NOT NULL').all(),
     db.prepare('SELECT slug FROM skills WHERE score IS NOT NULL').all(),
     db.prepare('SELECT DISTINCT category FROM tools WHERE category IS NOT NULL AND score IS NOT NULL UNION SELECT DISTINCT category FROM skills WHERE category IS NOT NULL AND score IS NOT NULL').all(),
+    db.prepare('SELECT id FROM weekly_reports ORDER BY week_start DESC LIMIT 52').all<{ id: string }>().catch(() => ({ results: [] as { id: string }[] })),
   ]);
 
   const urls: string[] = STATIC_URLS.map(p => `${SITE}${p}`);
@@ -447,6 +609,10 @@ async function submitIndexNow(db: D1Database): Promise<void> {
   }
   for (const row of categoryRows.results as { category: string }[]) {
     urls.push(`${SITE}/category/${row.category}/`);
+  }
+  urls.push(`${SITE}/reports/`);
+  for (const row of (reportRows.results ?? []) as { id: string }[]) {
+    urls.push(`${SITE}/reports/${row.id}/`);
   }
 
   // Submit in batches
@@ -1153,6 +1319,180 @@ async function monitorGitHubReleases(
   return totalInserted;
 }
 
+// ---------------------------------------------------------------------------
+// Fast-poll GitHub Events — runs every 30 min, inserts news_items immediately
+// ---------------------------------------------------------------------------
+
+interface GitHubEvent {
+  type: string;
+  created_at: string;
+  payload: {
+    action?: string;
+    release?: {
+      tag_name: string;
+      name: string | null;
+      body: string | null;
+      html_url: string;
+      published_at: string | null;
+      draft: boolean;
+      prerelease: boolean;
+    };
+  };
+}
+
+async function fetchRepoEvents(
+  fullName: string,
+  githubToken: string
+): Promise<GitHubEvent[]> {
+  const url = `https://api.github.com/repos/${fullName}/events?per_page=30`;
+  try {
+    const res = await fetch(url, {
+      headers: {
+        Authorization: `Bearer ${githubToken}`,
+        Accept: "application/vnd.github+json",
+        "User-Agent": "AgentRank/1.0 (https://agentrank-ai.com)",
+        "X-GitHub-Api-Version": "2022-11-28",
+      },
+    });
+    if (!res.ok) return [];
+    return (await res.json()) as GitHubEvent[];
+  } catch {
+    return [];
+  }
+}
+
+async function fastPollGitHubEvents(
+  db: D1Database,
+  githubToken: string
+): Promise<number> {
+  // Poll top 100 tools by score — avoids new-repo discovery, safe API budget
+  const toolsResult = await db
+    .prepare(`SELECT full_name FROM tools ORDER BY score DESC LIMIT 100`)
+    .all<{ full_name: string }>();
+
+  if (!toolsResult.results?.length) return 0;
+
+  // Dedup against existing news_items (any source_url already recorded)
+  const existingResult = await db
+    .prepare(`SELECT source_url FROM news_items WHERE source_url IS NOT NULL`)
+    .all<{ source_url: string }>();
+  const existingUrls = new Set(existingResult.results?.map((r) => r.source_url) ?? []);
+
+  const cutoff = new Date(Date.now() - 35 * 60 * 1000); // 35 min window (buffer for clock drift)
+  const nowIso = new Date().toISOString();
+
+  const toInsert: Array<{
+    title: string;
+    summary: string | null;
+    source_url: string;
+    category: string;
+    related_tool_slugs: string;
+    published_at: string;
+  }> = [];
+
+  // Process in parallel batches of 20 to respect CF Worker subrequest limits
+  const BATCH = 20;
+  for (let i = 0; i < toolsResult.results.length; i += BATCH) {
+    const batch = toolsResult.results.slice(i, i + BATCH);
+    const batchData = await Promise.all(
+      batch.map(async ({ full_name }) => {
+        const events = await fetchRepoEvents(full_name, githubToken);
+        return { full_name, events };
+      })
+    );
+
+    for (const { full_name, events } of batchData) {
+      const repoName = full_name.split("/")[1] ?? full_name;
+
+      // --- ReleaseEvent: new release published within the window ---
+      const releaseEvents = events.filter(
+        (e) =>
+          e.type === "ReleaseEvent" &&
+          e.payload?.action === "published" &&
+          new Date(e.created_at) >= cutoff
+      );
+
+      for (const evt of releaseEvents) {
+        const release = evt.payload?.release;
+        if (!release || release.draft || release.prerelease) continue;
+        const url = release.html_url;
+        if (!url || existingUrls.has(url)) continue;
+
+        const displayName = release.name?.trim() || release.tag_name;
+        toInsert.push({
+          title: `${repoName} ${displayName} released`,
+          summary: release.body
+            ? release.body.replace(/\r\n|\r/g, "\n").trim().slice(0, 280)
+            : null,
+          source_url: url,
+          category: "release",
+          related_tool_slugs: JSON.stringify([full_name]),
+          published_at: release.published_at || evt.created_at,
+        });
+        existingUrls.add(url);
+      }
+
+      // --- WatchEvent: real-time star momentum (10+ stars in 30 min) ---
+      const recentStars = events.filter(
+        (e) =>
+          e.type === "WatchEvent" &&
+          e.payload?.action === "started" &&
+          new Date(e.created_at) >= cutoff
+      ).length;
+
+      if (recentStars >= 10) {
+        const url = `https://github.com/${full_name}#live-trending-${cutoff.toISOString().slice(0, 16)}`;
+        if (!existingUrls.has(url)) {
+          toInsert.push({
+            title: `${repoName} gaining stars fast (+${recentStars} in 30 min)`,
+            summary: `${full_name} received ${recentStars} new stars in the last 30 minutes — real-time momentum signal.`,
+            source_url: url,
+            category: "trending",
+            related_tool_slugs: JSON.stringify([full_name]),
+            published_at: nowIso,
+          });
+          existingUrls.add(url);
+        }
+      }
+    }
+  }
+
+  if (toInsert.length === 0) {
+    console.log(`[cron-snapshot] fastPollGitHubEvents: no new events`);
+    return 0;
+  }
+
+  const INSERT_CHUNK = 50;
+  let totalInserted = 0;
+  for (let i = 0; i < toInsert.length; i += INSERT_CHUNK) {
+    const chunk = toInsert.slice(i, i + INSERT_CHUNK);
+    const stmts = chunk.map((item) =>
+      db
+        .prepare(
+          `INSERT OR IGNORE INTO news_items
+             (id, title, summary, source_url, source, category, related_tool_slugs, status, published_at)
+           VALUES (?, ?, ?, ?, 'github', ?, ?, 'published', ?)`
+        )
+        .bind(
+          crypto.randomUUID(),
+          item.title,
+          item.summary,
+          item.source_url,
+          item.category,
+          item.related_tool_slugs,
+          item.published_at
+        )
+    );
+    await db.batch(stmts);
+    totalInserted += chunk.length;
+  }
+
+  console.log(
+    `[cron-snapshot] fastPollGitHubEvents: inserted ${totalInserted} new items`
+  );
+  return totalInserted;
+}
+
 // --- Scheduled handler ---
 
 export default {
@@ -1162,6 +1502,21 @@ export default {
     const isTuesday = new Date().getUTCDay() === 2;
 
     console.log(`[cron-snapshot] Running at ${event.scheduledTime}, date=${today}, isMonday=${isMonday}`);
+
+    // Fast-poll path: lightweight GitHub Events check every 30 min
+    if (event.cron === "*/30 * * * *") {
+      if (env.GITHUB_TOKEN) {
+        try {
+          const count = await fastPollGitHubEvents(env.DB, env.GITHUB_TOKEN);
+          console.log(`[cron-snapshot] fastPoll complete: ${count} new news items`);
+        } catch (e: any) {
+          console.log(`[cron-snapshot] fastPollGitHubEvents failed: ${e?.message}`);
+        }
+      } else {
+        console.log(`[cron-snapshot] fastPoll: skipped (no GITHUB_TOKEN)`);
+      }
+      return;
+    }
 
     // Step 1: Always snapshot current rankings
     const inserted = await snapshotRankings(env.DB, today);
@@ -1222,10 +1577,15 @@ export default {
       }
     }
 
-    // Step 5: On Mondays, log weekly content for the bot to consume
-    // The bot reads from /api/v1/movers and /api/v1/new-tools — no storage needed here.
-    // Just log for observability; the API endpoints do the computation live.
+    // Step 5: On Mondays, generate weekly report + log weekly content for the bot
     if (isMonday) {
+      // Generate and store weekly ecosystem report in D1
+      try {
+        await generateWeeklyReport(env.DB, today);
+      } catch (e: any) {
+        console.log(`[cron-snapshot] generateWeeklyReport failed (non-fatal): ${e?.message}`);
+      }
+
       const [movers, newTools, top10] = await Promise.all([
         getBiggestMovers(env.DB, today),
         getNewTools(env.DB, today),

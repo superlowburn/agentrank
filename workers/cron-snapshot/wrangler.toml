@@ -10,6 +10,7 @@ database_id = "946abec6-5f2b-4177-b1cb-b84769a20883"
 
 [triggers]
 # Daily snapshot at 6:00 UTC (after nightly crawler/scorer finishes)
-# Weekly top10 tweet at 14:00 UTC every Monday
-# Weekly digest email at 9:00 UTC every Tuesday
-crons = ["0 6 * * *", "0 14 * * 1", "0 9 * * 2"]
+#   Monday: also generates weekly report + tweet content
+#   Tuesday: also sends weekly digest email
+# Fast-poll GitHub events every 30 min for near-real-time news
+crons = ["0 6 * * *", "*/30 * * * *"]
