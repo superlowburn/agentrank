@@ -37,6 +37,7 @@ const SITE_URL = 'https://agentrank-ai.com';
     <a href="#tool">Tool Detail</a>
     <a href="#movers">Movers</a>
     <a href="#new-tools">New Tools</a>
+    <a href="#stats">Stats</a>
     <a href="#v2">Pro (v2)</a>
     <a href="#v2-search">v2 Search</a>
     <a href="#v2-tool">v2 Tool</a>
@@ -348,6 +349,39 @@ const SITE_URL = 'https://agentrank-ai.com';
   }
 }`}</pre>
     </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- Stats v1 -->
+  <section class="endpoint" id="stats">
+    <div class="endpoint-sig">
+      <span class="method-badge get">GET</span>
+      <code class="endpoint-path">/api/v1/stats</code>
+    </div>
+    <p>Returns aggregate counts and averages for the entire index. Useful for dashboards, status pages, or displaying live stats. No parameters required. Response is cached for 1 hour.</p>
+
+    <h3>Example</h3>
+    <div class="code-block-wrap">
+      <div class="code-label">curl</div>
+      <pre class="code-block">curl "https://agentrank-ai.com/api/v1/stats"</pre>
+      <button class="copy-btn" data-copy={`curl "https://agentrank-ai.com/api/v1/stats"`}>Copy</button>
+    </div>
+
+    <h3>Response</h3>
+    <div class="response-block">
+      <div class="code-label">JSON</div>
+      <pre class="response-code">{`{
+  "totalTools": 25843,
+  "totalSkills": 1204,
+  "toolsUpdatedWeek": 3741,
+  "averageScore": 38.2,
+  "totalCategories": 42,
+  "generatedAt": "2026-03-19T08:00:00.000Z"
+}`}</pre>
+    </div>
+
+    <div class="field-note">Cached for 1 hour (<code>Cache-Control: public, s-maxage=3600</code>). <code>generatedAt</code> reflects when the response was generated, not the cache hit time.</div>
   </section>
 
   <div class="divider"></div>
