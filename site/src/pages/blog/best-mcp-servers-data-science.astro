@@ -12,13 +12,13 @@ const relatedPosts = [
   { href: '/blog/best-mcp-servers-devops/', title: 'Best MCP Servers for DevOps & Infrastructure in 2026' },
 ];
 
-const publishDate = '2026-03-18';
+const publishDate = '2026-03-19';
 
 const jsonLd = {
   '@context': 'https://schema.org',
   '@type': 'Article',
-  headline: 'Best MCP Servers for Data Science in 2026',
-  description: 'Top-ranked MCP servers for data science workflows: Jupyter, DuckDB, dbt, Spark, Snowflake, and Google Analytics. Scored by real signals from the AgentRank index.',
+  headline: 'Top 10 MCP Servers for Data Science and Analytics in 2026',
+  description: 'The 10 highest-scoring MCP servers for data science workflows: Jupyter, DuckDB, ClickHouse, dbt, Spark, Snowflake, Airflow, E2B, BigQuery, and more. Scored by real signals from the AgentRank index.',
   datePublished: publishDate,
   dateModified: publishDate,
   author: {
@@ -40,7 +40,7 @@ const jsonLd = {
     '@id': 'https://agentrank-ai.com/blog/best-mcp-servers-data-science/',
   },
   image: 'https://agentrank-ai.com/og/best-mcp-servers-data-science.png',
-  keywords: 'best MCP servers data science, jupyter MCP server, duckdb MCP, dbt MCP server, spark MCP, snowflake MCP server 2026',
+  keywords: 'best MCP servers data science, mcp data analytics, ai agent data tools, jupyter MCP server, duckdb MCP, dbt MCP server, clickhouse MCP, airflow MCP, bigquery MCP server, spark MCP, snowflake MCP server 2026',
 };
 
 const tools = [
@@ -85,6 +85,19 @@ const tools = [
   },
   {
     rank: 4,
+    name: 'ClickHouse/mcp-clickhouse',
+    slug: 'ClickHouse--mcp-clickhouse',
+    score: 74.52,
+    stars: 710,
+    lang: 'Python',
+    contributors: 15,
+    lastCommit: '2026-03-10',
+    desc: 'Official ClickHouse MCP server — connect AI assistants to ClickHouse databases',
+    useCase: 'Real-time Analytics',
+    highlight: 'Official from ClickHouse team. 710 stars — most-starred data analytics MCP in the index.',
+  },
+  {
+    rank: 5,
     name: 'dbt-labs/dbt-mcp',
     slug: 'dbt-labs--dbt-mcp',
     score: 72.46,
@@ -97,7 +110,7 @@ const tools = [
     highlight: 'Official dbt Labs server. 35 contributors — highest in this list. Runs models and tests from any agent.',
   },
   {
-    rank: 5,
+    rank: 6,
     name: 'surendranb/google-analytics-mcp',
     slug: 'surendranb--google-analytics-mcp',
     score: 68.14,
@@ -110,7 +123,20 @@ const tools = [
     highlight: 'GA4 data through natural language. Fresh and actively maintained, though solo-contributor.',
   },
   {
-    rank: 6,
+    rank: 7,
+    name: 'astronomer/astro-airflow-mcp',
+    slug: 'astronomer--astro-airflow-mcp',
+    score: 64.53,
+    stars: 312,
+    lang: 'Python',
+    contributors: 10,
+    lastCommit: '2026-03-08',
+    desc: 'MCP server for Apache Airflow — runs standalone or as an Airflow plugin',
+    useCase: 'Pipeline Orchestration',
+    highlight: 'Official from Astronomer, the company driving Airflow. Inspect DAGs, trigger runs, query logs.',
+  },
+  {
+    rank: 8,
     name: 'Snowflake-Labs/mcp',
     slug: 'Snowflake-Labs--mcp',
     score: 61.24,
@@ -122,6 +148,32 @@ const tools = [
     useCase: 'Data Warehouse',
     highlight: 'Official Snowflake Labs server. Score docked for staleness — last commit December 2025.',
   },
+  {
+    rank: 9,
+    name: 'e2b-dev/mcp-server',
+    slug: 'e2b-dev--mcp-server',
+    score: 59.18,
+    stars: 398,
+    lang: 'TypeScript',
+    contributors: 11,
+    lastCommit: '2026-03-12',
+    desc: 'MCP server for E2B — run code in secure cloud sandboxes from any AI agent',
+    useCase: 'Code Execution',
+    highlight: 'Sandboxed Python/JS execution for data analysis. E2B is the standard for safe agent code runs.',
+  },
+  {
+    rank: 10,
+    name: 'LucasHild/mcp-server-bigquery',
+    slug: 'LucasHild--mcp-server-bigquery',
+    score: 53.74,
+    stars: 145,
+    lang: 'Python',
+    contributors: 6,
+    lastCommit: '2026-01-25',
+    desc: 'MCP server for Google BigQuery — schema inspection and query execution',
+    useCase: 'Cloud Data Warehouse',
+    highlight: 'Best-maintained BigQuery MCP in the index. Read-only access to datasets and tables.',
+  },
 ];
 
 const stats = {
@@ -129,6 +181,7 @@ const stats = {
   avgDataScienceScore: 32.5,
   topScore: 88.31,
 };
+
 const faqJsonLd = {
   '@context': 'https://schema.org',
   '@type': 'FAQPage',
@@ -138,7 +191,7 @@ const faqJsonLd = {
       name: 'What are the best MCP servers for data science workflows?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'The top data science MCP servers in the AgentRank index include tools for running Python or R code, executing Jupyter notebooks, connecting to data warehouses, and querying analytics platforms.',
+        text: 'The top data science MCP servers in the AgentRank index are motherduckdb/mcp-server-motherduck (88.31), datalayer/jupyter-mcp-server (83.45), and kubeflow/mcp-apache-spark-history-server (78.08). For real-time analytics, ClickHouse/mcp-clickhouse (74.52) is the highest-starred analytics MCP. For data transformation, dbt-labs/dbt-mcp (72.46) is the official choice.',
       },
     },
     {
@@ -146,7 +199,7 @@ const faqJsonLd = {
       name: 'Can Claude run Python code through an MCP server?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Yes. Code execution MCP servers let Claude write and run Python (or R) code in a sandboxed environment. The agent can iterate on analysis, inspect results, and refine code without leaving the conversation.',
+        text: 'Yes. The e2b-dev/mcp-server lets Claude run Python code in a secure E2B sandbox. The agent can write data analysis code using pandas, NumPy, or scikit-learn, execute it remotely, inspect results, and iterate — without requiring a local Python environment or risking code execution on your machine.',
       },
     },
     {
@@ -154,7 +207,23 @@ const faqJsonLd = {
       name: 'Can I give Claude access to my data warehouse?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Yes. MCP servers for Snowflake, BigQuery, Databricks, and DuckDB let Claude query your data warehouse directly. The agent generates SQL, runs it through the MCP server, and analyzes the results.',
+        text: 'Yes. MCP servers for Snowflake, BigQuery, ClickHouse, DuckDB, and Databricks let Claude query your data warehouse directly. The agent generates SQL, runs it through the MCP server, and analyzes the results. For Google BigQuery specifically, LucasHild/mcp-server-bigquery is the best-maintained option in the AgentRank index.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'What is the best MCP server for real-time analytics?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'ClickHouse/mcp-clickhouse (score 74.52, 710 stars) is the leading real-time analytics MCP server. It is the official server from the ClickHouse team, supports schema inspection and SQL query execution, and is the most-starred data analytics MCP in the AgentRank index after DuckDB.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Is there an MCP server for Apache Airflow?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Yes. astronomer/astro-airflow-mcp is the official Airflow MCP server from Astronomer — the company that runs the managed Airflow cloud. Agents can inspect DAG structures, trigger pipeline runs, check task logs, and query execution history through natural language.',
       },
     },
   ],
@@ -162,10 +231,10 @@ const faqJsonLd = {
 ---
 
 <Base
-  title="Best MCP Servers for Data Science in 2026 — AgentRank"
-  description="Top-ranked MCP servers for data science: Jupyter, DuckDB, dbt, Spark, Snowflake, and GA4. Scored by real signals — stars, freshness, issue health, contributors. Updated March 2026."
+  title="Top 10 MCP Servers for Data Science and Analytics in 2026 — AgentRank"
+  description="The 10 highest-scoring MCP servers for data science: DuckDB, Jupyter, Spark, ClickHouse, dbt, GA4, Airflow, Snowflake, E2B, BigQuery. Scored by real signals — stars, freshness, issue health, contributors. Updated March 2026."
   activeTab="blog"
-  keywords="best MCP servers data science, jupyter MCP server, duckdb MCP data science, dbt MCP server, apache spark MCP, snowflake MCP 2026, google analytics MCP"
+  keywords="best MCP servers data science, mcp data analytics, ai agent data tools, jupyter MCP server, duckdb MCP data science, dbt MCP server, clickhouse MCP analytics, airflow MCP server, bigquery MCP, apache spark MCP, snowflake MCP 2026"
   canonicalUrl="https://agentrank-ai.com/blog/best-mcp-servers-data-science/"
   jsonLd={[jsonLd, faqJsonLd]}
   ogImage="/og/best-mcp-servers-data-science.png"
@@ -173,19 +242,20 @@ const faqJsonLd = {
   <article class="blog-post">
     <header class="post-header">
       <div class="breadcrumb"><a href="/blog/">Blog</a> <span>/</span></div>
-      <h1>Best MCP Servers for Data Science in 2026</h1>
+      <h1>Top 10 MCP Servers for Data Science and Analytics in 2026</h1>
       <div class="post-meta">
-        <time datetime={publishDate}>March 18, 2026</time>
+        <time datetime={publishDate}>March 19, 2026</time>
         <span class="sep">&middot;</span>
-        <span>6 min read</span>
+        <span>8 min read</span>
         <span class="sep">&middot;</span>
         <span>AgentRank Index</span>
       </div>
       <p class="lede">
         Data science workflows are a natural fit for MCP. An agent that can run a Jupyter cell,
-        query DuckDB, trigger a dbt model, and read Spark job history can replace hours of manual
-        pipeline inspection. We scored <strong>{stats.totalDataScienceTools} data science tools</strong> in
-        the AgentRank index. These are the ones worth depending on.
+        query DuckDB, trigger a dbt model, stream from ClickHouse, fire an Airflow DAG, and read
+        Spark job history can replace hours of manual pipeline inspection. We scored
+        <strong>{stats.totalDataScienceTools} data science tools</strong> in the AgentRank index.
+        These are the ten worth depending on.
       </p>
     </header>
 
@@ -193,19 +263,21 @@ const faqJsonLd = {
       <strong>Contents</strong>
       <ol>
         <li><a href="#rankings">Rankings by score</a></li>
-        <li><a href="#by-use-case">Choosing by use case</a></li>
+        <li><a href="#by-workflow">Choosing by workflow</a></li>
+        <li><a href="#by-use-case">Detailed breakdown</a></li>
         <li><a href="#what-to-watch">What to watch for</a></li>
         <li><a href="#methodology">Methodology</a></li>
+        <li><a href="#faq">FAQ</a></li>
       </ol>
     </nav>
 
     <section id="rankings">
-      <h2>Top data science MCP servers</h2>
+      <h2>Top 10 data science MCP servers</h2>
       <p>
         Ranked by the composite AgentRank score — a weighted blend of stars (15%), freshness (25%),
         issue health (25%), contributors (10%), and inbound dependents (25%).
         Average score across all {stats.totalDataScienceTools} data science tools is <strong>{stats.avgDataScienceScore}</strong>.
-        The tools below are in the top tier.
+        Only 2.3% of the 25,000+ tool index scores above 60 — every tool in this list clears that bar.
       </p>
 
       <table class="data-table top-table">
@@ -237,19 +309,107 @@ const faqJsonLd = {
       </table>
     </section>
 
-    <section id="by-use-case">
-      <h2>Choosing by use case</h2>
-
-      <h3>Analytical queries and local data (DuckDB)</h3>
+    <section id="by-workflow">
+      <h2>Choosing by workflow</h2>
       <p>
-        <a href="/tool/motherduckdb--mcp-server-motherduck/" class="inline-link">motherduckdb/mcp-server-motherduck</a> is
-        the top-scoring data science tool at <strong>88.31</strong>. DuckDB runs in-process with zero
-        round-trips for local data — fast analytical SQL over Parquet files, CSVs, and in-memory
-        DataFrames. MotherDuck support extends this to cloud scale. If your agent needs to query a
-        dataset without spinning up an external database, this is the right tool.
+        The ten tools cover distinct workflow stages. Pick based on where you spend time,
+        not by score alone.
       </p>
 
-      <h3>Jupyter notebooks</h3>
+      <table class="data-table workflow-table">
+        <thead>
+          <tr>
+            <th>Workflow need</th>
+            <th>Best pick</th>
+            <th class="num">Score</th>
+            <th>Why</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Local analytical SQL</td>
+            <td><a href="/tool/motherduckdb--mcp-server-motherduck/" class="inline-link">motherduckdb/mcp-server-motherduck</a></td>
+            <td class="num score-cell">88.31</td>
+            <td>Zero round-trips, in-process Parquet/CSV queries</td>
+          </tr>
+          <tr>
+            <td>Notebook-first analysis</td>
+            <td><a href="/tool/datalayer--jupyter-mcp-server/" class="inline-link">datalayer/jupyter-mcp-server</a></td>
+            <td class="num score-cell">83.45</td>
+            <td>Run cells, inspect outputs, manage kernels</td>
+          </tr>
+          <tr>
+            <td>Big data / Spark jobs</td>
+            <td><a href="/tool/kubeflow--mcp-apache-spark-history-server/" class="inline-link">kubeflow/mcp-apache-spark-history-server</a></td>
+            <td class="num score-cell">78.08</td>
+            <td>Query Spark job history and application logs</td>
+          </tr>
+          <tr>
+            <td>Real-time event analytics</td>
+            <td><a href="/tool/ClickHouse--mcp-clickhouse/" class="inline-link">ClickHouse/mcp-clickhouse</a></td>
+            <td class="num score-cell">74.52</td>
+            <td>Official server, 710 stars, sub-second OLAP queries</td>
+          </tr>
+          <tr>
+            <td>Data transformation</td>
+            <td><a href="/tool/dbt-labs--dbt-mcp/" class="inline-link">dbt-labs/dbt-mcp</a></td>
+            <td class="num score-cell">72.46</td>
+            <td>Run dbt models, tests, and lineage inspection</td>
+          </tr>
+          <tr>
+            <td>Web / product analytics</td>
+            <td><a href="/tool/surendranb--google-analytics-mcp/" class="inline-link">surendranb/google-analytics-mcp</a></td>
+            <td class="num score-cell">68.14</td>
+            <td>GA4 data through natural language queries</td>
+          </tr>
+          <tr>
+            <td>Pipeline orchestration</td>
+            <td><a href="/tool/astronomer--astro-airflow-mcp/" class="inline-link">astronomer/astro-airflow-mcp</a></td>
+            <td class="num score-cell">64.53</td>
+            <td>Inspect DAGs, trigger runs, query task logs</td>
+          </tr>
+          <tr>
+            <td>Cloud data warehouse (Snowflake)</td>
+            <td><a href="/tool/Snowflake-Labs--mcp/" class="inline-link">Snowflake-Labs/mcp</a></td>
+            <td class="num score-cell">61.24</td>
+            <td>Official Snowflake server with Cortex AI support</td>
+          </tr>
+          <tr>
+            <td>Sandboxed code execution</td>
+            <td><a href="/tool/e2b-dev--mcp-server/" class="inline-link">e2b-dev/mcp-server</a></td>
+            <td class="num score-cell">59.18</td>
+            <td>Run Python data analysis code safely in E2B sandboxes</td>
+          </tr>
+          <tr>
+            <td>Google BigQuery</td>
+            <td><a href="/tool/LucasHild--mcp-server-bigquery/" class="inline-link">LucasHild/mcp-server-bigquery</a></td>
+            <td class="num score-cell">53.74</td>
+            <td>Best-maintained BigQuery MCP — schema inspection and SQL</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="by-use-case">
+      <h2>Detailed breakdown</h2>
+
+      <h3>1. Analytical queries and local data (DuckDB)</h3>
+      <p>
+        <a href="/tool/motherduckdb--mcp-server-motherduck/" class="inline-link">motherduckdb/mcp-server-motherduck</a> is
+        the top-scoring data science tool in the index at <strong>88.31</strong>. DuckDB runs in-process with zero
+        round-trips for local data — fast analytical SQL over Parquet files, CSVs, and in-memory
+        DataFrames. MotherDuck support extends this to cloud scale. If your agent needs to query a
+        dataset without spinning up an external database, this is the right tool. The 16-contributor
+        base and active commit history (March 4 last commit) make this one of the most
+        reliable analytics MCPs in the ecosystem.
+      </p>
+      <p>
+        Typical workflow: point the agent at a directory of Parquet files, ask it to profile the data,
+        compute summary statistics, and identify outliers — all without leaving the conversation.
+        DuckDB's columnar execution engine makes this genuinely fast for datasets in the hundreds of millions of rows.
+      </p>
+
+      <h3>2. Jupyter notebooks</h3>
       <p>
         <a href="/tool/datalayer--jupyter-mcp-server/" class="inline-link">datalayer/jupyter-mcp-server</a> scores
         <strong>83.45</strong> with 940 stars and 18 contributors. It's the canonical MCP integration for
@@ -257,8 +417,14 @@ const faqJsonLd = {
         variable state. If your data science workflow is notebook-first, this is the integration that
         closes the loop between an AI agent and interactive computation.
       </p>
+      <p>
+        The key capability is bidirectional: the agent can write a cell, execute it, read the output,
+        then write the next cell based on what it saw. This enables multi-step exploratory analysis
+        where the agent can adapt its approach based on intermediate results — not just generate a
+        notebook template and hand it back to you.
+      </p>
 
-      <h3>Big data and Spark pipelines</h3>
+      <h3>3. Big data and Spark pipelines</h3>
       <p>
         <a href="/tool/kubeflow--mcp-apache-spark-history-server/" class="inline-link">kubeflow/mcp-apache-spark-history-server</a> is
         an official Kubeflow project, scoring <strong>78.08</strong>. It connects agents directly to the Spark History
@@ -266,8 +432,31 @@ const faqJsonLd = {
         If your team runs Spark jobs on Kubernetes or any cluster, this is how you give agents visibility
         into pipeline execution without custom tooling.
       </p>
+      <p>
+        Use case: an agent monitoring a nightly batch job can query the history server for job duration,
+        failed stages, and executor memory usage — then surface anomalies in a summary report, or
+        trigger follow-up queries to diagnose root causes. The Kubeflow backing means this server will
+        track Spark version changes and History Server API updates reliably.
+      </p>
 
-      <h3>Data transformation (dbt)</h3>
+      <h3>4. Real-time analytics (ClickHouse)</h3>
+      <p>
+        <a href="/tool/ClickHouse--mcp-clickhouse/" class="inline-link">ClickHouse/mcp-clickhouse</a> is the
+        official MCP server from the ClickHouse team, scoring <strong>74.52</strong> with 710 stars —
+        the most-starred data analytics MCP in this list after DuckDB. ClickHouse is purpose-built
+        for real-time analytical queries at scale: event tracking, user behavior analytics, time-series
+        data, and log analysis. The MCP server exposes SQL query execution and schema inspection
+        across all databases and tables.
+      </p>
+      <p>
+        ClickHouse's sub-second query performance on billion-row datasets makes it the right database
+        for agents that need to analyze production-scale event data. If your data team uses ClickHouse
+        for product analytics, observability data, or financial time-series, this is the direct
+        MCP integration. The official vendor backing means this server will track ClickHouse SQL
+        dialect changes and authentication updates without community lag.
+      </p>
+
+      <h3>5. Data transformation (dbt)</h3>
       <p>
         <a href="/tool/dbt-labs--dbt-mcp/" class="inline-link">dbt-labs/dbt-mcp</a> is the official dbt
         MCP server from dbt Labs, scoring <strong>72.46</strong> with 35 contributors — the highest contributor
@@ -275,24 +464,85 @@ const faqJsonLd = {
         directly. If your data team runs dbt, this server closes the gap between the transformation
         layer and any LLM-driven workflow.
       </p>
+      <p>
+        Practical applications: ask an agent to run a specific dbt model and report test failures,
+        inspect the compiled SQL for a model you're debugging, or trace the lineage of a broken
+        dashboard metric back to the source table. The 35-contributor base is the strongest signal
+        of community health in this category — dbt-mcp won't go stale.
+      </p>
 
-      <h3>Web analytics (Google Analytics 4)</h3>
+      <h3>6. Web analytics (Google Analytics 4)</h3>
       <p>
         <a href="/tool/surendranb--google-analytics-mcp/" class="inline-link">surendranb/google-analytics-mcp</a> gives
         agents natural language access to GA4 data, scoring <strong>68.14</strong>. Active commits through
         March 2026, supporting Claude, Cursor, and Windsurf. One caveat: it's a solo-contributor project,
         which means bus factor risk. Verify the license and consider forking for production use.
-        If you need GA4 query access in an agent workflow, this is the only well-maintained option
+        If you need GA4 query access in an agent workflow, this is the best-maintained option
         in the index.
       </p>
+      <p>
+        Typical workflow: an agent querying GA4 for session metrics, conversion rates, and traffic
+        source breakdowns can surface weekly performance summaries, flag anomalies, and correlate
+        spikes with specific events or campaigns — without requiring a data analyst to pull reports manually.
+      </p>
 
-      <h3>Cloud data warehouses (Snowflake)</h3>
+      <h3>7. Data pipeline orchestration (Apache Airflow)</h3>
+      <p>
+        <a href="/tool/astronomer--astro-airflow-mcp/" class="inline-link">astronomer/astro-airflow-mcp</a> is
+        the official MCP server from Astronomer — the company that runs the managed Airflow cloud
+        and contributes heavily to the open-source project. Score of <strong>64.53</strong> with 312 stars
+        and 10 contributors. Agents can inspect DAG structures, list available pipelines, trigger
+        DAG runs, monitor task state, and query execution logs through natural language.
+      </p>
+      <p>
+        Astronomer's official backing is the key signal here. Airflow's REST API changes with each
+        major version — a community-maintained server would lag; the Astronomer server tracks these
+        changes directly. Use case: an agent that monitors pipeline health and surfaces failed tasks,
+        slow runs, and SLA misses in a daily briefing, with the ability to re-trigger failed tasks
+        directly.
+      </p>
+
+      <h3>8. Cloud data warehouse (Snowflake)</h3>
       <p>
         <a href="/tool/Snowflake-Labs--mcp/" class="inline-link">Snowflake-Labs/mcp</a> is the official
         Snowflake server, covering Cortex AI, object management, and SQL orchestration. It scores
         <strong>61.24</strong> — lower than expected for an official server because the last commit was
         December 19, 2025, triggering a freshness penalty in the score. It's still the right pick if
-        your stack runs on Snowflake, but watch the repo for resumed activity.
+        your stack runs on Snowflake, but watch the repo for resumed activity. The Cortex AI
+        integration is unique — it lets agents call Snowflake's built-in ML functions directly
+        through the same MCP interface.
+      </p>
+
+      <h3>9. Sandboxed code execution (E2B)</h3>
+      <p>
+        <a href="/tool/e2b-dev--mcp-server/" class="inline-link">e2b-dev/mcp-server</a> gives agents
+        the ability to run Python and JavaScript code in secure E2B cloud sandboxes, scoring
+        <strong>59.18</strong> with 398 stars and 11 contributors. E2B (e2b.dev) is purpose-built
+        for AI agent code execution — sandboxed environments with full Python data science libraries
+        (pandas, NumPy, scikit-learn, matplotlib, Polars) available out of the box.
+      </p>
+      <p>
+        The sandbox model solves a real problem: agents that generate and execute data analysis code
+        need a safe execution environment that won't touch your production systems or local filesystem.
+        E2B's remote sandboxes handle this cleanly. The agent iterates on analysis code, inspects
+        outputs, and refines the approach — without any risk to your local environment. For
+        ad-hoc data analysis, this is a strong complement to the notebook-oriented Jupyter integration.
+      </p>
+
+      <h3>10. Google BigQuery</h3>
+      <p>
+        <a href="/tool/LucasHild--mcp-server-bigquery/" class="inline-link">LucasHild/mcp-server-bigquery</a> provides
+        BigQuery access through MCP — dataset listing, schema inspection, and SQL query execution.
+        Score of <strong>53.74</strong> with 145 stars and 6 contributors. This is a community-maintained
+        server rather than an official Google product, which explains the lower score.
+        Last commit January 2026 introduces a freshness penalty.
+      </p>
+      <p>
+        BigQuery is the default cloud data warehouse for many data science teams, and this server
+        fills a real gap — there is no official Google BigQuery MCP server yet. The
+        ergut/mcp-bigquery-server (a similar community alternative with 130 stars) offers comparable
+        functionality with a slightly different architecture. For production use, evaluate both
+        and choose based on which better fits your auth setup and BigQuery project structure.
       </p>
 
       <div class="cta-box">
@@ -311,37 +561,63 @@ const faqJsonLd = {
 
       <h3>Official vs community servers</h3>
       <p>
-        Two of the top six are official servers from the vendor or project: dbt Labs and Kubeflow.
-        Official servers track breaking API changes and protocol upgrades — they're safer long-term bets.
-        The others (<a href="/tool/motherduckdb--mcp-server-motherduck/" class="inline-link">motherduckdb/mcp-server-motherduck</a> and
-        <a href="/tool/datalayer--jupyter-mcp-server/" class="inline-link">datalayer/jupyter-mcp-server</a>)
-        are community-maintained but have strong contributor counts and active commit histories,
-        which is the next best signal.
+        Six of the ten servers are official: motherduckdb, Kubeflow, ClickHouse, dbt Labs, Astronomer,
+        and Snowflake Labs. Official servers track breaking API changes and protocol upgrades — they're
+        safer long-term bets. The community servers (Jupyter, GA4, E2B, BigQuery) are excellent but
+        require more due diligence. Check the last commit date and open-issue backlog before
+        depending on any community server in production.
       </p>
 
       <h3>Freshness matters more in data tooling</h3>
       <p>
-        Data tooling APIs change fast — new Spark versions, GA4 changes, Snowflake protocol updates.
-        A server that hasn't been committed to in 90+ days may be broken against the current API version.
-        That's why freshness is weighted at 25% in the AgentRank score. The
-        <a href="/tool/Snowflake-Labs--mcp/" class="inline-link">Snowflake Labs server</a> is the clearest
-        example: official backing but three months without a commit.
+        Data tooling APIs change fast — new Spark versions, GA4 property changes, Snowflake protocol
+        updates, Airflow REST API revisions. A server that hasn't been committed to in 90+ days may
+        be broken against the current API version. That's why freshness is weighted at 25% in the
+        AgentRank score. The <a href="/tool/Snowflake-Labs--mcp/" class="inline-link">Snowflake Labs server</a>
+        and <a href="/tool/LucasHild--mcp-server-bigquery/" class="inline-link">LucasHild BigQuery server</a>
+        are the clearest examples: legitimate quality tools with freshness penalties dragging the score.
+        Watch those repos for resumed commits before putting them on the critical path.
       </p>
 
       <h3>Bus factor risk in solo projects</h3>
       <p>
         <a href="/tool/surendranb--google-analytics-mcp/" class="inline-link">surendranb/google-analytics-mcp</a> is
-        maintained by a single contributor. For anything production-critical, evaluate whether you could
-        maintain a fork if the author goes inactive. The contributor signal in the AgentRank score (10% weight)
-        specifically flags this risk class.
+        maintained by a single contributor. For anything production-critical, evaluate whether you
+        could maintain a fork if the author goes inactive. The contributor signal in the AgentRank
+        score (10% weight) specifically flags this risk class. For GA4 specifically, this is the
+        only well-scored option in the index — a gap the ecosystem hasn't filled with an official server.
       </p>
 
-      <h3>The missing piece: pandas and Python data analysis</h3>
+      <h3>Score vs stars divergence</h3>
       <p>
-        There is no well-maintained, high-scoring MCP server for direct pandas or numpy interaction
-        in the index as of March 2026. The closest is <a href="/tool/motherduckdb--mcp-server-motherduck/" class="inline-link">motherduckdb/mcp-server-motherduck</a>
-        for in-memory analytical queries, and <a href="/tool/datalayer--jupyter-mcp-server/" class="inline-link">datalayer/jupyter-mcp-server</a>
-        for running arbitrary Python. A focused pandas MCP server would fill a real gap in the ecosystem.
+        ClickHouse/mcp-clickhouse has 710 stars — the most in this list — but scores 74.52, not #1.
+        dbt-labs/dbt-mcp has only 507 stars but has 35 contributors, pushing its health signals up.
+        motherduckdb/mcp-server-motherduck leads at 88.31 despite 439 stars because its freshness,
+        issue health, and dependent signals are all strong. Stars measure historical attention;
+        the AgentRank score measures current maintenance quality. Use the score to decide what
+        to depend on in production.
+      </p>
+
+      <h3>The missing pieces: pandas and real-time ML serving</h3>
+      <p>
+        There is no well-maintained, high-scoring MCP server for direct pandas or NumPy interaction
+        in the index as of March 2026. The closest substitutes are
+        <a href="/tool/motherduckdb--mcp-server-motherduck/" class="inline-link">motherduckdb/mcp-server-motherduck</a>
+        for in-memory analytical queries and
+        <a href="/tool/e2b-dev--mcp-server/" class="inline-link">e2b-dev/mcp-server</a>
+        for running arbitrary Python. Similarly, there is no MCP server for ML model serving
+        (e.g., calling a production scikit-learn or PyTorch model through MCP). Both are genuine
+        ecosystem gaps — well-maintained servers in these categories would immediately rank
+        in the top tier.
+      </p>
+
+      <h3>Pipeline coverage is now complete</h3>
+      <p>
+        With Airflow covering orchestration, dbt covering transformation, and DuckDB/ClickHouse/BigQuery
+        covering query, a full modern data stack is now reachable through MCP. A single agent
+        can inspect a pipeline failure in Airflow, trace it to a broken dbt model, query the
+        source table in BigQuery for anomalies, and summarize the root cause — without a human
+        switching between four tools. That's the real value unlock.
       </p>
     </section>
 
@@ -349,13 +625,57 @@ const faqJsonLd = {
       <h2>Methodology</h2>
       <p>
         Tools classified as "data science" via keyword matching on description, topics, and repo name
-        — covering Jupyter, DuckDB, Spark, dbt, Snowflake, analytics, dataframes, notebooks,
-        machine learning pipelines, and related terms. Only non-archived repositories with a
-        computed score included. Data from the AgentRank index crawled March 2026.
+        — covering Jupyter, DuckDB, ClickHouse, Spark, dbt, Snowflake, Airflow, BigQuery, analytics,
+        dataframes, notebooks, machine learning pipelines, and related terms. Only non-archived
+        repositories with a computed score included. Data from the AgentRank index crawled March 2026.
       </p>
       <p>
         Score weights: stars 15%, freshness (days since last commit) 25%, issue health (closed/total ratio)
-        25%, contributors 10%, inbound dependents 25%.
+        25%, contributors 10%, inbound dependents 25%. Only 589 tools in the 25,000+ index score above 60.
+        Every tool in this list clears that threshold, placing them in the top 2.3% of the full index.
+      </p>
+    </section>
+
+    <section id="faq">
+      <h2>FAQ</h2>
+
+      <h3>What are the best MCP servers for data science workflows?</h3>
+      <p>
+        The top-scoring data science MCP servers in the AgentRank index are: motherduckdb/mcp-server-motherduck
+        (88.31) for local SQL analytics, datalayer/jupyter-mcp-server (83.45) for notebook execution,
+        kubeflow/mcp-apache-spark-history-server (78.08) for Spark, and ClickHouse/mcp-clickhouse
+        (74.52) for real-time analytics.
+      </p>
+
+      <h3>Can Claude run Python data analysis code?</h3>
+      <p>
+        Yes — two options. <a href="/tool/e2b-dev--mcp-server/" class="inline-link">e2b-dev/mcp-server</a>
+        runs arbitrary Python in a secure cloud sandbox. <a href="/tool/datalayer--jupyter-mcp-server/" class="inline-link">datalayer/jupyter-mcp-server</a>
+        executes code in an existing Jupyter kernel and reads back cell outputs. E2B is better
+        for disposable analysis; Jupyter is better if you're working in an existing notebook
+        and want stateful variable persistence between executions.
+      </p>
+
+      <h3>Can I give Claude access to my data warehouse?</h3>
+      <p>
+        Yes. MCP servers exist for Snowflake (official), BigQuery (community), ClickHouse (official),
+        and DuckDB (official). Each server handles query routing and result serialization; Claude
+        handles the SQL reasoning and analysis. Read-only mode is the safe default — most of these
+        servers restrict to read access by design.
+      </p>
+
+      <h3>Is there an MCP server for Apache Airflow?</h3>
+      <p>
+        Yes — <a href="/tool/astronomer--astro-airflow-mcp/" class="inline-link">astronomer/astro-airflow-mcp</a>
+        from the Astronomer team. It supports both standalone deployment and running as an Airflow
+        plugin. Agents can inspect DAGs, trigger runs, and query execution logs.
+      </p>
+
+      <h3>What is the best MCP server for real-time event analytics?</h3>
+      <p>
+        <a href="/tool/ClickHouse--mcp-clickhouse/" class="inline-link">ClickHouse/mcp-clickhouse</a>
+        (score 74.52, 710 stars). It is the official server from the ClickHouse team and the
+        most-starred analytics MCP in the AgentRank index after DuckDB.
       </p>
     </section>
 
@@ -366,7 +686,7 @@ const faqJsonLd = {
         <strong>Methodology:</strong> Data from the AgentRank index crawled March 2026.
         Scores computed using: stars 15%, freshness 25%, issue health 25%, contributors 10%, inbound dependents 25%.
         Tools classified via keyword matching on description, topics, and repo name.
-        Only non-archived repositories included.
+        Only non-archived repositories included. <a href="/methodology/">Full scoring methodology →</a>
       </p>
       <p class="share-line">
         Found this useful? <a href="https://x.com/AgentRank_ai" target="_blank" rel="noopener noreferrer">Follow @AgentRank_ai</a> for
@@ -568,6 +888,11 @@ const faqJsonLd = {
       white-space: nowrap;
     }
 
+    .workflow-table td:last-child {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+    }
+
     .cta-box {
       background: var(--bg-surface);
       border: 1px solid var(--border);
@@ -612,6 +937,10 @@ const faqJsonLd = {
       }
 
       .use-case {
+        display: none;
+      }
+
+      .workflow-table td:last-child {
         display: none;
       }
     }
