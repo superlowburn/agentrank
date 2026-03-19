@@ -2,7 +2,7 @@
 
 ## Status: Ready to Build
 
-**Author:** CEO (writing this because PM was stuck)
+**Authors:** CEO (initial draft), Vibe Coder (maintainer journey + self-serve path)
 **Date:** 2026-03-19
 **Unblocks:** AUT-326 (Founding Engineer build task)
 
@@ -80,7 +80,75 @@ After Stripe checkout completes, redirect to `/dashboard/sponsor?session_id={CHE
 
 ---
 
-## 3. Sponsor Analytics
+## 3. Maintainer Journey (What They See)
+
+### Discovery
+Maintainers find the sponsored listing program through:
+- The `/advertise` landing page (already live) — linked from the footer and tool detail pages
+- The `/pricing` page — which surfaces sponsorship as a paid tier alongside Pro API
+- Direct outreach from us (cold email/Twitter) once we have traffic data
+
+### Two Paths to Sponsorship
+
+#### Path A: Self-Serve (Stripe checkout — preferred for v1)
+1. Maintainer lands on `/pricing` or `/advertise`
+2. Clicks "Get Started" for their desired tier
+3. Stripe checkout opens — they pay with credit card
+4. On success, Stripe webhook fires → tool flagged as `sponsored = 1` in D1
+5. Redirect to `/dashboard/sponsor?session_id={id}`
+6. Dashboard prompts them to:
+   - Confirm which tool (if email doesn't match a claim, they enter the `owner/repo` manually)
+   - Enter custom description (max 200 chars)
+   - Enter CTA button text + URL (e.g., "Try Free → https://mysite.com")
+7. Hit "Go Live" → listing updates within 60 seconds
+
+**This is the MVP path.** No human involvement required after Stripe connects.
+
+#### Path B: Manual Outreach (high-value, v1 fallback)
+Some maintainers — typically commercial companies — will email first or come in via the `/advertise` inquiry form. For these:
+1. We receive the inquiry (stored in `sponsor_interest` table)
+2. Steve sends a custom proposal within 24h (we have the traffic data for their category now)
+3. Payment via Stripe invoice link (not the checkout widget)
+4. We manually activate via `PATCH /api/admin/sponsor` with `DASH_TOKEN`
+5. We email onboarding steps manually
+
+**When to use manual outreach:** For $499/mo Featured tier or any multi-tool bundle deal. These need a human touch anyway (quarterly review call, newsletter placement, etc.).
+
+### Sponsor Dashboard Experience
+
+After going live, the sponsor can return to `/dashboard/sponsor` at any time to:
+- See live impression + click stats (last 7 / last 30 days)
+- Edit their custom description and CTA
+- View their billing status and next renewal date
+- Cancel (routes to Stripe customer portal)
+
+### What the Sponsor Sees on the Site
+
+| Location | What They See |
+|----------|---------------|
+| Homepage featured section | Card with their tool name, custom description, score badge, "Sponsored" label |
+| Category page (top) | Pinned card above organic results, same format |
+| Leaderboard table row | Subtle highlight + "Sponsored" pill — rank position unchanged |
+| Tool detail page | "Sponsored" badge, enhanced description block, CTA button |
+| MCP server API responses | `sponsored: true` flag included — AI agents see it |
+
+---
+
+## 4. Self-Serve vs Manual: Decision Matrix
+
+| Signal | Use Self-Serve | Use Manual Outreach |
+|--------|---------------|---------------------|
+| Lead source | `/pricing` page click | `/advertise` inquiry form or cold reach |
+| Tool type | OSS project or indie tool | Commercial product with a company behind it |
+| Tier | Starter ($199) or Growth ($299) | Featured ($499) or custom bundle |
+| Budget authority | Individual maintainer | Marketing/DevRel team |
+| Wants to customize | Basic (description + CTA) | Complex (logo, newsletter mention, co-branded) |
+
+**Default stance:** Push self-serve. Fewer emails, faster revenue. Manual is for enterprise deals only.
+
+---
+
+## 5. Sponsor Analytics
 
 ### What sponsors see (`/dashboard/sponsor`)
 - **Impressions:** How many times their sponsored listing was rendered (homepage, category, detail page)
@@ -111,7 +179,7 @@ After Stripe checkout completes, redirect to `/dashboard/sponsor?session_id={CHE
 
 ---
 
-## 4. DB Changes Required
+## 6. DB Changes Required
 
 ```sql
 -- New columns on tools table
@@ -132,7 +200,7 @@ CREATE INDEX IF NOT EXISTS idx_sponsor_events_tool ON sponsor_events(tool_full_n
 
 ---
 
-## 5. API Endpoints
+## 7. API Endpoints
 
 ### Existing (no changes needed):
 - `GET /api/sponsored` — list active sponsored tools
