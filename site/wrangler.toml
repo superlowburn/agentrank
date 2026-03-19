@@ -25,3 +25,33 @@ database_id = "946abec6-5f2b-4177-b1cb-b84769a20883"
 # Unsubscribe token signing key (optional — falls back to DASH_TOKEN)
 # Recommended: set a dedicated secret so rotating DASH_TOKEN doesn't break unsub links
 #   wrangler secret put UNSUB_SECRET
+
+# Cloudflare Analytics API token — enables /admin/analytics to show CF Web Analytics data
+# Create at: https://dash.cloudflare.com/profile/api-tokens
+# Required permission: Account Analytics: Read
+#   wrangler secret put CF_API_TOKEN
+
+# Stripe — payment processing for sponsored listings and Pro API subscriptions
+# Use test keys from https://dashboard.stripe.com/test/apikeys
+#   wrangler secret put STRIPE_SECRET_KEY
+#
+# Webhook signing secret — from Stripe dashboard: Developers > Webhooks
+# Endpoint URL: https://agentrank-ai.com/api/webhooks/stripe
+# Events to send: checkout.session.completed, customer.subscription.deleted,
+#                 invoice.payment_failed, invoice.payment_succeeded
+#   wrangler secret put STRIPE_WEBHOOK_SECRET
+#
+# Price IDs — create in Stripe dashboard: Products > (create each product)
+# Sponsored listing tiers:
+#   wrangler secret put STRIPE_PRICE_SPONSORED_BASIC_MONTHLY
+#   wrangler secret put STRIPE_PRICE_SPONSORED_BASIC_ANNUAL
+#   wrangler secret put STRIPE_PRICE_SPONSORED_PRO_MONTHLY
+#   wrangler secret put STRIPE_PRICE_SPONSORED_PRO_ANNUAL
+#   wrangler secret put STRIPE_PRICE_SPONSORED_ENTERPRISE_MONTHLY
+#   wrangler secret put STRIPE_PRICE_SPONSORED_ENTERPRISE_ANNUAL
+# Pro API tiers:
+#   wrangler secret put STRIPE_PRICE_PRO_MONTHLY
+#   wrangler secret put STRIPE_PRICE_PRO_ANNUAL
+# Verified Publisher tiers:
+#   wrangler secret put STRIPE_PRICE_VP_MONTHLY
+#   wrangler secret put STRIPE_PRICE_VP_ANNUAL
