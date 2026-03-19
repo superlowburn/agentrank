@@ -165,7 +165,8 @@ CREATE TABLE IF NOT EXISTS email_subscribers (
   subscribed_at TEXT NOT NULL DEFAULT (datetime('now')),
   confirmed INTEGER NOT NULL DEFAULT 0,     -- 0 = unconfirmed, 1 = confirmed
   ip_hash TEXT,                             -- SHA-256 of subscriber IP (not raw)
-  utm_params TEXT                           -- JSON blob of UTM params at subscribe time
+  utm_params TEXT,                          -- JSON blob of UTM params at subscribe time
+  welcome_sent_at TEXT                      -- ISO timestamp when welcome email was sent; NULL = not yet sent
 );
 CREATE UNIQUE INDEX IF NOT EXISTS idx_email_subscribers_email ON email_subscribers(email);
 CREATE INDEX IF NOT EXISTS idx_email_subscribers_source ON email_subscribers(source);
@@ -173,6 +174,7 @@ CREATE INDEX IF NOT EXISTS idx_email_subscribers_source ON email_subscribers(sou
 -- ALTER TABLE email_subscribers ADD COLUMN confirmed INTEGER NOT NULL DEFAULT 0;
 -- ALTER TABLE email_subscribers ADD COLUMN ip_hash TEXT;
 -- ALTER TABLE email_subscribers ADD COLUMN utm_params TEXT;
+-- ALTER TABLE email_subscribers ADD COLUMN welcome_sent_at TEXT;
 
 -- Install checkpoints — tracks our own skill install counts over time (from skills.sh)
 -- survives pipeline DROP/CREATE cycles

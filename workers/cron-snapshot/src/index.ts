@@ -582,6 +582,148 @@ function buildDigestHtml(
 </body></html>`;
 }
 
+// ---------------------------------------------------------------------------
+// Welcome email — sent once per subscriber, daily cron picks up new signups
+// ---------------------------------------------------------------------------
+
+function buildWelcomeHtml(
+  top10: { full_name: string; rank: number; score: number; stars: number }[],
+  unsubUrl: string,
+): string {
+  const site = 'https://agentrank-ai.com';
+  const shortName = (s: string) => s.split('/').pop() ?? s;
+  const ghUrl = (s: string) => `https://github.com/${s}`;
+
+  const top10Rows = top10.map(t => `
+    <tr>
+      <td style="padding:8px 0;border-bottom:1px solid #1f2937;color:#6b7280;font-size:13px;">#${t.rank}</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #1f2937;">
+        <a href="${ghUrl(t.full_name)}" style="color:#818cf8;text-decoration:none;font-weight:600;">${shortName(t.full_name)}</a>
+      </td>
+      <td style="padding:8px 0;border-bottom:1px solid #1f2937;text-align:right;color:#e5e7eb;font-size:13px;">${t.score.toFixed(1)}</td>
+      <td style="padding:8px 0 8px 8px;border-bottom:1px solid #1f2937;text-align:right;color:#9ca3af;font-size:13px;">&#9733; ${t.stars.toLocaleString()}</td>
+    </tr>`).join('');
+
+  return `<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Welcome to AgentRank</title></head>
+<body style="margin:0;padding:0;background:#0a0a0a;color:#e5e5e5;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background:#0a0a0a;">
+    <tr><td align="center" style="padding:40px 16px;">
+      <table width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;">
+        <tr><td style="padding:0 0 32px;">
+          <a href="${site}/" style="text-decoration:none;">
+            <span style="font-size:22px;font-weight:700;color:#f9fafb;">AgentRank</span>
+          </a>
+        </td></tr>
+        <tr><td style="padding:0 0 28px;">
+          <p style="margin:0 0 16px;font-size:16px;color:#e5e7eb;line-height:1.6;">
+            Welcome — you're now subscribed to the AgentRank weekly digest.
+          </p>
+          <p style="margin:0;font-size:14px;color:#9ca3af;line-height:1.6;">
+            AgentRank tracks every MCP server and agent tool on GitHub, scoring them nightly by real signals:
+            stars, freshness, issue health, contributors, and dependents. No hype — just data.
+          </p>
+        </td></tr>
+        <tr><td style="padding:0 0 32px;">
+          <h2 style="margin:0 0 16px;font-size:15px;font-weight:600;color:#f9fafb;text-transform:uppercase;letter-spacing:0.5px;">Top 10 MCP Tools Right Now</h2>
+          <table width="100%" cellpadding="0" cellspacing="0">
+            <thead><tr>
+              <th style="text-align:left;font-size:11px;color:#4b5563;padding:0 0 8px;border-bottom:1px solid #1f2937;">#</th>
+              <th style="text-align:left;font-size:11px;color:#4b5563;padding:0 12px 8px;border-bottom:1px solid #1f2937;">Tool</th>
+              <th style="text-align:right;font-size:11px;color:#4b5563;padding:0 0 8px;border-bottom:1px solid #1f2937;">Score</th>
+              <th style="text-align:right;font-size:11px;color:#4b5563;padding:0 0 8px 8px;border-bottom:1px solid #1f2937;">Stars</th>
+            </tr></thead>
+            <tbody>${top10Rows}</tbody>
+          </table>
+        </td></tr>
+        <tr><td style="padding:0 0 40px;text-align:center;">
+          <a href="${site}/tools/" style="display:inline-block;background:#6366f1;color:#fff;text-decoration:none;padding:13px 32px;border-radius:6px;font-weight:600;font-size:14px;">
+            View Full Leaderboard
+          </a>
+        </td></tr>
+        <tr><td style="border-top:1px solid #111827;padding:24px 0 0;">
+          <p style="margin:0;font-size:12px;color:#374151;line-height:1.6;">
+            You'll receive a weekly digest every Tuesday with the latest rankings and movers.<br>
+            <a href="${unsubUrl}" style="color:#4b5563;">Unsubscribe</a>
+          </p>
+        </td></tr>
+      </table>
+    </td></tr>
+  </table>
+</body></html>`;
+}
+
+async function sendWelcomeEmails(env: Env): Promise<void> {
+  const resendKey = env.RESEND_API_KEY;
+  if (!resendKey) {
+    console.log('[cron-snapshot] sendWelcomeEmails: RESEND_API_KEY not set, skipping');
+    return;
+  }
+
+  const db = env.DB;
+
+  // Find subscribers who haven't received a welcome email yet
+  const subsResult = await db
+    .prepare(`SELECT id, email FROM email_subscribers WHERE welcome_sent_at IS NULL ORDER BY subscribed_at ASC LIMIT 90`)
+    .all()
+    .catch(() => ({ results: [] as unknown[] }));
+
+  const subscribers = (subsResult.results || []) as { id: number; email: string }[];
+
+  if (subscribers.length === 0) {
+    console.log('[cron-snapshot] sendWelcomeEmails: no new subscribers, skipping');
+    return;
+  }
+
+  // Fetch top 10 tools once
+  const top10Result = await db
+    .prepare(`SELECT full_name, rank, score, stars FROM tools WHERE rank IS NOT NULL ORDER BY rank ASC LIMIT 10`)
+    .all()
+    .catch(() => ({ results: [] as unknown[] }));
+
+  const top10 = (top10Result.results || []) as { full_name: string; rank: number; score: number; stars: number }[];
+
+  const unsubSecret = env.UNSUB_SECRET || env.DASH_TOKEN || 'change-me';
+  let sent = 0;
+  let failed = 0;
+
+  for (const sub of subscribers) {
+    const unsubToken = await generateUnsubToken(unsubSecret, sub.email);
+    const unsubUrl = `https://agentrank-ai.com/api/unsubscribe?email=${encodeURIComponent(sub.email)}&token=${unsubToken}`;
+    const html = buildWelcomeHtml(top10, unsubUrl);
+
+    const res = await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${resendKey}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        from: 'AgentRank <digest@agentrank-ai.com>',
+        to: sub.email,
+        subject: 'Welcome to AgentRank — top MCP tools this week',
+        html,
+      }),
+    }).catch(() => null);
+
+    if (res?.ok) {
+      // Mark welcome email as sent
+      await db
+        .prepare(`UPDATE email_subscribers SET welcome_sent_at = datetime('now') WHERE id = ?`)
+        .bind(sub.id)
+        .run()
+        .catch(() => null);
+      sent++;
+    } else {
+      failed++;
+      console.log(`[cron-snapshot] sendWelcomeEmails: failed to send to ${sub.email}: HTTP ${res?.status ?? 'error'}`);
+    }
+  }
+
+  console.log(`[cron-snapshot] sendWelcomeEmails: sent=${sent} failed=${failed} total=${subscribers.length}`);
+}
+
 async function sendWeeklyDigest(env: Env): Promise<void> {
   const resendKey = env.RESEND_API_KEY;
   if (!resendKey) {
@@ -723,7 +865,14 @@ export default {
       console.log(`[cron-snapshot] IndexNow submission failed (non-fatal): ${e?.message}`);
     }
 
-    // Step 4: On Tuesdays, send the weekly email digest to all subscribers
+    // Step 4: Every day, send welcome emails to subscribers who haven't received one yet
+    try {
+      await sendWelcomeEmails(env);
+    } catch (e: any) {
+      console.log(`[cron-snapshot] sendWelcomeEmails failed (non-fatal): ${e?.message}`);
+    }
+
+    // Step 4b: On Tuesdays, send the weekly email digest to all subscribers
     if (isTuesday) {
       try {
         await sendWeeklyDigest(env);
