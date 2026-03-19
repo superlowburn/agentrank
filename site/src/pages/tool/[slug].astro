@@ -315,25 +315,37 @@ const relatedBlogPosts = toolCategory ? (CATEGORY_BLOG_MAP[toolCategory] ?? [
   { href: '/blog/how-to-choose-an-mcp-server/', title: 'How to Choose an MCP Server in 2026' },
 ];
 
-// Try to find related tools by category (matched queries), fall back to top-scored
-const primaryQuery = tool.matched_queries[0] || null;
+// Try to find related tools by category column first, then matched_queries, fall back to top-scored
 let relatedTools: Record<string, unknown>[] = [];
-if (primaryQuery) {
+const primaryQuery = tool.matched_queries[0] || null;
+if (toolCategory) {
   const categoryRows = await env.DB.prepare(
     `SELECT full_name, score, rank, description FROM tools
-     WHERE full_name != ? AND score IS NOT NULL AND matched_queries LIKE ?
-     ORDER BY score DESC LIMIT 5`
-  ).bind(tool.full_name, `%${primaryQuery}%`).all();
+     WHERE full_name != ? AND score IS NOT NULL AND category = ?
+     ORDER BY score DESC LIMIT 6`
+  ).bind(tool.full_name, toolCategory).all();
   relatedTools = (categoryRows.results || []) as Record<string, unknown>[];
+}
+if (relatedTools.length < 3 && primaryQuery) {
+  const queryRows = await env.DB.prepare(
+    `SELECT full_name, score, rank, description FROM tools
+     WHERE full_name != ? AND score IS NOT NULL AND matched_queries LIKE ?
+     ORDER BY score DESC LIMIT 6`
+  ).bind(tool.full_name, `%${primaryQuery}%`).all();
+  relatedTools = (queryRows.results || []) as Record<string, unknown>[];
 }
 if (relatedTools.length < 3) {
   const topRows = await env.DB.prepare(
     `SELECT full_name, score, rank, description FROM tools
      WHERE full_name != ? AND score IS NOT NULL
-     ORDER BY score DESC LIMIT 5`
+     ORDER BY score DESC LIMIT 6`
   ).bind(tool.full_name).all();
   relatedTools = (topRows.results || []) as Record<string, unknown>[];
 }
+
+const categoryLabel = toolCategory
+  ? toolCategory.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase())
+  : null;
 
 // Edge cache tool pages for 1 hour, browser for 60s (scores update daily)
 Astro.response.headers.set('Cache-Control', 'public, max-age=60, s-maxage=3600, stale-while-revalidate=86400');
@@ -600,14 +612,14 @@ Astro.response.headers.set('Cache-Control', 'public, max-age=60, s-maxage=3600, 
 
   {relatedTools.length > 0 && (
     <section class="related">
-      <h3>{primaryQuery ? `Related: ${primaryQuery}` : 'Top Ranked Tools'}</h3>
+      <h3>{categoryLabel ? `Similar ${categoryLabel} Tools` : 'Top Ranked Tools'}</h3>
       <div class="related-list">
         {relatedTools.map((r) => (
           <a href={`/tool/${(r.full_name as string).replace('/', '--')}/`} class="related-item">
             <div class="related-left">
               <span class="related-name">{r.full_name as string}</span>
               {(r.description as string | null) && (
-                <span class="related-desc">{(r.description as string).slice(0, 80)}{(r.description as string).length > 80 ? '…' : ''}</span>
+                <span class="related-desc">{(r.description as string).slice(0, 120)}{(r.description as string).length > 120 ? '…' : ''}</span>
               )}
             </div>
             <span class="related-score" style={`color: ${scoreColor(r.score as number)}`}>
@@ -1473,7 +1485,7 @@ Astro.response.headers.set('Cache-Control', 'public, max-age=60, s-maxage=3600, 
   .related-item {
     display: flex;
     justify-content: space-between;
-    align-items: center;
+    align-items: flex-start;
     gap: 1rem;
     padding: 0.5rem 0.75rem;
     background: var(--bg-surface);
