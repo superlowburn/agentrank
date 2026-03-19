@@ -6,6 +6,9 @@ const { env } = (Astro.locals as any).runtime;
 const token = Astro.url.searchParams.get('token') || '';
 const range = Astro.url.searchParams.get('range') || '30d';
 
+const CF_ACCOUNT_ID = '7772632d13bdbc8d681ad0cd8ff55663';
+const CF_SITE_TAG = '9e9faec619504d9ba50fba0ee6cd4916';
+
 const rangeLabel: Record<string, string> = { '7d': '7 days', '30d': '30 days', 'all': 'all time' };
 const windowClause: Record<string, string> = {
   '7d': "datetime('now', '-7 days')",
@@ -17,6 +20,8 @@ const activeRange = Object.keys(windowClause).includes(range) ? range : '30d';
 
 let metrics: any = null;
 let error: string | null = null;
+let cfMetrics: any = null;
+let cfError: string | null = null;
 
 if (!env.DASH_TOKEN) {
   error = 'DASH_TOKEN not configured.';
@@ -152,6 +157,61 @@ if (!env.DASH_TOKEN) {
     };
   } catch (e: any) {
     error = e.message;
+  }
+}
+
+// CF Web Analytics (browser visitors) — requires CF_API_TOKEN secret
+if (token && token === env.DASH_TOKEN && env.CF_API_TOKEN) {
+  try {
+    const today = new Date();
+    const days = range === '7d' ? 7 : range === '30d' ? 30 : 90;
+    const start = new Date(Date.now() - days * 24 * 60 * 60 * 1000);
+    const cfStartDate = start.toISOString().slice(0, 10);
+    const cfEndDate = today.toISOString().slice(0, 10);
+
+    const cfQuery = `{
+      viewer {
+        accounts(filter: {accountTag: "${CF_ACCOUNT_ID}"}) {
+          rumWebsiteTagsAdaptiveGroups(
+            filter: {
+              AND: [
+                {date_geq: "${cfStartDate}"}
+                {date_leq: "${cfEndDate}"}
+                {siteTag: "${CF_SITE_TAG}"}
+              ]
+            }
+            limit: 100
+            orderBy: [date_ASC]
+          ) {
+            dimensions { date }
+            sum { visits pageViews }
+            uniq { uniques }
+          }
+        }
+      }
+    }`;
+
+    const cfResp = await fetch('https://api.cloudflare.com/client/v4/graphql', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${env.CF_API_TOKEN}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ query: cfQuery }),
+    });
+
+    if (cfResp.ok) {
+      const cfJson = await cfResp.json() as any;
+      const rows = cfJson?.data?.viewer?.accounts?.[0]?.rumWebsiteTagsAdaptiveGroups ?? [];
+      const totalVisits = rows.reduce((s: number, r: any) => s + (r.sum?.visits ?? 0), 0);
+      const totalPageViews = rows.reduce((s: number, r: any) => s + (r.sum?.pageViews ?? 0), 0);
+      const totalUniques = rows.reduce((s: number, r: any) => s + (r.uniq?.uniques ?? 0), 0);
+      cfMetrics = { rows, totalVisits, totalPageViews, totalUniques };
+    } else {
+      cfError = `CF API error: ${cfResp.status}`;
+    }
+  } catch (e: any) {
+    cfError = `CF fetch failed: ${e.message}`;
   }
 }
 
@@ -371,9 +431,67 @@ const baseUrl = `/admin/analytics?token=${encodeURIComponent(token)}`;
         </div>
       </div>
 
-      <!-- API Requests Per Day -->
+      <!-- Cloudflare Web Analytics (browser visitors) -->
+      {cfMetrics && (
+        <section>
+          <h2>Cloudflare Web Analytics — Browser Visitors</h2>
+          <div class="stat-grid" style="margin-bottom: 1rem">
+            <div class="stat-card">
+              <div class="label">Unique Visitors</div>
+              <div class="value">{fmtNum(cfMetrics.totalUniques)}</div>
+              <div class="sub">browser, no cookies</div>
+            </div>
+            <div class="stat-card">
+              <div class="label">Visits (Sessions)</div>
+              <div class="value">{fmtNum(cfMetrics.totalVisits)}</div>
+              <div class="sub">{rangeLabel[activeRange]}</div>
+            </div>
+            <div class="stat-card">
+              <div class="label">Page Views</div>
+              <div class="value">{fmtNum(cfMetrics.totalPageViews)}</div>
+              <div class="sub">{rangeLabel[activeRange]}</div>
+            </div>
+          </div>
+          {cfMetrics.rows?.length > 0 && (
+            <table>
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th class="num">Unique Visitors</th>
+                  <th class="num">Visits</th>
+                  <th class="num">Page Views</th>
+                </tr>
+              </thead>
+              <tbody>
+                {[...cfMetrics.rows].reverse().map((r: any) => (
+                  <tr>
+                    <td>{r.dimensions?.date}</td>
+                    <td class="num">{fmtNum(r.uniq?.uniques)}</td>
+                    <td class="num">{fmtNum(r.sum?.visits)}</td>
+                    <td class="num">{fmtNum(r.sum?.pageViews)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
+        </section>
+      )}
+      {!cfMetrics && token === env.DASH_TOKEN && !env.CF_API_TOKEN && (
+        <section>
+          <h2>Cloudflare Web Analytics — Browser Visitors</h2>
+          <p class="empty">
+            Not configured. Add CF_API_TOKEN secret to enable real visitor data from Cloudflare.
+            See wrangler.toml for setup instructions.
+          </p>
+        </section>
+      )}
+      {cfError && (
+        <div class="error-box" style="margin-bottom: 1.5rem">{cfError}</div>
+      )}
+
+      <!-- Server-side Requests Per Day (D1) -->
       <section>
-        <h2>Requests Per Day</h2>
+        <h2>Server Requests Per Day (D1 — includes bots &amp; API)</h2>
         {metrics.dailyRequests?.length > 0 ? (
           <table>
             <thead>

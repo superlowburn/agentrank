@@ -48,6 +48,9 @@ const pypiWeeklyDownloads = (row.pypi_weekly_downloads as number) || 0;
 const pypiPackage = row.pypi_package as string | null;
 const isSponsored = (row.sponsored as number) === 1;
 const sponsorTier = row.sponsor_tier as string | null;
+const sponsorDescription = row.sponsor_description as string | null;
+const sponsorCtaText = row.sponsor_cta_text as string | null;
+const sponsorCtaUrl = row.sponsor_cta_url as string | null;
 
 const totalIssues = tool.open_issues + tool.closed_issues;
 const issueHealth = totalIssues > 0 ? (tool.closed_issues / totalIssues) : 0.5;
@@ -448,6 +451,25 @@ Astro.response.headers.set('Cache-Control', 'public, max-age=60, s-maxage=3600, 
   )}
 
   {tool.description && <p class="description">{tool.description}</p>}
+
+  {isSponsored && (sponsorDescription || sponsorCtaText) && (
+    <div class="sponsor-detail-block">
+      <div class="sponsor-detail-header">
+        <span class="sponsor-detail-label">Sponsored</span>
+      </div>
+      {sponsorDescription && <p class="sponsor-detail-desc">{sponsorDescription}</p>}
+      {sponsorCtaText && sponsorCtaUrl && (
+        <a
+          class="sponsor-detail-cta"
+          href={`/api/sponsored/click?tool=${encodeURIComponent(tool.full_name)}&type=cta&page=detail`}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          {sponsorCtaText} &rarr;
+        </a>
+      )}
+    </div>
+  )}
 
   <div class="install-cta-box">
     <div class="install-cta-content">
@@ -890,6 +912,60 @@ Astro.response.headers.set('Cache-Control', 'public, max-age=60, s-maxage=3600, 
     color: var(--text-muted);
     margin-bottom: 1rem;
     font-size: 0.9rem;
+  }
+
+  .sponsor-detail-block {
+    background: color-mix(in srgb, var(--accent) 5%, var(--bg-surface));
+    border: 1px solid color-mix(in srgb, var(--accent) 25%, transparent);
+    border-radius: 6px;
+    padding: 0.85rem 1rem;
+    margin-bottom: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .sponsor-detail-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .sponsor-detail-label {
+    font-size: 0.6rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--accent);
+    background: color-mix(in srgb, var(--accent) 12%, transparent);
+    border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent);
+    padding: 0.1rem 0.4rem;
+    border-radius: 3px;
+  }
+
+  .sponsor-detail-desc {
+    color: var(--text);
+    font-size: 0.88rem;
+    margin: 0;
+    line-height: 1.5;
+  }
+
+  .sponsor-detail-cta {
+    display: inline-block;
+    align-self: flex-start;
+    font-size: 0.82rem;
+    font-weight: 500;
+    color: var(--accent);
+    text-decoration: none;
+    border: 1px solid color-mix(in srgb, var(--accent) 40%, transparent);
+    padding: 0.3rem 0.75rem;
+    border-radius: 4px;
+    transition: background 0.12s, color 0.12s;
+  }
+
+  .sponsor-detail-cta:hover {
+    background: var(--accent);
+    color: #fff;
   }
 
   .install-cta-box {
