@@ -12,6 +12,10 @@ Use these skills when they apply to your work:
 - `mcp-builder` -- MCP server development. Use when building or modifying the AgentRank MCP server.
 - `webapp-testing` -- Testing web apps with Playwright. Use when writing or running integration tests.
 - `playwright-best-practices` -- Playwright test patterns. Use when writing test suites.
+- `refactor` -- Code refactoring patterns. Use when restructuring code for clarity or performance.
+- `chrome-devtools` -- Chrome DevTools debugging. Use when debugging frontend rendering, network, or performance issues.
+- `gh-cli` -- GitHub CLI operations. Use when creating PRs, managing issues, or interacting with GitHub from the terminal.
+- `analytics-tracking` -- Analytics implementation. Use when adding tracking, metrics, or observability to the product.
 
 ## Team
 

@@ -2,7 +2,7 @@
 interface Props {
   title: string;
   description?: string;
-  activeTab?: 'skills' | 'tools' | 'agents' | 'movers' | 'trends' | 'submit' | 'api' | 'blog' | 'pricing' | 'changelog';
+  activeTab?: 'skills' | 'tools' | 'agents' | 'movers' | 'trends' | 'submit' | 'api' | 'blog' | 'pricing' | 'changelog' | 'news';
   jsonLd?: object | object[];
   keywords?: string;
   canonicalUrl?: string;
@@ -295,6 +295,7 @@ const ogImageHeight = ogImage ? '630' : '500';
             <a href="/submit/" class={activeTab === 'submit' ? 'active' : ''}>Submit</a>
             <a href="/docs/" class={activeTab === 'api' ? 'active' : ''}>API</a>
             <a href="/pricing/" class={activeTab === 'pricing' ? 'active' : ''}>Pricing</a>
+            <a href="/news/" class={activeTab === 'news' ? 'active' : ''}>News</a>
             <a href="/blog/" class={activeTab === 'blog' ? 'active' : ''}>Blog</a>
             <a href="/changelog/" class={activeTab === 'changelog' ? 'active' : ''}>Changelog</a>
           </nav>

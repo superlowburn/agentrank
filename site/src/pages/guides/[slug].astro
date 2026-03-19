@@ -1,0 +1,920 @@
+---
+export const prerender = true;
+
+import Base from '../../layouts/Base.astro';
+import BlogSubscribeCTA from '../../components/BlogSubscribeCTA.astro';
+import { getAllTools } from '../../data/ranked';
+import { toSlug, formatStars, relativeTime, scoreColor } from '../../data/tools';
+
+export interface GuideConfig {
+  slug: string;
+  title: string;
+  h1: string;
+  description: string;
+  keywords: string;
+  intro: string[];
+  category?: string;
+  extraFilter?: (tool: ReturnType<typeof getAllTools>[0]) => boolean;
+  setupSnippet: string;
+  setupLang: string;
+  useCases: Array<{ label: string; description: string }>;
+  targetQuery: string;
+  relatedGuides: string[];
+}
+
+export const GUIDES: GuideConfig[] = [
+  {
+    slug: 'database-sql',
+    title: 'Best MCP Servers for Database & SQL Access in 2026',
+    h1: 'Best MCP Servers for Database & SQL',
+    description: 'Top-ranked MCP servers for database access — PostgreSQL, MySQL, SQLite, MongoDB, Redis, and more. Scored by stars, freshness, issue health, and real usage signals.',
+    keywords: 'best MCP server for database access, database MCP server 2026, postgres MCP server, SQL MCP server, mongodb MCP, redis MCP server',
+    intro: [
+      'Database MCP servers give AI agents direct, structured access to SQL and NoSQL databases through the Model Context Protocol. Instead of writing raw connection code, you define the query in natural language and the MCP server handles translation, execution, and type-safe results.',
+      'This guide ranks the top-performing database MCP servers from the AgentRank index — covering PostgreSQL, MySQL, SQLite, MongoDB, Redis, DuckDB, and cloud databases like Neon, Supabase, and PlanetScale. Scores are computed from a five-signal composite: stars, freshness, issue health, contributor depth, and inbound dependents.',
+    ],
+    category: 'database',
+    setupSnippet: `{
+  "mcpServers": {
+    "postgres": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-postgres", "postgresql://localhost/mydb"]
+    }
+  }
+}`,
+    setupLang: 'json',
+    useCases: [
+      { label: 'Relational DBs (Postgres, MySQL)', description: 'Query and manage structured data with full SQL support, schema inspection, and transactional writes.' },
+      { label: 'Document stores (MongoDB)', description: 'Flexible schema access for document-based data with aggregation pipeline support.' },
+      { label: 'Caching & real-time (Redis)', description: 'Key-value reads/writes, pub-sub, and sorted sets for session data, leaderboards, and real-time feeds.' },
+      { label: 'Analytics & OLAP (DuckDB)', description: 'In-process columnar queries over Parquet, CSV, and large local datasets at analytical speed.' },
+    ],
+    targetQuery: 'best MCP server for database access',
+    relatedGuides: ['api-integration', 'data-analytics', 'cloud-infrastructure'],
+  },
+  {
+    slug: 'file-management',
+    title: 'Best MCP Servers for File Management in 2026',
+    h1: 'Best MCP Servers for File Management',
+    description: 'Top-ranked MCP servers for file system access, cloud storage, and document management. Scored from the AgentRank index.',
+    keywords: 'best MCP server for file management, filesystem MCP server, file access MCP, cloud storage MCP, file system agent tool 2026',
+    intro: [
+      'File management MCP servers give AI agents read and write access to local filesystems, cloud storage, and document systems. They are the most common type of MCP server because every agent workflow eventually needs to read a file, write output, or organize documents.',
+      'This guide ranks the top file management MCP servers from the AgentRank index — covering local filesystems, S3-compatible storage, Google Drive, Dropbox, and document management tools. Use these to build agents that can read codebases, write reports, organize files, and sync across cloud storage.',
+    ],
+    category: 'filesystem',
+    extraFilter: (t) => {
+      const text = `${t.description || ''} ${t.full_name}`.toLowerCase();
+      return /\b(file|folder|directory|storage|drive|dropbox|s3|bucket|blob|gdrive|onedrive|box\.com|document.*manag)\b/.test(text);
+    },
+    setupSnippet: `{
+  "mcpServers": {
+    "filesystem": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-filesystem", "/Users/you/projects"]
+    }
+  }
+}`,
+    setupLang: 'json',
+    useCases: [
+      { label: 'Local filesystem', description: 'Read/write files and directories on the agent host machine. Scope to a safe directory.' },
+      { label: 'Cloud storage (S3, GCS, Azure Blob)', description: 'Object storage access for files that live in the cloud — read blobs, list buckets, upload outputs.' },
+      { label: 'Google Drive & Docs', description: 'Access shared documents, spreadsheets, and slides from Drive — great for team workflows.' },
+      { label: 'Document search & indexing', description: 'Full-text search across file collections so agents can find relevant context fast.' },
+    ],
+    targetQuery: 'top file management MCP tools',
+    relatedGuides: ['database-sql', 'developer-productivity', 'cloud-infrastructure'],
+  },
+  {
+    slug: 'web-scraping-browser-automation',
+    title: 'Best MCP Servers for Web Scraping & Browser Automation in 2026',
+    h1: 'Best MCP Servers for Web Scraping & Browser Automation',
+    description: 'Top-ranked MCP servers for browser automation, web scraping, and headless browser control — Playwright, Puppeteer, Crawl4AI, and more.',
+    keywords: 'best MCP server for web scraping, browser automation MCP server, playwright MCP, puppeteer MCP, headless browser MCP 2026',
+    intro: [
+      'Browser automation MCP servers let AI agents control headless browsers, scrape web content, fill forms, take screenshots, and navigate the web programmatically. They bridge the gap between the live web and what your agent can see and act on.',
+      'This guide ranks the top browser automation MCP servers from the AgentRank index — covering Playwright, Puppeteer, Crawl4AI, Firecrawl, and specialized scrapers. Scores are computed from freshness, issue health, stars, contributors, and inbound dependents.',
+    ],
+    category: 'browser-automation',
+    setupSnippet: `{
+  "mcpServers": {
+    "playwright": {
+      "command": "npx",
+      "args": ["-y", "@playwright/mcp@latest"]
+    }
+  }
+}`,
+    setupLang: 'json',
+    useCases: [
+      { label: 'Full browser control (Playwright/Puppeteer)', description: 'Navigate pages, click elements, fill forms, and take screenshots with a full Chromium/Firefox/WebKit engine.' },
+      { label: 'Web scraping & crawling', description: 'Extract structured data from pages, follow links, and build datasets from web sources.' },
+      { label: 'Screenshot & PDF capture', description: 'Capture visual snapshots of pages for testing, reporting, or visual diffing workflows.' },
+      { label: 'Auth-gated content', description: 'Log in and access pages that require authentication — useful for testing and data extraction behind login walls.' },
+    ],
+    targetQuery: 'best MCP server for web scraping',
+    relatedGuides: ['api-integration', 'developer-productivity', 'data-analytics'],
+  },
+  {
+    slug: 'api-integration',
+    title: 'Best MCP Servers for API Integration in 2026',
+    h1: 'Best MCP Servers for API Integration',
+    description: 'Top-ranked MCP servers for REST API access, GraphQL, webhooks, and no-code integrations like Zapier and n8n. Scored from the AgentRank index.',
+    keywords: 'best MCP server for API integration, REST API MCP server, GraphQL MCP, API connector MCP 2026, webhook MCP server',
+    intro: [
+      'API integration MCP servers let AI agents connect to external services — REST APIs, GraphQL endpoints, webhooks, and no-code platforms — without writing custom integration code for every service. They act as a universal adapter layer between your agent and the services your product depends on.',
+      'This guide ranks the top API integration MCP servers from the AgentRank index. These range from generic REST adapters that let you hit any API endpoint, to purpose-built connectors for platforms like Stripe, GitHub, Notion, and Linear.',
+    ],
+    category: 'api-integration',
+    setupSnippet: `{
+  "mcpServers": {
+    "github": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-github"],
+      "env": { "GITHUB_PERSONAL_ACCESS_TOKEN": "<token>" }
+    }
+  }
+}`,
+    setupLang: 'json',
+    useCases: [
+      { label: 'Generic REST adapters', description: 'Hit any HTTP endpoint with a configurable MCP server — useful for private APIs and internal services.' },
+      { label: 'GitHub & GitLab', description: 'Read repos, create issues, review PRs, and trigger CI/CD pipelines from inside your agent.' },
+      { label: 'Productivity APIs (Notion, Linear, Jira)', description: 'Read and write to project management tools, wikis, and issue trackers.' },
+      { label: 'No-code platforms (Zapier, n8n)', description: 'Trigger automation workflows from your agent via Zapier webhooks or n8n HTTP nodes.' },
+    ],
+    targetQuery: 'best MCP server for API integration',
+    relatedGuides: ['database-sql', 'communication', 'cloud-infrastructure'],
+  },
+  {
+    slug: 'developer-productivity',
+    title: 'Best MCP Servers for Developer Productivity in 2026',
+    h1: 'Best MCP Servers for Developer Productivity',
+    description: 'Top-ranked MCP servers for git, code generation, IDE integration, and developer tooling. Boost your AI coding workflow.',
+    keywords: 'best MCP server for developers, developer productivity MCP, git MCP server, code generation MCP, IDE MCP server 2026',
+    intro: [
+      'Developer productivity MCP servers give AI coding assistants access to git history, code search, test runners, linters, and IDE features. They turn your AI assistant from a code suggester into an active participant in your development workflow.',
+      'This guide ranks the top developer-focused MCP servers from the AgentRank index — covering git operations, code generation scaffolding, code search, dependency management, and terminal execution. The tools here are the ones senior engineers reach for when building agent-powered development workflows.',
+    ],
+    category: 'code-assistant',
+    extraFilter: (t) => {
+      const text = `${t.description || ''} ${t.full_name} ${(t.matched_queries || []).join(' ')}`.toLowerCase();
+      return /\b(git\b|github|gitlab|code.*gen|scaffold|lint|test.*run|ci.*cd|ide|vscode|neovim|terminal|shell.*exec|bash.*exec|code.*search|symbol.*search|ast\b|treesitter)\b/.test(text);
+    },
+    setupSnippet: `{
+  "mcpServers": {
+    "git": {
+      "command": "uvx",
+      "args": ["mcp-server-git", "--repository", "/path/to/your/repo"]
+    }
+  }
+}`,
+    setupLang: 'json',
+    useCases: [
+      { label: 'Git operations', description: 'Read commit history, diff files, create branches, stage changes, and run git commands from your agent.' },
+      { label: 'Code search & navigation', description: 'Semantic and symbol-level search across codebases — find where a function is defined, what calls it, and where it is tested.' },
+      { label: 'Test runners', description: 'Execute tests from inside the agent loop and read results to iterate on failing tests automatically.' },
+      { label: 'Terminal & shell execution', description: 'Run shell commands, build scripts, and CLI tools as part of agentic workflows.' },
+    ],
+    targetQuery: 'best MCP server for developers git tools',
+    relatedGuides: ['api-integration', 'cloud-infrastructure', 'file-management'],
+  },
+  {
+    slug: 'cloud-infrastructure',
+    title: 'Best MCP Servers for Cloud Infrastructure in 2026',
+    h1: 'Best MCP Servers for Cloud Infrastructure',
+    description: 'Top-ranked MCP servers for AWS, GCP, Azure, Docker, Kubernetes, and infrastructure automation. Scored from the AgentRank index.',
+    keywords: 'best MCP server for cloud infrastructure, AWS MCP server, Kubernetes MCP, Docker MCP, terraform MCP, cloud devops MCP 2026',
+    intro: [
+      'Cloud infrastructure MCP servers let AI agents interact with cloud platforms — provisioning resources, reading logs, scaling services, managing containers, and executing Terraform plans. They are the missing layer between your LLM and your cloud control plane.',
+      'This guide ranks the top cloud and DevOps MCP servers from the AgentRank index — covering AWS, GCP, Azure, Docker, Kubernetes, Terraform, Ansible, and CI/CD pipelines. Use these to build agents that can self-heal infrastructure, respond to incidents, and automate deployments.',
+    ],
+    category: 'deployment',
+    setupSnippet: `{
+  "mcpServers": {
+    "aws-kb": {
+      "command": "npx",
+      "args": ["-y", "awslabs.aws-kb-retrieval-server@latest"],
+      "env": { "AWS_ACCESS_KEY_ID": "...", "AWS_SECRET_ACCESS_KEY": "..." }
+    }
+  }
+}`,
+    setupLang: 'json',
+    useCases: [
+      { label: 'AWS services', description: 'Read CloudWatch logs, manage S3 buckets, trigger Lambda functions, and query EC2 state from your agent.' },
+      { label: 'Kubernetes & containers', description: 'List pods, view events, exec into containers, and apply manifests via kubectl through an MCP interface.' },
+      { label: 'Terraform & IaC', description: 'Plan and apply infrastructure changes, read state, and understand drift — without leaving the agent context.' },
+      { label: 'CI/CD pipelines', description: 'Trigger GitHub Actions, read pipeline status, and respond to build failures automatically.' },
+    ],
+    targetQuery: 'best MCP server for cloud infrastructure AWS',
+    relatedGuides: ['developer-productivity', 'api-integration', 'database-sql'],
+  },
+  {
+    slug: 'communication',
+    title: 'Best MCP Servers for Communication & Messaging in 2026',
+    h1: 'Best MCP Servers for Communication & Messaging',
+    description: 'Top-ranked MCP servers for Slack, email, Discord, Telegram, and messaging integrations. Let your AI agent send and receive messages.',
+    keywords: 'best MCP server for communication, Slack MCP server, email MCP server, Discord MCP, messaging MCP 2026, Telegram MCP server',
+    intro: [
+      'Communication MCP servers give AI agents the ability to send messages, read channels, create notifications, and integrate with messaging platforms. They close the loop between your agent\'s actions and the humans who need to know about them.',
+      'This guide ranks the top communication MCP servers from the AgentRank index — covering Slack, email (SMTP, SendGrid, Mailgun), Discord, Telegram, and webhook-based notification systems.',
+    ],
+    category: 'communication',
+    setupSnippet: `{
+  "mcpServers": {
+    "slack": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-slack"],
+      "env": { "SLACK_BOT_TOKEN": "xoxb-...", "SLACK_TEAM_ID": "T..." }
+    }
+  }
+}`,
+    setupLang: 'json',
+    useCases: [
+      { label: 'Slack', description: 'Post messages, read channels, react to events, and send DMs from within your agent workflow.' },
+      { label: 'Email (SMTP / SendGrid)', description: 'Send transactional emails, read inbox messages, and manage mailing lists programmatically.' },
+      { label: 'Discord & Telegram', description: 'Bot integrations for community platforms — post alerts, respond to commands, and moderate channels.' },
+      { label: 'Webhook notifications', description: 'Push events to external services via webhooks — useful for alerting, Zapier triggers, and custom dashboards.' },
+    ],
+    targetQuery: 'best MCP server for Slack messaging',
+    relatedGuides: ['api-integration', 'developer-productivity', 'cloud-infrastructure'],
+  },
+  {
+    slug: 'data-analytics',
+    title: 'Best MCP Servers for Data & Analytics in 2026',
+    h1: 'Best MCP Servers for Data & Analytics',
+    description: 'Top-ranked MCP servers for data pipelines, analytics, ETL, and data processing. Scored from the AgentRank index.',
+    keywords: 'best MCP server for data analytics, data pipeline MCP, ETL MCP server, dbt MCP, Kafka MCP, analytics MCP 2026',
+    intro: [
+      'Data and analytics MCP servers connect AI agents to data pipelines, transformation tools, and analytics platforms. They let agents query processed data, trigger pipeline runs, inspect data quality, and build automated data workflows.',
+      'This guide ranks the top data and analytics MCP servers from the AgentRank index — covering dbt, Apache Kafka, Airflow, Spark, Snowflake connectors, and general ETL tooling. These are the tools data engineers reach for when adding AI to their stack.',
+    ],
+    category: 'data-processing',
+    extraFilter: (t) => {
+      const text = `${t.description || ''} ${t.full_name}`.toLowerCase();
+      return /\b(data|analytics|etl|pipeline|warehouse|snowflake|bigquery|redshift|dbt\b|kafka|spark|airflow|looker|tableau|metabase|grafana|chart|visualization|report)\b/.test(text);
+    },
+    setupSnippet: `{
+  "mcpServers": {
+    "dbt": {
+      "command": "uvx",
+      "args": ["dbt-mcp"]
+    }
+  }
+}`,
+    setupLang: 'json',
+    useCases: [
+      { label: 'dbt & data transformation', description: 'Run dbt models, execute tests, and query compiled SQL from inside your agent.' },
+      { label: 'Data warehouses (Snowflake, BigQuery)', description: 'Query data warehouses for BI-level aggregations, segmentations, and reporting.' },
+      { label: 'Streaming & event data (Kafka)', description: 'Produce and consume Kafka events, inspect topic state, and manage consumer groups.' },
+      { label: 'Visualization & reporting', description: 'Generate charts, trigger dashboard refreshes, and embed analytics outputs in agent workflows.' },
+    ],
+    targetQuery: 'best MCP server for data analytics pipelines',
+    relatedGuides: ['database-sql', 'cloud-infrastructure', 'api-integration'],
+  },
+  {
+    slug: 'ai-ml',
+    title: 'Best MCP Servers for AI & Machine Learning in 2026',
+    h1: 'Best MCP Servers for AI & Machine Learning',
+    description: 'Top-ranked MCP servers for LLM APIs, vector databases, embeddings, model serving, and AI infrastructure. Scored from the AgentRank index.',
+    keywords: 'best MCP server for AI, machine learning MCP server, vector database MCP, embeddings MCP, LLM MCP server 2026, Ollama MCP',
+    intro: [
+      'AI and ML MCP servers give agents access to model APIs, vector stores, embedding services, and local inference engines. They let your agent call other models, store and retrieve embeddings, and plug into the full AI infrastructure stack.',
+      'This guide ranks the top AI and ML MCP servers from the AgentRank index — covering Ollama for local inference, vector databases (Pinecone, Qdrant, Chroma, Weaviate), embedding APIs, and multi-model gateways.',
+    ],
+    category: 'ai-models',
+    extraFilter: (t) => {
+      const text = `${t.description || ''} ${t.full_name}`.toLowerCase();
+      return /\b(ollama|llama|llm|embedding|vector|pinecone|qdrant|chroma|weaviate|milvus|openai|anthropic|gemini|mistral|cohere|model.*serving|inference|hugging|semantic.*search|rag\b)\b/.test(text);
+    },
+    setupSnippet: `{
+  "mcpServers": {
+    "ollama": {
+      "command": "npx",
+      "args": ["-y", "ollama-mcp"]
+    }
+  }
+}`,
+    setupLang: 'json',
+    useCases: [
+      { label: 'Local model inference (Ollama)', description: 'Run Llama, Mistral, and other open models locally and call them from your MCP-enabled agent.' },
+      { label: 'Vector databases', description: 'Store and retrieve embeddings for RAG, semantic search, and memory — Pinecone, Qdrant, Chroma, Weaviate.' },
+      { label: 'LLM API gateways', description: 'Route between OpenAI, Anthropic, Gemini, and open models through a unified MCP interface.' },
+      { label: 'Embedding generation', description: 'Generate text embeddings on demand for clustering, similarity search, and knowledge base construction.' },
+    ],
+    targetQuery: 'best MCP server for AI ML embeddings',
+    relatedGuides: ['database-sql', 'data-analytics', 'api-integration'],
+  },
+  {
+    slug: 'security-auth',
+    title: 'Best MCP Servers for Security & Authentication in 2026',
+    h1: 'Best MCP Servers for Security & Authentication',
+    description: 'Top-ranked MCP servers for secrets management, auth integration, compliance scanning, and security tooling. Scored from the AgentRank index.',
+    keywords: 'best MCP server for security, authentication MCP server, secrets management MCP, vault MCP, security scanning MCP 2026',
+    intro: [
+      'Security and authentication MCP servers give agents controlled access to secrets managers, identity providers, vulnerability scanners, and compliance tools. They are essential for any agent that operates in production environments where credentials, permissions, and audit trails matter.',
+      'This guide ranks the top security-focused MCP servers from the AgentRank index — covering HashiCorp Vault, AWS Secrets Manager, OAuth integrations, SAST/DAST scanning tools, and compliance automation.',
+    ],
+    extraFilter: (t) => {
+      const text = `${t.description || ''} ${t.full_name} ${(t.matched_queries || []).join(' ')}`.toLowerCase();
+      return /\b(secret|vault\b|auth\b|oauth|jwt\b|saml|ldap|okta|keycloak|iam\b|rbac|acl\b|permission|credential|password|encrypt|tls|ssl|cert|scan|sast|dast|vuln|security|compliance|audit|soc2|penetr|owasp)\b/.test(text);
+    },
+    setupSnippet: `{
+  "mcpServers": {
+    "secrets": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-aws-secrets"],
+      "env": { "AWS_REGION": "us-east-1" }
+    }
+  }
+}`,
+    setupLang: 'json',
+    useCases: [
+      { label: 'Secrets management (Vault, AWS Secrets)', description: 'Read secrets, rotate credentials, and manage secret versions — without hardcoding credentials.' },
+      { label: 'Identity & auth (OAuth, SAML, Okta)', description: 'Integrate with identity providers for agent authentication and user context.' },
+      { label: 'Vulnerability scanning', description: 'Run SAST/DAST scans, check for known CVEs, and surface security issues in automated agent loops.' },
+      { label: 'Compliance & audit', description: 'Generate audit logs, check compliance posture, and track access patterns across agent operations.' },
+    ],
+    targetQuery: 'best MCP server for security authentication',
+    relatedGuides: ['cloud-infrastructure', 'api-integration', 'developer-productivity'],
+  },
+];
+
+export function getStaticPaths() {
+  return GUIDES.map((g) => ({ params: { slug: g.slug } }));
+}
+
+const { slug } = Astro.params;
+const guide = GUIDES.find((g) => g.slug === slug)!;
+
+const allTools = getAllTools();
+
+// Filter tools for this guide
+let guideTools = allTools.filter((t) => {
+  if (t.is_archived) return false;
+  const categoryMatch = guide.category ? t.category === guide.category : false;
+  const extraMatch = guide.extraFilter ? guide.extraFilter(t) : false;
+  return categoryMatch || extraMatch;
+});
+
+// Sort by score desc, take top 8
+guideTools = guideTools
+  .sort((a, b) => (b.score ?? 0) - (a.score ?? 0))
+  .slice(0, 8);
+
+const pageUrl = `https://agentrank-ai.com/guides/${slug}/`;
+
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: guide.title,
+    description: guide.description,
+    datePublished: '2026-03-19',
+    dateModified: new Date().toISOString().slice(0, 10),
+    author: { '@type': 'Organization', name: 'AgentRank', url: 'https://agentrank-ai.com' },
+    publisher: {
+      '@type': 'Organization',
+      name: 'AgentRank',
+      url: 'https://agentrank-ai.com',
+      logo: { '@type': 'ImageObject', url: 'https://agentrank-ai.com/og-image.png' },
+    },
+    mainEntityOfPage: { '@type': 'WebPage', '@id': pageUrl },
+    image: 'https://agentrank-ai.com/og-image.png',
+    keywords: guide.keywords,
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    name: guide.h1,
+    description: guide.description,
+    url: pageUrl,
+    numberOfItems: guideTools.length,
+    itemListElement: guideTools.map((t, i) => ({
+      '@type': 'ListItem',
+      position: i + 1,
+      name: t.full_name,
+      url: `https://agentrank-ai.com/tool/${toSlug(t.full_name)}/`,
+      description: t.description || undefined,
+    })),
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://agentrank-ai.com' },
+      { '@type': 'ListItem', position: 2, name: 'Guides', item: 'https://agentrank-ai.com/guides/' },
+      { '@type': 'ListItem', position: 3, name: guide.h1, item: pageUrl },
+    ],
+  },
+];
+
+const otherGuides = GUIDES.filter((g) => guide.relatedGuides.includes(g.slug));
+const publishDate = 'March 19, 2026';
+---
+
+<Base
+  title={guide.title}
+  description={guide.description}
+  keywords={guide.keywords}
+  canonicalUrl={pageUrl}
+  jsonLd={jsonLd}
+  activeTab="blog"
+>
+  <article class="guide-post">
+    <nav class="breadcrumb">
+      <a href="/">AgentRank</a>
+      <span>/</span>
+      <a href="/guides/">Guides</a>
+      <span>/</span>
+      <span>{guide.h1}</span>
+    </nav>
+
+    <header class="post-header">
+      <h1>{guide.h1}</h1>
+      <div class="post-meta">
+        <span>AgentRank</span>
+        <span class="sep">·</span>
+        <time datetime="2026-03-19">{publishDate}</time>
+        <span class="sep">·</span>
+        <span>{guideTools.length} tools ranked</span>
+      </div>
+      <p class="post-lead">{guide.description}</p>
+    </header>
+
+    {guide.intro.map((para) => <p set:html={para} />)}
+
+    <nav class="toc">
+      <strong>In this guide</strong>
+      <ol>
+        <li><a href="#rankings">Top tools ranked</a></li>
+        <li><a href="#use-cases">Choosing by use case</a></li>
+        <li><a href="#setup">Quick setup</a></li>
+        <li><a href="#signals">Reading the signals</a></li>
+      </ol>
+    </nav>
+
+    <section id="rankings">
+      <h2>Top {guide.h1.replace('Best MCP Servers for ', '').replace('Best MCP Servers for ', '')} MCP servers</h2>
+      <p>
+        Ranked by the composite AgentRank score — a weighted blend of stars (15%), freshness (25%),
+        issue health (25%), contributors (10%), and inbound dependents (25%).
+        {guideTools.length > 0
+          ? `Average score across these ${guideTools.length} tools: ${(guideTools.reduce((s, t) => s + (t.score ?? 0), 0) / guideTools.length).toFixed(1)}.`
+          : ''}
+      </p>
+
+      {guideTools.length > 0 ? (
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th class="num">#</th>
+              <th>Repository</th>
+              <th class="num">Score</th>
+              <th class="num">Stars</th>
+              <th>Lang</th>
+              <th>Updated</th>
+            </tr>
+          </thead>
+          <tbody>
+            {guideTools.map((tool, i) => (
+              <tr>
+                <td class="num rank-num">{i + 1}</td>
+                <td class="tool-cell">
+                  <a href={`/tool/${toSlug(tool.full_name)}/`} class="tool-link">{tool.full_name}</a>
+                  {tool.description && <span class="tool-desc">{tool.description.length > 90 ? tool.description.slice(0, 90) + '…' : tool.description}</span>}
+                </td>
+                <td class="num score-cell">
+                  <span class="score-badge" style={`background:${scoreColor(tool.score ?? 0)}22;color:${scoreColor(tool.score ?? 0)}`}>
+                    {(tool.score ?? 0).toFixed(1)}
+                  </span>
+                </td>
+                <td class="num">{formatStars(tool.stars)}</td>
+                <td class="lang-badge">{tool.language || '—'}</td>
+                <td class="date-cell">{relativeTime(tool.last_commit_at)}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      ) : (
+        <p class="empty-state">No tools matched this category in the current index snapshot. Check back after the next crawl.</p>
+      )}
+
+      {guide.category && (
+        <p class="see-all">
+          <a href={`/category/${guide.category}/`}>See all {guide.category} tools in the index →</a>
+        </p>
+      )}
+    </section>
+
+    <section id="use-cases">
+      <h2>Choosing by use case</h2>
+      <dl class="use-case-list">
+        {guide.useCases.map((uc) => (
+          <>
+            <dt>{uc.label}</dt>
+            <dd>{uc.description}</dd>
+          </>
+        ))}
+      </dl>
+    </section>
+
+    <section id="setup">
+      <h2>Quick setup</h2>
+      <p>
+        Most MCP servers follow the same config pattern. Add this to your Claude Desktop,
+        Cursor, or Windsurf MCP config file:
+      </p>
+      <pre class="code-block"><code>{guide.setupSnippet}</code></pre>
+      <p>
+        See the <a href="/integrations/">integrations page</a> for platform-specific setup guides
+        for Claude Code, Cursor, VS Code, Windsurf, and Cline.
+      </p>
+    </section>
+
+    <section id="signals">
+      <h2>Reading the AgentRank signals</h2>
+      <p>
+        Each tool in this guide is scored on five signals that predict long-term reliability:
+      </p>
+      <table class="data-table signal-table">
+        <thead>
+          <tr>
+            <th>Signal</th>
+            <th class="num">Weight</th>
+            <th>What it means</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Stars</td>
+            <td class="num">15%</td>
+            <td>Raw popularity — how many developers have found and bookmarked this tool</td>
+          </tr>
+          <tr>
+            <td>Freshness</td>
+            <td class="num">25%</td>
+            <td>Days since last commit — tools with no recent commits decay hard after 90 days</td>
+          </tr>
+          <tr>
+            <td>Issue health</td>
+            <td class="num">25%</td>
+            <td>Ratio of closed to total issues — measures maintainer responsiveness</td>
+          </tr>
+          <tr>
+            <td>Contributors</td>
+            <td class="num">10%</td>
+            <td>More contributors = less bus-factor risk, broader review surface</td>
+          </tr>
+          <tr>
+            <td>Dependents</td>
+            <td class="num">25%</td>
+            <td>How many other repos depend on this — the strongest signal of real-world adoption</td>
+          </tr>
+        </tbody>
+      </table>
+      <p>
+        <a href="/methodology/">Full scoring methodology →</a>
+      </p>
+    </section>
+
+    <div class="cta-box">
+      <p>
+        <strong>Query this live from your editor:</strong>
+        <a href="/integrations/">Install AgentRank in Cursor, VS Code, or Claude Code</a> — your AI agent can query live rankings on demand.
+      </p>
+      <p>
+        <strong>Missing a tool?</strong>
+        <a href="/submit/">Submit it to the index</a> — new tools are scored in the next nightly crawl.
+      </p>
+    </div>
+
+    {otherGuides.length > 0 && (
+      <section class="related-guides">
+        <h2>Related guides</h2>
+        <ul class="guide-links">
+          {otherGuides.map((g) => (
+            <li>
+              <a href={`/guides/${g.slug}/`}>{g.title}</a>
+            </li>
+          ))}
+        </ul>
+      </section>
+    )}
+
+    <BlogSubscribeCTA source="guides" />
+
+    <footer class="post-footer">
+      <p class="methodology">
+        <strong>Methodology:</strong> Data from the AgentRank index crawled March 2026.
+        Scores: stars 15%, freshness 25%, issue health 25%, contributors 10%, dependents 25%.
+        <a href="/methodology/">Full scoring methodology →</a>
+        Only non-archived repositories included. Rankings update nightly.
+      </p>
+      <p class="share-line">
+        Found this useful?
+        <a href="https://x.com/AgentRank_ai" target="_blank" rel="noopener noreferrer">Follow @AgentRank_ai</a>
+        for weekly ecosystem updates and biggest movers.
+      </p>
+    </footer>
+  </article>
+
+  <style>
+    .guide-post {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 2rem 0 3rem;
+    }
+
+    .breadcrumb {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      margin-bottom: 0.75rem;
+    }
+
+    .breadcrumb span {
+      margin: 0 0.25rem;
+      opacity: 0.5;
+    }
+
+    .breadcrumb a {
+      color: var(--text-muted);
+      text-decoration: none;
+    }
+
+    .breadcrumb a:hover {
+      color: var(--text);
+    }
+
+    .post-header {
+      margin-bottom: 2rem;
+      padding-bottom: 1.5rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .post-header h1 {
+      font-size: 1.65rem;
+      font-weight: 700;
+      line-height: 1.3;
+      margin-bottom: 0.75rem;
+    }
+
+    .post-meta {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      flex-wrap: wrap;
+      margin-bottom: 1rem;
+    }
+
+    .sep { opacity: 0.4; }
+
+    .post-lead {
+      font-size: 1rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+      margin: 0;
+    }
+
+    .toc {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1rem 1.25rem;
+      margin: 1.5rem 0;
+      font-size: 0.88rem;
+    }
+
+    .toc strong {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+    }
+
+    .toc ol {
+      margin: 0;
+      padding-left: 1.25rem;
+    }
+
+    .toc li {
+      margin: 0.2rem 0;
+    }
+
+    .toc a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    .toc a:hover { text-decoration: underline; }
+
+    section {
+      margin: 2.5rem 0;
+    }
+
+    section h2 {
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin-bottom: 0.75rem;
+    }
+
+    p {
+      line-height: 1.7;
+      margin: 0.75rem 0;
+      font-size: 0.95rem;
+    }
+
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+      margin: 1rem 0;
+    }
+
+    .data-table th {
+      text-align: left;
+      padding: 0.5rem 0.75rem;
+      border-bottom: 2px solid var(--border);
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--text-muted);
+      white-space: nowrap;
+    }
+
+    .data-table td {
+      padding: 0.6rem 0.75rem;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+    }
+
+    .data-table .num {
+      text-align: right;
+    }
+
+    .rank-num {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      font-weight: 700;
+    }
+
+    .tool-cell {
+      max-width: 280px;
+    }
+
+    .tool-link {
+      font-weight: 600;
+      font-size: 0.85rem;
+      color: var(--accent);
+      text-decoration: none;
+      display: block;
+    }
+
+    .tool-link:hover { text-decoration: underline; }
+
+    .tool-desc {
+      display: block;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-top: 0.15rem;
+      line-height: 1.4;
+    }
+
+    .score-badge {
+      display: inline-block;
+      padding: 0.1rem 0.4rem;
+      border-radius: 4px;
+      font-weight: 700;
+      font-size: 0.8rem;
+    }
+
+    .lang-badge {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    .date-cell {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      white-space: nowrap;
+    }
+
+    .signal-table .num { text-align: center; }
+
+    .see-all {
+      font-size: 0.82rem;
+      margin-top: 0.5rem;
+    }
+
+    .see-all a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    .see-all a:hover { text-decoration: underline; }
+
+    .empty-state {
+      color: var(--text-muted);
+      font-style: italic;
+    }
+
+    .use-case-list {
+      margin: 1rem 0;
+    }
+
+    .use-case-list dt {
+      font-weight: 700;
+      font-size: 0.9rem;
+      margin-top: 1rem;
+    }
+
+    .use-case-list dd {
+      margin: 0.25rem 0 0 0;
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    .code-block {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 1rem 1.25rem;
+      overflow-x: auto;
+      font-size: 0.8rem;
+      line-height: 1.6;
+      margin: 1rem 0;
+    }
+
+    .code-block code {
+      font-family: 'SF Mono', 'Fira Code', monospace;
+    }
+
+    .cta-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1.25rem 1.5rem;
+      margin: 2rem 0;
+      font-size: 0.88rem;
+    }
+
+    .cta-box p {
+      margin: 0.4rem 0;
+      font-size: 0.88rem;
+    }
+
+    .cta-box a {
+      color: var(--accent);
+    }
+
+    .related-guides {
+      border-top: 1px solid var(--border);
+      padding-top: 1.5rem;
+      margin-top: 2rem;
+    }
+
+    .guide-links {
+      list-style: none;
+      padding: 0;
+      margin: 0.75rem 0;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .guide-links a {
+      color: var(--accent);
+      text-decoration: none;
+      font-size: 0.9rem;
+    }
+
+    .guide-links a:hover { text-decoration: underline; }
+
+    .post-footer {
+      margin-top: 3rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--border);
+    }
+
+    .methodology {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+
+    .share-line {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+    }
+
+    @media (max-width: 600px) {
+      .post-header h1 { font-size: 1.35rem; }
+      .data-table { font-size: 0.78rem; }
+      .tool-cell { max-width: 200px; }
+      .date-cell { display: none; }
+    }
+  </style>
+</Base>

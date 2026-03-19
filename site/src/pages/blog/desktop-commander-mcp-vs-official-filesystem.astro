@@ -1,0 +1,606 @@
+---
+export const prerender = true;
+
+import Base from '../../layouts/Base.astro';
+import BlogSubscribeCTA from '../../components/BlogSubscribeCTA.astro';
+import RelatedPosts from '../../components/RelatedPosts.astro';
+
+const relatedPosts = [
+  { href: '/blog/best-mcp-servers-file-management/', title: 'Best MCP Servers for File Management in 2026' },
+  { href: '/blog/best-mcp-servers-code-generation/', title: 'Best MCP Servers for Code Generation in 2026' },
+  { href: '/blog/mcp-setup-guide-claude-cursor-windsurf/', title: 'MCP Setup Guide: Claude, Cursor, Windsurf' },
+  { href: '/blog/how-to-choose-an-mcp-server/', title: 'How to Choose an MCP Server in 2026' },
+];
+
+const publishDate = '2026-03-19';
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: 'Desktop Commander MCP vs Official Filesystem Server: Local File Access Compared',
+  description: 'Data-driven comparison of DesktopCommanderMCP and the official MCP filesystem server. AgentRank scores, feature coverage, and which to use — March 2026.',
+  datePublished: publishDate,
+  dateModified: publishDate,
+  author: {
+    '@type': 'Organization',
+    name: 'AgentRank',
+    url: 'https://agentrank-ai.com',
+  },
+  publisher: {
+    '@type': 'Organization',
+    name: 'AgentRank',
+    url: 'https://agentrank-ai.com',
+    logo: {
+      '@type': 'ImageObject',
+      url: 'https://agentrank-ai.com/og-image.png',
+    },
+  },
+  mainEntityOfPage: {
+    '@type': 'WebPage',
+    '@id': 'https://agentrank-ai.com/blog/desktop-commander-mcp-vs-official-filesystem/',
+  },
+  image: 'https://agentrank-ai.com/og-image.png',
+  keywords: 'desktop commander MCP, official MCP filesystem server, local filesystem MCP comparison, wonderwhy-er DesktopCommanderMCP, modelcontextprotocol servers filesystem 2026',
+};
+
+const tools = [
+  {
+    name: 'wonderwhy-er/DesktopCommanderMCP',
+    slug: 'wonderwhy-er--DesktopCommanderMCP',
+    score: 78.48,
+    stars: 5721,
+    contributors: 31,
+    lastCommit: '2026-03-03',
+    lang: 'TypeScript',
+    type: 'Community',
+    features: 'Files + terminal + diff editing',
+    verdict: 'Most-starred community filesystem server. 5,721 stars. Combines file search, diff editing, and shell execution — the Swiss army knife option.',
+  },
+  {
+    name: 'modelcontextprotocol/servers (server-filesystem)',
+    slug: 'modelcontextprotocol--servers',
+    score: 70.26,
+    stars: 81030,
+    contributors: 1018,
+    lastCommit: '2026-03-07',
+    lang: 'TypeScript',
+    type: 'Official (Anthropic)',
+    features: 'Files only (read, write, search, list)',
+    verdict: '81K stars and 1,018 contributors. The reference implementation. No terminal access, no diff editing — pure filesystem operations only.',
+  },
+  {
+    name: 'mark3labs/mcp-filesystem-server',
+    slug: 'mark3labs--mcp-filesystem-server',
+    score: 55.88,
+    stars: 616,
+    contributors: 8,
+    lastCommit: '2025-11-24',
+    lang: 'Go',
+    type: 'Community (mark3labs)',
+    features: 'Files only (Go, zero deps)',
+    verdict: 'Focused Go implementation with zero external dependencies. Covers read, write, create, delete, move, copy. Stale since November 2025.',
+  },
+];
+
+const faqJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: [
+    {
+      '@type': 'Question',
+      name: 'What does Desktop Commander MCP do differently from the official filesystem server?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Desktop Commander MCP (wonderwhy-er/DesktopCommanderMCP) adds terminal control, shell command execution, and diff-based file editing on top of standard filesystem operations. The official MCP server-filesystem only handles file read, write, search, and directory listing — no terminal, no shell access. If you need agents to run commands in addition to reading and writing files, Desktop Commander is the right choice.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Is the official MCP filesystem server safe to use?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'The official server-filesystem from modelcontextprotocol/servers is safe for file operations within a configured root directory. It does not expose shell or terminal access. Desktop Commander MCP includes terminal execution, which requires more care about what commands the agent is allowed to run.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'How do I give Claude access to my local files?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Install either the official MCP filesystem server or Desktop Commander MCP and configure it in your MCP client. The official server is available via npx @modelcontextprotocol/server-filesystem. Desktop Commander is available via npx @wonderwhy-er/desktop-commander. Both require specifying a root directory to scope file access.',
+      },
+    },
+  ],
+};
+---
+
+<Base
+  title="Desktop Commander MCP vs Official Filesystem Server: Local File Access Compared — AgentRank"
+  description="Compare DesktopCommanderMCP and the official MCP filesystem server. Scores, feature coverage, and which to use for local file access — March 2026 data."
+  activeTab="blog"
+  keywords="desktop commander MCP server, official MCP filesystem server, local filesystem MCP, wonderwhy-er DesktopCommanderMCP, modelcontextprotocol filesystem 2026, file access AI agent"
+  canonicalUrl="https://agentrank-ai.com/blog/desktop-commander-mcp-vs-official-filesystem/"
+  jsonLd={[jsonLd, faqJsonLd]}
+  ogImage="/og/blog.png"
+>
+  <article class="blog-post">
+    <header class="post-header">
+      <div class="breadcrumb"><a href="/blog/">Blog</a> <span>/</span></div>
+      <h1>Desktop Commander MCP vs Official Filesystem Server: Local File Access Compared</h1>
+      <div class="post-meta">
+        <time datetime={publishDate}>March 19, 2026</time>
+        <span class="sep">&middot;</span>
+        <span>5 min read</span>
+        <span class="sep">&middot;</span>
+        <span>AgentRank Index</span>
+      </div>
+      <p class="lede">
+        Local filesystem access is one of the first things developers add to an AI agent setup.
+        Two tools dominate: <strong>DesktopCommanderMCP</strong> (the community favorite) and
+        <strong>server-filesystem</strong> from the official Anthropic MCP servers repo.
+        We indexed the full file management category — here's what the data says.
+      </p>
+    </header>
+
+    <nav class="toc">
+      <strong>Contents</strong>
+      <ol>
+        <li><a href="#comparison-table">Side-by-side comparison</a></li>
+        <li><a href="#desktop-commander-section">Desktop Commander MCP</a></li>
+        <li><a href="#official-section">Official filesystem server</a></li>
+        <li><a href="#verdict">Verdict</a></li>
+        <li><a href="#setup">Setup guide</a></li>
+      </ol>
+    </nav>
+
+    <section id="comparison-table">
+      <h2>Side-by-side comparison</h2>
+      <p>
+        The core difference is not about score — it's about surface area. Desktop Commander gives agents
+        file access <em>plus</em> terminal control. The official server gives file access only.
+        Both are actively maintained and TypeScript-based.
+      </p>
+
+      <div class="table-wrapper">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Repository</th>
+              <th class="num">Score</th>
+              <th class="num">Stars</th>
+              <th class="num">Contrib.</th>
+              <th class="num">Last commit</th>
+              <th>Feature surface</th>
+            </tr>
+          </thead>
+          <tbody>
+            {tools.map((tool, i) => (
+              <tr class={i === 0 ? 'row-dc' : i === 1 ? 'row-official' : 'row-third'}>
+                <td class="tool-cell">
+                  <a href={`/tool/${tool.slug}/`} class="tool-link">{tool.name}</a>
+                  <span class="tool-meta">{tool.type} · {tool.lang}</span>
+                </td>
+                <td class="num score-cell">{tool.score}</td>
+                <td class="num">{tool.stars.toLocaleString('en-US')}</td>
+                <td class="num">{tool.contributors}</td>
+                <td class="num date-cell">{tool.lastCommit}</td>
+                <td class="feat-cell">{tool.features}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <p class="table-note">
+        Data from March 19, 2026. modelcontextprotocol/servers has 81K stars across all reference servers —
+        server-filesystem is one component of that monorepo.
+      </p>
+    </section>
+
+    <section id="desktop-commander-section">
+      <h2>Desktop Commander MCP</h2>
+
+      <h3>wonderwhy-er/DesktopCommanderMCP — score 78.48</h3>
+      <p>
+        <a href="/tool/wonderwhy-er--DesktopCommanderMCP/" class="inline-link">wonderwhy-er/DesktopCommanderMCP</a>
+        is the most-starred focused filesystem server in the AgentRank index at <strong>5,721 stars</strong>.
+        It scores 78.48, placing it in the top 15% of all indexed repositories.
+      </p>
+      <p>
+        The key differentiator is <strong>terminal access</strong>. Desktop Commander lets agents execute
+        shell commands in addition to reading and writing files. It also includes diff-based file editing —
+        rather than overwriting a file, the agent can apply targeted patches, which is safer for large
+        files where only a section needs updating.
+      </p>
+      <p>
+        31 contributors and a last commit of March 3, 2026 confirm active maintenance. The freshness
+        signal (25% of the AgentRank score) is the main reason it scores 8 points above the official server
+        despite having far fewer stars (5,721 vs 81,030). The official monorepo's last commit is March 7
+        — close but slightly older.
+      </p>
+
+      <div class="verdict-box dc-box">
+        <strong>Best for:</strong> Agents that need to run commands, execute scripts, and apply surgical file
+        edits. The terminal access makes this the more powerful — and more dangerous — option.
+        Use in controlled environments where you trust the agent's command execution.
+      </div>
+    </section>
+
+    <section id="official-section">
+      <h2>Official filesystem server</h2>
+
+      <h3>modelcontextprotocol/servers (server-filesystem) — score 70.26</h3>
+      <p>
+        The <a href="/tool/modelcontextprotocol--servers/" class="inline-link">official MCP reference servers
+        repo</a> is a monorepo maintained by Anthropic that includes <code>server-filesystem</code> —
+        the canonical filesystem MCP implementation. The monorepo has <strong>81,030 stars</strong> and
+        <strong>1,018 contributors</strong>, the largest contributor count of any tool in the filesystem category.
+      </p>
+      <p>
+        <code>server-filesystem</code> covers: read file, write file, create directory, list directory,
+        search files, and get file info — all scoped to a configured root directory. It does <em>not</em>
+        include terminal access, shell execution, or diff-based editing. This is intentional: the reference
+        implementation demonstrates safe, minimal filesystem access.
+      </p>
+      <p>
+        The 70.26 score reflects a lower freshness signal — the monorepo's last commit was March 7 vs
+        Desktop Commander's March 3. Both are fresh. The score gap is largely explained by Desktop Commander's
+        higher community adoption signals (more focused stars relative to the overall repo size).
+      </p>
+
+      <div class="verdict-box official-box">
+        <strong>Best for:</strong> Agents that should only read and write files — no shell access, no
+        command execution. Safer default. The official implementation is well-documented, widely tested,
+        and the spec-compliant baseline.
+      </div>
+    </section>
+
+    <section id="verdict">
+      <h2>Verdict</h2>
+      <p>
+        Choose based on what your agent needs to do:
+      </p>
+
+      <ul class="verdict-list">
+        <li><strong>Agent needs to run shell commands or apply diff patches:</strong> <a href="/tool/wonderwhy-er--DesktopCommanderMCP/" class="inline-link">wonderwhy-er/DesktopCommanderMCP</a> — score 78.48, terminal + filesystem, 5,721 stars.</li>
+        <li><strong>Agent should only read and write files (safest default):</strong> <a href="/tool/modelcontextprotocol--servers/" class="inline-link">modelcontextprotocol/servers server-filesystem</a> — score 70.26, official reference implementation, no shell access.</li>
+        <li><strong>Go stack or zero-dependency requirement:</strong> <a href="/tool/mark3labs--mcp-filesystem-server/" class="inline-link">mark3labs/mcp-filesystem-server</a> — score 55.88, pure Go, no external dependencies. Watch the freshness: last commit November 2025.</li>
+      </ul>
+
+      <p>
+        For cloud storage (S3, Google Drive), see the <a href="/blog/best-mcp-servers-file-management/">full
+        file management ranking</a> — <code>awslabs/mcp</code> (score 71.72) and
+        <code>xing5/mcp-google-sheets</code> (score 83.27) cover the cloud storage tier.
+      </p>
+    </section>
+
+    <section id="setup">
+      <h2>Setup guide</h2>
+
+      <h3>Install Desktop Commander MCP</h3>
+      <pre class="code-block"><code>{`{
+  "mcpServers": {
+    "desktop-commander": {
+      "command": "npx",
+      "args": ["-y", "@wonderwhy-er/desktop-commander"]
+    }
+  }
+}`}</code></pre>
+
+      <p>Desktop Commander auto-detects your home directory as the root. You can scope it with additional config.</p>
+
+      <h3>Install official server-filesystem</h3>
+      <pre class="code-block"><code>{`{
+  "mcpServers": {
+    "filesystem": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-filesystem",
+        "/Users/yourname/projects"
+      ]
+    }
+  }
+}`}</code></pre>
+
+      <p>
+        The path argument sets the root directory — the agent can only access files within it.
+        Pass multiple paths to allow access to multiple directories.
+      </p>
+
+      <div class="cta-box">
+        <p>
+          <strong>Full file management ranking:</strong> <a href="/blog/best-mcp-servers-file-management/">Best MCP Servers for File Management</a> —
+          Google Drive, AWS S3, and local options ranked.
+        </p>
+        <p>
+          <strong>Full leaderboard:</strong> <a href="/">25,638 tools ranked by AgentRank score</a> — updated daily.
+        </p>
+      </div>
+    </section>
+
+    <RelatedPosts posts={relatedPosts} />
+    <BlogSubscribeCTA source="blog" />
+    <footer class="post-footer">
+      <p class="methodology">
+        <strong>Methodology:</strong> Data from the AgentRank index crawled March 19, 2026.
+        Scores computed using: stars 15%, freshness 25%, issue health 25%, contributors 10%, inbound dependents 25%.
+        25,638 repositories indexed. modelcontextprotocol/servers star count reflects the full monorepo.
+      </p>
+      <p class="share-line">
+        Found this useful? <a href="https://x.com/AgentRank_ai" target="_blank" rel="noopener noreferrer">Follow @AgentRank_ai</a> for
+        weekly ecosystem updates, biggest movers, and new tool spotlights.
+      </p>
+    </footer>
+  </article>
+
+  <style>
+    .blog-post {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 2rem 0 3rem;
+    }
+
+    .inline-link {
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    .breadcrumb {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      margin-bottom: 0.75rem;
+    }
+
+    .breadcrumb span {
+      margin: 0 0.25rem;
+      opacity: 0.5;
+    }
+
+    .post-header {
+      margin-bottom: 2rem;
+      padding-bottom: 1.5rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .post-header h1 {
+      font-size: 1.6rem;
+      font-weight: 700;
+      line-height: 1.3;
+      margin-bottom: 0.75rem;
+    }
+
+    .post-meta {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      flex-wrap: wrap;
+      margin-bottom: 1rem;
+    }
+
+    .sep { opacity: 0.4; }
+
+    .lede {
+      font-size: 1rem;
+      line-height: 1.7;
+      color: var(--text);
+      opacity: 0.9;
+    }
+
+    .toc {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 1rem 1.25rem;
+      margin-bottom: 2.5rem;
+      font-size: 0.82rem;
+    }
+
+    .toc strong {
+      display: block;
+      margin-bottom: 0.6rem;
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+    }
+
+    .toc ol {
+      margin: 0;
+      padding-left: 1.2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+    }
+
+    .toc a { color: var(--text-muted); }
+    .toc a:hover { color: var(--accent); }
+
+    section { margin-bottom: 3rem; }
+
+    section h2 {
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin-bottom: 0.75rem;
+      padding-bottom: 0.4rem;
+      border-bottom: 2px solid var(--accent);
+      display: inline-block;
+    }
+
+    section h3 {
+      font-size: 0.95rem;
+      font-weight: 700;
+      margin: 1.5rem 0 0.5rem;
+      color: var(--text);
+    }
+
+    section p {
+      font-size: 0.9rem;
+      line-height: 1.75;
+      color: var(--text);
+      opacity: 0.9;
+      margin-bottom: 0.9rem;
+    }
+
+    .table-wrapper {
+      overflow-x: auto;
+      margin: 1rem 0 0.5rem;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.82rem;
+    }
+
+    .data-table th {
+      text-align: left;
+      font-weight: 600;
+      color: var(--text-muted);
+      border-bottom: 1px solid var(--border);
+      padding: 0.4rem 0.75rem 0.4rem 0;
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      white-space: nowrap;
+    }
+
+    .data-table td {
+      padding: 0.45rem 0.75rem 0.45rem 0;
+      border-bottom: 1px solid var(--border);
+      color: var(--text);
+      vertical-align: top;
+    }
+
+    .data-table tr:last-child td { border-bottom: none; }
+
+    .row-dc td {
+      background: color-mix(in srgb, var(--accent) 4%, transparent);
+    }
+
+    .num {
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .tool-cell {
+      display: flex;
+      flex-direction: column;
+      gap: 0.15rem;
+    }
+
+    .tool-link {
+      font-weight: 600;
+      color: var(--accent);
+      font-size: 0.78rem;
+    }
+
+    .tool-meta {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+    }
+
+    .score-cell {
+      color: var(--accent);
+      font-weight: 700;
+    }
+
+    .date-cell {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+    }
+
+    .feat-cell {
+      font-size: 0.78rem;
+    }
+
+    .table-note {
+      font-size: 0.75rem !important;
+      color: var(--text-muted) !important;
+      margin-top: 0.5rem !important;
+    }
+
+    .verdict-box {
+      border-radius: 4px;
+      padding: 0.875rem 1rem;
+      margin-top: 1.25rem;
+      font-size: 0.88rem;
+      line-height: 1.6;
+    }
+
+    .dc-box {
+      background: color-mix(in srgb, var(--accent) 8%, var(--bg-surface));
+      border: 1px solid var(--accent);
+    }
+
+    .official-box {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+    }
+
+    .verdict-list {
+      margin: 0.75rem 0 1rem 1.25rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+      font-size: 0.9rem;
+      line-height: 1.65;
+    }
+
+    .code-block {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 0.875rem 1rem;
+      font-size: 0.78rem;
+      line-height: 1.6;
+      overflow-x: auto;
+      margin: 0.75rem 0 1rem;
+    }
+
+    .code-block code {
+      font-family: monospace;
+      color: var(--text);
+    }
+
+    .cta-box {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      border-radius: 4px;
+      padding: 1rem 1.25rem;
+      margin-top: 1.5rem;
+    }
+
+    .cta-box p {
+      margin-bottom: 0.5rem;
+      font-size: 0.88rem !important;
+    }
+
+    .cta-box p:last-child { margin-bottom: 0; }
+
+    .post-footer {
+      margin-top: 3rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--border);
+    }
+
+    .methodology {
+      font-size: 0.75rem !important;
+      color: var(--text-muted) !important;
+      opacity: 1 !important;
+    }
+
+    .share-line {
+      font-size: 0.82rem !important;
+      margin-top: 0.75rem;
+    }
+
+    @media (max-width: 640px) {
+      .post-header h1 { font-size: 1.3rem; }
+      .feat-cell, .date-cell { display: none; }
+    }
+  </style>
+</Base>

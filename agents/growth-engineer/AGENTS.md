@@ -17,6 +17,15 @@ Use these skills when they apply to your work:
 - `content-strategy` -- Content strategy planning (coreyhaines31/marketingskills). Use when planning content pillars, topic clusters, or editorial calendars.
 - `email-sequence` -- Email marketing sequences (coreyhaines31/marketingskills). Use when building welcome sequences, nurture flows, or re-engagement campaigns.
 - `backlink-analyzer` -- Backlink profile analysis (aaron-he-zhu/seo-geo-claude-skills). Use when analyzing link quality, finding link opportunities, or evaluating competitor backlinks.
+- `keyword-research` -- Keyword research and analysis. Use when identifying target keywords, search volume, and keyword difficulty.
+- `on-page-seo-auditor` -- On-page SEO auditing. Use when optimizing individual pages for search ranking factors.
+- `serp-analysis` -- Search engine results page analysis. Use when analyzing SERP features, competitor rankings, and search intent.
+- `content-gap-analysis` -- Content gap identification. Use when finding topics competitors cover that we don't.
+- `page-cro` -- Landing page conversion rate optimization. Use when optimizing pages for conversions (signups, API key generation, etc).
+- `schema-markup` -- Structured data and schema markup. Use when adding JSON-LD or schema.org markup for rich search results.
+- `marketing-psychology` -- Psychological triggers in marketing. Use when crafting persuasive copy or designing engagement loops.
+- `rank-tracker` -- Search ranking tracking. Use when monitoring keyword positions and tracking SEO progress over time.
+- `domain-authority-auditor` -- Domain authority analysis. Use when evaluating our domain strength or identifying link building opportunities.
 
 ## Team
 

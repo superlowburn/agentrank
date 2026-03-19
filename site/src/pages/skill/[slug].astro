@@ -148,6 +148,7 @@ const jsonLd = generateSkillJsonLd({
   dateModified: repoData?.last_commit_at,
 }, pageUrl);
 const keywordsStr = [skill.source, ...skill.platforms.slice(0, 5), 'AI skill', 'agent skill'].join(', ');
+const ogImage = skill.rank <= 200 ? `/og/skill/${slug}.png` : undefined;
 
 // Related skills
 const relatedRows = await env.DB.prepare(
@@ -159,7 +160,7 @@ const relatedSkills = relatedRows.results || [];
 Astro.response.headers.set('Cache-Control', 'public, max-age=60, s-maxage=3600, stale-while-revalidate=86400');
 ---
 
-<Base title={`${skill.name} — AgentRank`} description={summary} activeTab="skills" jsonLd={jsonLd} keywords={keywordsStr} canonicalUrl={pageUrl}>
+<Base title={`${skill.name} — AgentRank`} description={summary} activeTab="skills" jsonLd={jsonLd} keywords={keywordsStr} canonicalUrl={pageUrl} ogImage={ogImage}>
   <nav class="breadcrumb" aria-label="breadcrumb">
     <a href="/">Home</a>
     <span class="breadcrumb-sep" aria-hidden="true">&rsaquo;</span>

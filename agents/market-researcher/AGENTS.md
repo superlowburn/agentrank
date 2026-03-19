@@ -12,6 +12,13 @@ Use these skills when they apply to your work:
 - `lead-gen` -- Prospect research. Use when researching companies or potential partners in the ecosystem.
 - `competitor-analysis` -- Competitor analysis (aaron-he-zhu/seo-geo-claude-skills). Use when evaluating competitor positioning, features, and market share.
 - `content-strategy` -- Content strategy (coreyhaines31/marketingskills). Use when researching content landscape, topic opportunities, or competitive content gaps.
+- `competitor-alternatives` -- Competitor alternatives analysis. Use when mapping the full competitive landscape and alternative solutions.
+- `content-gap-analysis` -- Content gap identification. Use when finding topics competitors cover that AgentRank doesn't.
+- `serp-analysis` -- SERP analysis. Use when analyzing search results for competitive positioning and search intent.
+- `keyword-research` -- Keyword research. Use when identifying high-value keywords and search trends in the MCP/agent space.
+- `backlink-analyzer` -- Backlink profile analysis (aaron-he-zhu/seo-geo-claude-skills). Use when analyzing competitor link profiles and finding link opportunities.
+- `domain-authority-auditor` -- Domain authority analysis. Use when evaluating site authority of competitors and potential partners.
+- `rank-tracker` -- Search ranking tracking. Use when monitoring competitive keyword positions.
 
 ## Team
 
@@ -24,6 +31,10 @@ You work with these agents. Mention them in Paperclip comments when you need col
 - **Vibe Coder** — Frontend/design. Share competitor UX patterns worth copying.
 - **Community Manager** — AgentHive community management (separate project).
 - **MoltBook Agent** — Social engagement on MoltBook.com (autonomous).
+
+## Browser Usage
+
+When using Chrome browser tools, **always resize the window to 400x300 pixels** immediately after creating or switching to a tab. Steve works on this machine and full-size browser windows block him. Use `mcp__claude-in-chrome__resize_window` with `width: 400, height: 300` on every tab you interact with. Do not leave browser windows at default size.
 
 ## Guidelines
 

@@ -44,6 +44,8 @@ const glamaDownloads = (row.glama_weekly_downloads as number) || 0;
 const glamaToolCalls = (row.glama_tool_calls as number) || 0;
 const npmWeeklyDownloads = (row.npm_weekly_downloads as number) || 0;
 const npmPackage = row.npm_package as string | null;
+const pypiWeeklyDownloads = (row.pypi_weekly_downloads as number) || 0;
+const pypiPackage = row.pypi_package as string | null;
 
 const totalIssues = tool.open_issues + tool.closed_issues;
 const issueHealth = totalIssues > 0 ? (tool.closed_issues / totalIssues) : 0.5;
@@ -104,6 +106,13 @@ const signals = [
     bar: npmWeeklyDownloads > 0 ? Math.min(100, Math.log(1 + npmWeeklyDownloads) / Math.log(1 + 10000) * 100) : -1,
     weight: npmWeeklyDownloads > 0 ? 13 : 0,
     driver: npmWeeklyDownloads > 0 ? `${npmWeeklyDownloads.toLocaleString('en-US')} weekly installs → ${npmWeeklyDownloads > 5000 ? 'widely installed' : npmWeeklyDownloads > 1000 ? 'gaining traction' : 'early adoption'}` : '',
+  },
+  {
+    name: 'PyPI Downloads',
+    value: pypiWeeklyDownloads > 0 ? pypiWeeklyDownloads.toLocaleString('en-US') + '/wk' : 'N/A',
+    bar: pypiWeeklyDownloads > 0 ? Math.min(100, Math.log(1 + pypiWeeklyDownloads) / Math.log(1 + 10000) * 100) : -1,
+    weight: pypiWeeklyDownloads > 0 ? 13 : 0,
+    driver: pypiWeeklyDownloads > 0 ? `${pypiWeeklyDownloads.toLocaleString('en-US')} weekly installs → ${pypiWeeklyDownloads > 5000 ? 'widely installed' : pypiWeeklyDownloads > 1000 ? 'gaining traction' : 'early adoption'}` : '',
   },
   { name: 'Forks', value: tool.forks.toLocaleString('en-US'), bar: Math.min(100, Math.log(1 + tool.forks) / Math.log(1 + 50000) * 100), weight: 0, driver: '' },
   { name: 'Description', value: descQuality === 0 ? 'None' : descQuality === 0.3 ? 'Brief' : descQuality === 0.7 ? 'Good' : 'Detailed', bar: descQuality * 100, weight: 0, driver: '' },
@@ -390,6 +399,14 @@ Astro.response.headers.set('Cache-Control', 'public, max-age=60, s-maxage=3600, 
       )}
       {npmWeeklyDownloads > 0 && !npmPackage && (
         <span class="eco-pill">{npmWeeklyDownloads.toLocaleString('en-US')} npm/wk</span>
+      )}
+      {pypiWeeklyDownloads > 0 && pypiPackage && (
+        <a class="eco-pill eco-pill-link" href={`https://pypi.org/project/${pypiPackage}`} target="_blank" rel="noopener noreferrer">
+          {pypiWeeklyDownloads.toLocaleString('en-US')} pypi/wk
+        </a>
+      )}
+      {pypiWeeklyDownloads > 0 && !pypiPackage && (
+        <span class="eco-pill">{pypiWeeklyDownloads.toLocaleString('en-US')} pypi/wk</span>
       )}
     </div>
     {githubTopics.length > 0 && (

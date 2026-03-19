@@ -1,0 +1,245 @@
+---
+export const prerender = false;
+
+import Base from '../../layouts/Base.astro';
+
+interface ReportRow {
+  id: string;
+  week_start: string;
+  week_end: string;
+  week_number: number;
+  year: number;
+  total_tools: number;
+  new_tools_count: number;
+  generated_at: string;
+}
+
+const MOCK_REPORTS: ReportRow[] = [];
+
+let reports: ReportRow[] = [];
+let isMock = false;
+
+try {
+  const { env } = Astro.locals.runtime;
+  const result = await env.DB.prepare(
+    `SELECT id, week_start, week_end, week_number, year, total_tools, new_tools_count, generated_at
+     FROM weekly_reports
+     ORDER BY week_start DESC
+     LIMIT 52`
+  ).all<ReportRow>();
+  reports = result.results ?? [];
+  if (reports.length === 0) {
+    isMock = true;
+    reports = MOCK_REPORTS;
+  }
+} catch {
+  isMock = true;
+  reports = MOCK_REPORTS;
+}
+
+function formatDateRange(start: string, end: string): string {
+  const s = new Date(start + 'T00:00:00Z');
+  const e = new Date(end + 'T00:00:00Z');
+  const opts: Intl.DateTimeFormatOptions = { month: 'short', day: 'numeric', timeZone: 'UTC' };
+  const endOpts: Intl.DateTimeFormatOptions = { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' };
+  return `${s.toLocaleDateString('en-US', opts)} – ${e.toLocaleDateString('en-US', endOpts)}`;
+}
+---
+
+<Base
+  title="Weekly MCP Ecosystem Reports — AgentRank"
+  description="Auto-generated weekly reports on the MCP server and agent tool ecosystem. Biggest movers, new tools, notable releases, top 10 snapshot — updated every Monday."
+  keywords="MCP ecosystem report, weekly AI tools report, MCP server trends, AgentRank weekly"
+  activeTab="news"
+  canonicalUrl="https://agentrank-ai.com/reports/"
+>
+  <div class="reports-page">
+    <div class="reports-header">
+      <h1 class="page-title">Weekly Ecosystem Reports</h1>
+      <p class="page-sub">Auto-generated every Monday from real GitHub signals. Biggest movers, new tools, notable releases, top 10 snapshot.</p>
+    </div>
+
+    {isMock || reports.length === 0 ? (
+      <div class="empty-state">
+        <p>No reports yet. Reports are generated automatically every Monday.</p>
+        <p>Check back after the first Monday of data collection.</p>
+        <a href="/news/" class="empty-cta">View live news feed &rarr;</a>
+      </div>
+    ) : (
+      <div class="reports-list">
+        {reports.map((r, i) => (
+          <a href={`/reports/${r.id}/`} class={`report-card${i === 0 ? ' report-card--latest' : ''}`}>
+            <div class="rc-week">
+              {i === 0 && <span class="rc-latest-badge">Latest</span>}
+              <span class="rc-week-label">Week {r.week_number}, {r.year}</span>
+            </div>
+            <div class="rc-dates">{formatDateRange(r.week_start, r.week_end)}</div>
+            <div class="rc-stats">
+              <span class="rc-stat">
+                <span class="rc-stat-num">{r.total_tools.toLocaleString('en-US')}</span>
+                <span class="rc-stat-label">tools</span>
+              </span>
+              <span class="rc-sep">·</span>
+              <span class="rc-stat">
+                <span class="rc-stat-num rc-new">{r.new_tools_count}</span>
+                <span class="rc-stat-label">new</span>
+              </span>
+            </div>
+            <span class="rc-arrow">&rarr;</span>
+          </a>
+        ))}
+      </div>
+    )}
+
+    <div class="reports-footer">
+      <p>Reports are generated automatically every Monday at 14:00 UTC from the AgentRank nightly crawler data.</p>
+      <p>Also available: <a href="/news/">live news feed</a> · <a href="/movers/">weekly movers</a> · <a href="/news/rss.xml">RSS feed</a></p>
+    </div>
+  </div>
+</Base>
+
+<style>
+.reports-page {
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 32px 16px 64px;
+}
+
+.reports-header {
+  margin-bottom: 32px;
+}
+
+.page-title {
+  font-size: 26px;
+  font-weight: 700;
+  color: #f9fafb;
+  margin: 0 0 8px;
+}
+
+.page-sub {
+  font-size: 14px;
+  color: #6b7280;
+  margin: 0;
+  line-height: 1.6;
+}
+
+.empty-state {
+  padding: 40px 0;
+  text-align: center;
+  color: #6b7280;
+  font-size: 14px;
+  line-height: 1.8;
+}
+.empty-cta {
+  display: inline-block;
+  margin-top: 16px;
+  color: #818cf8;
+  text-decoration: none;
+  font-size: 14px;
+}
+.empty-cta:hover { text-decoration: underline; }
+
+.reports-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.report-card {
+  display: grid;
+  grid-template-columns: 1fr 1fr auto auto;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 18px;
+  background: #111827;
+  border: 1px solid #1f2937;
+  border-radius: 8px;
+  text-decoration: none;
+  transition: border-color 0.15s;
+}
+.report-card:hover { border-color: #6366f1; }
+.report-card--latest { border-color: #312e81; background: #0f0f1a; }
+
+@media (max-width: 540px) {
+  .report-card {
+    grid-template-columns: 1fr auto;
+    grid-template-rows: auto auto;
+  }
+  .rc-dates { grid-column: 1; grid-row: 2; }
+  .rc-stats { display: none; }
+  .rc-arrow { grid-column: 2; grid-row: 1; }
+}
+
+.rc-week {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.rc-week-label {
+  font-size: 15px;
+  font-weight: 600;
+  color: #e5e7eb;
+}
+
+.rc-latest-badge {
+  font-size: 10px;
+  font-weight: 700;
+  background: #4f46e5;
+  color: #e0e7ff;
+  padding: 2px 7px;
+  border-radius: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.rc-dates {
+  font-size: 13px;
+  color: #6b7280;
+}
+
+.rc-stats {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+}
+
+.rc-stat {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+}
+
+.rc-stat-num {
+  font-weight: 600;
+  color: #9ca3af;
+  font-variant-numeric: tabular-nums;
+}
+.rc-stat-num.rc-new { color: #22c55e; }
+
+.rc-stat-label {
+  color: #4b5563;
+  font-size: 11px;
+}
+
+.rc-sep { color: #374151; }
+
+.rc-arrow {
+  color: #374151;
+  font-size: 16px;
+  transition: color 0.15s;
+}
+.report-card:hover .rc-arrow { color: #818cf8; }
+
+.reports-footer {
+  margin-top: 40px;
+  padding-top: 24px;
+  border-top: 1px solid #1f2937;
+  font-size: 12px;
+  color: #4b5563;
+  line-height: 1.8;
+}
+.reports-footer a { color: #6b7280; text-decoration: underline; }
+.reports-footer a:hover { color: #818cf8; }
+</style>

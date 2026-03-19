@@ -9,7 +9,8 @@
     "mcp-server"
   ],
   "dependencies": {
-    "@octokit/rest": "^22.0.1"
+    "@octokit/rest": "^22.0.1",
+    "puppeteer-core": "^24.39.1"
   },
   "devDependencies": {
     "@types/better-sqlite3": "^7.6.13",

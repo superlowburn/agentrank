@@ -1,0 +1,597 @@
+---
+export const prerender = true;
+
+import Base from '../../layouts/Base.astro';
+import BlogSubscribeCTA from '../../components/BlogSubscribeCTA.astro';
+import RelatedPosts from '../../components/RelatedPosts.astro';
+
+const relatedPosts = [
+  { href: '/blog/best-mcp-servers-api-integration/', title: 'Best MCP Servers for API Integration in 2026' },
+  { href: '/blog/best-mcp-servers-code-generation/', title: 'Best MCP Servers for Code Generation in 2026' },
+  { href: '/blog/best-mcp-servers-devops/', title: 'Best MCP Servers for DevOps & Infrastructure in 2026' },
+  { href: '/blog/mcp-setup-guide-claude-cursor-windsurf/', title: 'MCP Setup Guide: Claude, Cursor, Windsurf' },
+];
+
+const publishDate = '2026-03-19';
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: 'GitHub MCP Server vs git-mcp: Which GitHub Integration to Use?',
+  description: 'Data-driven comparison of the official GitHub MCP server and git-mcp. AgentRank scores, feature differences, and when to use each — March 2026.',
+  datePublished: publishDate,
+  dateModified: publishDate,
+  author: {
+    '@type': 'Organization',
+    name: 'AgentRank',
+    url: 'https://agentrank-ai.com',
+  },
+  publisher: {
+    '@type': 'Organization',
+    name: 'AgentRank',
+    url: 'https://agentrank-ai.com',
+    logo: {
+      '@type': 'ImageObject',
+      url: 'https://agentrank-ai.com/og-image.png',
+    },
+  },
+  mainEntityOfPage: {
+    '@type': 'WebPage',
+    '@id': 'https://agentrank-ai.com/blog/github-mcp-vs-git-mcp/',
+  },
+  image: 'https://agentrank-ai.com/og-image.png',
+  keywords: 'github MCP server vs git-mcp, official github MCP, idosal git-mcp, github MCP server comparison, code repository MCP 2026, github AI agent integration',
+};
+
+const tools = [
+  {
+    name: 'github/github-mcp-server',
+    slug: 'github--github-mcp-server',
+    score: 85.44,
+    stars: 27865,
+    contributors: 111,
+    lastCommit: '2026-03-13',
+    lang: 'Go',
+    type: 'Official (GitHub)',
+    mode: 'Local binary / GitHub API',
+    verdict: 'Official GitHub server. 111 contributors, 27K+ stars. Covers issues, PRs, code search, discussions — full GitHub API surface. Requires a GitHub token.',
+  },
+  {
+    name: 'idosal/git-mcp',
+    slug: 'idosal--git-mcp',
+    score: 75.44,
+    stars: 7759,
+    contributors: 16,
+    lastCommit: '2026-03-13',
+    lang: 'TypeScript',
+    type: 'Community (idosal)',
+    mode: 'Remote (no local setup)',
+    verdict: 'Remote MCP server — works for any public GitHub or GitLab repo with no installation. Just add the URL. Best for reading repo docs and preventing code hallucinations.',
+  },
+  {
+    name: 'modelcontextprotocol/servers (server-github)',
+    slug: 'modelcontextprotocol--servers',
+    score: 70.26,
+    stars: 81030,
+    contributors: 1018,
+    lastCommit: '2026-03-07',
+    lang: 'TypeScript',
+    type: 'Official (Anthropic reference)',
+    mode: 'Local / GitHub API',
+    verdict: 'Reference GitHub server from the Anthropic monorepo. Functional but superseded by the official GitHub server for most use cases.',
+  },
+];
+
+const faqJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: [
+    {
+      '@type': 'Question',
+      name: 'What is the official GitHub MCP server?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'github/github-mcp-server is the official MCP server maintained by GitHub. It scores 85.44 in the AgentRank index and gives AI agents access to the full GitHub API surface: repositories, issues, pull requests, code search, discussions, and GitHub Actions. It requires a GitHub personal access token and runs as a local binary.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'What is git-mcp and how is it different?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'idosal/git-mcp is a remote MCP server — it runs in the cloud and gives agents access to any public GitHub or GitLab repository without local installation. You add it by URL, not by installing a binary. It is optimized for reading repository documentation and source code to prevent hallucinations. It scores 75.44 in the AgentRank index.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Should I use the official GitHub MCP server or git-mcp?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Use the official GitHub MCP server if you need to create issues, manage PRs, trigger workflows, or interact with private repos — it requires a token and full API access. Use git-mcp if you want agents to read any public repo without setup — useful for reading documentation, studying code, and preventing hallucinations about library APIs. Both can run simultaneously.',
+      },
+    },
+  ],
+};
+---
+
+<Base
+  title="GitHub MCP Server vs git-mcp: Which GitHub Integration to Use? — AgentRank"
+  description="Compare the official GitHub MCP server and git-mcp. Scores, approach differences, and when to use each — March 2026 data from the AgentRank index."
+  activeTab="blog"
+  keywords="github MCP server official, git-mcp, github MCP server comparison 2026, idosal git-mcp, github AI agent, code repository MCP server"
+  canonicalUrl="https://agentrank-ai.com/blog/github-mcp-vs-git-mcp/"
+  jsonLd={[jsonLd, faqJsonLd]}
+  ogImage="/og/blog.png"
+>
+  <article class="blog-post">
+    <header class="post-header">
+      <div class="breadcrumb"><a href="/blog/">Blog</a> <span>/</span></div>
+      <h1>GitHub MCP Server vs git-mcp: Which GitHub Integration to Use?</h1>
+      <div class="post-meta">
+        <time datetime={publishDate}>March 19, 2026</time>
+        <span class="sep">&middot;</span>
+        <span>5 min read</span>
+        <span class="sep">&middot;</span>
+        <span>AgentRank Index</span>
+      </div>
+      <p class="lede">
+        Two GitHub MCP tools dominate: the <strong>official GitHub MCP server</strong> (maintained by GitHub)
+        and <strong>git-mcp</strong> (a remote MCP server that works for any public repo without installation).
+        The 10-point score gap (85.44 vs 75.44) masks a more interesting difference: they solve different problems.
+      </p>
+    </header>
+
+    <nav class="toc">
+      <strong>Contents</strong>
+      <ol>
+        <li><a href="#comparison-table">Side-by-side comparison</a></li>
+        <li><a href="#github-official-section">Official GitHub MCP server</a></li>
+        <li><a href="#git-mcp-section">git-mcp</a></li>
+        <li><a href="#verdict">Verdict</a></li>
+        <li><a href="#setup">Setup guide</a></li>
+      </ol>
+    </nav>
+
+    <section id="comparison-table">
+      <h2>Side-by-side comparison</h2>
+      <p>
+        Both tools were last committed on <strong>March 13, 2026</strong> — equally fresh.
+        The key difference is deployment model: the official server runs locally and uses the GitHub API;
+        git-mcp is a remote server you connect to by URL with no local install required.
+      </p>
+
+      <div class="table-wrapper">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Repository</th>
+              <th class="num">Score</th>
+              <th class="num">Stars</th>
+              <th class="num">Contrib.</th>
+              <th>Mode</th>
+            </tr>
+          </thead>
+          <tbody>
+            {tools.map((tool, i) => (
+              <tr class={i === 0 ? 'row-github' : i === 1 ? 'row-gitmcp' : 'row-ref'}>
+                <td class="tool-cell">
+                  <a href={`/tool/${tool.slug}/`} class="tool-link">{tool.name}</a>
+                  <span class="tool-meta">{tool.type} · {tool.lang}</span>
+                </td>
+                <td class="num score-cell">{tool.score}</td>
+                <td class="num">{tool.stars.toLocaleString('en-US')}</td>
+                <td class="num">{tool.contributors}</td>
+                <td class="mode-cell">{tool.mode}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <p class="table-note">
+        Data from March 19, 2026 crawl. modelcontextprotocol/servers star count reflects the full monorepo,
+        not only server-github. Mode = how the MCP server is deployed and accessed.
+      </p>
+    </section>
+
+    <section id="github-official-section">
+      <h2>Official GitHub MCP server</h2>
+
+      <h3>github/github-mcp-server — score 85.44</h3>
+      <p>
+        <a href="/tool/github--github-mcp-server/" class="inline-link">github/github-mcp-server</a> is
+        maintained directly by GitHub and scores <strong>85.44</strong> in the AgentRank index — the
+        second-highest in the API integration category after Google Workspace MCP. It has
+        <strong>27,865 stars</strong> and <strong>111 contributors</strong>.
+      </p>
+      <p>
+        The official server wraps the GitHub REST and GraphQL APIs into MCP tools. Agents can:
+        list and create repositories, open and close issues, create pull requests, review PRs, run
+        code searches, trigger GitHub Actions workflows, and read repository contents. It requires a
+        GitHub personal access token and runs as a local Go binary.
+      </p>
+      <p>
+        The Go implementation (rather than TypeScript) reflects GitHub's choice to ship a fast,
+        dependency-light binary. The official backing means it tracks GitHub API changes — when GitHub
+        adds a new API surface, the MCP server typically follows within weeks.
+      </p>
+
+      <div class="verdict-box github-box">
+        <strong>Best for:</strong> Agents that need to <em>write</em> to GitHub — create issues, merge PRs,
+        trigger workflows, manage projects, or access private repos. Requires a GitHub token and local
+        installation. Full GitHub API coverage.
+      </div>
+    </section>
+
+    <section id="git-mcp-section">
+      <h2>git-mcp</h2>
+
+      <h3>idosal/git-mcp — score 75.44</h3>
+      <p>
+        <a href="/tool/idosal--git-mcp/" class="inline-link">idosal/git-mcp</a> takes a different
+        architectural approach: it is a <strong>remote MCP server</strong>. Instead of running a local binary,
+        you add a URL to your MCP config and the server runs in the cloud. No installation required.
+        7,759 stars and 16 contributors.
+      </p>
+      <p>
+        The use case is narrower but the friction is dramatically lower. Point git-mcp at any public GitHub
+        or GitLab repository, and agents can read the repository's code, README, documentation, and file
+        tree — without setting up a token or running a local process. The primary purpose is eliminating
+        code hallucinations: agents that can read the actual library source produce more accurate code.
+      </p>
+      <p>
+        git-mcp does not support write operations (creating issues, opening PRs, etc.) — it is a read-only
+        tool optimized for documentation and source code ingestion. The AgentRank score (75.44) reflects
+        solid freshness (March 13 commit) and good adoption, but lower contributor depth than the official server.
+      </p>
+
+      <div class="verdict-box gitmcp-box">
+        <strong>Best for:</strong> Agents that need to <em>read</em> public repos without setup — reading
+        library documentation, understanding API surfaces, and preventing hallucinations about third-party code.
+        Zero installation: just add the URL. Works for GitHub and GitLab.
+      </div>
+    </section>
+
+    <section id="verdict">
+      <h2>Verdict</h2>
+      <p>
+        The AgentRank score difference (85.44 vs 75.44) is real but not the whole picture.
+        These tools solve different problems:
+      </p>
+
+      <ul class="verdict-list">
+        <li><strong>Need to write to GitHub (issues, PRs, workflows, private repos):</strong> <a href="/tool/github--github-mcp-server/" class="inline-link">github/github-mcp-server</a> — score 85.44, official, 111 contributors, full API surface.</li>
+        <li><strong>Need to read any public repo without setup:</strong> <a href="/tool/idosal--git-mcp/" class="inline-link">idosal/git-mcp</a> — score 75.44, remote server, no token required, zero installation.</li>
+        <li><strong>Running both simultaneously is valid:</strong> Use git-mcp for reading external public repos and the official server for your own GitHub organization's write operations. MCP clients support multiple servers.</li>
+      </ul>
+
+      <p>
+        For the widest coverage, the combination is: official GitHub server (authenticated, write-capable)
+        + git-mcp (anonymous read, zero setup) configured simultaneously. Your agent uses each based on
+        the task.
+      </p>
+    </section>
+
+    <section id="setup">
+      <h2>Setup guide</h2>
+
+      <h3>Install Official GitHub MCP server</h3>
+      <pre class="code-block"><code>{`{
+  "mcpServers": {
+    "github": {
+      "command": "github-mcp-server",
+      "args": ["stdio"],
+      "env": {
+        "GITHUB_PERSONAL_ACCESS_TOKEN": "ghp_..."
+      }
+    }
+  }
+}`}</code></pre>
+
+      <p>Install the binary: <code>brew install github/gh/gh-mcp</code> or download from the GitHub releases page.</p>
+
+      <h3>Add git-mcp (remote, no install)</h3>
+      <pre class="code-block"><code>{`{
+  "mcpServers": {
+    "git-mcp": {
+      "url": "https://gitmcp.io/docs"
+    }
+  }
+}`}</code></pre>
+
+      <p>
+        Replace the URL with any public GitHub repo: <code>https://gitmcp.io/{`{owner}/{repo}`}</code>.
+        No token required. For Claude Desktop, add as an MCP server with type <code>sse</code>.
+      </p>
+
+      <div class="cta-box">
+        <p>
+          <strong>Full API integration ranking:</strong> <a href="/blog/best-mcp-servers-api-integration/">Best MCP Servers for API Integration</a> —
+          Slack, GitHub, Notion, Google Workspace, Atlassian, and Airtable ranked.
+        </p>
+        <p>
+          <strong>Full leaderboard:</strong> <a href="/">25,638 tools ranked by AgentRank score</a> — updated daily.
+        </p>
+      </div>
+    </section>
+
+    <RelatedPosts posts={relatedPosts} />
+    <BlogSubscribeCTA source="blog" />
+    <footer class="post-footer">
+      <p class="methodology">
+        <strong>Methodology:</strong> Data from the AgentRank index crawled March 19, 2026.
+        Scores computed using: stars 15%, freshness 25%, issue health 25%, contributors 10%, inbound dependents 25%.
+        25,638 repositories indexed. 876 repositories matched API integration category queries.
+      </p>
+      <p class="share-line">
+        Found this useful? <a href="https://x.com/AgentRank_ai" target="_blank" rel="noopener noreferrer">Follow @AgentRank_ai</a> for
+        weekly ecosystem updates, biggest movers, and new tool spotlights.
+      </p>
+    </footer>
+  </article>
+
+  <style>
+    .blog-post {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 2rem 0 3rem;
+    }
+
+    .inline-link {
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    .breadcrumb {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      margin-bottom: 0.75rem;
+    }
+
+    .breadcrumb span {
+      margin: 0 0.25rem;
+      opacity: 0.5;
+    }
+
+    .post-header {
+      margin-bottom: 2rem;
+      padding-bottom: 1.5rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .post-header h1 {
+      font-size: 1.6rem;
+      font-weight: 700;
+      line-height: 1.3;
+      margin-bottom: 0.75rem;
+    }
+
+    .post-meta {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      flex-wrap: wrap;
+      margin-bottom: 1rem;
+    }
+
+    .sep { opacity: 0.4; }
+
+    .lede {
+      font-size: 1rem;
+      line-height: 1.7;
+      color: var(--text);
+      opacity: 0.9;
+    }
+
+    .toc {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 1rem 1.25rem;
+      margin-bottom: 2.5rem;
+      font-size: 0.82rem;
+    }
+
+    .toc strong {
+      display: block;
+      margin-bottom: 0.6rem;
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+    }
+
+    .toc ol {
+      margin: 0;
+      padding-left: 1.2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+    }
+
+    .toc a { color: var(--text-muted); }
+    .toc a:hover { color: var(--accent); }
+
+    section { margin-bottom: 3rem; }
+
+    section h2 {
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin-bottom: 0.75rem;
+      padding-bottom: 0.4rem;
+      border-bottom: 2px solid var(--accent);
+      display: inline-block;
+    }
+
+    section h3 {
+      font-size: 0.95rem;
+      font-weight: 700;
+      margin: 1.5rem 0 0.5rem;
+      color: var(--text);
+    }
+
+    section p {
+      font-size: 0.9rem;
+      line-height: 1.75;
+      color: var(--text);
+      opacity: 0.9;
+      margin-bottom: 0.9rem;
+    }
+
+    .table-wrapper {
+      overflow-x: auto;
+      margin: 1rem 0 0.5rem;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.82rem;
+    }
+
+    .data-table th {
+      text-align: left;
+      font-weight: 600;
+      color: var(--text-muted);
+      border-bottom: 1px solid var(--border);
+      padding: 0.4rem 0.75rem 0.4rem 0;
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      white-space: nowrap;
+    }
+
+    .data-table td {
+      padding: 0.45rem 0.75rem 0.45rem 0;
+      border-bottom: 1px solid var(--border);
+      color: var(--text);
+      vertical-align: top;
+    }
+
+    .data-table tr:last-child td { border-bottom: none; }
+
+    .row-github td {
+      background: color-mix(in srgb, var(--accent) 4%, transparent);
+    }
+
+    .num {
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .tool-cell {
+      display: flex;
+      flex-direction: column;
+      gap: 0.15rem;
+    }
+
+    .tool-link {
+      font-weight: 600;
+      color: var(--accent);
+      font-size: 0.78rem;
+    }
+
+    .tool-meta {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+    }
+
+    .score-cell {
+      color: var(--accent);
+      font-weight: 700;
+    }
+
+    .mode-cell {
+      font-size: 0.78rem;
+    }
+
+    .table-note {
+      font-size: 0.75rem !important;
+      color: var(--text-muted) !important;
+      margin-top: 0.5rem !important;
+    }
+
+    .verdict-box {
+      border-radius: 4px;
+      padding: 0.875rem 1rem;
+      margin-top: 1.25rem;
+      font-size: 0.88rem;
+      line-height: 1.6;
+    }
+
+    .github-box {
+      background: color-mix(in srgb, var(--accent) 8%, var(--bg-surface));
+      border: 1px solid var(--accent);
+    }
+
+    .gitmcp-box {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+    }
+
+    .verdict-list {
+      margin: 0.75rem 0 1rem 1.25rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+      font-size: 0.9rem;
+      line-height: 1.65;
+    }
+
+    .code-block {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 0.875rem 1rem;
+      font-size: 0.78rem;
+      line-height: 1.6;
+      overflow-x: auto;
+      margin: 0.75rem 0 1rem;
+    }
+
+    .code-block code {
+      font-family: monospace;
+      color: var(--text);
+    }
+
+    .cta-box {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      border-radius: 4px;
+      padding: 1rem 1.25rem;
+      margin-top: 1.5rem;
+    }
+
+    .cta-box p {
+      margin-bottom: 0.5rem;
+      font-size: 0.88rem !important;
+    }
+
+    .cta-box p:last-child { margin-bottom: 0; }
+
+    .post-footer {
+      margin-top: 3rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--border);
+    }
+
+    .methodology {
+      font-size: 0.75rem !important;
+      color: var(--text-muted) !important;
+      opacity: 1 !important;
+    }
+
+    .share-line {
+      font-size: 0.82rem !important;
+      margin-top: 0.75rem;
+    }
+
+    @media (max-width: 640px) {
+      .post-header h1 { font-size: 1.3rem; }
+      .mode-cell { display: none; }
+    }
+  </style>
+</Base>

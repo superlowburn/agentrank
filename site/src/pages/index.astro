@@ -67,6 +67,8 @@ const itemListJsonLd = {
       <span class="sp-sep">·</span>
       <span class="sp-stat">scores refresh daily</span>
       <span class="sp-sep">·</span>
+      <a class="sp-stat sp-link" href="/reports/">weekly reports</a>
+      <span class="sp-sep">·</span>
       <a class="sp-stat sp-link" href="https://github.com/superlowburn/agentrank" target="_blank" rel="noopener noreferrer">open source</a>
     </div>
     <div class="install-pitch">
@@ -113,6 +115,16 @@ const itemListJsonLd = {
     </form>
     <div class="maintainer-row">
       <span class="maintainer-row-text">Maintainer? <a href="/submit/" class="maintainer-row-link">Claim your listing</a> to add context, get a verified badge, and track your rank.</span>
+    </div>
+  </div>
+
+  <div class="news-widget" id="news-widget">
+    <div class="news-widget-header">
+      <span class="news-widget-title">Latest from the ecosystem</span>
+      <a href="/news/" class="news-widget-more">all news &rarr;</a>
+    </div>
+    <div class="news-widget-items" id="news-widget-items">
+      <div class="news-widget-loading">loading…</div>
     </div>
   </div>
 
@@ -676,6 +688,90 @@ const itemListJsonLd = {
       color: #52525b;
     }
   }
+
+  /* News widget */
+  .news-widget {
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 0.85rem 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .news-widget-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.65rem;
+  }
+
+  .news-widget-title {
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  .news-widget-more {
+    font-size: 0.75rem;
+    color: var(--accent);
+    text-decoration: none;
+  }
+
+  .news-widget-more:hover { text-decoration: underline; }
+
+  .news-widget-loading {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+  }
+
+  .nwi {
+    display: grid;
+    grid-template-columns: 5rem 1fr 3.5rem;
+    align-items: baseline;
+    gap: 0.5rem;
+    padding: 0.3rem 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .nwi:last-child { border-bottom: none; }
+
+  .nwi-cat {
+    font-size: 0.68rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+  }
+
+  .nwi-title {
+    font-size: 0.82rem;
+    color: var(--text);
+    text-decoration: none;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .nwi-title:hover {
+    color: var(--accent);
+    text-decoration: none;
+  }
+
+  .nwi-time {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    text-align: right;
+    white-space: nowrap;
+  }
+
+  @media (max-width: 480px) {
+    .nwi {
+      grid-template-columns: 4rem 1fr 3rem;
+      gap: 0.35rem;
+    }
+  }
 </style>
 
 <script>
@@ -809,4 +905,38 @@ const itemListJsonLd = {
       }, 1500);
     });
   });
+
+  // News widget — load latest items from API
+  (async () => {
+    const container = document.getElementById('news-widget-items');
+    if (!container) return;
+    try {
+      const res = await fetch('/api/v1/news?limit=5');
+      if (!res.ok) throw new Error('fetch failed');
+      const { items } = await res.json();
+      if (!items || items.length === 0) {
+        document.getElementById('news-widget')?.remove();
+        return;
+      }
+      function relTime(iso) {
+        const diff = Date.now() - new Date(iso).getTime();
+        const mins = Math.floor(diff / 60000);
+        if (mins < 60) return `${mins}m ago`;
+        const hrs = Math.floor(mins / 60);
+        if (hrs < 24) return `${hrs}h ago`;
+        const days = Math.floor(hrs / 24);
+        return days === 1 ? 'yesterday' : `${days}d ago`;
+      }
+      const catColors = { launch: '#22c55e', update: '#3b82f6', community: '#a855f7', trending: '#f59e0b', analysis: '#ef4444' };
+      container.innerHTML = items.map((item) => `
+        <div class="nwi">
+          <span class="nwi-cat" style="color:${catColors[item.category] || 'var(--text-muted)'}">${item.category}</span>
+          <a class="nwi-title" href="${item.source_url}" target="_blank" rel="noopener noreferrer">${item.title}</a>
+          <span class="nwi-time">${relTime(item.published_at)}</span>
+        </div>
+      `).join('');
+    } catch {
+      document.getElementById('news-widget')?.remove();
+    }
+  })();
 </script>

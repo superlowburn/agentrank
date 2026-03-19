@@ -23,6 +23,8 @@ CREATE TABLE tools (
   glama_tool_calls INTEGER NOT NULL DEFAULT 0,
   npm_weekly_downloads INTEGER NOT NULL DEFAULT 0,
   npm_package TEXT,
+  pypi_weekly_downloads INTEGER NOT NULL DEFAULT 0,
+  pypi_package TEXT,
   category TEXT
 );
 
@@ -33,6 +35,8 @@ CREATE INDEX idx_tools_score ON tools(score DESC);
 -- ALTER TABLE tools ADD COLUMN category TEXT;
 -- ALTER TABLE tools ADD COLUMN npm_weekly_downloads INTEGER NOT NULL DEFAULT 0;
 -- ALTER TABLE tools ADD COLUMN npm_package TEXT;
+-- ALTER TABLE tools ADD COLUMN pypi_weekly_downloads INTEGER NOT NULL DEFAULT 0;
+-- ALTER TABLE tools ADD COLUMN pypi_package TEXT;
 
 DROP TABLE IF EXISTS skills;
 
@@ -284,6 +288,54 @@ CREATE INDEX IF NOT EXISTS idx_sp_slug_ts ON skill_pings(slug, ts);
 -- Migration (run once on existing D1):
 -- CREATE TABLE IF NOT EXISTS skill_pings (id INTEGER PRIMARY KEY AUTOINCREMENT, slug TEXT NOT NULL DEFAULT 'agentrank', ip_hash TEXT, user_agent TEXT, ts TEXT NOT NULL DEFAULT (datetime('now')));
 -- CREATE INDEX IF NOT EXISTS idx_sp_slug_ts ON skill_pings(slug, ts);
+
+-- News items table — AgentRank Newspaper; survives pipeline DROP/CREATE cycles
+CREATE TABLE IF NOT EXISTS news_items (
+  id TEXT PRIMARY KEY,
+  title TEXT NOT NULL,
+  summary TEXT,
+  source_url TEXT,
+  source TEXT DEFAULT 'manual',
+  category TEXT DEFAULT 'community',
+  related_tool_slugs TEXT,
+  author TEXT,
+  author_handle TEXT,
+  thread_context TEXT,
+  engagement_score INTEGER DEFAULT 0,
+  status TEXT DEFAULT 'draft',
+  published_at TEXT,
+  ingested_at TEXT DEFAULT (datetime('now'))
+);
+CREATE INDEX IF NOT EXISTS idx_news_status ON news_items(status);
+CREATE INDEX IF NOT EXISTS idx_news_published ON news_items(published_at);
+CREATE INDEX IF NOT EXISTS idx_news_source ON news_items(source);
+-- Migration (run once on existing D1):
+-- CREATE TABLE IF NOT EXISTS news_items (id TEXT PRIMARY KEY, title TEXT NOT NULL, summary TEXT, source_url TEXT, source TEXT DEFAULT 'manual', category TEXT DEFAULT 'community', related_tool_slugs TEXT, author TEXT, author_handle TEXT, thread_context TEXT, engagement_score INTEGER DEFAULT 0, status TEXT DEFAULT 'draft', published_at TEXT, ingested_at TEXT DEFAULT (datetime('now')));
+-- CREATE INDEX IF NOT EXISTS idx_news_status ON news_items(status);
+-- CREATE INDEX IF NOT EXISTS idx_news_published ON news_items(published_at);
+-- CREATE INDEX IF NOT EXISTS idx_news_source ON news_items(source);
+
+-- Weekly ecosystem reports — generated every Monday, one row per ISO week
+-- survives pipeline DROP/CREATE cycles
+CREATE TABLE IF NOT EXISTS weekly_reports (
+  id TEXT PRIMARY KEY,               -- "week-YYYY-wNN" (e.g. "week-2026-w11")
+  week_start TEXT NOT NULL,          -- YYYY-MM-DD (Monday)
+  week_end TEXT NOT NULL,            -- YYYY-MM-DD (Sunday)
+  week_number INTEGER NOT NULL,      -- ISO week number (1-53)
+  year INTEGER NOT NULL,
+  total_tools INTEGER NOT NULL DEFAULT 0,
+  new_tools_count INTEGER NOT NULL DEFAULT 0,
+  top_10 TEXT,                       -- JSON array of top 10 tools
+  biggest_movers TEXT,               -- JSON array of biggest rank changes
+  new_tools TEXT,                    -- JSON array of new tools this week
+  notable_releases TEXT,             -- JSON array from news_items (category=release)
+  category_stats TEXT,               -- JSON object of category counts
+  generated_at TEXT NOT NULL DEFAULT (datetime('now'))
+);
+CREATE INDEX IF NOT EXISTS idx_wr_week_start ON weekly_reports(week_start DESC);
+-- Migration (run once on existing D1):
+-- CREATE TABLE IF NOT EXISTS weekly_reports (id TEXT PRIMARY KEY, week_start TEXT NOT NULL, week_end TEXT NOT NULL, week_number INTEGER NOT NULL, year INTEGER NOT NULL, total_tools INTEGER NOT NULL DEFAULT 0, new_tools_count INTEGER NOT NULL DEFAULT 0, top_10 TEXT, biggest_movers TEXT, new_tools TEXT, notable_releases TEXT, category_stats TEXT, generated_at TEXT NOT NULL DEFAULT (datetime('now')));
+-- CREATE INDEX IF NOT EXISTS idx_wr_week_start ON weekly_reports(week_start DESC);
 
 -- Submissions table — survives pipeline DROP/CREATE cycles
 CREATE TABLE IF NOT EXISTS submissions (

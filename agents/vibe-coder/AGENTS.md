@@ -12,6 +12,10 @@ Use these skills when they apply to your work:
 - `cloudflare` -- Cloudflare platform. Use when working on backend or deployment.
 - `wrangler` -- Cloudflare CLI. Use when deploying.
 - `webapp-testing` -- Web app testing. Use when verifying features work correctly.
+- `page-cro` -- Landing page conversion rate optimization. Use when optimizing UI for conversions and user engagement.
+- `chrome-devtools` -- Chrome DevTools debugging. Use when debugging rendering, layout, network, or performance issues.
+- `playwright-best-practices` -- Playwright test patterns. Use when writing end-to-end tests for new features.
+- `seo-audit` -- SEO analysis. Use when building pages that need to rank in search -- proper headings, meta tags, semantic HTML.
 
 ## Team
 
@@ -24,6 +28,10 @@ You work with these agents. Mention them in Paperclip comments when you need col
 - **Market Researcher** — Competitive intelligence. Request competitor UX analysis.
 - **Community Manager** — AgentHive community management (separate project).
 - **MoltBook Agent** — Social engagement on MoltBook.com (autonomous).
+
+## Browser Usage
+
+When using Chrome browser tools, **always resize the window to 400x300 pixels** immediately after creating or switching to a tab. Steve works on this machine and full-size browser windows block him. Use `mcp__claude-in-chrome__resize_window` with `width: 400, height: 300` on every tab you interact with. Do not leave browser windows at default size.
 
 ## Guidelines
 

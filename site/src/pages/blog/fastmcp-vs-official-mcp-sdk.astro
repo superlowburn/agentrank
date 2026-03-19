@@ -1,0 +1,606 @@
+---
+export const prerender = true;
+
+import Base from '../../layouts/Base.astro';
+import BlogSubscribeCTA from '../../components/BlogSubscribeCTA.astro';
+import RelatedPosts from '../../components/RelatedPosts.astro';
+
+const relatedPosts = [
+  { href: '/blog/best-python-mcp-libraries/', title: 'Best Python MCP Libraries in 2026' },
+  { href: '/compare/mcp-sdks/', title: 'MCP SDK Comparison: Python, TypeScript, Go, Rust' },
+  { href: '/blog/how-to-build-an-mcp-server/', title: 'How to Build an MCP Server in 2026' },
+  { href: '/blog/fastmcp-tutorial-python-mcp-server/', title: 'FastMCP Tutorial: Build a Python MCP Server' },
+];
+
+const publishDate = '2026-03-19';
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: 'FastMCP vs Official MCP SDK: Which Python Framework to Use?',
+  description: 'Data-driven comparison of FastMCP and the official Anthropic Python MCP SDK. AgentRank scores, dependents, issue health, and when to use each — March 2026.',
+  datePublished: publishDate,
+  dateModified: publishDate,
+  author: {
+    '@type': 'Organization',
+    name: 'AgentRank',
+    url: 'https://agentrank-ai.com',
+  },
+  publisher: {
+    '@type': 'Organization',
+    name: 'AgentRank',
+    url: 'https://agentrank-ai.com',
+    logo: {
+      '@type': 'ImageObject',
+      url: 'https://agentrank-ai.com/og-image.png',
+    },
+  },
+  mainEntityOfPage: {
+    '@type': 'WebPage',
+    '@id': 'https://agentrank-ai.com/blog/fastmcp-vs-official-mcp-sdk/',
+  },
+  image: 'https://agentrank-ai.com/og-image.png',
+  keywords: 'fastmcp vs official mcp sdk, fastmcp python, modelcontextprotocol python-sdk, best python mcp framework, PrefectHQ fastmcp, mcp server python 2026',
+};
+
+const tools = [
+  {
+    name: 'PrefectHQ/fastmcp',
+    slug: 'PrefectHQ--fastmcp',
+    score: 94.73,
+    stars: 23659,
+    contributors: 208,
+    dependents: 7718,
+    issueCloseRate: 83,
+    lastCommit: '2026-03-14',
+    globalRank: 7,
+    lang: 'Python',
+    type: 'Community (Prefect)',
+    verdict: '#7 globally. 7,718 inbound dependents — the highest Python adoption signal in the index. FastAPI-style DX: decorators, type hints, auto-schemas.',
+  },
+  {
+    name: 'modelcontextprotocol/python-sdk',
+    slug: 'modelcontextprotocol--python-sdk',
+    score: 87.5,
+    stars: 22124,
+    contributors: 181,
+    dependents: 0,
+    issueCloseRate: 65,
+    lastCommit: '2026-03-13',
+    globalRank: 61,
+    lang: 'Python',
+    type: 'Official (Anthropic)',
+    verdict: '#61 globally. Official spec implementation. Full protocol coverage, asyncio-native, 181 contributors. Lower issue close rate (65%) reflects spec-level issue complexity.',
+  },
+];
+
+const faqJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: [
+    {
+      '@type': 'Question',
+      name: 'Is FastMCP built on the official MCP SDK?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Yes. PrefectHQ/fastmcp wraps the official modelcontextprotocol/python-sdk. It adds a developer-friendly API (decorators, type inference, auto-schemas) on top of the spec-level SDK. Using fastmcp does not mean abandoning the official SDK — it means using it more ergonomically.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Which Python MCP library should I use in 2026?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'For most projects: fastmcp. It scores 94.73 in the AgentRank index (#7 globally), has 7,718 inbound dependents, and provides the most productive developer experience. Use the official SDK directly only if you need protocol-level control or are contributing to MCP spec implementation.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'What is the install command for FastMCP vs official MCP SDK?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'FastMCP: pip install fastmcp. Official SDK: pip install mcp. Both are on PyPI. FastMCP installs the official SDK as a dependency automatically.',
+      },
+    },
+  ],
+};
+---
+
+<Base
+  title="FastMCP vs Official MCP SDK: Which Python Framework to Use? — AgentRank"
+  description="Data-driven comparison of FastMCP and the official Python MCP SDK. Scores, dependents, issue health, and when to pick each — March 2026 data from the AgentRank index."
+  activeTab="blog"
+  keywords="fastmcp vs official mcp sdk, fastmcp python 2026, modelcontextprotocol python-sdk, PrefectHQ fastmcp, best python mcp framework, mcp server python library"
+  canonicalUrl="https://agentrank-ai.com/blog/fastmcp-vs-official-mcp-sdk/"
+  jsonLd={[jsonLd, faqJsonLd]}
+  ogImage="/og/blog.png"
+>
+  <article class="blog-post">
+    <header class="post-header">
+      <div class="breadcrumb"><a href="/blog/">Blog</a> <span>/</span></div>
+      <h1>FastMCP vs Official MCP SDK: Which Python Framework to Use?</h1>
+      <div class="post-meta">
+        <time datetime={publishDate}>March 19, 2026</time>
+        <span class="sep">&middot;</span>
+        <span>5 min read</span>
+        <span class="sep">&middot;</span>
+        <span>AgentRank Index</span>
+      </div>
+      <p class="lede">
+        Two Python libraries dominate MCP server development: the <strong>official Anthropic SDK</strong> and
+        <strong>PrefectHQ/fastmcp</strong>. Together they account for the majority of Python MCP server adoption.
+        We pulled their AgentRank signals to show exactly where each one wins — and where to use them.
+      </p>
+    </header>
+
+    <nav class="toc">
+      <strong>Contents</strong>
+      <ol>
+        <li><a href="#comparison-table">Side-by-side comparison</a></li>
+        <li><a href="#fastmcp-section">FastMCP deep dive</a></li>
+        <li><a href="#official-sdk-section">Official SDK deep dive</a></li>
+        <li><a href="#verdict">Verdict</a></li>
+        <li><a href="#setup">Setup guide</a></li>
+      </ol>
+    </nav>
+
+    <section id="comparison-table">
+      <h2>Side-by-side comparison</h2>
+      <p>
+        Both libraries score in the top 5% of all 25,000+ repositories in the AgentRank index.
+        FastMCP's <strong>7,718 inbound dependents</strong> is the clearest signal of ecosystem adoption — it leads every other Python tool in the index by a factor of five.
+      </p>
+
+      <div class="table-wrapper">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Repository</th>
+              <th class="num">Score</th>
+              <th class="num">Stars</th>
+              <th class="num">Contrib.</th>
+              <th class="num">Dependents</th>
+              <th class="num">Close%</th>
+              <th class="num">Global rank</th>
+            </tr>
+          </thead>
+          <tbody>
+            {tools.map((tool) => (
+              <tr class={tool.name.includes('fastmcp') ? 'row-fastmcp' : 'row-official'}>
+                <td class="tool-cell">
+                  <a href={`/tool/${tool.slug}/`} class="tool-link">{tool.name}</a>
+                  <span class="tool-meta">{tool.type} · {tool.lang}</span>
+                </td>
+                <td class="num score-cell">{tool.score}</td>
+                <td class="num">{tool.stars.toLocaleString('en-US')}</td>
+                <td class="num">{tool.contributors}</td>
+                <td class="num">{tool.dependents.toLocaleString('en-US')}</td>
+                <td class="num">{tool.issueCloseRate}%</td>
+                <td class="num rank-global">#{tool.globalRank}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <p class="table-note">
+        Global rank = position among 25,638 indexed repos. Dependents = inbound GitHub package dependents.
+        Close% = issue close rate. Data from March 19, 2026 crawl.
+      </p>
+    </section>
+
+    <section id="fastmcp-section">
+      <h2>FastMCP deep dive</h2>
+
+      <h3>PrefectHQ/fastmcp — score 94.73</h3>
+      <p>
+        <a href="/tool/PrefectHQ--fastmcp/" class="inline-link">PrefectHQ/fastmcp</a> is the highest-scored
+        Python MCP library in the AgentRank index, ranked <strong>#7 globally</strong> across all 25,638
+        indexed repositories. It was originally built by jlowin and later adopted by Prefect; the transition
+        brought institutional maintenance without breaking the community-first character.
+      </p>
+      <p>
+        The <strong>7,718 inbound dependents</strong> signal is the most significant data point: it means 7,718 other
+        repositories on GitHub have fastmcp as a declared dependency. The official SDK has zero recorded in our
+        index — not because nobody uses it, but because fastmcp is what most developers install directly,
+        pulling in the official SDK as a transitive dependency.
+      </p>
+      <p>
+        The 83% issue close rate reflects responsive maintenance. The FastAPI-style decorator API
+        (<code>@mcp.tool()</code>, <code>@mcp.resource()</code>, <code>@mcp.prompt()</code>) is the reason for
+        adoption: developers write less boilerplate and get automatic JSON schema generation from Python type hints.
+      </p>
+
+      <div class="verdict-box fastmcp-box">
+        <strong>Best for:</strong> Building production MCP servers. The 7,718 dependents, 208 contributors,
+        and 94.73 score make fastmcp the community standard for Python MCP development as of March 2026.
+      </div>
+    </section>
+
+    <section id="official-sdk-section">
+      <h2>Official SDK deep dive</h2>
+
+      <h3>modelcontextprotocol/python-sdk — score 87.5</h3>
+      <p>
+        The <a href="/tool/modelcontextprotocol--python-sdk/" class="inline-link">official Python SDK</a> is
+        maintained by Anthropic and implements the full MCP specification. It scores <strong>87.5</strong>
+        and ranks #61 globally — still top 1% of all indexed repositories.
+      </p>
+      <p>
+        The 65% issue close rate is lower than fastmcp's 83%, which sounds like a red flag but reflects a
+        different reality: many open issues are feature requests or spec clarifications that remain open
+        for specification governance reasons, not neglect. The 181 contributors signal strong collective
+        ownership.
+      </p>
+      <p>
+        The official SDK is <em>asyncio-native</em> and exposes the full protocol surface: low-level transport
+        handling, stream management, and extension points that fastmcp abstracts away. If you are building
+        infrastructure tooling around MCP (a proxy, a gateway, a test harness), you want the official SDK.
+      </p>
+
+      <div class="verdict-box official-box">
+        <strong>Best for:</strong> Protocol-level work — building MCP infrastructure, contributing to the
+        spec, or when you need transport-layer control. Also the right choice if your team is already familiar
+        with asyncio patterns and prefers explicit over implicit.
+      </div>
+    </section>
+
+    <section id="verdict">
+      <h2>Verdict</h2>
+      <p>
+        This is not a zero-sum choice. FastMCP is built on the official SDK. Using fastmcp means using the
+        official SDK — with an ergonomic layer on top. The AgentRank data tells you which layer the ecosystem
+        prefers:
+      </p>
+
+      <ul class="verdict-list">
+        <li><strong>For most Python MCP projects:</strong> <a href="/tool/PrefectHQ--fastmcp/" class="inline-link">PrefectHQ/fastmcp</a> — score 94.73, #7 globally, 7,718 dependents. The de facto standard.</li>
+        <li><strong>For protocol-level work:</strong> <a href="/tool/modelcontextprotocol--python-sdk/" class="inline-link">modelcontextprotocol/python-sdk</a> — score 87.5, full spec coverage, asyncio-native.</li>
+        <li><strong>For TypeScript:</strong> <a href="/tool/punkpeye--fastmcp/" class="inline-link">punkpeye/fastmcp</a> scores 88.55 and mirrors the Python FastMCP API for TypeScript developers.</li>
+      </ul>
+
+      <p>
+        The 7.23-point score gap (94.73 vs 87.5) is explained almost entirely by the dependents signal.
+        FastMCP's 7,718 inbound dependents vs the official SDK's 0 recorded tells the story: Python developers
+        who need to build MCP servers reach for fastmcp first.
+      </p>
+    </section>
+
+    <section id="setup">
+      <h2>Setup guide</h2>
+
+      <h3>Install FastMCP</h3>
+      <pre class="code-block"><code>pip install fastmcp</code></pre>
+
+      <p>A minimal FastMCP server:</p>
+      <pre class="code-block"><code>{`from fastmcp import FastMCP
+
+mcp = FastMCP("My Server")
+
+@mcp.tool()
+def add(a: int, b: int) -> int:
+    """Add two numbers."""
+    return a + b
+
+if __name__ == "__main__":
+    mcp.run()`}</code></pre>
+
+      <h3>Install Official MCP SDK</h3>
+      <pre class="code-block"><code>pip install mcp</code></pre>
+
+      <p>A minimal server with the official SDK:</p>
+      <pre class="code-block"><code>{`from mcp.server import Server
+from mcp.server.stdio import stdio_server
+import mcp.types as types
+
+app = Server("my-server")
+
+@app.call_tool()
+async def call_tool(name: str, arguments: dict):
+    if name == "add":
+        return [types.TextContent(type="text", text=str(arguments["a"] + arguments["b"]))]
+
+async def main():
+    async with stdio_server() as streams:
+        await app.run(*streams, app.create_initialization_options())
+
+if __name__ == "__main__":
+    import asyncio
+    asyncio.run(main())`}</code></pre>
+
+      <p>
+        The difference in boilerplate is visible. FastMCP infers argument schemas from Python type hints;
+        the official SDK requires explicit type definitions.
+      </p>
+
+      <div class="cta-box">
+        <p>
+          <strong>Compare all MCP SDKs:</strong> <a href="/compare/mcp-sdks/">MCP SDK Comparison — Python, TypeScript, Go, Rust, Java, Kotlin, C#, Swift</a>
+        </p>
+        <p>
+          <strong>Full leaderboard:</strong> <a href="/">25,638 tools ranked by AgentRank score</a> — updated daily.
+        </p>
+      </div>
+    </section>
+
+    <RelatedPosts posts={relatedPosts} />
+    <BlogSubscribeCTA source="blog" />
+    <footer class="post-footer">
+      <p class="methodology">
+        <strong>Methodology:</strong> Data from the AgentRank index crawled March 19, 2026.
+        Scores computed using: stars 15%, freshness 25%, issue health 25%, contributors 10%, inbound dependents 25%.
+        25,638 repositories indexed. Issue close rate = closed_issues / (open_issues + closed_issues).
+      </p>
+      <p class="share-line">
+        Found this useful? <a href="https://x.com/AgentRank_ai" target="_blank" rel="noopener noreferrer">Follow @AgentRank_ai</a> for
+        weekly ecosystem updates, biggest movers, and new tool spotlights.
+      </p>
+    </footer>
+  </article>
+
+  <style>
+    .blog-post {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 2rem 0 3rem;
+    }
+
+    .inline-link {
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    .breadcrumb {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      margin-bottom: 0.75rem;
+    }
+
+    .breadcrumb span {
+      margin: 0 0.25rem;
+      opacity: 0.5;
+    }
+
+    .post-header {
+      margin-bottom: 2rem;
+      padding-bottom: 1.5rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .post-header h1 {
+      font-size: 1.6rem;
+      font-weight: 700;
+      line-height: 1.3;
+      margin-bottom: 0.75rem;
+    }
+
+    .post-meta {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      flex-wrap: wrap;
+      margin-bottom: 1rem;
+    }
+
+    .sep { opacity: 0.4; }
+
+    .lede {
+      font-size: 1rem;
+      line-height: 1.7;
+      color: var(--text);
+      opacity: 0.9;
+    }
+
+    .toc {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 1rem 1.25rem;
+      margin-bottom: 2.5rem;
+      font-size: 0.82rem;
+    }
+
+    .toc strong {
+      display: block;
+      margin-bottom: 0.6rem;
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+    }
+
+    .toc ol {
+      margin: 0;
+      padding-left: 1.2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+    }
+
+    .toc a { color: var(--text-muted); }
+    .toc a:hover { color: var(--accent); }
+
+    section { margin-bottom: 3rem; }
+
+    section h2 {
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin-bottom: 0.75rem;
+      padding-bottom: 0.4rem;
+      border-bottom: 2px solid var(--accent);
+      display: inline-block;
+    }
+
+    section h3 {
+      font-size: 0.95rem;
+      font-weight: 700;
+      margin: 1.5rem 0 0.5rem;
+      color: var(--text);
+    }
+
+    section p {
+      font-size: 0.9rem;
+      line-height: 1.75;
+      color: var(--text);
+      opacity: 0.9;
+      margin-bottom: 0.9rem;
+    }
+
+    .table-wrapper {
+      overflow-x: auto;
+      margin: 1rem 0 0.5rem;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.82rem;
+    }
+
+    .data-table th {
+      text-align: left;
+      font-weight: 600;
+      color: var(--text-muted);
+      border-bottom: 1px solid var(--border);
+      padding: 0.4rem 0.75rem 0.4rem 0;
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      white-space: nowrap;
+    }
+
+    .data-table td {
+      padding: 0.45rem 0.75rem 0.45rem 0;
+      border-bottom: 1px solid var(--border);
+      color: var(--text);
+      vertical-align: top;
+    }
+
+    .data-table tr:last-child td { border-bottom: none; }
+
+    .row-fastmcp td {
+      background: color-mix(in srgb, var(--accent) 4%, transparent);
+    }
+
+    .num {
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .tool-cell {
+      display: flex;
+      flex-direction: column;
+      gap: 0.15rem;
+    }
+
+    .tool-link {
+      font-weight: 600;
+      color: var(--accent);
+      font-size: 0.78rem;
+    }
+
+    .tool-meta {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+    }
+
+    .score-cell {
+      color: var(--accent);
+      font-weight: 700;
+    }
+
+    .rank-global {
+      color: var(--text-muted);
+      font-size: 0.75rem;
+    }
+
+    .table-note {
+      font-size: 0.75rem !important;
+      color: var(--text-muted) !important;
+      margin-top: 0.5rem !important;
+    }
+
+    .verdict-box {
+      border-radius: 4px;
+      padding: 0.875rem 1rem;
+      margin-top: 1.25rem;
+      font-size: 0.88rem;
+      line-height: 1.6;
+    }
+
+    .fastmcp-box {
+      background: color-mix(in srgb, var(--accent) 8%, var(--bg-surface));
+      border: 1px solid var(--accent);
+    }
+
+    .official-box {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+    }
+
+    .verdict-list {
+      margin: 0.75rem 0 1rem 1.25rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+      font-size: 0.9rem;
+      line-height: 1.65;
+    }
+
+    .code-block {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 0.875rem 1rem;
+      font-size: 0.78rem;
+      line-height: 1.6;
+      overflow-x: auto;
+      margin: 0.75rem 0 1rem;
+    }
+
+    .code-block code {
+      font-family: monospace;
+      color: var(--text);
+    }
+
+    .cta-box {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      border-radius: 4px;
+      padding: 1rem 1.25rem;
+      margin-top: 1.5rem;
+    }
+
+    .cta-box p {
+      margin-bottom: 0.5rem;
+      font-size: 0.88rem !important;
+    }
+
+    .cta-box p:last-child { margin-bottom: 0; }
+
+    .post-footer {
+      margin-top: 3rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--border);
+    }
+
+    .methodology {
+      font-size: 0.75rem !important;
+      color: var(--text-muted) !important;
+      opacity: 1 !important;
+    }
+
+    .share-line {
+      font-size: 0.82rem !important;
+      margin-top: 0.75rem;
+    }
+
+    @media (max-width: 640px) {
+      .post-header h1 { font-size: 1.3rem; }
+      .rank-global { display: none; }
+    }
+  </style>
+</Base>

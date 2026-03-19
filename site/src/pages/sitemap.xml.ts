@@ -38,6 +38,17 @@ const BLOG_POSTS = Object.keys(blogGlob)
   .filter((slug) => !['index', 'how-to-choose-mcp-server', 'mcp-server-directory-comparison'].includes(slug))
   .map((slug) => ({ path: `/blog/${slug}/`, changefreq: 'weekly' as const }));
 
+// Guide pages
+const GUIDE_SLUGS = [
+  'database-sql', 'file-management', 'web-scraping-browser-automation',
+  'api-integration', 'developer-productivity', 'cloud-infrastructure',
+  'communication', 'data-analytics', 'ai-ml', 'security-auth',
+];
+const GUIDE_PAGES = [
+  { path: '/guides/', changefreq: 'weekly' as const },
+  ...GUIDE_SLUGS.map((s) => ({ path: `/guides/${s}/`, changefreq: 'weekly' as const })),
+];
+
 function escapeXml(s: string): string {
   return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&apos;');
 }
@@ -57,7 +68,7 @@ export const GET: APIRoute = async ({ locals }) => {
 
   let urls = '';
 
-  for (const page of [...STATIC_PAGES, ...BLOG_POSTS]) {
+  for (const page of [...STATIC_PAGES, ...BLOG_POSTS, ...GUIDE_PAGES]) {
     urls += `  <url>
     <loc>${SITE}${page.path}</loc>
     <lastmod>${today}</lastmod>

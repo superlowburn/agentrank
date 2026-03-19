@@ -15,10 +15,14 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const OUT_DIR = join(__dirname, '../site/public/og');
 const COMPARE_OUT_DIR = join(__dirname, '../site/public/og/compare');
 const ALTERNATIVES_OUT_DIR = join(__dirname, '../site/public/og/alternatives');
+const TOOL_OUT_DIR = join(__dirname, '../site/public/og/tool');
+const SKILL_OUT_DIR = join(__dirname, '../site/public/og/skill');
 
 mkdirSync(OUT_DIR, { recursive: true });
 mkdirSync(COMPARE_OUT_DIR, { recursive: true });
 mkdirSync(ALTERNATIVES_OUT_DIR, { recursive: true });
+mkdirSync(TOOL_OUT_DIR, { recursive: true });
+mkdirSync(SKILL_OUT_DIR, { recursive: true });
 
 // ── Data helpers (mirrors ranked.ts / tools.ts / content-gen.ts) ──────────────
 
@@ -349,6 +353,53 @@ const PAGES = [
   },
 ];
 
+// ── Tool detail OG pages (top 200) ──────────────────────────────────────────
+
+function scoreColor(score) {
+  if (score >= 80) return '#22c55e';
+  if (score >= 60) return '#eab308';
+  if (score >= 40) return '#f97316';
+  return '#ef4444';
+}
+
+const TOOL_OG_PAGES = rankedData.slice(0, 200).map(tool => {
+  const shortName = tool.full_name.split('/')[1] || tool.full_name;
+  const category = classifyTool(tool);
+  const catLabel = category.replace(/-/g, ' ');
+  return {
+    slug: toSlug(tool.full_name),
+    title: shortName,
+    fullName: tool.full_name,
+    score: (tool.score ?? 0).toFixed(1),
+    rank: tool.rank ?? '—',
+    stars: tool.stars ?? 0,
+    category: catLabel,
+    language: tool.language || null,
+    type: 'tool',
+  };
+});
+
+// ── Skill detail OG pages (top 200) ─────────────────────────────────────────
+
+const skillsDataPath = join(__dirname, '../data/ranked-skills.json');
+let SKILL_OG_PAGES = [];
+if (existsSync(skillsDataPath)) {
+  const skillsData = JSON.parse(readFileSync(skillsDataPath, 'utf-8'));
+  SKILL_OG_PAGES = skillsData.slice(0, 200).map(skill => {
+    const urlSlug = skill.slug.replace(/\//g, '--').replace(/:/g, '-');
+    return {
+      slug: urlSlug,
+      title: skill.name || skill.slug,
+      score: (skill.score ?? 0).toFixed(1),
+      rank: skill.rank ?? '—',
+      installs: skill.installs ?? 0,
+      source: skill.source || '',
+      author: skill.author || null,
+      type: 'skill',
+    };
+  });
+}
+
 // ── Auto-discover weekly "This Week in MCP" posts ────────────────────────────
 // Reads data/weekly/*.json to find all weekly report dates and adds OG image
 // entries for any that aren't already in PAGES (by slug).
@@ -375,6 +426,150 @@ if (existsSync(WEEKLY_DATA_DIR)) {
       }
     }
   }
+}
+
+function formatNumber(n) {
+  if (n >= 1000000) return (n / 1000000).toFixed(1) + 'M';
+  if (n >= 1000) return (n / 1000).toFixed(1) + 'K';
+  return String(n);
+}
+
+function buildToolHtml(item) {
+  const sc = scoreColor(parseFloat(item.score));
+  const titleSize = item.title.length > 30 ? '42px' : item.title.length > 20 ? '52px' : '60px';
+  const stats = [
+    item.stars > 0 ? `${formatNumber(item.stars)} stars` : null,
+    item.language,
+    item.category,
+  ].filter(Boolean).join('  ·  ');
+
+  return `<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&display=swap');
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    width: 1200px; height: 630px;
+    background: #0a0a0a;
+    font-family: 'JetBrains Mono', 'Courier New', monospace;
+    color: #e5e5e5;
+    display: flex; flex-direction: column;
+    justify-content: center; align-items: flex-start;
+    padding: 64px 72px; overflow: hidden; position: relative;
+  }
+  body::before {
+    content: ''; position: absolute; inset: 0;
+    background-image:
+      linear-gradient(rgba(34, 197, 94, 0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(34, 197, 94, 0.04) 1px, transparent 1px);
+    background-size: 60px 60px; pointer-events: none;
+  }
+  body::after {
+    content: ''; position: absolute; top: -120px; right: -120px;
+    width: 500px; height: 500px;
+    background: radial-gradient(circle, rgba(34, 197, 94, 0.12) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .label { font-size: 14px; color: #22c55e; letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 16px; opacity: 0.9; }
+  .fullname { font-size: 18px; color: #52525b; margin-bottom: 20px; }
+  .title { font-size: ${titleSize}; font-weight: 700; color: #e5e5e5; line-height: 1.1; letter-spacing: -0.02em; margin-bottom: 28px; max-width: 800px; }
+  .score-row { display: flex; align-items: baseline; gap: 28px; margin-bottom: 20px; }
+  .score { font-size: 72px; font-weight: 800; color: ${sc}; line-height: 1; }
+  .score-label { font-size: 18px; color: #71717a; }
+  .rank { font-size: 24px; color: #71717a; font-weight: 700; }
+  .stats { font-size: 16px; color: #52525b; }
+  .divider { position: absolute; bottom: 90px; left: 72px; right: 72px; height: 1px; background: linear-gradient(90deg, #22c55e30, transparent); }
+  .footer { position: absolute; bottom: 52px; left: 72px; right: 72px; display: flex; align-items: center; justify-content: space-between; }
+  .brand { font-size: 18px; color: #3f3f46; }
+  .url { font-size: 16px; color: #3f3f46; }
+</style>
+</head>
+<body>
+  <div class="label">AgentRank · Tool</div>
+  <div class="title">${item.title}</div>
+  <div class="fullname">${item.fullName}</div>
+  <div class="score-row">
+    <div><span class="score">${item.score}</span> <span class="score-label">score</span></div>
+    <div class="rank">#${item.rank}</div>
+  </div>
+  <div class="stats">${stats}</div>
+  <div class="divider"></div>
+  <div class="footer">
+    <span class="brand">agentrank-ai.com</span>
+    <span class="url">Scored daily from real signals</span>
+  </div>
+</body>
+</html>`;
+}
+
+function buildSkillHtml(item) {
+  const sc = scoreColor(parseFloat(item.score));
+  const titleSize = item.title.length > 40 ? '36px' : item.title.length > 28 ? '44px' : '52px';
+  const stats = [
+    item.installs > 0 ? `${formatNumber(item.installs)} installs` : null,
+    item.source,
+    item.author,
+  ].filter(Boolean).join('  ·  ');
+
+  return `<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&display=swap');
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    width: 1200px; height: 630px;
+    background: #0a0a0a;
+    font-family: 'JetBrains Mono', 'Courier New', monospace;
+    color: #e5e5e5;
+    display: flex; flex-direction: column;
+    justify-content: center; align-items: flex-start;
+    padding: 64px 72px; overflow: hidden; position: relative;
+  }
+  body::before {
+    content: ''; position: absolute; inset: 0;
+    background-image:
+      linear-gradient(rgba(34, 197, 94, 0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(34, 197, 94, 0.04) 1px, transparent 1px);
+    background-size: 60px 60px; pointer-events: none;
+  }
+  body::after {
+    content: ''; position: absolute; top: -120px; right: -120px;
+    width: 500px; height: 500px;
+    background: radial-gradient(circle, rgba(34, 197, 94, 0.12) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .label { font-size: 14px; color: #22c55e; letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 24px; opacity: 0.9; }
+  .title { font-size: ${titleSize}; font-weight: 700; color: #e5e5e5; line-height: 1.15; letter-spacing: -0.02em; margin-bottom: 28px; max-width: 900px; }
+  .score-row { display: flex; align-items: baseline; gap: 28px; margin-bottom: 20px; }
+  .score { font-size: 72px; font-weight: 800; color: ${sc}; line-height: 1; }
+  .score-label { font-size: 18px; color: #71717a; }
+  .rank { font-size: 24px; color: #71717a; font-weight: 700; }
+  .stats { font-size: 16px; color: #52525b; }
+  .divider { position: absolute; bottom: 90px; left: 72px; right: 72px; height: 1px; background: linear-gradient(90deg, #22c55e30, transparent); }
+  .footer { position: absolute; bottom: 52px; left: 72px; right: 72px; display: flex; align-items: center; justify-content: space-between; }
+  .brand { font-size: 18px; color: #3f3f46; }
+  .url { font-size: 16px; color: #3f3f46; }
+</style>
+</head>
+<body>
+  <div class="label">AgentRank · Skill</div>
+  <div class="title">${item.title}</div>
+  <div class="score-row">
+    <div><span class="score">${item.score}</span> <span class="score-label">score</span></div>
+    <div class="rank">#${item.rank}</div>
+  </div>
+  <div class="stats">${stats}</div>
+  <div class="divider"></div>
+  <div class="footer">
+    <span class="brand">agentrank-ai.com</span>
+    <span class="url">Scored daily from real signals</span>
+  </div>
+</body>
+</html>`;
 }
 
 function buildHtml(page) {
@@ -549,6 +744,30 @@ async function main() {
     console.log(`  generated: og/alternatives/${item.slug}.png`);
     count++;
   }
+
+  // ── Tool detail pages ──────────────────────────────────────────────────────
+  console.log(`\nGenerating ${TOOL_OG_PAGES.length} tool OG images...`);
+  for (const item of TOOL_OG_PAGES) {
+    const html = buildToolHtml(item);
+    await page.setContent(html, { waitUntil: 'domcontentloaded' });
+    await page.waitForTimeout(150);
+    const outPath = join(TOOL_OUT_DIR, `${item.slug}.png`);
+    await page.screenshot({ path: outPath, type: 'png' });
+    count++;
+  }
+  console.log(`  done: ${TOOL_OG_PAGES.length} tool images`);
+
+  // ── Skill detail pages ─────────────────────────────────────────────────────
+  console.log(`\nGenerating ${SKILL_OG_PAGES.length} skill OG images...`);
+  for (const item of SKILL_OG_PAGES) {
+    const html = buildSkillHtml(item);
+    await page.setContent(html, { waitUntil: 'domcontentloaded' });
+    await page.waitForTimeout(150);
+    const outPath = join(SKILL_OUT_DIR, `${item.slug}.png`);
+    await page.screenshot({ path: outPath, type: 'png' });
+    count++;
+  }
+  console.log(`  done: ${SKILL_OG_PAGES.length} skill images`);
 
   await browser.close();
   console.log(`\nDone. Generated ${count} OG images total.`);

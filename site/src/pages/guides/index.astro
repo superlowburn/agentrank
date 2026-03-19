@@ -1,0 +1,244 @@
+---
+export const prerender = true;
+
+import Base from '../../layouts/Base.astro';
+import { GUIDES } from './[slug].astro';
+
+const pageUrl = 'https://agentrank-ai.com/guides/';
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'CollectionPage',
+  name: 'MCP Server Guides — AgentRank',
+  description: 'Data-driven guides to the best MCP servers for every use case — database, file management, browser automation, API integration, cloud infrastructure, and more.',
+  url: pageUrl,
+  publisher: { '@type': 'Organization', name: 'AgentRank', url: 'https://agentrank-ai.com' },
+  hasPart: GUIDES.map((g) => ({
+    '@type': 'Article',
+    name: g.title,
+    url: `https://agentrank-ai.com/guides/${g.slug}/`,
+    description: g.description,
+  })),
+};
+
+const GUIDE_ICONS: Record<string, string> = {
+  'database-sql': '🗄',
+  'file-management': '📁',
+  'web-scraping-browser-automation': '🌐',
+  'api-integration': '🔌',
+  'developer-productivity': '⚙',
+  'cloud-infrastructure': '☁',
+  'communication': '💬',
+  'data-analytics': '📊',
+  'ai-ml': '🧠',
+  'security-auth': '🔐',
+};
+---
+
+<Base
+  title="MCP Server Guides — Best Tools by Use Case | AgentRank"
+  description="Data-driven guides to the best MCP servers for every use case — database access, file management, browser automation, API integration, cloud infrastructure, and more. Scored daily from the AgentRank index."
+  keywords="best MCP servers by use case, MCP server guide, top MCP servers 2026, MCP server comparison"
+  canonicalUrl={pageUrl}
+  jsonLd={jsonLd}
+  activeTab="blog"
+>
+  <div class="guides-index">
+    <header class="page-header">
+      <nav class="breadcrumb">
+        <a href="/">AgentRank</a>
+        <span>/</span>
+        <span>Guides</span>
+      </nav>
+      <h1>MCP Server Guides</h1>
+      <p class="page-lead">
+        Data-driven rankings and recommendations for the best MCP servers by use case.
+        Each guide pulls from the <a href="/">AgentRank index</a> — 25,000+ tools scored
+        daily from real signals: stars, freshness, issue health, contributors, and inbound dependents.
+      </p>
+    </header>
+
+    <div class="guide-grid">
+      {GUIDES.map((guide) => (
+        <a href={`/guides/${guide.slug}/`} class="guide-card">
+          <div class="guide-icon">{GUIDE_ICONS[guide.slug] || '📦'}</div>
+          <div class="guide-body">
+            <h2>{guide.h1}</h2>
+            <p>{guide.description}</p>
+            <span class="guide-query">Target: "{guide.targetQuery}"</span>
+          </div>
+        </a>
+      ))}
+    </div>
+
+    <section class="about-section">
+      <h2>About these guides</h2>
+      <p>
+        Each guide is generated from the live AgentRank index — a nightly crawl of 25,000+ MCP server
+        repositories on GitHub. Tools are scored from five signals:
+      </p>
+      <ul>
+        <li><strong>Stars (15%)</strong> — raw popularity signal</li>
+        <li><strong>Freshness (25%)</strong> — days since last commit; stale tools decay hard after 90 days</li>
+        <li><strong>Issue health (25%)</strong> — ratio of closed to total issues; measures maintainer responsiveness</li>
+        <li><strong>Contributors (10%)</strong> — more contributors means lower bus-factor risk</li>
+        <li><strong>Dependents (25%)</strong> — how many repos depend on this; the strongest adoption signal</li>
+      </ul>
+      <p>
+        <a href="/methodology/">Read the full scoring methodology →</a>
+      </p>
+      <p>
+        Missing a tool? <a href="/submit/">Submit it to the index</a> and it will be scored
+        in the next nightly crawl.
+      </p>
+    </section>
+  </div>
+
+  <style>
+    .guides-index {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 2rem 0 3rem;
+    }
+
+    .breadcrumb {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      margin-bottom: 0.75rem;
+    }
+
+    .breadcrumb span {
+      margin: 0 0.25rem;
+      opacity: 0.5;
+    }
+
+    .breadcrumb a {
+      color: var(--text-muted);
+      text-decoration: none;
+    }
+
+    .breadcrumb a:hover { color: var(--text); }
+
+    .page-header {
+      margin-bottom: 2.5rem;
+      padding-bottom: 1.5rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .page-header h1 {
+      font-size: 1.75rem;
+      font-weight: 700;
+      margin-bottom: 0.75rem;
+    }
+
+    .page-lead {
+      font-size: 1rem;
+      color: var(--text-muted);
+      line-height: 1.65;
+      max-width: 680px;
+      margin: 0;
+    }
+
+    .page-lead a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    .page-lead a:hover { text-decoration: underline; }
+
+    .guide-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+      gap: 1rem;
+      margin-bottom: 3rem;
+    }
+
+    .guide-card {
+      display: flex;
+      gap: 1rem;
+      padding: 1.25rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      text-decoration: none;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    .guide-card:hover {
+      border-color: var(--accent);
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+    }
+
+    .guide-icon {
+      font-size: 1.75rem;
+      flex-shrink: 0;
+      line-height: 1;
+      margin-top: 0.1rem;
+    }
+
+    .guide-body {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .guide-body h2 {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--text);
+      margin: 0 0 0.35rem;
+      line-height: 1.35;
+    }
+
+    .guide-body p {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+      margin: 0 0 0.5rem;
+    }
+
+    .guide-query {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      font-style: italic;
+      opacity: 0.75;
+    }
+
+    .about-section {
+      border-top: 1px solid var(--border);
+      padding-top: 2rem;
+    }
+
+    .about-section h2 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin-bottom: 0.75rem;
+    }
+
+    .about-section p {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      line-height: 1.65;
+      margin: 0.5rem 0;
+    }
+
+    .about-section ul {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      line-height: 1.7;
+      padding-left: 1.5rem;
+      margin: 0.5rem 0;
+    }
+
+    .about-section a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    .about-section a:hover { text-decoration: underline; }
+
+    @media (max-width: 600px) {
+      .guide-grid { grid-template-columns: 1fr; }
+      .page-header h1 { font-size: 1.4rem; }
+    }
+  </style>
+</Base>
