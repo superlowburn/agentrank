@@ -1,0 +1,755 @@
+---
+export const prerender = true;
+
+import Base from '../../layouts/Base.astro';
+import BlogSubscribeCTA from '../../components/BlogSubscribeCTA.astro';
+import RelatedPosts from '../../components/RelatedPosts.astro';
+import RelatedCategories from '../../components/RelatedCategories.astro';
+
+const relatedPosts = [
+  { href: '/blog/best-mcp-servers-code-generation/', title: 'Best MCP Servers for Code Generation in 2026' },
+  { href: '/blog/agentrank-claude-code-integration-guide/', title: 'How to Use AgentRank Scores in Claude Code' },
+  { href: '/blog/agentrank-cursor-integration-guide/', title: 'How to Use AgentRank in Cursor' },
+  { href: '/blog/mcp-setup-guide-claude-cursor-windsurf/', title: 'How to Set Up MCP Servers in Claude Desktop, Cursor, and Windsurf' },
+];
+
+const publishDate = '2026-03-19';
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: 'Best MCP Servers for AI-Assisted Coding in 2026',
+  description: 'The top-scored MCP servers for developers using Claude, Cursor, or GitHub Copilot. Real AgentRank data: GitHub access, semantic code editing, live docs, error tracking, browser testing, and terminal control.',
+  datePublished: publishDate,
+  dateModified: publishDate,
+  author: {
+    '@type': 'Organization',
+    name: 'AgentRank',
+    url: 'https://agentrank-ai.com',
+  },
+  publisher: {
+    '@type': 'Organization',
+    name: 'AgentRank',
+    url: 'https://agentrank-ai.com',
+    logo: {
+      '@type': 'ImageObject',
+      url: 'https://agentrank-ai.com/og-image.png',
+    },
+  },
+  mainEntityOfPage: {
+    '@type': 'WebPage',
+    '@id': 'https://agentrank-ai.com/blog/best-mcp-servers-ai-coding/',
+  },
+  image: 'https://agentrank-ai.com/og-image.png',
+  keywords: 'best MCP servers AI coding 2026, Claude Code MCP server, Cursor MCP server, GitHub Copilot MCP, coding agent tools, GitHub MCP server, Playwright MCP coding, Serena MCP code editing',
+};
+
+const tools = [
+  {
+    rank: 1,
+    name: 'jgravelle/jcodemunch-mcp',
+    slug: 'jgravelle--jcodemunch-mcp',
+    score: 94.25,
+    stars: 1082,
+    lang: 'Python',
+    issueCloseRate: 96,
+    desc: 'Token-efficient GitHub codebase exploration via tree-sitter AST parsing',
+    useCase: 'Codebase Exploration',
+    highlight: 'Parses any GitHub repo into AST-compressed summaries — your agent understands the full codebase in far fewer tokens. 96% issue close rate.',
+  },
+  {
+    rank: 2,
+    name: 'microsoft/playwright-mcp',
+    slug: 'microsoft--playwright-mcp',
+    score: 94.23,
+    stars: 29150,
+    lang: 'TypeScript',
+    issueCloseRate: 97,
+    desc: 'Browser automation and E2E testing via Playwright',
+    useCase: 'Browser Testing',
+    highlight: 'Official Microsoft server. #10 globally on AgentRank. 29,150 stars, 97% issue close rate. Run tests, capture screenshots, validate UI — all from your agent.',
+  },
+  {
+    rank: 3,
+    name: 'oraios/serena',
+    slug: 'oraios--serena',
+    score: 92.80,
+    stars: 21673,
+    lang: 'Python',
+    issueCloseRate: 85,
+    desc: 'Semantic code editing agent with full codebase awareness',
+    useCase: 'Semantic Code Editing',
+    highlight: '21,673 stars. Serena gives your agent semantic understanding of any codebase — it reads the symbol tree, not just raw text. 85% issue close rate.',
+  },
+  {
+    rank: 4,
+    name: 'github/github-mcp-server',
+    slug: 'github--github-mcp-server',
+    score: 85.37,
+    stars: 28006,
+    lang: 'Go',
+    issueCloseRate: 66,
+    desc: "GitHub's official MCP server — repos, PRs, issues, code search",
+    useCase: 'GitHub Access',
+    highlight: 'Official GitHub server. Read and write access to repos, PRs, issues, files, commits, and GitHub search. 28,006 stars.',
+  },
+  {
+    rank: 5,
+    name: 'getsentry/sentry-mcp',
+    slug: 'getsentry--sentry-mcp',
+    score: 83.61,
+    stars: 598,
+    lang: 'TypeScript',
+    issueCloseRate: 68,
+    desc: 'Sentry error tracking and performance monitoring via MCP',
+    useCase: 'Error Monitoring',
+    highlight: 'Official Sentry server. Pull live error data, stack traces, and performance issues directly into your coding session. Close the loop between writing and debugging.',
+  },
+  {
+    rank: 6,
+    name: 'augmnt/augments-mcp-server',
+    slug: 'augmnt--augments-mcp-server',
+    score: 81.20,
+    stars: 116,
+    lang: 'TypeScript',
+    issueCloseRate: 80,
+    desc: 'Real-time framework documentation access with intelligent caching',
+    useCase: 'Live Docs',
+    highlight: 'Serves current framework docs to Claude Code and Cursor — not stale training data. Supports multiple documentation sources. 80% issue close rate.',
+  },
+  {
+    rank: 7,
+    name: 'postrv/narsil-mcp',
+    slug: 'postrv--narsil-mcp',
+    score: 78.75,
+    stars: 123,
+    lang: 'Rust',
+    issueCloseRate: 92,
+    desc: 'Comprehensive code intelligence — 90 tools, 32 languages, call graphs',
+    useCase: 'Code Intelligence',
+    highlight: '90 tools covering call graphs, symbol extraction, security scanning, and dead code detection across 32 languages. 92% issue close rate.',
+  },
+  {
+    rank: 8,
+    name: 'wonderwhy-er/DesktopCommanderMCP',
+    slug: 'wonderwhy-er--DesktopCommanderMCP',
+    score: 78.28,
+    stars: 5721,
+    lang: 'TypeScript',
+    issueCloseRate: 45,
+    desc: 'Terminal command execution + filesystem access via MCP',
+    useCase: 'Terminal / Files',
+    highlight: '5,721 stars. Full terminal access — run scripts, manage files, watch processes. The most-used local dev tool in the index.',
+  },
+  {
+    rank: 9,
+    name: 'bgauryy/octocode-mcp',
+    slug: 'bgauryy--octocode-mcp',
+    score: 76.74,
+    stars: 750,
+    lang: 'TypeScript',
+    issueCloseRate: 87,
+    desc: 'Semantic code search across GitHub public and private repos',
+    useCase: 'Code Search',
+    highlight: 'Natural language code discovery across GitHub — find real implementations, not just documentation. 87% issue close rate.',
+  },
+  {
+    rank: 10,
+    name: 'CodeGraphContext/CodeGraphContext',
+    slug: 'CodeGraphContext--CodeGraphContext',
+    score: 77.05,
+    stars: 2009,
+    lang: 'Python',
+    issueCloseRate: 70,
+    desc: 'Repository code graph context for LLMs — structural code understanding',
+    useCase: 'Code Graph',
+    highlight: '2,009 stars. Generates structural code graphs that let your agent understand module dependencies, class hierarchies, and call relationships.',
+  },
+];
+
+const stats = {
+  totalCodingTools: 1840,
+  avgCodingScore: 28.1,
+  topScore: 94.25,
+  lastUpdated: 'March 19, 2026',
+};
+
+const faqJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: [
+    {
+      '@type': 'Question',
+      name: 'What are the best MCP servers for Claude Code in 2026?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'The top-scoring MCP servers for AI-assisted coding are jgravelle/jcodemunch-mcp (94.25, AST-based codebase exploration), microsoft/playwright-mcp (94.23, browser testing), and oraios/serena (92.8, semantic code editing). All are in the top 10 globally on AgentRank. For GitHub-specific workflows, github/github-mcp-server (85.37) is the official choice.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Which MCP servers work with Cursor?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Cursor supports any MCP server configured in its settings. The most popular for Cursor users are github/github-mcp-server for repo access, wonderwhy-er/DesktopCommanderMCP for terminal and file access, and microsoft/playwright-mcp for browser automation. Add them via Cursor Settings → MCP → Add Server.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'How do I give Claude access to my codebase with MCP?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'For local codebases, use oraios/serena (semantic code editing) or wonderwhy-er/DesktopCommanderMCP (filesystem + terminal). For GitHub-hosted repos, use github/github-mcp-server or jgravelle/jcodemunch-mcp for AST-compressed exploration. Configure them in your claude_desktop_config.json or .mcp.json file.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'What MCP server should I use for debugging with Claude?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'getsentry/sentry-mcp (83.61) connects Claude directly to your Sentry error data — stack traces, performance issues, and incident timelines appear in context. Pair it with postrv/narsil-mcp (78.75) for static code intelligence and dead code detection.',
+      },
+    },
+  ],
+};
+---
+
+<Base
+  title="Best MCP Servers for AI-Assisted Coding in 2026 — AgentRank"
+  description="The 10 highest-scoring MCP servers for developers using Claude, Cursor, and GitHub Copilot. Real AgentRank data: codebase exploration, semantic editing, browser testing, GitHub access, error monitoring, and live docs."
+  activeTab="blog"
+  keywords="best MCP servers AI coding 2026, Claude Code MCP, Cursor MCP servers, GitHub Copilot MCP, coding agent tools, GitHub MCP server, Playwright MCP, Serena MCP, DesktopCommanderMCP"
+  canonicalUrl="https://agentrank-ai.com/blog/best-mcp-servers-ai-coding/"
+  jsonLd={[jsonLd, faqJsonLd]}
+  ogImage="/og-image.png"
+>
+  <article class="blog-post">
+    <header class="post-header">
+      <div class="breadcrumb"><a href="/blog/">Blog</a> <span>/</span></div>
+      <h1>Best MCP Servers for AI-Assisted Coding in 2026</h1>
+      <div class="post-meta">
+        <time datetime={publishDate}>March 19, 2026</time>
+        <span class="sep">&middot;</span>
+        <span>7 min read</span>
+        <span class="sep">&middot;</span>
+        <span>AgentRank Index</span>
+      </div>
+      <p class="lede">
+        If you're using Claude Code, Cursor, or GitHub Copilot, the right MCP servers turn your AI assistant into
+        a full development partner — with live GitHub access, semantic codebase understanding, browser testing,
+        and real-time error data. We scored <strong>{stats.totalCodingTools} coding-category MCP servers</strong> using
+        five real GitHub signals. Below are the top 10. Data as of {stats.lastUpdated}.
+      </p>
+    </header>
+
+    <nav class="toc">
+      <strong>Contents</strong>
+      <ol>
+        <li><a href="#comparison">Full comparison table</a></li>
+        <li><a href="#top10">Top 10 breakdown</a></li>
+        <li><a href="#by-use-case">Choosing by use case</a></li>
+        <li><a href="#methodology">Scoring methodology</a></li>
+      </ol>
+    </nav>
+
+    <section id="comparison">
+      <h2>Full comparison table</h2>
+      <p>
+        All scores are on a 0–100 scale. The average across {stats.totalCodingTools} coding tools is <strong>{stats.avgCodingScore}</strong>.
+        Every tool below scores above 76 — top 5% of the index.
+      </p>
+
+      <table class="data-table comparison-table">
+        <thead>
+          <tr>
+            <th class="num">#</th>
+            <th>Repository</th>
+            <th class="num">Score</th>
+            <th class="num">Stars</th>
+            <th class="num">Issue Close %</th>
+            <th>Use Case</th>
+            <th>Lang</th>
+          </tr>
+        </thead>
+        <tbody>
+          {tools.map((tool) => (
+            <tr>
+              <td class="num rank-num">{tool.rank}</td>
+              <td class="tool-cell">
+                <a href={`/tool/${tool.slug}/`} class="tool-link">{tool.name}</a>
+                <span class="tool-desc">{tool.desc}</span>
+              </td>
+              <td class="num score-cell">{tool.score}</td>
+              <td class="num">{tool.stars.toLocaleString('en-US')}</td>
+              <td class="num close-rate">{tool.issueCloseRate}%</td>
+              <td class="use-case">{tool.useCase}</td>
+              <td class="lang-badge">{tool.lang}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </section>
+
+    <section id="top10">
+      <h2>Top 10 breakdown</h2>
+
+      <h3>#1 — jgravelle/jcodemunch-mcp (94.25)</h3>
+      <p>
+        <a href="/tool/jgravelle--jcodemunch-mcp/" class="inline-link">jgravelle/jcodemunch-mcp</a> leads the
+        AI coding category with a score of <strong>94.25</strong>. It solves the context window problem for
+        large codebases: instead of dumping raw source files into your agent, it uses tree-sitter AST parsing
+        to generate compact, token-efficient summaries of any GitHub repository. Your agent understands
+        architecture, class relationships, and module dependencies without burning through your context budget.
+        96% issue close rate signals a very responsive maintainer.
+      </p>
+
+      <h3>#2 — microsoft/playwright-mcp (94.23)</h3>
+      <p>
+        <a href="/tool/microsoft--playwright-mcp/" class="inline-link">microsoft/playwright-mcp</a> is the
+        official Microsoft Playwright server scoring <strong>94.23</strong> — #10 globally on AgentRank.
+        29,150 stars and a 97% issue close rate put it among the most-maintained MCP servers in the entire index.
+        For web developers, this is essential: run end-to-end tests, capture screenshots, navigate pages,
+        and validate UI behavior without leaving your agent session.
+      </p>
+
+      <h3>#3 — oraios/serena (92.80)</h3>
+      <p>
+        <a href="/tool/oraios--serena/" class="inline-link">oraios/serena</a> is the semantic code editing
+        server at <strong>92.80</strong>, with 21,673 stars. Where most file-access servers give your agent
+        raw text, Serena provides semantic understanding — symbol trees, cross-references, and contextual
+        awareness of what code does, not just what it says. 85% issue close rate. The go-to choice for agents
+        that need to navigate and modify unfamiliar codebases.
+      </p>
+
+      <h3>#4 — github/github-mcp-server (85.37)</h3>
+      <p>
+        <a href="/tool/github--github-mcp-server/" class="inline-link">github/github-mcp-server</a> is
+        GitHub's official server at <strong>85.37</strong> with 28,006 stars. It covers the full GitHub API:
+        read and write access to repos, pull requests, issues, code search, file contents, and commit history.
+        The 66% issue close rate is lower than others in this list, but official vendor backing means it will
+        track GitHub API changes reliably. Required for any agent workflow that touches GitHub.
+      </p>
+
+      <h3>#5 — getsentry/sentry-mcp (83.61)</h3>
+      <p>
+        <a href="/tool/getsentry--sentry-mcp/" class="inline-link">getsentry/sentry-mcp</a> is Sentry's
+        official server at <strong>83.61</strong>. It brings live error data into your coding session — stack
+        traces, performance issues, release health, and incident timelines. If you're debugging a production
+        issue or writing a fix for a recurring error, having the real Sentry context in your agent removes the
+        round-trip between your IDE and the Sentry dashboard. 598 stars, 68% issue close rate.
+      </p>
+
+      <h3>#6 — augmnt/augments-mcp-server (81.20)</h3>
+      <p>
+        <a href="/tool/augmnt--augments-mcp-server/" class="inline-link">augmnt/augments-mcp-server</a> scores
+        <strong>81.20</strong> and solves a persistent problem with AI coding tools: stale training data.
+        It serves real-time framework documentation — React, Next.js, Astro, whatever you configure — with
+        intelligent caching and multi-source integration. Your agent references current API signatures,
+        not whatever was indexed during training. 80% issue close rate.
+      </p>
+
+      <h3>#7 — postrv/narsil-mcp (78.75)</h3>
+      <p>
+        <a href="/tool/postrv--narsil-mcp/" class="inline-link">postrv/narsil-mcp</a> is a Rust-implemented
+        code intelligence server scoring <strong>78.75</strong>. It ships 90 tools covering call graph analysis,
+        symbol extraction, security scanning, and dead code detection across 32 programming languages.
+        92% issue close rate — the highest in this list outside the top 3. Lower star count (123) but
+        exceptional maintenance. Best for polyglot teams or agents doing deep code analysis.
+      </p>
+
+      <h3>#8 — wonderwhy-er/DesktopCommanderMCP (78.28)</h3>
+      <p>
+        <a href="/tool/wonderwhy-er--DesktopCommanderMCP/" class="inline-link">wonderwhy-er/DesktopCommanderMCP</a>
+        scores <strong>78.28</strong> and is the most-starred local dev tool in this list with 5,721 stars.
+        It gives your agent full terminal and filesystem access — run shell commands, manage files, watch processes,
+        edit configurations. The 45% issue close rate is the lowest here, but the star count and community
+        adoption signal broad real-world use. Essential for any workflow that requires local system access.
+      </p>
+
+      <h3>#9 — bgauryy/octocode-mcp (76.74)</h3>
+      <p>
+        <a href="/tool/bgauryy--octocode-mcp/" class="inline-link">bgauryy/octocode-mcp</a> enables semantic
+        code search across GitHub at <strong>76.74</strong>. Rather than just keyword matching, it transforms
+        natural language queries into semantic searches across public and private repos (based on your
+        permissions). Useful when your agent needs to find real-world implementations, not documentation.
+        750 stars, 87% issue close rate.
+      </p>
+
+      <h3>#10 — CodeGraphContext/CodeGraphContext (77.05)</h3>
+      <p>
+        <a href="/tool/CodeGraphContext--CodeGraphContext/" class="inline-link">CodeGraphContext/CodeGraphContext</a>
+        rounds out the list at <strong>77.05</strong> with 2,009 stars. It generates structural code graphs
+        that expose module dependencies, class hierarchies, and import relationships — the kind of structural
+        context that raw file reads can't provide. 70% issue close rate. Best for agents working with
+        large, unfamiliar codebases where architecture understanding matters.
+      </p>
+    </section>
+
+    <section id="by-use-case">
+      <h2>Choosing by use case</h2>
+
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>You need to...</th>
+            <th>Best MCP Server</th>
+            <th class="num">Score</th>
+            <th>Why</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Explore a large GitHub codebase</td>
+            <td><a href="/tool/jgravelle--jcodemunch-mcp/" class="tool-link">jcodemunch-mcp</a></td>
+            <td class="num score-cell">94.25</td>
+            <td>AST-compressed summaries, token-efficient</td>
+          </tr>
+          <tr>
+            <td>Run browser tests from your agent</td>
+            <td><a href="/tool/microsoft--playwright-mcp/" class="tool-link">playwright-mcp</a></td>
+            <td class="num score-cell">94.23</td>
+            <td>Official Microsoft, 97% close rate</td>
+          </tr>
+          <tr>
+            <td>Edit code with semantic awareness</td>
+            <td><a href="/tool/oraios--serena/" class="tool-link">serena</a></td>
+            <td class="num score-cell">92.80</td>
+            <td>Symbol trees, cross-references, 21k stars</td>
+          </tr>
+          <tr>
+            <td>Access GitHub repos, PRs, issues</td>
+            <td><a href="/tool/github--github-mcp-server/" class="tool-link">github-mcp-server</a></td>
+            <td class="num score-cell">85.37</td>
+            <td>Official GitHub, full API coverage</td>
+          </tr>
+          <tr>
+            <td>Debug with live error data</td>
+            <td><a href="/tool/getsentry--sentry-mcp/" class="tool-link">sentry-mcp</a></td>
+            <td class="num score-cell">83.61</td>
+            <td>Official Sentry, stack traces in context</td>
+          </tr>
+          <tr>
+            <td>Access current framework docs</td>
+            <td><a href="/tool/augmnt--augments-mcp-server/" class="tool-link">augments-mcp-server</a></td>
+            <td class="num score-cell">81.20</td>
+            <td>Live docs with caching, beats stale training data</td>
+          </tr>
+          <tr>
+            <td>Deep code analysis across 32 languages</td>
+            <td><a href="/tool/postrv--narsil-mcp/" class="tool-link">narsil-mcp</a></td>
+            <td class="num score-cell">78.75</td>
+            <td>90 tools, call graphs, security scanning</td>
+          </tr>
+          <tr>
+            <td>Run terminal commands and manage files</td>
+            <td><a href="/tool/wonderwhy-er--DesktopCommanderMCP/" class="tool-link">DesktopCommanderMCP</a></td>
+            <td class="num score-cell">78.28</td>
+            <td>Most popular local dev tool, 5.7k stars</td>
+          </tr>
+          <tr>
+            <td>Find real implementations across GitHub</td>
+            <td><a href="/tool/bgauryy--octocode-mcp/" class="tool-link">octocode-mcp</a></td>
+            <td class="num score-cell">76.74</td>
+            <td>Semantic search, public + private repos</td>
+          </tr>
+          <tr>
+            <td>Understand module/class structure</td>
+            <td><a href="/tool/CodeGraphContext--CodeGraphContext/" class="tool-link">CodeGraphContext</a></td>
+            <td class="num score-cell">77.05</td>
+            <td>Structural graphs, dependency mapping</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="methodology">
+      <h2>Scoring methodology</h2>
+      <p class="methodology">
+        AgentRank scores combine five GitHub signals: stars (15%), commit freshness (25%), issue close rate (25%),
+        contributor count (10%), and inbound dependents (25%). Scores are updated nightly from live crawl data.
+        The average score across all {stats.totalCodingTools} coding-category tools is {stats.avgCodingScore}.
+        <a href="/methodology/" class="inline-link">Full methodology &rarr;</a>
+      </p>
+
+      <div class="cta-box">
+        <p>
+          <strong>See all {stats.totalCodingTools} coding tools ranked.</strong> The full leaderboard updates nightly
+          with fresh crawl data — scores shift as maintainers commit, close issues, and gain stars.
+        </p>
+        <p>
+          <a href="/category/code-generation/" class="inline-link">Browse all coding MCP servers &rarr;</a>
+          &nbsp;&nbsp;
+          <a href="/" class="inline-link">Full leaderboard &rarr;</a>
+        </p>
+      </div>
+    </section>
+
+    <footer class="post-footer">
+      <p class="methodology">
+        Data sourced from the AgentRank nightly crawl of 25,000+ GitHub repositories.
+        Scores reflect the March 19, 2026 snapshot.
+        <a href="/methodology/">Scoring methodology</a>.
+      </p>
+      <p class="share-line">
+        Found this useful? <a href="https://agentrank-ai.com/blog/best-mcp-servers-ai-coding/" class="inline-link">Share this post</a>
+        or explore the <a href="/" class="inline-link">full AgentRank leaderboard</a>.
+      </p>
+    </footer>
+
+    <BlogSubscribeCTA />
+    <RelatedPosts posts={relatedPosts} />
+    <RelatedCategories currentCategory="code-generation" />
+  </article>
+</Base>
+
+<style>
+  .blog-post {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 2rem 1rem 4rem;
+  }
+
+  .post-header {
+    margin-bottom: 2rem;
+  }
+
+  .breadcrumb {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    margin-bottom: 0.75rem;
+  }
+
+  .breadcrumb a {
+    color: var(--text-muted);
+  }
+
+  .breadcrumb span {
+    margin: 0 0.3rem;
+    opacity: 0.4;
+  }
+
+  .post-header h1 {
+    font-size: 1.6rem;
+    font-weight: 800;
+    line-height: 1.25;
+    margin-bottom: 0.6rem;
+  }
+
+  .post-meta {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    flex-wrap: wrap;
+  }
+
+  .post-meta .sep {
+    opacity: 0.4;
+  }
+
+  .lede {
+    font-size: 1rem;
+    line-height: 1.7;
+    color: var(--text);
+    opacity: 0.9;
+  }
+
+  .toc {
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 1rem 1.25rem;
+    margin-bottom: 2.5rem;
+    font-size: 0.82rem;
+  }
+
+  .toc strong {
+    display: block;
+    margin-bottom: 0.6rem;
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-muted);
+  }
+
+  .toc ol {
+    margin: 0;
+    padding-left: 1.2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+  }
+
+  .toc a {
+    color: var(--text-muted);
+  }
+
+  .toc a:hover {
+    color: var(--accent);
+  }
+
+  section {
+    margin-bottom: 3rem;
+  }
+
+  section h2 {
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-bottom: 0.75rem;
+    padding-bottom: 0.4rem;
+    border-bottom: 2px solid var(--accent);
+    display: inline-block;
+  }
+
+  section h3 {
+    font-size: 0.95rem;
+    font-weight: 700;
+    margin: 1.5rem 0 0.5rem;
+    color: var(--text);
+  }
+
+  section p {
+    font-size: 0.9rem;
+    line-height: 1.75;
+    color: var(--text);
+    opacity: 0.9;
+    margin-bottom: 0.9rem;
+  }
+
+  .inline-link {
+    color: var(--accent);
+    font-weight: 600;
+  }
+
+  .data-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.82rem;
+    margin: 1rem 0 1.25rem;
+  }
+
+  .data-table th {
+    text-align: left;
+    font-weight: 600;
+    color: var(--text-muted);
+    border-bottom: 1px solid var(--border);
+    padding: 0.4rem 0.75rem 0.4rem 0;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+
+  .data-table td {
+    padding: 0.45rem 0.75rem 0.45rem 0;
+    border-bottom: 1px solid var(--border);
+    color: var(--text);
+    vertical-align: top;
+  }
+
+  .data-table tr:last-child td {
+    border-bottom: none;
+  }
+
+  .num {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .rank-num {
+    color: var(--text-muted);
+    font-weight: 700;
+  }
+
+  .tool-cell {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+  }
+
+  .tool-link {
+    font-weight: 600;
+    color: var(--accent);
+    font-size: 0.82rem;
+  }
+
+  .tool-desc {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    font-weight: 400;
+  }
+
+  .score-cell {
+    color: var(--accent);
+    font-weight: 700;
+  }
+
+  .close-rate {
+    font-variant-numeric: tabular-nums;
+  }
+
+  .use-case {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    white-space: nowrap;
+  }
+
+  .lang-badge {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    white-space: nowrap;
+  }
+
+  .cta-box {
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    border-radius: 4px;
+    padding: 1rem 1.25rem;
+    margin-top: 1.5rem;
+  }
+
+  .cta-box p {
+    margin-bottom: 0.5rem;
+  }
+
+  .cta-box p:last-child {
+    margin-bottom: 0;
+  }
+
+  .post-footer {
+    margin-top: 3rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border);
+  }
+
+  .methodology {
+    font-size: 0.75rem !important;
+    color: var(--text-muted) !important;
+    opacity: 1 !important;
+  }
+
+  .share-line {
+    font-size: 0.82rem !important;
+    margin-top: 0.75rem;
+  }
+
+  @media (max-width: 640px) {
+    .post-header h1 {
+      font-size: 1.3rem;
+    }
+
+    .data-table {
+      font-size: 0.75rem;
+    }
+
+    .use-case, .lang-badge {
+      display: none;
+    }
+
+    .comparison-table .close-rate {
+      display: none;
+    }
+  }
+</style>

@@ -1,0 +1,753 @@
+---
+export const prerender = true;
+
+import Base from '../../layouts/Base.astro';
+import BlogSubscribeCTA from '../../components/BlogSubscribeCTA.astro';
+import RelatedPosts from '../../components/RelatedPosts.astro';
+import RelatedCategories from '../../components/RelatedCategories.astro';
+
+const relatedPosts = [
+  { href: '/blog/best-mcp-servers-data-science/', title: 'Best MCP Servers for Data Science in 2026' },
+  { href: '/blog/top-mcp-servers-database/', title: 'Top 10 MCP Servers for Database Access in 2026' },
+  { href: '/blog/motherduck-mcp-vs-redis-mcp/', title: 'MotherDuck MCP vs Redis MCP: Analytics vs Real-Time' },
+  { href: '/blog/best-mcp-servers-ai-ml/', title: 'Best MCP Servers for AI & Machine Learning in 2026' },
+];
+
+const publishDate = '2026-03-19';
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: 'Best MCP Servers for Data Pipelines and ETL in 2026',
+  description: 'The top-scoring MCP servers for data engineers: DuckDB analytics, dbt transformation, Airflow orchestration, BigQuery, Spark, SQLAlchemy multi-DB, and data visualization. Real AgentRank scores from 25,000+ indexed tools.',
+  datePublished: publishDate,
+  dateModified: publishDate,
+  author: {
+    '@type': 'Organization',
+    name: 'AgentRank',
+    url: 'https://agentrank-ai.com',
+  },
+  publisher: {
+    '@type': 'Organization',
+    name: 'AgentRank',
+    url: 'https://agentrank-ai.com',
+    logo: {
+      '@type': 'ImageObject',
+      url: 'https://agentrank-ai.com/og-image.png',
+    },
+  },
+  mainEntityOfPage: {
+    '@type': 'WebPage',
+    '@id': 'https://agentrank-ai.com/blog/best-mcp-servers-data-pipelines-etl/',
+  },
+  image: 'https://agentrank-ai.com/og-image.png',
+  keywords: 'best MCP servers data pipelines 2026, ETL MCP server, dbt MCP, Airflow MCP, BigQuery MCP, DuckDB MCP, data engineering AI tools, data pipeline agent tools',
+};
+
+const tools = [
+  {
+    rank: 1,
+    name: 'motherduckdb/mcp-server-motherduck',
+    slug: 'motherduckdb--mcp-server-motherduck',
+    score: 89.06,
+    stars: 442,
+    lang: 'Python',
+    issueCloseRate: 80,
+    desc: 'DuckDB in-process analytics and MotherDuck cloud scale',
+    useCase: 'Analytics / OLAP',
+    highlight: 'Runs DuckDB in-process — zero round-trips, fastest queries for local Parquet/CSV. 80% issue close rate. Scales to MotherDuck cloud when needed.',
+  },
+  {
+    rank: 2,
+    name: 'redis/mcp-redis',
+    slug: 'redis--mcp-redis',
+    score: 88.84,
+    stars: 454,
+    lang: 'Python',
+    issueCloseRate: 68,
+    desc: 'Official Redis MCP Server — natural language for streams, cache, search',
+    useCase: 'Streaming / Cache',
+    highlight: 'Official Redis Labs server. Covers streams, pub/sub, search, and all data structures. Critical for pipeline state management and real-time data routing.',
+  },
+  {
+    rank: 3,
+    name: 'mongodb-js/mongodb-mcp-server',
+    slug: 'mongodb-js--mongodb-mcp-server',
+    score: 88.56,
+    stars: 965,
+    lang: 'TypeScript',
+    issueCloseRate: 84,
+    desc: 'Official MongoDB MCP server — documents and Atlas clusters',
+    useCase: 'Document Storage',
+    highlight: 'Official MongoDB server. 84% issue close rate — best-maintained of the top 3. Covers local instances and Atlas cloud clusters for semi-structured data pipelines.',
+  },
+  {
+    rank: 4,
+    name: 'tableau/tableau-mcp',
+    slug: 'tableau--tableau-mcp',
+    score: 84.32,
+    stars: 202,
+    lang: 'TypeScript',
+    issueCloseRate: 73,
+    desc: "Tableau's official MCP Server — data visualization and BI access",
+    useCase: 'Data Viz / BI',
+    highlight: "Official Tableau server. Gives agents the ability to see and understand your data visualizations — query workbooks, extract data, and navigate dashboards.",
+  },
+  {
+    rank: 5,
+    name: 'benborla/mcp-server-mysql',
+    slug: 'benborla--mcp-server-mysql',
+    score: 85.22,
+    stars: 1361,
+    lang: 'JavaScript',
+    issueCloseRate: 53,
+    desc: 'Read-only MySQL access via MCP — schema inspection and SQL queries',
+    useCase: 'Relational (MySQL)',
+    highlight: 'Most-starred MySQL MCP server at 1,361 stars. Read-only by design — safe for production pipelines. Inspect schemas, validate data quality, run SELECT queries.',
+  },
+  {
+    rank: 6,
+    name: 'astronomer/agents',
+    slug: 'astronomer--agents',
+    score: 77.89,
+    stars: 280,
+    lang: 'Python',
+    issueCloseRate: 57,
+    desc: 'AI agent tooling for data engineering and Airflow workflows',
+    useCase: 'Airflow / Orchestration',
+    highlight: "Official Astronomer tooling for data engineering agents. Brings AI-assisted DAG authoring, pipeline debugging, and workflow orchestration to Airflow-based stacks.",
+  },
+  {
+    rank: 7,
+    name: 'dbt-labs/dbt-mcp',
+    slug: 'dbt-labs--dbt-mcp',
+    score: 76.04,
+    stars: 507,
+    lang: 'Python',
+    issueCloseRate: 68,
+    desc: 'Official dbt MCP server — run models, tests, and queries',
+    useCase: 'Transformation / dbt',
+    highlight: 'Official dbt Labs server. Exposes models, tests, and raw query execution to any agent. 507 stars, 68% issue close rate. The only dbt-native tool in the index.',
+  },
+  {
+    rank: 8,
+    name: 'runekaagaard/mcp-alchemy',
+    slug: 'runekaagaard--mcp-alchemy',
+    score: 74.93,
+    stars: 397,
+    lang: 'Python',
+    issueCloseRate: 100,
+    desc: 'Multi-database MCP via SQLAlchemy — Postgres, MySQL, SQLite, Oracle, MSSQL',
+    useCase: 'Multi-DB (SQLAlchemy)',
+    highlight: '100% issue close rate — every reported issue resolved. Any SQLAlchemy-compatible DB: Postgres, MySQL, SQLite, MSSQL, Oracle. Widest coverage of any single tool here.',
+  },
+  {
+    rank: 9,
+    name: 'LucasHild/mcp-server-bigquery',
+    slug: 'LucasHild--mcp-server-bigquery',
+    score: 75.28,
+    stars: 123,
+    lang: 'Python',
+    issueCloseRate: 41,
+    desc: 'Google BigQuery access via Model Context Protocol',
+    useCase: 'BigQuery / Data Warehouse',
+    highlight: 'The primary MCP tool for BigQuery workflows. Query datasets, inspect table schemas, and run SQL against your data warehouse directly from your agent.',
+  },
+  {
+    rank: 10,
+    name: 'yangkyeongmo/mcp-server-apache-airflow',
+    slug: 'yangkyeongmo--mcp-server-apache-airflow',
+    score: 71.10,
+    stars: 148,
+    lang: 'Python',
+    issueCloseRate: 56,
+    desc: 'Apache Airflow orchestration via MCP — DAG management and monitoring',
+    useCase: 'Orchestration (Airflow)',
+    highlight: 'Wraps the Airflow REST API — trigger DAGs, check run status, monitor task logs, and manage pipeline health from your agent. 56% issue close rate.',
+  },
+];
+
+const stats = {
+  totalDataTools: 720,
+  avgDataScore: 27.4,
+  topScore: 89.06,
+  lastUpdated: 'March 19, 2026',
+};
+
+const faqJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: [
+    {
+      '@type': 'Question',
+      name: 'What is the best MCP server for data engineering in 2026?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'The top-scoring data engineering MCP servers are motherduckdb/mcp-server-motherduck (89.06, DuckDB analytics), redis/mcp-redis (88.84, streaming and cache), and mongodb-js/mongodb-mcp-server (88.56, document storage). For transformation workflows, dbt-labs/dbt-mcp (76.04) is the only official dbt server in the index.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Is there an MCP server for Apache Airflow?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Yes — yangkyeongmo/mcp-server-apache-airflow (AgentRank score: 71.10) wraps the Airflow REST API and lets agents trigger DAGs, check run status, monitor task logs, and manage pipeline health. Astronomer/agents (77.89) provides broader AI agent tooling for data engineering teams using Airflow.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Which MCP server should I use for BigQuery?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'LucasHild/mcp-server-bigquery (score: 75.28) is the primary MCP tool for Google BigQuery. It supports SQL queries, dataset inspection, and table schema exploration. For multi-cloud or hybrid warehouse setups, runekaagaard/mcp-alchemy (74.93) covers multiple engines via SQLAlchemy.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Can I use Claude or Cursor for data pipeline work with MCP?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Yes. Configure database and pipeline MCP servers in your claude_desktop_config.json or Cursor MCP settings. You can then ask Claude or Cursor to query your data, inspect schemas, run dbt models, or trigger Airflow DAGs — all in natural language. dbt-labs/dbt-mcp and motherduckdb/mcp-server-motherduck are the most mature options for this workflow.',
+      },
+    },
+  ],
+};
+---
+
+<Base
+  title="Best MCP Servers for Data Pipelines and ETL in 2026 — AgentRank"
+  description="The 10 highest-scoring MCP servers for data engineers: DuckDB analytics, dbt transformation, Airflow orchestration, BigQuery, Spark, SQLAlchemy multi-DB, Redis streaming, and Tableau BI. Real AgentRank scores."
+  activeTab="blog"
+  keywords="best MCP servers data pipelines ETL 2026, dbt MCP server, Airflow MCP, BigQuery MCP server, DuckDB MCP, data engineering agent tools, ETL agent MCP, data pipeline AI"
+  canonicalUrl="https://agentrank-ai.com/blog/best-mcp-servers-data-pipelines-etl/"
+  jsonLd={[jsonLd, faqJsonLd]}
+  ogImage="/og-image.png"
+>
+  <article class="blog-post">
+    <header class="post-header">
+      <div class="breadcrumb"><a href="/blog/">Blog</a> <span>/</span></div>
+      <h1>Best MCP Servers for Data Pipelines and ETL in 2026</h1>
+      <div class="post-meta">
+        <time datetime={publishDate}>March 19, 2026</time>
+        <span class="sep">&middot;</span>
+        <span>7 min read</span>
+        <span class="sep">&middot;</span>
+        <span>AgentRank Index</span>
+      </div>
+      <p class="lede">
+        Data engineers can now give AI agents direct access to their full pipeline stack — DuckDB for analytics,
+        dbt for transformation, Airflow for orchestration, BigQuery for the warehouse, Redis for streaming.
+        We scored <strong>{stats.totalDataTools} data-category MCP servers</strong> from the AgentRank index
+        using real GitHub signals. Below are the top 10. Data as of {stats.lastUpdated}.
+      </p>
+    </header>
+
+    <nav class="toc">
+      <strong>Contents</strong>
+      <ol>
+        <li><a href="#comparison">Full comparison table</a></li>
+        <li><a href="#top10">Top 10 breakdown</a></li>
+        <li><a href="#by-stack">Choosing by stack</a></li>
+        <li><a href="#methodology">Scoring methodology</a></li>
+      </ol>
+    </nav>
+
+    <section id="comparison">
+      <h2>Full comparison table</h2>
+      <p>
+        All scores are on a 0–100 scale. The average across {stats.totalDataTools} data tools is <strong>{stats.avgDataScore}</strong>.
+        The tools below represent the top tier — all scoring above 70.
+      </p>
+
+      <table class="data-table comparison-table">
+        <thead>
+          <tr>
+            <th class="num">#</th>
+            <th>Repository</th>
+            <th class="num">Score</th>
+            <th class="num">Stars</th>
+            <th class="num">Issue Close %</th>
+            <th>Use Case</th>
+            <th>Lang</th>
+          </tr>
+        </thead>
+        <tbody>
+          {tools.map((tool) => (
+            <tr>
+              <td class="num rank-num">{tool.rank}</td>
+              <td class="tool-cell">
+                <a href={`/tool/${tool.slug}/`} class="tool-link">{tool.name}</a>
+                <span class="tool-desc">{tool.desc}</span>
+              </td>
+              <td class="num score-cell">{tool.score}</td>
+              <td class="num">{tool.stars.toLocaleString('en-US')}</td>
+              <td class="num close-rate">{tool.issueCloseRate}%</td>
+              <td class="use-case">{tool.useCase}</td>
+              <td class="lang-badge">{tool.lang}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </section>
+
+    <section id="top10">
+      <h2>Top 10 breakdown</h2>
+
+      <h3>#1 — motherduckdb/mcp-server-motherduck (89.06)</h3>
+      <p>
+        <a href="/tool/motherduckdb--mcp-server-motherduck/" class="inline-link">motherduckdb/mcp-server-motherduck</a>
+        leads at <strong>89.06</strong>. DuckDB runs in-process — there's no separate server, no network
+        round-trips for local queries. This makes it the fastest analytical option for agents processing
+        local Parquet files, CSV exports, or in-memory datasets. When local scale isn't enough, MotherDuck
+        extends it to cloud-hosted DuckDB. 80% issue close rate. Best-in-category for OLAP and analytical workloads.
+      </p>
+
+      <h3>#2 — redis/mcp-redis (88.84)</h3>
+      <p>
+        <a href="/tool/redis--mcp-redis/" class="inline-link">redis/mcp-redis</a> scores <strong>88.84</strong>
+        as the official Redis Labs server. For data pipelines, Redis is the glue — pipeline state, task queues,
+        pub/sub messaging, rate limiting, and stream processing. This server exposes all of it through natural
+        language: strings, hashes, sets, sorted sets, streams, and full-text search. 68% issue close rate,
+        official vendor backing for long-term reliability.
+      </p>
+
+      <h3>#3 — mongodb-js/mongodb-mcp-server (88.56)</h3>
+      <p>
+        <a href="/tool/mongodb-js--mongodb-mcp-server/" class="inline-link">mongodb-js/mongodb-mcp-server</a>
+        is the official MongoDB server at <strong>88.56</strong>. With 965 stars and an 84% issue close rate —
+        the best of the top 3 — it's the most responsive to issues. Covers both local instances and Atlas
+        cloud clusters. For pipelines ingesting semi-structured data (logs, events, API responses), MongoDB
+        remains the dominant document store and this is its reference MCP server.
+      </p>
+
+      <h3>#4 — tableau/tableau-mcp (84.32)</h3>
+      <p>
+        <a href="/tool/tableau--tableau-mcp/" class="inline-link">tableau/tableau-mcp</a> is Tableau's official
+        server at <strong>84.32</strong>. It's the bridge between AI agents and business intelligence — agents
+        can query workbooks, extract underlying data, navigate dashboards, and understand what your organization
+        is measuring. 202 stars, 73% issue close rate. Essential for teams where Tableau sits at the end of the
+        data pipeline as the consumption layer.
+      </p>
+
+      <h3>#5 — benborla/mcp-server-mysql (85.22)</h3>
+      <p>
+        <a href="/tool/benborla--mcp-server-mysql/" class="inline-link">benborla/mcp-server-mysql</a> scores
+        <strong>85.22</strong> with 1,361 stars — the most-starred MySQL MCP server in the index. It's
+        read-only by design, which is a deliberate safety constraint for production pipelines. Data engineers
+        use it for schema inspection, data quality checks, and SELECT-based validation without risk of
+        accidental mutation. If you need write access, build on top of it or pair with a write-capable layer.
+      </p>
+
+      <h3>#6 — astronomer/agents (77.89)</h3>
+      <p>
+        <a href="/tool/astronomer--agents/" class="inline-link">astronomer/agents</a> scores <strong>77.89</strong>
+        as the official Astronomer (Apache Airflow) toolkit for data engineering agents. It enables AI-assisted
+        DAG authoring, pipeline debugging, and workflow orchestration — the full Airflow development loop.
+        280 stars, 57% issue close rate. The highest-scoring Airflow-adjacent tool in the index and the
+        natural choice for teams running Airflow on Astronomer's managed platform.
+      </p>
+
+      <h3>#7 — dbt-labs/dbt-mcp (76.04)</h3>
+      <p>
+        <a href="/tool/dbt-labs--dbt-mcp/" class="inline-link">dbt-labs/dbt-mcp</a> is the official dbt Labs
+        server at <strong>76.04</strong>. It sits between your dbt project and any agent — run models, execute
+        tests, inspect schemas, and query outputs through natural language. 507 stars, 68% issue close rate.
+        It's the only dbt-native MCP tool in the index. If your transformation layer is dbt, this is required.
+      </p>
+
+      <h3>#8 — runekaagaard/mcp-alchemy (74.93)</h3>
+      <p>
+        <a href="/tool/runekaagaard--mcp-alchemy/" class="inline-link">runekaagaard/mcp-alchemy</a> scores
+        <strong>74.93</strong> with a <strong>100% issue close rate</strong> — every reported issue resolved.
+        It uses SQLAlchemy under the hood, which means it connects to any SQLAlchemy-compatible database:
+        Postgres, MySQL, SQLite, MSSQL, Oracle, and more. 397 stars. The best single tool for polyglot data
+        environments where you're querying multiple engines from one pipeline.
+      </p>
+
+      <h3>#9 — LucasHild/mcp-server-bigquery (75.28)</h3>
+      <p>
+        <a href="/tool/LucasHild--mcp-server-bigquery/" class="inline-link">LucasHild/mcp-server-bigquery</a>
+        scores <strong>75.28</strong> and is the primary MCP tool for Google BigQuery. It supports SQL query
+        execution, dataset inspection, and table schema exploration. 123 stars, 41% issue close rate — the
+        lowest in this list, which signals room for improvement. But it's the only mature BigQuery MCP option
+        in the index, making it the default for GCP-based data warehouses.
+      </p>
+
+      <h3>#10 — yangkyeongmo/mcp-server-apache-airflow (71.10)</h3>
+      <p>
+        <a href="/tool/yangkyeongmo--mcp-server-apache-airflow/" class="inline-link">yangkyeongmo/mcp-server-apache-airflow</a>
+        rounds out the list at <strong>71.10</strong>. It wraps the Airflow REST API — trigger DAGs, check
+        run status, monitor task logs, manage pipeline health. 148 stars, 56% issue close rate. The choice
+        for teams running self-managed Apache Airflow (versus Astronomer's managed platform). Complements
+        astronomer/agents for Airflow-native orchestration use cases.
+      </p>
+    </section>
+
+    <section id="by-stack">
+      <h2>Choosing by stack</h2>
+
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Stack / Layer</th>
+            <th>Best MCP Server</th>
+            <th class="num">Score</th>
+            <th>Notes</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>DuckDB / MotherDuck</td>
+            <td><a href="/tool/motherduckdb--mcp-server-motherduck/" class="tool-link">mcp-server-motherduck</a></td>
+            <td class="num score-cell">89.06</td>
+            <td>In-process, fastest analytics, cloud scale</td>
+          </tr>
+          <tr>
+            <td>Redis Streams / Cache</td>
+            <td><a href="/tool/redis--mcp-redis/" class="tool-link">mcp-redis</a></td>
+            <td class="num score-cell">88.84</td>
+            <td>Official Redis Labs, all data structures</td>
+          </tr>
+          <tr>
+            <td>MongoDB / Atlas</td>
+            <td><a href="/tool/mongodb-js--mongodb-mcp-server/" class="tool-link">mongodb-mcp-server</a></td>
+            <td class="num score-cell">88.56</td>
+            <td>Official, 84% close rate, Atlas support</td>
+          </tr>
+          <tr>
+            <td>Tableau / BI</td>
+            <td><a href="/tool/tableau--tableau-mcp/" class="tool-link">tableau-mcp</a></td>
+            <td class="num score-cell">84.32</td>
+            <td>Official Tableau, workbook + data access</td>
+          </tr>
+          <tr>
+            <td>MySQL</td>
+            <td><a href="/tool/benborla--mcp-server-mysql/" class="tool-link">mcp-server-mysql</a></td>
+            <td class="num score-cell">85.22</td>
+            <td>Read-only, 1,361 stars, safe for production</td>
+          </tr>
+          <tr>
+            <td>Airflow (Astronomer)</td>
+            <td><a href="/tool/astronomer--agents/" class="tool-link">astronomer/agents</a></td>
+            <td class="num score-cell">77.89</td>
+            <td>AI agent tooling for managed Airflow</td>
+          </tr>
+          <tr>
+            <td>dbt Core / Cloud</td>
+            <td><a href="/tool/dbt-labs--dbt-mcp/" class="tool-link">dbt-mcp</a></td>
+            <td class="num score-cell">76.04</td>
+            <td>Official dbt Labs, run models + tests</td>
+          </tr>
+          <tr>
+            <td>Multi-DB (SQLAlchemy)</td>
+            <td><a href="/tool/runekaagaard--mcp-alchemy/" class="tool-link">mcp-alchemy</a></td>
+            <td class="num score-cell">74.93</td>
+            <td>100% issue close, widest DB coverage</td>
+          </tr>
+          <tr>
+            <td>Google BigQuery</td>
+            <td><a href="/tool/LucasHild--mcp-server-bigquery/" class="tool-link">mcp-server-bigquery</a></td>
+            <td class="num score-cell">75.28</td>
+            <td>Only mature BigQuery MCP in the index</td>
+          </tr>
+          <tr>
+            <td>Apache Airflow (self-managed)</td>
+            <td><a href="/tool/yangkyeongmo--mcp-server-apache-airflow/" class="tool-link">mcp-server-apache-airflow</a></td>
+            <td class="num score-cell">71.10</td>
+            <td>Airflow REST API, DAG management</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="methodology">
+      <h2>Scoring methodology</h2>
+      <p class="methodology">
+        AgentRank scores combine five GitHub signals: stars (15%), commit freshness (25%), issue close rate (25%),
+        contributor count (10%), and inbound dependents (25%). Scores are updated nightly from live crawl data.
+        The average score across all {stats.totalDataTools} data-category tools is {stats.avgDataScore}.
+        <a href="/methodology/" class="inline-link">Full methodology &rarr;</a>
+      </p>
+
+      <div class="cta-box">
+        <p>
+          <strong>See all {stats.totalDataTools} data engineering tools ranked.</strong> The full leaderboard
+          updates nightly with fresh crawl data — scores shift as maintainers commit, close issues, and gain stars.
+        </p>
+        <p>
+          <a href="/category/data-science/" class="inline-link">Browse all data MCP servers &rarr;</a>
+          &nbsp;&nbsp;
+          <a href="/" class="inline-link">Full leaderboard &rarr;</a>
+        </p>
+      </div>
+    </section>
+
+    <footer class="post-footer">
+      <p class="methodology">
+        Data sourced from the AgentRank nightly crawl of 25,000+ GitHub repositories.
+        Scores reflect the March 19, 2026 snapshot.
+        <a href="/methodology/">Scoring methodology</a>.
+      </p>
+      <p class="share-line">
+        Found this useful? <a href="https://agentrank-ai.com/blog/best-mcp-servers-data-pipelines-etl/" class="inline-link">Share this post</a>
+        or explore the <a href="/" class="inline-link">full AgentRank leaderboard</a>.
+      </p>
+    </footer>
+
+    <BlogSubscribeCTA />
+    <RelatedPosts posts={relatedPosts} />
+    <RelatedCategories currentCategory="data-science" />
+  </article>
+</Base>
+
+<style>
+  .blog-post {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 2rem 1rem 4rem;
+  }
+
+  .post-header {
+    margin-bottom: 2rem;
+  }
+
+  .breadcrumb {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    margin-bottom: 0.75rem;
+  }
+
+  .breadcrumb a {
+    color: var(--text-muted);
+  }
+
+  .breadcrumb span {
+    margin: 0 0.3rem;
+    opacity: 0.4;
+  }
+
+  .post-header h1 {
+    font-size: 1.6rem;
+    font-weight: 800;
+    line-height: 1.25;
+    margin-bottom: 0.6rem;
+  }
+
+  .post-meta {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    flex-wrap: wrap;
+  }
+
+  .post-meta .sep {
+    opacity: 0.4;
+  }
+
+  .lede {
+    font-size: 1rem;
+    line-height: 1.7;
+    color: var(--text);
+    opacity: 0.9;
+  }
+
+  .toc {
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 1rem 1.25rem;
+    margin-bottom: 2.5rem;
+    font-size: 0.82rem;
+  }
+
+  .toc strong {
+    display: block;
+    margin-bottom: 0.6rem;
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-muted);
+  }
+
+  .toc ol {
+    margin: 0;
+    padding-left: 1.2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+  }
+
+  .toc a {
+    color: var(--text-muted);
+  }
+
+  .toc a:hover {
+    color: var(--accent);
+  }
+
+  section {
+    margin-bottom: 3rem;
+  }
+
+  section h2 {
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-bottom: 0.75rem;
+    padding-bottom: 0.4rem;
+    border-bottom: 2px solid var(--accent);
+    display: inline-block;
+  }
+
+  section h3 {
+    font-size: 0.95rem;
+    font-weight: 700;
+    margin: 1.5rem 0 0.5rem;
+    color: var(--text);
+  }
+
+  section p {
+    font-size: 0.9rem;
+    line-height: 1.75;
+    color: var(--text);
+    opacity: 0.9;
+    margin-bottom: 0.9rem;
+  }
+
+  .inline-link {
+    color: var(--accent);
+    font-weight: 600;
+  }
+
+  .data-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.82rem;
+    margin: 1rem 0 1.25rem;
+  }
+
+  .data-table th {
+    text-align: left;
+    font-weight: 600;
+    color: var(--text-muted);
+    border-bottom: 1px solid var(--border);
+    padding: 0.4rem 0.75rem 0.4rem 0;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+
+  .data-table td {
+    padding: 0.45rem 0.75rem 0.45rem 0;
+    border-bottom: 1px solid var(--border);
+    color: var(--text);
+    vertical-align: top;
+  }
+
+  .data-table tr:last-child td {
+    border-bottom: none;
+  }
+
+  .num {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .rank-num {
+    color: var(--text-muted);
+    font-weight: 700;
+  }
+
+  .tool-cell {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+  }
+
+  .tool-link {
+    font-weight: 600;
+    color: var(--accent);
+    font-size: 0.82rem;
+  }
+
+  .tool-desc {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    font-weight: 400;
+  }
+
+  .score-cell {
+    color: var(--accent);
+    font-weight: 700;
+  }
+
+  .close-rate {
+    font-variant-numeric: tabular-nums;
+  }
+
+  .use-case {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    white-space: nowrap;
+  }
+
+  .lang-badge {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    white-space: nowrap;
+  }
+
+  .cta-box {
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    border-radius: 4px;
+    padding: 1rem 1.25rem;
+    margin-top: 1.5rem;
+  }
+
+  .cta-box p {
+    margin-bottom: 0.5rem;
+  }
+
+  .cta-box p:last-child {
+    margin-bottom: 0;
+  }
+
+  .post-footer {
+    margin-top: 3rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border);
+  }
+
+  .methodology {
+    font-size: 0.75rem !important;
+    color: var(--text-muted) !important;
+    opacity: 1 !important;
+  }
+
+  .share-line {
+    font-size: 0.82rem !important;
+    margin-top: 0.75rem;
+  }
+
+  @media (max-width: 640px) {
+    .post-header h1 {
+      font-size: 1.3rem;
+    }
+
+    .data-table {
+      font-size: 0.75rem;
+    }
+
+    .use-case, .lang-badge {
+      display: none;
+    }
+
+    .comparison-table .close-rate {
+      display: none;
+    }
+  }
+</style>
