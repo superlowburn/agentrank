@@ -35,9 +35,31 @@ const isAuthenticated = sessionSlug === slug && !!githubUsername;
 // Load existing claim if authenticated
 const existingClaim = isAuthenticated
   ? await env.DB.prepare(
-      'SELECT tagline, category, logo_url, is_deprecated FROM claims WHERE tool_full_name = ? AND github_username = ? AND verified = 1'
+      'SELECT tagline, category, logo_url, website_url, is_deprecated FROM claims WHERE tool_full_name = ? AND github_username = ? AND verified = 1'
     ).bind(fullName, githubUsername).first()
   : null;
+
+// Load analytics for authenticated maintainer
+let analytics: { views7d: number; views30d: number; checks30d: number } | null = null;
+if (isAuthenticated) {
+  const toolPath = `/tool/${slug}/`;
+  const [v7, v30, c30] = await Promise.all([
+    env.DB.prepare(
+      `SELECT COUNT(*) as cnt FROM request_log WHERE path = ? AND is_bot = 0 AND ts >= datetime('now', '-7 days')`
+    ).bind(toolPath).first<{ cnt: number }>(),
+    env.DB.prepare(
+      `SELECT COUNT(*) as cnt FROM request_log WHERE path = ? AND is_bot = 0 AND ts >= datetime('now', '-30 days')`
+    ).bind(toolPath).first<{ cnt: number }>(),
+    env.DB.prepare(
+      `SELECT COUNT(*) as cnt FROM analytics_events WHERE repo = ? AND ts >= datetime('now', '-30 days')`
+    ).bind(fullName).first<{ cnt: number }>(),
+  ]);
+  analytics = {
+    views7d: v7?.cnt ?? 0,
+    views30d: v30?.cnt ?? 0,
+    checks30d: c30?.cnt ?? 0,
+  };
+}
 
 const urlParams = new URL(Astro.request.url).searchParams;
 const justVerified = urlParams.get('verified') === '1';
@@ -172,6 +194,17 @@ const CATEGORIES = [
           />
         </div>
 
+        <div class="form-group">
+          <label for="website_url">Website / Docs URL <span class="hint">(https:// only, optional)</span></label>
+          <input
+            type="url"
+            id="website_url"
+            name="website_url"
+            placeholder="https://your-tool-docs.com"
+            value={existingClaim?.website_url as string || ''}
+          />
+        </div>
+
         <div class="form-group checkbox-group">
           <label>
             <input
@@ -200,6 +233,27 @@ const CATEGORIES = [
           <span id="save-status" class="save-status"></span>
         </div>
       </form>
+
+      {analytics && (
+        <div class="analytics-section">
+          <h3>Your listing stats</h3>
+          <div class="analytics-grid">
+            <div class="analytics-stat">
+              <span class="analytics-value">{analytics.views7d.toLocaleString()}</span>
+              <span class="analytics-label">page views (7d)</span>
+            </div>
+            <div class="analytics-stat">
+              <span class="analytics-value">{analytics.views30d.toLocaleString()}</span>
+              <span class="analytics-label">page views (30d)</span>
+            </div>
+            <div class="analytics-stat">
+              <span class="analytics-value">{analytics.checks30d.toLocaleString()}</span>
+              <span class="analytics-label">API checks (30d)</span>
+            </div>
+          </div>
+          <p class="analytics-note">Human traffic only. Updated in real time.</p>
+        </div>
+      )}
 
       <div id="next-steps" class="next-steps" style="display:none">
         <h3>Listing saved. What's next?</h3>
@@ -288,6 +342,7 @@ const CATEGORIES = [
         tagline: (document.getElementById('tagline') as HTMLInputElement).value.trim() || undefined,
         category: (document.getElementById('category') as HTMLSelectElement).value || undefined,
         logo_url: (document.getElementById('logo_url') as HTMLInputElement).value.trim() || undefined,
+        website_url: (document.getElementById('website_url') as HTMLInputElement).value.trim() || undefined,
         is_deprecated: (document.getElementById('is_deprecated') as HTMLInputElement).checked,
         email: emailInput?.value.trim() || undefined,
       };
@@ -575,6 +630,57 @@ const CATEGORIES = [
   .email-capture input[type="email"]:focus {
     outline: none;
     border-color: var(--accent);
+  }
+
+  .analytics-section {
+    margin-top: 2rem;
+    padding: 1.25rem 1.5rem;
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    max-width: 560px;
+  }
+
+  .analytics-section h3 {
+    font-size: 0.85rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-muted);
+  }
+
+  .analytics-grid {
+    display: flex;
+    gap: 2rem;
+    flex-wrap: wrap;
+  }
+
+  .analytics-stat {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+  }
+
+  .analytics-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--accent);
+    line-height: 1;
+  }
+
+  .analytics-label {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  .analytics-note {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    margin-top: 0.75rem;
+    opacity: 0.7;
   }
 
   .next-steps {

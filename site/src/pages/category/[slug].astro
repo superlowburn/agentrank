@@ -459,6 +459,12 @@ const jsonLd = categoryItemListJsonLd
     color: #fbbf24;
   }
 
+  .badge.claimed {
+    background: color-mix(in srgb, #22c55e 15%, transparent);
+    color: #22c55e;
+    border: 1px solid color-mix(in srgb, #22c55e 35%, transparent);
+  }
+
   .score-bar {
     display: inline-block;
     padding: 0.1rem 0.5rem;
@@ -691,4 +697,29 @@ const jsonLd = categoryItemListJsonLd
       }
     })();
   }
+
+  // --- Claimed badges ---
+  (async () => {
+    try {
+      const res = await fetch('/api/v1/claimed');
+      if (!res.ok) return;
+      const { claimed } = await res.json() as { claimed: string[] };
+      if (!claimed?.length) return;
+      const claimedSet = new Set(claimed);
+      document.querySelectorAll<HTMLTableRowElement>('tr[data-full-name]').forEach((row) => {
+        const fullName = row.dataset.fullName;
+        if (fullName && claimedSet.has(fullName)) {
+          const nameCell = row.querySelector('.name');
+          if (nameCell && !nameCell.querySelector('.claimed')) {
+            const badge = document.createElement('span');
+            badge.className = 'badge claimed';
+            badge.textContent = 'Claimed';
+            nameCell.appendChild(badge);
+          }
+        }
+      });
+    } catch {
+      // Non-fatal
+    }
+  })();
 </script>

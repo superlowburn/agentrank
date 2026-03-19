@@ -25,7 +25,7 @@ export const GET: APIRoute = async ({ params, locals }) => {
   const fullName = slug.replace('--', '/');
 
   const claim = await env.DB.prepare(
-    'SELECT github_username, tagline, category, logo_url, is_deprecated FROM claims WHERE tool_full_name = ? AND status = ? LIMIT 1'
+    'SELECT github_username, tagline, category, logo_url, website_url, is_deprecated FROM claims WHERE tool_full_name = ? AND status = ? LIMIT 1'
   ).bind(fullName, 'active').first();
 
   return json({ claim: claim || null });
@@ -65,6 +65,7 @@ export const POST: APIRoute = async ({ request, params, locals }) => {
     tagline?: string;
     category?: string;
     logo_url?: string;
+    website_url?: string;
     is_deprecated?: boolean;
     email?: string;
   };
@@ -74,6 +75,9 @@ export const POST: APIRoute = async ({ request, params, locals }) => {
   }
   if (data.logo_url && !/^https:\/\/.+/.test(data.logo_url)) {
     return json({ success: false, error: 'Logo URL must start with https://' }, 400);
+  }
+  if (data.website_url && !/^https:\/\/.+/.test(data.website_url)) {
+    return json({ success: false, error: 'Website URL must start with https://' }, 400);
   }
 
   const VALID_CATEGORIES = [
@@ -87,12 +91,13 @@ export const POST: APIRoute = async ({ request, params, locals }) => {
 
   await env.DB.prepare(`
     UPDATE claims
-    SET tagline = ?, category = ?, logo_url = ?, is_deprecated = ?, updated_at = datetime('now')
+    SET tagline = ?, category = ?, logo_url = ?, website_url = ?, is_deprecated = ?, updated_at = datetime('now')
     WHERE tool_full_name = ? AND github_username = ?
   `).bind(
     data.tagline?.trim() || null,
     data.category?.trim() || null,
     data.logo_url?.trim() || null,
+    data.website_url?.trim() || null,
     data.is_deprecated ? 1 : 0,
     fullName,
     githubUsername,

@@ -145,6 +145,7 @@ CREATE TABLE IF NOT EXISTS claims (
   tagline TEXT,                            -- short description/tagline (max 200 chars)
   category TEXT,                           -- primary category
   logo_url TEXT,                           -- https:// URL for logo/icon
+  website_url TEXT,                        -- maintainer website / docs URL (https://)
   is_deprecated INTEGER NOT NULL DEFAULT 0,
   verified INTEGER NOT NULL DEFAULT 1,
   status TEXT NOT NULL DEFAULT 'active',   -- 'active', 'removed'
@@ -154,6 +155,8 @@ CREATE TABLE IF NOT EXISTS claims (
 );
 CREATE INDEX IF NOT EXISTS idx_claims_tool ON claims(tool_full_name);
 CREATE INDEX IF NOT EXISTS idx_claims_user ON claims(github_username);
+-- Migration (run once on existing D1):
+-- ALTER TABLE claims ADD COLUMN website_url TEXT;
 
 -- Rank history — daily snapshots for computing movers/new-tools
 -- survives pipeline DROP/CREATE cycles
@@ -223,6 +226,10 @@ CREATE INDEX IF NOT EXISTS idx_apikeys_active ON api_keys(is_active);
 -- CREATE TABLE IF NOT EXISTS api_keys (id TEXT PRIMARY KEY, key_hash TEXT NOT NULL UNIQUE, key_prefix TEXT NOT NULL, name TEXT, tier TEXT NOT NULL DEFAULT 'free', owner_email TEXT, is_active INTEGER NOT NULL DEFAULT 1, created_at TEXT NOT NULL DEFAULT (datetime('now')), revoked_at TEXT, last_used_at TEXT);
 -- CREATE INDEX IF NOT EXISTS idx_apikeys_hash ON api_keys(key_hash);
 -- CREATE INDEX IF NOT EXISTS idx_apikeys_active ON api_keys(is_active);
+-- 2026-03-19: GitHub OAuth developer dashboard
+-- ALTER TABLE api_keys ADD COLUMN github_user_id INTEGER;
+-- ALTER TABLE api_keys ADD COLUMN github_username TEXT;
+-- CREATE INDEX IF NOT EXISTS idx_apikeys_github ON api_keys(github_user_id) WHERE github_user_id IS NOT NULL;
 
 -- API usage per key per day per endpoint
 -- survives pipeline DROP/CREATE cycles

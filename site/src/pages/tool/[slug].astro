@@ -16,7 +16,7 @@ if (!row) {
 }
 
 const claim = await env.DB.prepare(
-  'SELECT github_username, tagline, logo_url, is_deprecated FROM claims WHERE tool_full_name = ? AND status = ? LIMIT 1'
+  'SELECT github_username, tagline, logo_url, website_url, is_deprecated FROM claims WHERE tool_full_name = ? AND status = ? LIMIT 1'
 ).bind(fullName, 'active').first();
 
 const tool: Tool = {
@@ -394,6 +394,9 @@ Astro.response.headers.set('Cache-Control', 'public, max-age=60, s-maxage=3600, 
     {claim && (
       <div class="claimed-badge">
         Maintained by <a href={`https://github.com/${claim.github_username as string}`} target="_blank" rel="noopener noreferrer">@{claim.github_username as string}</a>
+        {(claim.website_url as string) && (
+          <a href={claim.website_url as string} class="claim-website-link" target="_blank" rel="noopener noreferrer">Docs &rarr;</a>
+        )}
         {(claim.is_deprecated as number) === 1 && <span class="deprecated-badge">deprecated</span>}
       </div>
     )}
@@ -1372,6 +1375,20 @@ Astro.response.headers.set('Cache-Control', 'public, max-age=60, s-maxage=3600, 
     font-size: 0.75rem;
     color: var(--accent);
     margin-top: 0.25rem;
+  }
+
+  .claim-website-link {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    text-decoration: none;
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    padding: 0.05rem 0.35rem;
+  }
+
+  .claim-website-link:hover {
+    border-color: var(--accent);
+    color: var(--accent);
   }
 
   .claim-tagline {
