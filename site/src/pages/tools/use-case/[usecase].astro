@@ -1,0 +1,380 @@
+---
+export const prerender = true;
+
+import Base from '../../../layouts/Base.astro';
+import { getAllTools } from '../../../data/ranked';
+import { toSlug, formatStars, relativeTime, scoreColor } from '../../../data/tools';
+import { CATEGORIES, CATEGORY_CONTENT } from '../../../data/content-gen';
+
+export function getStaticPaths() {
+  const allTools = getAllTools();
+  const categoriesWithTools = new Set(allTools.map((t) => t.category).filter(Boolean));
+  return [...categoriesWithTools]
+    .filter((slug) => slug! in CATEGORIES)
+    .map((slug) => ({ params: { usecase: slug } }));
+}
+
+const { usecase } = Astro.params;
+const label = CATEGORIES[usecase!] ?? usecase!;
+const content = CATEGORY_CONTENT[usecase!];
+
+const tools = getAllTools()
+  .filter((t) => t.category === usecase)
+  .slice(0, 50);
+
+const pageUrl = `https://agentrank-ai.com/tools/use-case/${usecase}/`;
+const avg = tools.length > 0
+  ? tools.reduce((s, t) => s + t.score, 0) / tools.length
+  : null;
+
+const metaTitle = content?.metaTitle
+  ?? `Best ${label} MCP Servers & Agent Tools — AgentRank`;
+const metaDescription = content?.metaDescription
+  ?? `Top ${label} MCP servers and agent tools ranked by stars, freshness, issue health, and real adoption. ${tools.length} tools indexed.`;
+const metaKeywords = content?.keywords
+  ?? `${label} MCP servers, best ${label} agent tools, top ${label} tools`;
+
+const itemListJsonLd = tools.length > 0 ? {
+  '@context': 'https://schema.org',
+  '@type': 'ItemList',
+  name: content?.heading ?? `Best ${label} MCP Servers`,
+  description: metaDescription,
+  itemListOrder: 'https://schema.org/ItemListOrderDescending',
+  numberOfItems: Math.min(tools.length, 10),
+  itemListElement: tools.slice(0, 10).map((t, i) => ({
+    '@type': 'ListItem',
+    position: i + 1,
+    name: t.full_name,
+    url: `https://agentrank-ai.com/tool/${toSlug(t.full_name)}/`,
+  })),
+} : undefined;
+
+const breadcrumbJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'AgentRank', item: 'https://agentrank-ai.com/' },
+    { '@type': 'ListItem', position: 2, name: 'Browse by Category', item: 'https://agentrank-ai.com/category/' },
+    { '@type': 'ListItem', position: 3, name: content?.heading ?? label, item: pageUrl },
+  ],
+};
+
+const jsonLd = itemListJsonLd ? [breadcrumbJsonLd, itemListJsonLd] : breadcrumbJsonLd;
+
+const relatedCategories = (content?.relatedCategories || [])
+  .map((slug) => ({ slug, label: CATEGORIES[slug] ?? slug }))
+  .filter((c) => c.label && c.slug !== usecase);
+
+const LANGUAGE_LINKS = [
+  { slug: 'python', label: 'Python' },
+  { slug: 'typescript', label: 'TypeScript' },
+  { slug: 'go', label: 'Go' },
+];
+---
+
+<Base
+  title={metaTitle}
+  description={metaDescription}
+  keywords={metaKeywords}
+  canonicalUrl={pageUrl}
+  jsonLd={jsonLd}
+>
+  <div class="breadcrumb">
+    <a href="/">AgentRank</a> / <a href="/category/">Categories</a> / <span>{content?.heading ?? label}</span>
+  </div>
+
+  <h1 class="page-heading">{content?.heading ?? `Best ${label} MCP Servers`}</h1>
+  <p class="page-sub">
+    {tools.length} tool{tools.length !== 1 ? 's' : ''}
+    {avg !== null && <> &middot; avg score <span class="avg-score">{avg.toFixed(1)}</span></>}
+    &middot; sorted by AgentRank score
+  </p>
+
+  {content?.intro && content.intro.length > 0 && (
+    <section class="intro-section">
+      {content.intro.map((para) => <p class="intro-para">{para}</p>)}
+    </section>
+  )}
+
+  {tools.length > 0 ? (
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Tool</th>
+            <th>Score</th>
+            <th>Stars</th>
+            <th>Last Commit</th>
+            <th>Language</th>
+          </tr>
+        </thead>
+        <tbody>
+          {tools.map((tool, i) => (
+            <tr>
+              <td class="rank">{i + 1}</td>
+              <td class="name">
+                <a href={`/tool/${toSlug(tool.full_name)}/`}>{tool.full_name}</a>
+                {tool.is_archived && <span class="badge">archived</span>}
+              </td>
+              <td class="score">
+                <span class="score-bar" style={`--w: ${tool.score}%; --c: ${scoreColor(tool.score)}`}>
+                  {tool.score.toFixed(1)}
+                </span>
+              </td>
+              <td class="muted">{formatStars(tool.stars)}</td>
+              <td class="muted">{relativeTime(tool.last_commit_at)}</td>
+              <td class="muted">{tool.language || '—'}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  ) : (
+    <p class="empty">No {label} tools indexed yet.</p>
+  )}
+
+  <div class="related-sections">
+    {relatedCategories.length > 0 && (
+      <section class="related-section">
+        <h3 class="section-heading">Related Use Cases</h3>
+        <div class="related-grid">
+          {relatedCategories.map(({ slug, label: rLabel }) => (
+            <a href={`/tools/use-case/${slug}/`} class="related-card">
+              <span>{rLabel}</span>
+              <span class="arrow">&rarr;</span>
+            </a>
+          ))}
+        </div>
+      </section>
+    )}
+
+    <section class="related-section">
+      <h3 class="section-heading">Browse by Language</h3>
+      <div class="related-grid">
+        {LANGUAGE_LINKS.map(({ slug, label: lLabel }) => (
+          <a href={`/tools/language/${slug}/`} class="related-card">
+            <span>{lLabel} Tools</span>
+            <span class="arrow">&rarr;</span>
+          </a>
+        ))}
+      </div>
+    </section>
+  </div>
+
+  <div class="bottom-links">
+    <a href="/" class="bottom-link">Full Leaderboard &rarr;</a>
+    <a href="/category/" class="bottom-link">All Categories &rarr;</a>
+    <a href="/methodology/" class="bottom-link">How Scores Work &rarr;</a>
+  </div>
+</Base>
+
+<style>
+  .breadcrumb {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    margin-bottom: 1.5rem;
+  }
+
+  .breadcrumb a {
+    color: var(--text-muted);
+  }
+
+  .breadcrumb a:hover {
+    color: var(--accent);
+  }
+
+  .page-heading {
+    font-size: 1.4rem;
+    font-weight: 700;
+    margin-bottom: 0.25rem;
+  }
+
+  .page-sub {
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .avg-score {
+    font-weight: 600;
+    color: var(--accent);
+  }
+
+  .intro-section {
+    margin-bottom: 2rem;
+    max-width: 72ch;
+  }
+
+  .intro-para {
+    font-size: 0.9rem;
+    line-height: 1.7;
+    color: var(--text);
+    margin-bottom: 1rem;
+  }
+
+  .intro-para:last-child {
+    margin-bottom: 0;
+  }
+
+  .table-wrap {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    margin-bottom: 2.5rem;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.85rem;
+  }
+
+  th {
+    background: var(--bg-surface);
+    border-bottom: 2px solid var(--border);
+    padding: 0.5rem 0.75rem;
+    text-align: left;
+    font-weight: 600;
+    white-space: nowrap;
+    color: var(--text-muted);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  td {
+    padding: 0.4rem 0.75rem;
+    border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+  }
+
+  tr:hover td {
+    background: var(--bg-hover);
+  }
+
+  .rank {
+    color: var(--text-muted);
+    width: 3rem;
+  }
+
+  .name a {
+    color: var(--text);
+    font-weight: 500;
+  }
+
+  .name a:hover {
+    color: var(--accent);
+  }
+
+  .badge {
+    font-size: 0.65rem;
+    padding: 0.1rem 0.35rem;
+    border-radius: 3px;
+    margin-left: 0.5rem;
+    vertical-align: middle;
+    background: #78350f;
+    color: #fbbf24;
+  }
+
+  .score-bar {
+    display: inline-block;
+    padding: 0.1rem 0.5rem;
+    border-radius: 3px;
+    background: linear-gradient(90deg, var(--c) var(--w), transparent var(--w));
+    background-color: var(--bg-surface);
+    min-width: 4rem;
+    font-weight: 600;
+  }
+
+  .muted {
+    color: var(--text-muted);
+  }
+
+  .empty {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    margin-bottom: 2rem;
+  }
+
+  .related-sections {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    margin-bottom: 2rem;
+  }
+
+  .section-heading {
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-muted);
+    margin-bottom: 0.6rem;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 0.4rem;
+  }
+
+  .related-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .related-card {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.35rem 0.75rem;
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    font-size: 0.82rem;
+    color: var(--text);
+    text-decoration: none;
+    transition: border-color 0.15s, color 0.15s;
+  }
+
+  .related-card:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    text-decoration: none;
+  }
+
+  .arrow {
+    color: var(--text-muted);
+    font-size: 0.75rem;
+  }
+
+  .related-card:hover .arrow {
+    color: var(--accent);
+  }
+
+  .bottom-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 1rem;
+  }
+
+  .bottom-link {
+    font-size: 0.85rem;
+    color: var(--accent);
+    text-decoration: none;
+    padding: 0.35rem 0.75rem;
+    border: 1px solid color-mix(in srgb, var(--accent) 30%, var(--border));
+    border-radius: 4px;
+    font-weight: 500;
+  }
+
+  .bottom-link:hover {
+    background: color-mix(in srgb, var(--accent) 8%, transparent);
+    text-decoration: none;
+  }
+
+  @media (prefers-color-scheme: light) {
+    .badge {
+      background: #fef3c7;
+      color: #92400e;
+    }
+  }
+</style>

@@ -1,0 +1,450 @@
+---
+export const prerender = true;
+
+import Base from '../../../layouts/Base.astro';
+import { getAllTools } from '../../../data/ranked';
+import { toSlug, formatStars, relativeTime, scoreColor } from '../../../data/tools';
+import { CATEGORIES } from '../../../data/content-gen';
+
+const LANGUAGE_SLUGS = ['python', 'typescript', 'javascript', 'go', 'rust'];
+
+const LANGUAGE_META: Record<string, {
+  label: string;
+  heading: string;
+  intro: string[];
+  metaTitle: string;
+  metaDescription: string;
+  keywords: string;
+}> = {
+  python: {
+    label: 'Python',
+    heading: 'Best Python MCP Servers for AI Agents',
+    intro: [
+      'Python is the dominant language for MCP server development, powered by the official Anthropic Python SDK and the FastMCP framework that makes building servers fast and ergonomic. The Python MCP ecosystem covers databases, search, data processing, and AI/ML integrations better than any other language.',
+      'If you are building AI pipelines with LangChain, LlamaIndex, or direct Anthropic SDK integrations, Python-native MCP servers offer the smoothest path from prototype to production. Most community servers for AI model integrations, vector databases, and data tools are Python-first.',
+      'The tools below are ranked by the AgentRank composite score: stars, freshness, issue health, contributors, and dependents. A high score means the tool is actively maintained and used in real production projects.',
+    ],
+    metaTitle: 'Best Python MCP Servers — Ranked by Real Signals | AgentRank',
+    metaDescription: 'Top Python MCP servers for AI agents, ranked by GitHub stars, freshness, issue health, and real adoption. FastMCP, official Anthropic SDK, and community tools.',
+    keywords: 'Python MCP server, best Python MCP, FastMCP, Python agent tools, Python AI agent, MCP Python SDK, Python model context protocol',
+  },
+  typescript: {
+    label: 'TypeScript',
+    heading: 'Best TypeScript MCP Servers for AI Agents',
+    intro: [
+      'TypeScript is the second-largest language in the MCP ecosystem, backed by the official @modelcontextprotocol/sdk npm package. TypeScript MCP servers are the default choice for Node.js teams, Cloudflare Workers deployments, and anyone integrating with JavaScript frontends.',
+      'TypeScript\'s static type system makes MCP tool definitions particularly clean. Input schemas, return types, and error handling are all typed at compile time, reducing runtime surprises in production. The npm ecosystem also means TypeScript servers can leverage the full breadth of existing JavaScript libraries.',
+      'The tools below are ranked by real GitHub signals: stars, freshness, issue health, contributors, and dependents.',
+    ],
+    metaTitle: 'Best TypeScript MCP Servers — Ranked by Real Signals | AgentRank',
+    metaDescription: 'Top TypeScript MCP servers for AI agents, ranked by GitHub stars, freshness, issue health, and real adoption. Official MCP SDK and community tools.',
+    keywords: 'TypeScript MCP server, best TypeScript MCP, Node.js MCP server, MCP TypeScript SDK, TypeScript agent tools, JavaScript MCP server',
+  },
+  javascript: {
+    label: 'JavaScript',
+    heading: 'Best JavaScript MCP Servers for AI Agents',
+    intro: [
+      'JavaScript MCP servers cover tooling built for Node.js environments without TypeScript. Many started as TypeScript projects and ship pre-compiled, while others are pure JS for maximum compatibility with older environments.',
+      'When evaluating a JavaScript MCP server, check whether it ships TypeScript type definitions alongside the JS build. Tools that provide `.d.ts` files work seamlessly in typed codebases even when the source is JavaScript.',
+    ],
+    metaTitle: 'Best JavaScript MCP Servers — Ranked by Real Signals | AgentRank',
+    metaDescription: 'Top JavaScript MCP servers for AI agents, ranked by GitHub stars, freshness, issue health, and real adoption. Node.js MCP server ecosystem.',
+    keywords: 'JavaScript MCP server, Node.js MCP, JS agent tools, JavaScript model context protocol tools, npm MCP server',
+  },
+  go: {
+    label: 'Go',
+    heading: 'Best Go MCP Servers for AI Agents',
+    intro: [
+      'Go is the language of choice for high-performance MCP server infrastructure. Go MCP servers offer lower latency, smaller binary sizes, and simpler deployment (single static binary) compared to Python or Node.js. They are a common choice for teams running MCP servers in containers or Kubernetes.',
+      'The mcp-go library has become the standard Go implementation, providing typed tool definitions, resource handlers, and stdio/HTTP transport support. Go MCP servers appear most often in DevOps and infrastructure categories where performance and deployment simplicity matter most.',
+    ],
+    metaTitle: 'Best Go MCP Servers — Ranked by Real Signals | AgentRank',
+    metaDescription: 'Top Go MCP servers for AI agents, ranked by GitHub stars, freshness, issue health, and real adoption. High-performance Golang MCP server tools.',
+    keywords: 'Go MCP server, Golang MCP, mcp-go, Go agent tools, Go model context protocol, Golang AI agent, Go MCP library',
+  },
+  rust: {
+    label: 'Rust',
+    heading: 'Best Rust MCP Servers for AI Agents',
+    intro: [
+      'Rust MCP servers represent the high-performance frontier of the MCP ecosystem. Rust\'s zero-cost abstractions and memory safety guarantees make it ideal for MCP servers that handle large data volumes, require extreme throughput, or are embedded in safety-critical systems.',
+      'The Rust MCP ecosystem is smaller but growing. Tools here are used in high-performance data processing pipelines, embedded AI systems, and infrastructure where Go or Python performance is not sufficient. If your use case demands maximum throughput, a well-maintained Rust MCP server is worth the added complexity.',
+    ],
+    metaTitle: 'Best Rust MCP Servers — Ranked by Real Signals | AgentRank',
+    metaDescription: 'Top Rust MCP servers for AI agents, ranked by GitHub stars, freshness, issue health, and real adoption. High-performance Rust MCP ecosystem.',
+    keywords: 'Rust MCP server, Rust agent tools, Rust model context protocol, high performance MCP, Rust AI agent, Rust MCP library',
+  },
+};
+
+export function getStaticPaths() {
+  const SLUGS = ['python', 'typescript', 'javascript', 'go', 'rust'];
+  const allTools = getAllTools();
+  const langCounts: Record<string, number> = {};
+  for (const t of allTools) {
+    if (t.language) {
+      const lang = t.language.toLowerCase();
+      langCounts[lang] = (langCounts[lang] || 0) + 1;
+    }
+  }
+  return SLUGS
+    .filter((lang) => (langCounts[lang] || 0) >= 3)
+    .map((lang) => ({ params: { lang } }));
+}
+
+const { lang } = Astro.params;
+const meta = LANGUAGE_META[lang!];
+const tools = getAllTools()
+  .filter((t) => t.language?.toLowerCase() === lang)
+  .slice(0, 50);
+
+const pageUrl = `https://agentrank-ai.com/tools/language/${lang}/`;
+const avg = tools.length > 0
+  ? tools.reduce((s, t) => s + t.score, 0) / tools.length
+  : null;
+
+const itemListJsonLd = tools.length > 0 ? {
+  '@context': 'https://schema.org',
+  '@type': 'ItemList',
+  name: meta?.heading,
+  description: meta?.metaDescription,
+  itemListOrder: 'https://schema.org/ItemListOrderDescending',
+  numberOfItems: Math.min(tools.length, 10),
+  itemListElement: tools.slice(0, 10).map((t, i) => ({
+    '@type': 'ListItem',
+    position: i + 1,
+    name: t.full_name,
+    url: `https://agentrank-ai.com/tool/${toSlug(t.full_name)}/`,
+  })),
+} : undefined;
+
+const breadcrumbJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'AgentRank', item: 'https://agentrank-ai.com/' },
+    { '@type': 'ListItem', position: 2, name: 'Browse by Category', item: 'https://agentrank-ai.com/category/' },
+    { '@type': 'ListItem', position: 3, name: `${meta?.label} MCP Servers`, item: pageUrl },
+  ],
+};
+
+const jsonLd = itemListJsonLd ? [breadcrumbJsonLd, itemListJsonLd] : breadcrumbJsonLd;
+
+const otherLanguages = LANGUAGE_SLUGS
+  .filter((l) => l !== lang)
+  .map((l) => ({ slug: l, label: LANGUAGE_META[l]?.label || l }));
+
+const USE_CASES = [
+  { slug: 'database', label: 'Database' },
+  { slug: 'browser-automation', label: 'Browser Automation' },
+  { slug: 'search', label: 'Search & RAG' },
+  { slug: 'api-integration', label: 'API Integration' },
+  { slug: 'filesystem', label: 'Filesystem' },
+  { slug: 'deployment', label: 'DevOps' },
+];
+---
+
+<Base
+  title={meta?.metaTitle ?? `Best ${meta?.label} MCP Servers — AgentRank`}
+  description={meta?.metaDescription}
+  keywords={meta?.keywords}
+  canonicalUrl={pageUrl}
+  jsonLd={jsonLd}
+>
+  <div class="breadcrumb">
+    <a href="/">AgentRank</a> / <a href="/category/">Categories</a> / <span>{meta?.label} Tools</span>
+  </div>
+
+  <h1 class="page-heading">{meta?.heading ?? `Best ${meta?.label} MCP Servers`}</h1>
+  <p class="page-sub">
+    {tools.length} tool{tools.length !== 1 ? 's' : ''}
+    {avg !== null && <> &middot; avg score <span class="avg-score">{avg.toFixed(1)}</span></>}
+    &middot; sorted by AgentRank score
+  </p>
+
+  {meta?.intro && (
+    <section class="intro-section">
+      {meta.intro.map((para) => <p class="intro-para">{para}</p>)}
+    </section>
+  )}
+
+  {tools.length > 0 ? (
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Tool</th>
+            <th>Score</th>
+            <th>Stars</th>
+            <th>Last Commit</th>
+            <th>Category</th>
+          </tr>
+        </thead>
+        <tbody>
+          {tools.map((tool, i) => (
+            <tr>
+              <td class="rank">{i + 1}</td>
+              <td class="name">
+                <a href={`/tool/${toSlug(tool.full_name)}/`}>{tool.full_name}</a>
+                {tool.is_archived && <span class="badge">archived</span>}
+              </td>
+              <td class="score">
+                <span class="score-bar" style={`--w: ${tool.score}%; --c: ${scoreColor(tool.score)}`}>
+                  {tool.score.toFixed(1)}
+                </span>
+              </td>
+              <td class="muted">{formatStars(tool.stars)}</td>
+              <td class="muted">{relativeTime(tool.last_commit_at)}</td>
+              <td class="muted">{tool.category ? (CATEGORIES[tool.category] ?? tool.category) : '—'}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  ) : (
+    <p class="empty">No {meta?.label} tools indexed yet.</p>
+  )}
+
+  <div class="related-sections">
+    <section class="related-section">
+      <h3 class="section-heading">Other Languages</h3>
+      <div class="related-grid">
+        {otherLanguages.map(({ slug, label }) => (
+          <a href={`/tools/language/${slug}/`} class="related-card">
+            <span>{label} Tools</span>
+            <span class="arrow">&rarr;</span>
+          </a>
+        ))}
+      </div>
+    </section>
+
+    <section class="related-section">
+      <h3 class="section-heading">Browse by Use Case</h3>
+      <div class="related-grid">
+        {USE_CASES.map(({ slug, label }) => (
+          <a href={`/tools/use-case/${slug}/`} class="related-card">
+            <span>{label}</span>
+            <span class="arrow">&rarr;</span>
+          </a>
+        ))}
+      </div>
+    </section>
+  </div>
+
+  <div class="bottom-links">
+    <a href="/" class="bottom-link">Full Leaderboard &rarr;</a>
+    <a href="/category/" class="bottom-link">All Categories &rarr;</a>
+    <a href="/methodology/" class="bottom-link">How Scores Work &rarr;</a>
+  </div>
+</Base>
+
+<style>
+  .breadcrumb {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    margin-bottom: 1.5rem;
+  }
+
+  .breadcrumb a {
+    color: var(--text-muted);
+  }
+
+  .breadcrumb a:hover {
+    color: var(--accent);
+  }
+
+  .page-heading {
+    font-size: 1.4rem;
+    font-weight: 700;
+    margin-bottom: 0.25rem;
+  }
+
+  .page-sub {
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .avg-score {
+    font-weight: 600;
+    color: var(--accent);
+  }
+
+  .intro-section {
+    margin-bottom: 2rem;
+    max-width: 72ch;
+  }
+
+  .intro-para {
+    font-size: 0.9rem;
+    line-height: 1.7;
+    color: var(--text);
+    margin-bottom: 1rem;
+  }
+
+  .intro-para:last-child {
+    margin-bottom: 0;
+  }
+
+  .table-wrap {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    margin-bottom: 2.5rem;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.85rem;
+  }
+
+  th {
+    background: var(--bg-surface);
+    border-bottom: 2px solid var(--border);
+    padding: 0.5rem 0.75rem;
+    text-align: left;
+    font-weight: 600;
+    white-space: nowrap;
+    color: var(--text-muted);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  td {
+    padding: 0.4rem 0.75rem;
+    border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+  }
+
+  tr:hover td {
+    background: var(--bg-hover);
+  }
+
+  .rank {
+    color: var(--text-muted);
+    width: 3rem;
+  }
+
+  .name a {
+    color: var(--text);
+    font-weight: 500;
+  }
+
+  .name a:hover {
+    color: var(--accent);
+  }
+
+  .badge {
+    font-size: 0.65rem;
+    padding: 0.1rem 0.35rem;
+    border-radius: 3px;
+    margin-left: 0.5rem;
+    vertical-align: middle;
+    background: #78350f;
+    color: #fbbf24;
+  }
+
+  .score-bar {
+    display: inline-block;
+    padding: 0.1rem 0.5rem;
+    border-radius: 3px;
+    background: linear-gradient(90deg, var(--c) var(--w), transparent var(--w));
+    background-color: var(--bg-surface);
+    min-width: 4rem;
+    font-weight: 600;
+  }
+
+  .muted {
+    color: var(--text-muted);
+  }
+
+  .empty {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    margin-bottom: 2rem;
+  }
+
+  .related-sections {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    margin-bottom: 2rem;
+  }
+
+  .related-section {}
+
+  .section-heading {
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-muted);
+    margin-bottom: 0.6rem;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 0.4rem;
+  }
+
+  .related-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .related-card {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.35rem 0.75rem;
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    font-size: 0.82rem;
+    color: var(--text);
+    text-decoration: none;
+    transition: border-color 0.15s, color 0.15s;
+  }
+
+  .related-card:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    text-decoration: none;
+  }
+
+  .arrow {
+    color: var(--text-muted);
+    font-size: 0.75rem;
+  }
+
+  .related-card:hover .arrow {
+    color: var(--accent);
+  }
+
+  .bottom-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 1rem;
+  }
+
+  .bottom-link {
+    font-size: 0.85rem;
+    color: var(--accent);
+    text-decoration: none;
+    padding: 0.35rem 0.75rem;
+    border: 1px solid color-mix(in srgb, var(--accent) 30%, var(--border));
+    border-radius: 4px;
+    font-weight: 500;
+  }
+
+  .bottom-link:hover {
+    background: color-mix(in srgb, var(--accent) 8%, transparent);
+    text-decoration: none;
+  }
+
+  @media (prefers-color-scheme: light) {
+    .badge {
+      background: #fef3c7;
+      color: #92400e;
+    }
+  }
+</style>
