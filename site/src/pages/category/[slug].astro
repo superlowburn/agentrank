@@ -218,7 +218,7 @@ const jsonLd = categoryItemListJsonLd
     <a href="/">AgentRank</a> / <a href="/category/">Categories</a> / <span>{content?.heading ?? label}</span>
   </div>
 
-  <h2 class="category-heading">{content?.heading ?? label}</h2>
+  <h1 class="category-heading">{content?.heading ?? `Top ${label} MCP Servers`}</h1>
   <p class="category-sub">
     {allTools.length} tool{allTools.length !== 1 ? 's' : ''}
     {allSkills.length > 0 && <> &middot; {allSkills.length} skill{allSkills.length !== 1 ? 's' : ''}</>}

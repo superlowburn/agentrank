@@ -14,6 +14,8 @@ const STATIC_PAGES = [
   { path: '/', changefreq: 'daily' },
   { path: '/tools/', changefreq: 'daily' },
   { path: '/movers/', changefreq: 'daily' },
+  { path: '/new/', changefreq: 'daily' },
+  { path: '/rising/', changefreq: 'daily' },
   { path: '/agents/', changefreq: 'weekly' },
   { path: '/compare/', changefreq: 'weekly' },
   { path: '/compare/mcp-sdks/', changefreq: 'weekly' },

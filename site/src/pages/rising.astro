@@ -1,0 +1,220 @@
+---
+export const prerender = true;
+
+import Base from '../layouts/Base.astro';
+import { getMovers } from '../data/movers';
+import { toSlug, scoreColor } from '../data/tools';
+
+const movers = getMovers();
+const gainers = movers.tools.gainers;
+const comparisonDate = movers.comparison_date;
+const daysSpan = movers.days_span;
+const hasData = movers.has_data && gainers.length > 0;
+
+const itemListJsonLd = hasData ? {
+  '@context': 'https://schema.org',
+  '@type': 'ItemList',
+  name: 'Rising MCP Servers',
+  description: 'MCP servers with the biggest score gains this week in the AgentRank index.',
+  itemListOrder: 'https://schema.org/ItemListOrderDescending',
+  numberOfItems: gainers.length,
+  itemListElement: gainers.slice(0, 10).map((m, i) => ({
+    '@type': 'ListItem',
+    position: i + 1,
+    name: m.name || m.identifier,
+    url: `https://agentrank-ai.com/tool/${toSlug(m.identifier)}/`,
+  })),
+} : undefined;
+
+const breadcrumbJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'AgentRank', item: 'https://agentrank-ai.com/' },
+    { '@type': 'ListItem', position: 2, name: 'Rising MCP Servers', item: 'https://agentrank-ai.com/rising/' },
+  ],
+};
+
+const jsonLd = itemListJsonLd ? [breadcrumbJsonLd, itemListJsonLd] : breadcrumbJsonLd;
+---
+
+<Base
+  title="Rising MCP Servers — Biggest Score Gainers This Week — AgentRank"
+  description={`Which MCP servers are gaining traction this week? ${gainers.length} tools with the biggest AgentRank score increases, ranked by real GitHub signals.`}
+  keywords="rising MCP servers, trending MCP servers, MCP server gainers, fastest growing MCP servers, trending AI agent tools"
+  canonicalUrl="https://agentrank-ai.com/rising/"
+  jsonLd={jsonLd}
+>
+  <div class="breadcrumb">
+    <a href="/">AgentRank</a> / <span>Rising</span>
+  </div>
+
+  <h1 class="page-heading">Rising MCP Servers</h1>
+  <p class="page-sub">
+    {hasData
+      ? `${gainers.length} tool${gainers.length !== 1 ? 's' : ''} with the biggest score gains${comparisonDate ? ` vs ${comparisonDate}` : ''}${daysSpan ? ` (${daysSpan}d)` : ''}. Scored by stars, freshness, issue health, and contributors.`
+      : 'Rising tool data will appear after the first tracking snapshot.'}
+  </p>
+
+  {hasData && (
+    <>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Rank</th>
+              <th>Tool</th>
+              <th>Score</th>
+              <th>Change</th>
+              <th>Rank Move</th>
+            </tr>
+          </thead>
+          <tbody>
+            {gainers.map((m) => (
+              <tr>
+                <td class="rank">{m.current_rank}</td>
+                <td class="name">
+                  <a href={`/tool/${toSlug(m.identifier)}/`}>{m.name || m.identifier}</a>
+                </td>
+                <td class="score">
+                  <span class="score-bar" style={`--w: ${m.current_score}%; --c: ${scoreColor(m.current_score)}`}>
+                    {m.current_score.toFixed(1)}
+                  </span>
+                </td>
+                <td class="change positive">+{m.score_change.toFixed(2)}</td>
+                <td class="rank-move">
+                  {m.rank_change > 0 ? `+${m.rank_change}` : m.rank_change === 0 ? '—' : String(m.rank_change)}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      <div class="related-links">
+        <a href="/new/" class="related-link">New This Week &rarr;</a>
+        <a href="/movers/" class="related-link">Weekly Movers &rarr;</a>
+        <a href="/" class="related-link">Full Leaderboard &rarr;</a>
+        <a href="/category/" class="related-link">Browse by Category &rarr;</a>
+      </div>
+    </>
+  )}
+</Base>
+
+<style>
+  .breadcrumb {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    margin-bottom: 1.5rem;
+  }
+
+  .breadcrumb a {
+    color: var(--text-muted);
+  }
+
+  .breadcrumb a:hover {
+    color: var(--accent);
+  }
+
+  .page-heading {
+    font-size: 1.4rem;
+    font-weight: 700;
+    margin-bottom: 0.25rem;
+  }
+
+  .page-sub {
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .table-wrap {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    margin-bottom: 2rem;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.85rem;
+  }
+
+  th {
+    background: var(--bg-surface);
+    border-bottom: 2px solid var(--border);
+    padding: 0.5rem 0.75rem;
+    text-align: left;
+    font-weight: 600;
+    white-space: nowrap;
+    color: var(--text-muted);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  td {
+    padding: 0.4rem 0.75rem;
+    border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+  }
+
+  tr:hover td {
+    background: var(--bg-hover);
+  }
+
+  .rank {
+    color: var(--text-muted);
+    width: 3rem;
+  }
+
+  .name a {
+    color: var(--text);
+    font-weight: 500;
+  }
+
+  .name a:hover {
+    color: var(--accent);
+  }
+
+  .score-bar {
+    display: inline-block;
+    padding: 0.1rem 0.5rem;
+    border-radius: 3px;
+    background: linear-gradient(90deg, var(--c) var(--w), transparent var(--w));
+    background-color: var(--bg-surface);
+    min-width: 4rem;
+    font-weight: 600;
+  }
+
+  .change.positive {
+    color: #22c55e;
+    font-weight: 600;
+  }
+
+  .rank-move {
+    color: var(--text-muted);
+  }
+
+  .related-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 1rem;
+  }
+
+  .related-link {
+    font-size: 0.85rem;
+    color: var(--accent);
+    text-decoration: none;
+    padding: 0.35rem 0.75rem;
+    border: 1px solid color-mix(in srgb, var(--accent) 30%, var(--border));
+    border-radius: 4px;
+    font-weight: 500;
+  }
+
+  .related-link:hover {
+    background: color-mix(in srgb, var(--accent) 8%, transparent);
+    text-decoration: none;
+  }
+</style>
