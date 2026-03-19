@@ -6,11 +6,11 @@ import BlogSubscribeCTA from '../../components/BlogSubscribeCTA.astro';
 import RelatedPosts from '../../components/RelatedPosts.astro';
 
 const relatedPosts = [
+  { href: '/blog/getting-started-with-mcp-servers/', title: 'Getting Started with MCP Servers: A Complete Beginner Tutorial' },
   { href: '/blog/how-to-build-an-mcp-server/', title: 'How to Build an MCP Server in 2026' },
   { href: '/blog/mcp-server-vs-rest-api/', title: 'MCP Server vs REST API: When to Use Each' },
   { href: '/blog/mcp-setup-guide-claude-cursor-windsurf/', title: 'How to Set Up MCP Servers in Claude Desktop, Cursor, and Windsurf' },
   { href: '/blog/how-to-choose-an-mcp-server/', title: 'How to Choose an MCP Server in 2026' },
-  { href: '/blog/mcp-server-landscape-q1-2026/', title: 'The MCP Server Landscape: Q1 2026' },
 ];
 
 const publishDate = '2026-03-18';
@@ -448,8 +448,8 @@ const capabilities = [
         <li><strong>Docker</strong> — Docker MCP Gateway for container operations</li>
         <li><strong>AWS</strong> — 60+ official MCP servers for AWS services</li>
         <li><strong>Microsoft Azure</strong> — Azure MCP included in Visual Studio 2026</li>
-        <li><strong>Redis</strong>, <strong>MongoDB</strong>, <strong>Neon</strong> — Official database MCP servers</li>
-        <li><strong>Linear</strong>, <strong>Notion</strong>, <strong>Slack</strong>, <strong>GitHub</strong> — Productivity and collaboration tools</li>
+        <li><a href="/tool/redis--mcp-redis/" class="inline-link"><strong>Redis</strong></a>, <a href="/tool/mongodb-js--mongodb-mcp-server/" class="inline-link"><strong>MongoDB</strong></a>, <a href="/tool/neondatabase--mcp-server-neon/" class="inline-link"><strong>Neon</strong></a> — Official database MCP servers</li>
+        <li><a href="/tool/modelcontextprotocol--servers/" class="inline-link"><strong>GitHub</strong></a>, <strong>Linear</strong>, <strong>Notion</strong>, <strong>Slack</strong> — Productivity and collaboration tools</li>
       </ul>
       <p>
         The vendor adoption pattern is the strongest signal that MCP is the standard. When companies
@@ -584,8 +584,12 @@ if __name__ == "__main__":
       <p>
         One of the easiest ways to understand what MCP can do is to browse the existing server
         ecosystem. The 25,632 repositories in the AgentRank index cover every major category:
-        database access, DevOps tooling, code generation, browser automation, communication
-        platforms, cloud providers, and dozens of specialized niches.
+        <a href="/category/database/" class="inline-link">database access</a>,
+        <a href="/category/deployment/" class="inline-link">DevOps tooling</a>,
+        <a href="/category/code-generation/" class="inline-link">code generation</a>,
+        <a href="/category/browser-automation/" class="inline-link">browser automation</a>,
+        <a href="/category/communication/" class="inline-link">communication platforms</a>,
+        cloud providers, and dozens of specialized niches.
       </p>
       <p>
         AgentRank ranks every server by five real signals: stars, freshness, issue health,

@@ -1,0 +1,892 @@
+---
+export const prerender = true;
+
+import Base from '../../layouts/Base.astro';
+import BlogSubscribeCTA from '../../components/BlogSubscribeCTA.astro';
+import RelatedPosts from '../../components/RelatedPosts.astro';
+
+const relatedPosts = [
+  { href: '/blog/what-is-mcp-model-context-protocol-explained/', title: 'What is MCP? Model Context Protocol Explained for Developers' },
+  { href: '/blog/how-to-choose-an-mcp-server/', title: 'How to Choose an MCP Server in 2026' },
+  { href: '/blog/mcp-setup-guide-claude-cursor-windsurf/', title: 'How to Set Up MCP Servers in Claude Desktop, Cursor, and Windsurf' },
+  { href: '/blog/mcp-server-framework-comparison/', title: 'MCP Server Framework Comparison: SDK vs FastMCP vs MCP-Go' },
+  { href: '/blog/top-mcp-servers-2026/', title: 'Top MCP Servers in 2026' },
+];
+
+const publishDate = '2026-03-19';
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: 'Getting Started with MCP Servers: A Complete Beginner Tutorial',
+  description: 'A step-by-step beginner guide to MCP servers — what they are, how to find and install them, how to evaluate quality using the AgentRank score, and the top 5 servers to start with.',
+  datePublished: publishDate,
+  dateModified: publishDate,
+  author: {
+    '@type': 'Organization',
+    name: 'AgentRank',
+    url: 'https://agentrank-ai.com',
+  },
+  publisher: {
+    '@type': 'Organization',
+    name: 'AgentRank',
+    url: 'https://agentrank-ai.com',
+    logo: {
+      '@type': 'ImageObject',
+      url: 'https://agentrank-ai.com/og-image.png',
+    },
+  },
+  mainEntityOfPage: {
+    '@type': 'WebPage',
+    '@id': 'https://agentrank-ai.com/blog/getting-started-with-mcp-servers/',
+  },
+  image: 'https://agentrank-ai.com/og-image.png',
+  keywords: 'what are MCP servers, how to use MCP servers, MCP server tutorial, model context protocol guide, install MCP server, MCP server for beginners, getting started with MCP',
+};
+
+const faqJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: [
+    {
+      '@type': 'Question',
+      name: 'What are MCP servers?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'MCP servers are lightweight processes that expose tools, data, and capabilities to AI agents through the Model Context Protocol. They act as standardized adapters between AI coding assistants (like Claude, Cursor, or VS Code Copilot) and external services — databases, APIs, file systems, search engines, and more.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'How do I install my first MCP server?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Most MCP servers install via npm. Add an entry to your AI client\'s config file (claude_desktop_config.json for Claude Desktop, .cursor/mcp.json for Cursor) with the server\'s command and arguments. For example: {"mcpServers": {"filesystem": {"command": "npx", "args": ["-y", "@modelcontextprotocol/server-filesystem", "/Users/you/projects"]}}}',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'How do I know if an MCP server is good quality?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'The AgentRank score gives every MCP server a 0-100 quality rating based on five signals: GitHub stars (15%), code freshness (25%), issue health (25%), contributor count (10%), and inbound dependents (25%). Scores above 70 indicate well-maintained, actively used servers worth trusting.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Do I need to code to use MCP servers?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'No. Most MCP servers install via a single npx command. You edit a JSON config file to register them with your AI client. No programming required for installation and use — coding only becomes relevant if you want to build your own custom MCP server.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Which AI tools support MCP servers?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'As of 2026, MCP servers are supported natively by Claude Desktop, Cursor, VS Code (via GitHub Copilot in Agent mode), Windsurf, Cline, and Claude Code. Most major AI coding assistants now support MCP.',
+      },
+    },
+  ],
+};
+
+const topServers = [
+  {
+    name: 'filesystem',
+    package: '@modelcontextprotocol/server-filesystem',
+    slug: 'modelcontextprotocol--servers',
+    score: '91',
+    description: 'Read and write local files. The most fundamental MCP server — gives your AI assistant direct access to your project directory.',
+    installLine: 'npx -y @modelcontextprotocol/server-filesystem /path/to/your/projects',
+  },
+  {
+    name: 'GitHub',
+    package: '@modelcontextprotocol/server-github',
+    slug: 'modelcontextprotocol--servers',
+    score: '91',
+    description: 'Create issues, open PRs, search code, and manage repositories without leaving your editor. Requires a GitHub personal access token.',
+    installLine: 'npx -y @modelcontextprotocol/server-github',
+  },
+  {
+    name: 'Playwright MCP',
+    package: '@playwright/mcp',
+    slug: 'microsoft--playwright-mcp',
+    score: '87',
+    description: 'Browser automation for your AI agent. Scrape pages, run end-to-end tests, take screenshots, and interact with web UIs.',
+    installLine: 'npx -y @playwright/mcp',
+  },
+  {
+    name: 'Brave Search',
+    package: '@modelcontextprotocol/server-brave-search',
+    slug: 'modelcontextprotocol--servers',
+    score: '85',
+    description: 'Web search without hallucination. Your AI agent can look things up in real time using the Brave Search API.',
+    installLine: 'npx -y @modelcontextprotocol/server-brave-search',
+  },
+  {
+    name: 'Memory',
+    package: '@modelcontextprotocol/server-memory',
+    slug: 'modelcontextprotocol--servers',
+    score: '83',
+    description: 'Persistent knowledge graph for your AI agent. Store and retrieve facts across sessions — your agent remembers what you told it yesterday.',
+    installLine: 'npx -y @modelcontextprotocol/server-memory',
+  },
+];
+---
+
+<Base
+  title="Getting Started with MCP Servers: A Complete Beginner Tutorial — AgentRank"
+  description="Learn what MCP servers are, how to install your first one, how to evaluate quality with the AgentRank score, and the top 5 servers every developer should start with."
+  activeTab="blog"
+  keywords="what are MCP servers, how to use MCP servers, MCP server tutorial, model context protocol guide, MCP server for beginners, install MCP server, getting started with MCP"
+  canonicalUrl="https://agentrank-ai.com/blog/getting-started-with-mcp-servers/"
+  jsonLd={[jsonLd, faqJsonLd]}
+  ogImage="/og-image.png"
+>
+  <article class="blog-post">
+    <header class="post-header">
+      <div class="breadcrumb"><a href="/blog/">Blog</a> <span>/</span></div>
+      <h1>Getting Started with MCP Servers: A Complete Beginner Tutorial</h1>
+      <div class="post-meta">
+        <time datetime={publishDate}>March 19, 2026</time>
+        <span class="sep">&middot;</span>
+        <span>14 min read</span>
+        <span class="sep">&middot;</span>
+        <span>Beginner tutorial</span>
+      </div>
+      <p class="lede">
+        MCP servers turn your AI coding assistant into an agent that can actually do things — search the web,
+        read files, open pull requests, query databases. This guide covers everything you need to go from
+        "what is this?" to running your first five servers in under an hour.
+      </p>
+    </header>
+
+    <nav class="toc">
+      <strong>Contents</strong>
+      <ol>
+        <li><a href="#what-is-mcp">What is the Model Context Protocol?</a></li>
+        <li><a href="#what-are-mcp-servers">What are MCP servers and why they matter</a></li>
+        <li><a href="#find-the-right-server">How to find the right MCP server for your use case</a></li>
+        <li><a href="#install-your-first-server">Step-by-step: installing your first MCP server</a></li>
+        <li><a href="#evaluate-quality">How to evaluate MCP server quality</a></li>
+        <li><a href="#top-5-servers">Top 5 MCP servers to start with</a></li>
+        <li><a href="#common-pitfalls">Common pitfalls and how to avoid them</a></li>
+      </ol>
+    </nav>
+
+    <section id="what-is-mcp">
+      <h2>1. What is the Model Context Protocol?</h2>
+      <p>
+        The Model Context Protocol (MCP) is an open standard, published by Anthropic in November 2024, that
+        defines exactly how AI agents connect to external tools and data sources. Think of it as USB-C for
+        AI integrations: one standard connector that works everywhere, instead of a different cable for
+        every device.
+      </p>
+      <p>
+        Before MCP, connecting an AI assistant to your database meant writing custom integration code
+        specific to that AI tool. If you switched from Claude to Cursor, your integration broke. If the
+        AI provider changed their API, your code needed updates. Every integration was a one-off that only
+        worked in one place.
+      </p>
+      <p>
+        MCP fixes this by defining a universal language. An MCP server exposes capabilities using a
+        standard schema. Any MCP-compatible client — Claude Desktop, Cursor, VS Code, Windsurf — can
+        discover those capabilities and call them without any custom glue code. Build the server once,
+        use it everywhere.
+      </p>
+      <p>
+        The protocol has three primitives:
+      </p>
+      <ul>
+        <li>
+          <strong>Tools</strong> — functions the AI can call. A tool has a name, a description, and a JSON Schema
+          for its input. The AI decides when to call it based on the description. Example: <code>search_web</code>,
+          <code>create_github_issue</code>, <code>query_database</code>.
+        </li>
+        <li>
+          <strong>Resources</strong> — read-only data the AI can fetch, like files or database records.
+          Example: <code>file://project/README.md</code>.
+        </li>
+        <li>
+          <strong>Prompts</strong> — pre-built prompt templates the AI can invoke by name. Useful for
+          complex repeatable workflows.
+        </li>
+      </ul>
+      <p>
+        For a deeper dive into the protocol itself, see our
+        <a href="/blog/what-is-mcp-model-context-protocol-explained/" class="inline-link">full MCP explainer</a>.
+        This guide focuses on the practical side: finding, installing, and using MCP servers.
+      </p>
+    </section>
+
+    <section id="what-are-mcp-servers">
+      <h2>2. What are MCP servers and why they matter</h2>
+      <p>
+        An MCP server is a lightweight process — usually a Node.js or Python script — that implements
+        the server side of the Model Context Protocol. It runs locally on your machine (or remotely over
+        HTTP) and exposes a set of tools your AI assistant can discover and call.
+      </p>
+      <p>
+        Here is the architecture in plain terms: your AI client (Claude Desktop, Cursor) contains an
+        MCP client. When you start the client, it launches the MCP servers you've configured and asks
+        each one: "what tools do you have?" The server responds with a list of tool definitions. Now
+        the AI knows about those tools and can call them when relevant to the task at hand.
+      </p>
+      <p>
+        When you ask Claude to "check if there are any open issues blocking the login feature," it can
+        call a GitHub MCP server tool to search issues — and return real data instead of guessing. When
+        you ask Cursor to "look up the latest docs for this API," it can call a web search MCP server
+        to fetch live results instead of relying on its training cutoff.
+      </p>
+      <p>
+        That's why MCP servers matter: they close the gap between what AI assistants <em>know</em>
+        and what they can actually <em>do</em>. The AI stops being a smart autocomplete and starts
+        being an agent that takes actions in the real world.
+      </p>
+      <p>
+        As of March 2026, there are over 25,000 MCP server repositories on GitHub. They cover
+        databases, file systems, web browsers, search engines, communication tools, cloud providers,
+        and more. The ecosystem has grown faster than almost any other developer tooling category
+        in the past two years.
+      </p>
+    </section>
+
+    <section id="find-the-right-server">
+      <h2>3. How to find the right MCP server for your use case</h2>
+      <p>
+        With 25,000+ servers available, the discovery problem is real. A GitHub search for "mcp server"
+        returns thousands of results with no way to tell which are actively maintained, widely used, or
+        safe to install. Most search results are abandoned side projects or low-quality forks.
+      </p>
+      <p>
+        The <a href="/tools/" class="inline-link">AgentRank leaderboard</a> is built specifically to
+        solve this. It crawls GitHub nightly, scores every MCP server on five quality signals, and
+        surfaces the best ones by category. You can browse by use case:
+      </p>
+      <ul>
+        <li><a href="/blog/best-mcp-servers-database/" class="inline-link">Database</a> — PostgreSQL, MySQL, MongoDB, Redis, Neon, DynamoDB</li>
+        <li><a href="/blog/best-mcp-servers-web-browser/" class="inline-link">Browser automation</a> — Playwright, Puppeteer, headless Chrome</li>
+        <li><a href="/blog/best-mcp-servers-devops/" class="inline-link">DevOps</a> — Docker, Kubernetes, GitHub Actions, CI/CD</li>
+        <li><a href="/blog/best-mcp-servers-code-generation/" class="inline-link">Code generation</a> — language servers, linters, test runners</li>
+        <li><a href="/blog/best-mcp-servers-productivity/" class="inline-link">Productivity</a> — Slack, Notion, calendar, email</li>
+      </ul>
+      <p>
+        If you already know the tool you want (say, you want a Postgres MCP server), use the
+        <a href="/check/" class="inline-link">AgentRank Health Checker</a>: paste any GitHub URL and
+        get an instant quality breakdown — score, freshness, issue health, and contributor count.
+        No login required.
+      </p>
+      <p>
+        If you're choosing between two similar servers, the
+        <a href="/compare/" class="inline-link">comparison tool</a> shows full signal breakdowns
+        side by side. See which one was updated more recently, which has a better issue close rate,
+        and which has more contributors before you commit.
+      </p>
+      <p>
+        For first-timers: start with the official servers maintained by the MCP working group at
+        <code>@modelcontextprotocol</code> on GitHub. They have the highest scores, the most
+        contributors, and the most consistent update cadence. They're a safe baseline before you
+        explore third-party options.
+      </p>
+    </section>
+
+    <section id="install-your-first-server">
+      <h2>4. Step-by-step: installing your first MCP server</h2>
+      <p>
+        We'll install the filesystem MCP server — which gives your AI access to read and write local
+        files — in Claude Desktop. The same pattern applies to Cursor, VS Code, and Windsurf with
+        minor config path differences.
+      </p>
+
+      <h3>Prerequisites</h3>
+      <ul>
+        <li>Claude Desktop installed (or another MCP-compatible client)</li>
+        <li>Node.js 18+ installed (<code>node --version</code> to check)</li>
+        <li>A text editor to modify JSON config files</li>
+      </ul>
+
+      <h3>Step 1: Find the config file</h3>
+      <p>
+        Claude Desktop uses a JSON config file to know which MCP servers to launch. Its location
+        depends on your OS:
+      </p>
+      <div class="code-block">
+        <div class="code-label">Config file location</div>
+        <pre><code># macOS
+~/Library/Application Support/Claude/claude_desktop_config.json
+
+# Windows
+%APPDATA%\Claude\claude_desktop_config.json
+
+# Linux
+~/.config/Claude/claude_desktop_config.json</code></pre>
+      </div>
+      <p>
+        If the file doesn't exist, create it. It must be valid JSON — a single typo will prevent
+        Claude Desktop from loading any servers.
+      </p>
+
+      <h3>Step 2: Add the server entry</h3>
+      <p>
+        Open the config file and add (or merge) the following:
+      </p>
+      <div class="code-block">
+        <div class="code-label">claude_desktop_config.json</div>
+        <pre><code>&#123;
+  "mcpServers": &#123;
+    "filesystem": &#123;
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-filesystem",
+        "/Users/yourname/projects"
+      ]
+    &#125;
+  &#125;
+&#125;</code></pre>
+      </div>
+      <p>
+        Replace <code>/Users/yourname/projects</code> with the directory you want the AI to access.
+        You can pass multiple paths as additional arguments. Restrict this to directories you're
+        comfortable granting read/write access — the AI can create, modify, and delete files in
+        any path you specify.
+      </p>
+
+      <h3>Step 3: Restart Claude Desktop</h3>
+      <p>
+        MCP servers are launched on startup. Fully quit Claude Desktop (Cmd+Q on macOS, not just
+        closing the window) and reopen it. On startup, Claude Desktop will launch the filesystem
+        server as a subprocess and request its tool list.
+      </p>
+
+      <h3>Step 4: Verify it's working</h3>
+      <p>
+        In a Claude Desktop conversation, ask: "What files are in my projects directory?" If the
+        filesystem server is connected, Claude will call the <code>list_directory</code> tool and
+        return the actual contents. You'll see a tool call annotation in the response showing what
+        was executed.
+      </p>
+      <p>
+        If it's not working, open the developer console: <strong>Help &rarr; Developer Tools &rarr;
+        Console</strong>. Look for MCP-related errors — usually a missing Node.js version, a wrong
+        path, or a JSON syntax error in the config.
+      </p>
+
+      <h3>Adding a second server</h3>
+      <p>
+        To add more servers, add entries to the <code>mcpServers</code> object. Here's a config
+        with both filesystem and GitHub:
+      </p>
+      <div class="code-block">
+        <div class="code-label">claude_desktop_config.json — multiple servers</div>
+        <pre><code>&#123;
+  "mcpServers": &#123;
+    "filesystem": &#123;
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-filesystem",
+        "/Users/yourname/projects"
+      ]
+    &#125;,
+    "github": &#123;
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-github"],
+      "env": &#123;
+        "GITHUB_PERSONAL_ACCESS_TOKEN": "ghp_your_token_here"
+      &#125;
+    &#125;
+  &#125;
+&#125;</code></pre>
+      </div>
+      <p>
+        For the GitHub server, create a personal access token at
+        <strong>GitHub Settings &rarr; Developer settings &rarr; Personal access tokens</strong>.
+        Grant <code>repo</code> scope for full repository access, or narrow it to the specific
+        permissions you need.
+      </p>
+
+      <h3>Config for other clients</h3>
+      <p>
+        The config structure is similar across clients, just in different files:
+      </p>
+      <ul>
+        <li><strong>Cursor:</strong> <code>~/.cursor/mcp.json</code> — uses <code>&#123;"mcpServers": &#123;...&#125;&#125;</code> format</li>
+        <li><strong>VS Code:</strong> <code>.vscode/mcp.json</code> in your project — uses <code>&#123;"servers": &#123;...&#125;&#125;</code> format</li>
+        <li><strong>Windsurf:</strong> <code>~/.codeium/windsurf/mcp_config.json</code></li>
+      </ul>
+      <p>
+        For detailed per-client setup instructions, see our
+        <a href="/blog/mcp-setup-guide-claude-cursor-windsurf/" class="inline-link">MCP setup guide for Claude, Cursor, and Windsurf</a>.
+      </p>
+    </section>
+
+    <section id="evaluate-quality">
+      <h2>5. How to evaluate MCP server quality</h2>
+      <p>
+        Not all MCP servers are worth installing. Some are abandoned prototypes. Some have critical
+        bugs with no maintainer to fix them. Some were written over a weekend, never updated, and
+        will break when the underlying API changes. Installing low-quality servers wastes your time
+        and can introduce reliability issues into your workflow.
+      </p>
+      <p>
+        The AgentRank score gives every server a single 0–100 quality rating built from five signals:
+      </p>
+
+      <div class="signals-grid">
+        <div class="signal-card">
+          <div class="signal-label">Stars <span class="signal-weight">15%</span></div>
+          <p>Raw popularity signal. More stars means more users who've found it useful. Normalized against the ecosystem so one tool isn't penalized just because it's newer.</p>
+        </div>
+        <div class="signal-card">
+          <div class="signal-label">Freshness <span class="signal-weight">25%</span></div>
+          <p>Days since last commit. Anything over 90 days starts decaying significantly. Active projects ship fixes when APIs change and the MCP spec updates. Freshness is the single strongest maintenance signal.</p>
+        </div>
+        <div class="signal-card">
+          <div class="signal-label">Issue Health <span class="signal-weight">25%</span></div>
+          <p>Closed issues divided by total issues. A high ratio means the maintainer responds to bug reports and ships fixes. Low ratio often means reports pile up unaddressed.</p>
+        </div>
+        <div class="signal-card">
+          <div class="signal-label">Contributors <span class="signal-weight">10%</span></div>
+          <p>More than one contributor dramatically reduces bus factor risk. Single-maintainer projects go dark when that person moves on. Multi-contributor projects have built-in continuity.</p>
+        </div>
+        <div class="signal-card">
+          <div class="signal-label">Inbound Dependents <span class="signal-weight">25%</span></div>
+          <p>How many other repos import or depend on this server? Strong dependents signal means other developers have evaluated it and staked their own projects on it. This is the highest-conviction quality signal.</p>
+        </div>
+      </div>
+
+      <p>
+        Scores above 80 are the safest tier — well-maintained, widely used, actively developed.
+        Scores 60–80 are solid but may have gaps (lighter contributor counts or sporadic commit
+        activity). Below 60, look carefully at the freshness signal specifically — if the last
+        commit was six months ago and there are open bug reports, that's a real risk.
+      </p>
+      <p>
+        To check any server's score: paste its GitHub URL into the
+        <a href="/check/" class="inline-link">AgentRank Health Checker</a>. You'll get the full
+        signal breakdown in seconds.
+      </p>
+    </section>
+
+    <section id="top-5-servers">
+      <h2>6. Top 5 MCP servers to start with</h2>
+      <p>
+        These five servers are the highest-signal starting point for any developer. They cover the
+        most common use cases, have the highest AgentRank scores in their categories, and have
+        straightforward installation with no complex dependencies. All scores from the AgentRank
+        index, March 2026.
+      </p>
+
+      {topServers.map((server) => (
+        <div class="server-card">
+          <div class="server-header">
+            <div>
+              <span class="server-name">{server.name}</span>
+              <code class="server-package">{server.package}</code>
+            </div>
+            <span class="server-score">Score: {server.score}</span>
+          </div>
+          <p>{server.description}</p>
+          <div class="code-block">
+            <div class="code-label">Install (add to your config args)</div>
+            <pre><code>{server.installLine}</code></pre>
+          </div>
+          <p class="server-link">
+            <a href={`/tool/${server.slug}/`} class="inline-link">View on AgentRank &rarr;</a>
+          </p>
+        </div>
+      ))}
+
+      <p>
+        For a broader look at what's ranked highest across the full ecosystem, see the
+        <a href="/tools/" class="inline-link">AgentRank leaderboard</a> or the curated
+        <a href="/blog/top-mcp-servers-2026/" class="inline-link">top MCP servers of 2026</a> list.
+      </p>
+    </section>
+
+    <section id="common-pitfalls">
+      <h2>7. Common pitfalls and how to avoid them</h2>
+
+      <h3>JSON syntax errors in the config file</h3>
+      <p>
+        The most common installation failure. A single trailing comma, a missing quote, or a mismatched
+        brace breaks the entire config — Claude Desktop silently loads no servers instead of flagging
+        the broken one. Before restarting, validate your config:
+      </p>
+      <div class="code-block">
+        <div class="code-label">Validate JSON before restarting</div>
+        <pre><code># macOS/Linux
+cat ~/Library/Application\ Support/Claude/claude_desktop_config.json \
+  | python3 -m json.tool
+
+# Or use an online validator: jsonlint.com</code></pre>
+      </div>
+
+      <h3>Forgetting to fully restart the client</h3>
+      <p>
+        On macOS, clicking the red close button hides the window but keeps the app running. MCP
+        server config is only re-read on full restart. Use <strong>Cmd+Q</strong> (or <strong>File
+        &rarr; Quit</strong>) to fully exit, then relaunch. In Cursor, use
+        <strong>Developer: Reload MCP Servers</strong> from the command palette instead.
+      </p>
+
+      <h3>Installing servers without checking their score</h3>
+      <p>
+        GitHub is full of MCP servers with impressive README screenshots and zero recent commits.
+        Before installing any server from a tutorial, blog post, or Reddit thread, paste its GitHub
+        URL into the <a href="/check/" class="inline-link">AgentRank Health Checker</a>. A quick
+        score check takes ten seconds and can save hours of debugging a broken integration.
+      </p>
+
+      <h3>Granting excessive file system access</h3>
+      <p>
+        The filesystem MCP server gets read and write access to every path you specify. Don't pass
+        <code>/</code> or <code>~</code> as the root path. Pass the specific directories your AI
+        workflow actually needs — your projects folder, not your entire home directory. The AI
+        can create, modify, and delete files anywhere in scope.
+      </p>
+
+      <h3>Using the wrong Node.js version</h3>
+      <p>
+        Most MCP servers require Node.js 18 or higher. If your system Node is older, <code>npx</code>
+        commands will fail with cryptic errors. Check with <code>node --version</code> and upgrade
+        via <a href="https://github.com/nvm-sh/nvm" target="_blank" rel="noopener noreferrer">nvm</a>
+        if needed.
+      </p>
+
+      <h3>Installing too many servers at once</h3>
+      <p>
+        Each MCP server is a subprocess that your AI client maintains a connection to. Start with
+        two or three servers and verify each one works before adding more. If something breaks after
+        adding five servers simultaneously, you won't know which one caused the issue. Add servers
+        incrementally and test after each addition.
+      </p>
+
+      <h3>Not understanding what tools are available</h3>
+      <p>
+        After installing a new server, ask your AI assistant: "What MCP tools do you have available?"
+        A good client will list the connected servers and their tools. Knowing what's available helps
+        you write better prompts — instead of hoping the AI figures out it should use a tool, you
+        can explicitly ask it to use a specific one.
+      </p>
+
+      <h3>Using servers from untrusted sources</h3>
+      <p>
+        MCP servers run as processes on your machine with whatever permissions you grant them. An
+        MCP server with file access can read your SSH keys, API credentials, and source code. Stick
+        to servers with high AgentRank scores, active GitHub histories, and maintainers with
+        verifiable identities. The official <code>@modelcontextprotocol</code> servers are the
+        safest baseline — they're maintained by the MCP working group and reviewed by Anthropic.
+        For a full discussion of security considerations, see our
+        <a href="/blog/mcp-server-security-best-practices/" class="inline-link">MCP server security best practices</a> guide.
+      </p>
+
+      <div class="cta-box">
+        <p>
+          <strong>Find your next server:</strong> <a href="/tools/">Browse 25,000+ ranked MCP servers</a>
+          — sorted by the five-signal AgentRank score, updated nightly.
+        </p>
+        <p>
+          <strong>Compare before you install:</strong> <a href="/compare/">Head-to-head comparison tool</a>
+          — see full signal breakdowns side by side.
+        </p>
+        <p>
+          <strong>Check any server in seconds:</strong> <a href="/check/">AgentRank Health Checker</a>
+          — paste a GitHub URL for an instant score and quality breakdown.
+        </p>
+        <p>
+          <strong>Connect AgentRank to your editor:</strong> <a href="/integrations/">AgentRank integrations</a>
+          — query live rankings from inside Cursor, VS Code, Cline, and Windsurf.
+        </p>
+      </div>
+    </section>
+
+    <RelatedPosts posts={relatedPosts} />
+    <BlogSubscribeCTA source="blog" />
+    <footer class="post-footer">
+      <p class="methodology">
+        <strong>Methodology:</strong> Server scores from the AgentRank index crawled March 2026.
+        Scores computed using: stars 15%, freshness 25%, issue health 25%, contributors 10%, inbound dependents 25%.
+        Only non-archived repositories included.
+      </p>
+      <p class="share-line">
+        Found this useful? <a href="https://x.com/AgentRank_ai" target="_blank" rel="noopener noreferrer">Follow @AgentRank_ai</a> for
+        weekly ecosystem updates, biggest movers, and new tool spotlights.
+      </p>
+    </footer>
+  </article>
+
+  <style>
+    .blog-post {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 2rem 0 3rem;
+    }
+
+    .breadcrumb {
+      font-size: 0.85rem;
+      color: var(--text-muted, #666);
+      margin-bottom: 0.75rem;
+    }
+
+    .breadcrumb a {
+      color: var(--text-muted, #666);
+      text-decoration: none;
+    }
+
+    .breadcrumb a:hover {
+      text-decoration: underline;
+    }
+
+    .breadcrumb span {
+      margin: 0 0.4rem;
+    }
+
+    .post-meta {
+      font-size: 0.9rem;
+      color: var(--text-muted, #666);
+      margin-bottom: 1.5rem;
+    }
+
+    .sep {
+      margin: 0 0.5rem;
+    }
+
+    .lede {
+      font-size: 1.15rem;
+      line-height: 1.6;
+      color: var(--text-secondary, #444);
+      margin-bottom: 2rem;
+    }
+
+    .toc {
+      background: var(--surface-alt, #f8f8f8);
+      border: 1px solid var(--border, #e0e0e0);
+      border-radius: 6px;
+      padding: 1.25rem 1.5rem;
+      margin-bottom: 2.5rem;
+    }
+
+    .toc strong {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted, #666);
+    }
+
+    .toc ol {
+      margin: 0;
+      padding-left: 1.25rem;
+    }
+
+    .toc li {
+      margin-bottom: 0.25rem;
+      font-size: 0.95rem;
+    }
+
+    section {
+      margin-bottom: 3rem;
+    }
+
+    h2 {
+      font-size: 1.5rem;
+      margin: 0 0 1rem;
+      padding-top: 0.5rem;
+    }
+
+    h3 {
+      font-size: 1.1rem;
+      margin: 1.75rem 0 0.5rem;
+    }
+
+    p {
+      line-height: 1.7;
+      margin-bottom: 1rem;
+    }
+
+    ul, ol {
+      line-height: 1.7;
+      margin-bottom: 1rem;
+      padding-left: 1.5rem;
+    }
+
+    li {
+      margin-bottom: 0.4rem;
+    }
+
+    code {
+      font-family: var(--font-mono, monospace);
+      font-size: 0.88em;
+      background: var(--surface-alt, #f4f4f4);
+      padding: 0.15em 0.35em;
+      border-radius: 3px;
+    }
+
+    .code-block {
+      background: var(--surface-code, #1e1e1e);
+      color: var(--text-code, #d4d4d4);
+      border-radius: 6px;
+      overflow: hidden;
+      margin: 1rem 0 1.5rem;
+    }
+
+    .code-label {
+      font-size: 0.8rem;
+      padding: 0.4rem 1rem;
+      background: rgba(255,255,255,0.07);
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      font-family: var(--font-mono, monospace);
+      color: rgba(255,255,255,0.5);
+    }
+
+    .code-block pre {
+      margin: 0;
+      padding: 1rem;
+      overflow-x: auto;
+    }
+
+    .code-block code {
+      background: none;
+      padding: 0;
+      font-size: 0.875rem;
+      color: inherit;
+    }
+
+    .inline-link {
+      color: var(--accent, #2563eb);
+    }
+
+    .inline-link:hover {
+      text-decoration: underline;
+    }
+
+    .signals-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin: 1.5rem 0;
+    }
+
+    @media (max-width: 600px) {
+      .signals-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .signal-card {
+      border: 1px solid var(--border, #e0e0e0);
+      border-radius: 6px;
+      padding: 1rem;
+    }
+
+    .signal-label {
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      font-size: 0.95rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .signal-weight {
+      font-size: 0.8rem;
+      color: var(--text-muted, #888);
+      font-weight: normal;
+    }
+
+    .signal-card p {
+      font-size: 0.9rem;
+      margin: 0;
+      color: var(--text-secondary, #555);
+      line-height: 1.5;
+    }
+
+    .server-card {
+      border: 1px solid var(--border, #e0e0e0);
+      border-radius: 8px;
+      padding: 1.25rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .server-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 0.5rem;
+      gap: 1rem;
+    }
+
+    .server-name {
+      font-weight: 700;
+      font-size: 1.05rem;
+      display: block;
+      margin-bottom: 0.2rem;
+    }
+
+    .server-package {
+      font-size: 0.82rem;
+      background: var(--surface-alt, #f4f4f4);
+      padding: 0.15em 0.4em;
+      border-radius: 3px;
+    }
+
+    .server-score {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--accent, #2563eb);
+      white-space: nowrap;
+      background: var(--surface-alt, #f0f4ff);
+      padding: 0.25rem 0.6rem;
+      border-radius: 4px;
+    }
+
+    .server-card p {
+      font-size: 0.95rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .server-link {
+      margin: 0.5rem 0 0;
+      font-size: 0.9rem;
+    }
+
+    .cta-box {
+      background: var(--surface-alt, #f8f9ff);
+      border: 1px solid var(--border-accent, #c7d7ff);
+      border-radius: 8px;
+      padding: 1.25rem 1.5rem;
+      margin: 2rem 0;
+    }
+
+    .cta-box p {
+      margin-bottom: 0.75rem;
+      font-size: 0.95rem;
+    }
+
+    .cta-box p:last-child {
+      margin-bottom: 0;
+    }
+
+    .post-footer {
+      margin-top: 3rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--border, #e0e0e0);
+    }
+
+    .methodology {
+      font-size: 0.85rem;
+      color: var(--text-muted, #666);
+      line-height: 1.5;
+    }
+
+    .share-line {
+      font-size: 0.9rem;
+      color: var(--text-muted, #666);
+      margin-top: 0.75rem;
+    }
+  </style>
+</Base>
