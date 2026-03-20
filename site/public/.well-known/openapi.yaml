@@ -264,38 +264,6 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
 
-  /api/status:
-    get:
-      operationId: healthCheck
-      summary: Health check
-      description: Returns the current health status of the AgentRank API.
-      responses:
-        "200":
-          description: Health status
-          content:
-            application/json:
-              schema:
-                type: object
-                required:
-                  - status
-                  - timestamp
-                  - response_ms
-                  - checks
-                properties:
-                  status:
-                    type: string
-                    enum:
-                      - ok
-                      - degraded
-                  timestamp:
-                    type: string
-                    format: date-time
-                  response_ms:
-                    type: number
-                  checks:
-                    type: object
-                    additionalProperties: true
-
 components:
   schemas:
     SearchResult:

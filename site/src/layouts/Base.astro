@@ -2,7 +2,7 @@
 interface Props {
   title: string;
   description?: string;
-  activeTab?: 'skills' | 'tools' | 'agents' | 'movers' | 'trends' | 'submit' | 'api' | 'blog' | 'pricing' | 'changelog' | 'news' | 'integrations' | 'check' | 'methodology';
+  activeTab?: 'skills' | 'tools' | 'agents' | 'movers' | 'trends' | 'submit' | 'api' | 'blog' | 'pricing' | 'changelog' | 'news' | 'integrations' | 'methodology';
   jsonLd?: object | object[];
   keywords?: string;
   canonicalUrl?: string;
@@ -182,11 +182,6 @@ const ogImageHeight = ogImage ? '630' : '500';
         vertical-align: middle;
       }
 
-      .nav-health-check .badge-free {
-        border-color: #22c55e;
-        color: #22c55e;
-      }
-
       header .tagline {
         color: var(--text);
         font-size: 0.82rem;
@@ -322,7 +317,6 @@ const ogImageHeight = ogImage ? '630' : '500';
           <nav class="tabs">
             <a href="/" class={activeTab === 'skills' ? 'active' : ''}>Skills</a>
             <a href="/tools/" class={activeTab === 'tools' ? 'active' : ''}>Tools</a>
-            <a href="/check/" class={`nav-health-check${activeTab === 'check' ? ' active' : ''}`}>Health Check <span class="badge-free">free</span></a>
             <a href="/movers/" class={activeTab === 'movers' ? 'active' : ''}>Movers</a>
             <a href="/trends/" class={activeTab === 'trends' ? 'active' : ''}>Trends</a>
             <a href="/agents/" class={activeTab === 'agents' ? 'active' : ''}>Agents <span class="badge-beta">beta</span></a>

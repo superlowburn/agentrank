@@ -727,7 +727,6 @@ Astro.response.headers.set('Cache-Control', 'public, max-age=60, s-maxage=3600, 
       <a href={`/category/${toolCategory}/`} class="nav-link">Browse {toolCategory} category &rarr;</a>
     )}
     <a href={`/compare/?tools=${slug}`} class="nav-link">Compare {tool.full_name} &rarr;</a>
-    <a href={`/check/?url=${encodeURIComponent(tool.url)}`} class="nav-link nav-link-health">Check {tool.full_name} health score &rarr;</a>
     {relatedBlogPosts.map((post) => (
       <a href={post.href} class="nav-link">{post.title} &rarr;</a>
     ))}
