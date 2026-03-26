@@ -20,18 +20,32 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Download previous DB
-        uses: actions/download-artifact@v4
+      - name: Restore previous DB
+        uses: actions/cache/restore@v4
+        id: db-cache
         with:
-          name: agentrank-db
-          path: data/
-        continue-on-error: true # First run has no artifact
+          path: data/agentrank.db
+          key: agentrank-db-dummy-key-never-matches
+          restore-keys: |
+            agentrank-db-
+
+      - name: Check DB state
+        run: |
+          if [ -f data/agentrank.db ]; then
+            echo "DB restored from cache"
+            ls -lh data/agentrank.db
+          else
+            echo "No previous DB found — starting fresh"
+          fi
 
       - name: Determine crawl mode
         id: mode
         run: |
           DOW=$(date +%u) # 1=Monday, 7=Sunday
-          if [ "$DOW" = "7" ]; then
+          if [ ! -f data/agentrank.db ]; then
+            echo "No DB found — forcing full crawl"
+            echo "mode=full" >> $GITHUB_OUTPUT
+          elif [ "$DOW" = "7" ]; then
             echo "mode=full" >> $GITHUB_OUTPUT
           else
             echo "mode=incremental" >> $GITHUB_OUTPUT
@@ -69,10 +83,9 @@ jobs:
           npm run build
           npx wrangler pages deploy dist --commit-dirty=true
 
-      - name: Upload DB artifact
+      - name: Save DB to cache
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/cache/save@v4
         with:
-          name: agentrank-db
           path: data/agentrank.db
-          retention-days: 30
+          key: agentrank-db-${{ github.run_id }}
