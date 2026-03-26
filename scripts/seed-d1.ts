@@ -65,6 +65,15 @@ const toolRows = db.prepare(`
   ORDER BY rank ASC
 `).all() as Array<Record<string, unknown>>;
 
+// Safety guard: refuse to seed if tool count is suspiciously low
+const MIN_TOOLS = 500;
+if (toolRows.length < MIN_TOOLS) {
+  console.error(`ABORT: Only ${toolRows.length} tools found (minimum ${MIN_TOOLS}). DB may be corrupted or crawl incomplete.`);
+  console.error('Refusing to seed D1 to prevent wiping good data with bad data.');
+  db.close();
+  process.exit(1);
+}
+
 for (let i = 0; i < toolRows.length; i += CHUNK_SIZE) {
   const chunk = toolRows.slice(i, i + CHUNK_SIZE);
   const values = chunk.map((r) => {
