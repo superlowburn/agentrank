@@ -8,7 +8,7 @@ on:
 jobs:
   pipeline:
     runs-on: ubuntu-latest
-    timeout-minutes: 120
+    timeout-minutes: 180
 
     steps:
       - uses: actions/checkout@v4
@@ -57,7 +57,7 @@ jobs:
           CRAWL_MODE: ${{ steps.mode.outputs.mode }}
           GLAMA_MAX_PAGES: '500'
         run: cd crawler && npx tsx src/index.ts
-        timeout-minutes: 100
+        timeout-minutes: 150
 
       - name: Score
         run: cd scorer && npx tsx src/index.ts
